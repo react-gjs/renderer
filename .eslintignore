@@ -1,0 +1,17 @@
+node_modules
+dist
+.vscode
+tests
+__tests__
+__mocks__
+coverage
+jest.config.js
+webpack.config.js
+.eslintignore
+.eslintrc.json
+.gitignore
+.prettierrc.json
+tsconfig.json
+yarn-error.log
+yarn.lock
+package-lock.json

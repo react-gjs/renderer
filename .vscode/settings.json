@@ -1,0 +1,14 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "source.fixAll.eslint": true
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["git-hook-tasks.config.json"],
+      "url": "./node_modules/git-hook-tasks/dist/config/json-schema.json"
+    }
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
