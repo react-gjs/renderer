@@ -1,14 +1,11 @@
-import Gtk from "gi://Gtk?version=3.0";
+import { ApplicationElement } from "../gjs-elements/application/application";
 import { GjsRenderer } from "./gjs-renderer";
 
-Gtk.init();
-
-export const render = (app: JSX.Element) => {
-  const window = new Gtk.Window();
-  window.connect("destroy", () => Gtk.main_quit());
+export const render = (appContent: JSX.Element) => {
+  const application = new ApplicationElement();
 
   const container = GjsRenderer.createContainer(
-    window,
+    application,
     1,
     null,
     false,
@@ -18,8 +15,7 @@ export const render = (app: JSX.Element) => {
     null
   );
 
-  GjsRenderer.updateContainer(app, container, null);
+  GjsRenderer.updateContainer(appContent, container, null, () => {});
 
-  window.show_all();
-  Gtk.main();
+  application.start();
 };

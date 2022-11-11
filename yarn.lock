@@ -1963,7 +1963,7 @@ clify.js@ncpa0cpl/clify.js:
   languageName: node
   linkType: hard
 
-"dilswer@npm:^1.2.0":
+"dilswer@npm:^1.2.0, dilswer@npm:^1.3.0":
   version: 1.3.0
   resolution: "dilswer@npm:1.3.0"
   dependencies:
@@ -4343,6 +4343,7 @@ git-hook-tasks@ncpa0cpl/git-hook-tasks:
     "@types/react-reconciler": ^0.28.0
     "@typescript-eslint/eslint-plugin": ^5.42.1
     "@typescript-eslint/parser": ^5.42.1
+    dilswer: ^1.3.0
     eslint: ^8.27.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-prettier: ^4.2.1

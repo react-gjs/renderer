@@ -1,17 +1,19 @@
-import type Gtk from "gi://Gtk?version=3.0";
+import type { BoxProps } from "../gjs-elements/box/box";
+import type { ButtonProps } from "../gjs-elements/button/button";
+import type { LabelProps } from "../gjs-elements/label/label";
+import type { WindowProps } from "../gjs-elements/window/window";
 
 export type ComponentAttributes<P> = {
-  children?: React.ReactNode;
+  children?: React.ReactNode | React.ReactNode[];
 } & P;
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      WINDOW: ComponentAttributes<Partial<Gtk.WindowInitOptions>>;
-      BUTTON: ComponentAttributes<Partial<Gtk.ButtonInitOptions>>;
-      VBOX: ComponentAttributes<Partial<Gtk.VBoxInitOptions>>;
-      HBOX: ComponentAttributes<Partial<Gtk.HBoxInitOptions>>;
-      LABEL: ComponentAttributes<Partial<Gtk.LabelInitOptions>>;
+      WINDOW: ComponentAttributes<WindowProps>;
+      BUTTON: ComponentAttributes<ButtonProps>;
+      BOX: ComponentAttributes<BoxProps>;
+      LABEL: ComponentAttributes<LabelProps>;
     }
   }
 }
