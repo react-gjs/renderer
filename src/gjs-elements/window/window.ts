@@ -1,23 +1,54 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
-import { mapProperties } from "../utils/map-properties";
+import { EventHandlers } from "../utils/event-handlers";
+import type { DiffedProps } from "../utils/map-properties";
+import { createPropMap } from "../utils/map-properties";
 
 export type WindowProps = {
   title?: string;
   defaultWidth?: number;
   defaultHeight?: number;
   onDestroy?: () => void;
+  onDragBegin?: () => void;
+  onDragEnd?: () => void;
+  onFocus?: () => void;
+  onHide?: () => void;
+  onResize?: (width: number, height: number) => void;
 };
 
 export class WindowElement implements GjsElement {
   readonly kind = "WINDOW";
 
-  private gobject = new Gtk.Window();
+  private widget = new Gtk.Window();
   private parent: Gtk.Container | null = null;
-  private onDestroyHandlerID: number | null = null;
+
+  private readonly handlers = new EventHandlers(this.widget);
+
+  private readonly mapProps = createPropMap<WindowProps>((props) =>
+    props
+      .title(DataType.String, (v = "") => {
+        this.widget.title = v;
+      })
+      .defaultWidth(DataType.Number, (v = -1) => {
+        this.widget.default_width = v;
+      })
+      .defaultHeight(DataType.Number, (v = -1) => {
+        this.widget.default_height = v;
+      })
+  );
 
   constructor(props: any) {
+    this.handlers.bind("destroy", "onDestroy");
+    this.handlers.bind("drag-begin", "onDragBegin");
+    this.handlers.bind("drag-end", "onDragEnd");
+    this.handlers.bind("focus", "onFocus");
+    this.handlers.bind("hide", "onHide");
+    this.handlers.bind("configure-event", "onResize", () => [
+      this.widget.get_allocated_width(),
+      this.widget.get_allocated_height(),
+    ]);
+
     this.updateProps(props);
   }
 
@@ -30,28 +61,20 @@ export class WindowElement implements GjsElement {
       throw new Error("Window can only have other elements as it's children.");
     }
 
-    child.appendTo(this.gobject);
+    child.appendTo(this.widget);
   }
 
-  updateProps(props: object): void {
-    mapProperties<WindowProps>(props)
-      .title(DataType.String, (v) => (this.gobject.title = v))
-      .defaultWidth(DataType.Number, (v) => (this.gobject.default_width = v))
-      .defaultHeight(DataType.Number, (v) => (this.gobject.default_height = v))
-      .onDestroy(DataType.Function, (callback) => {
-        if (this.onDestroyHandlerID) {
-          this.gobject.disconnect(this.onDestroyHandlerID);
-        }
-
-        this.onDestroyHandlerID = this.gobject.connect("destroy", callback);
-      });
+  updateProps(props: DiffedProps): void {
+    this.mapProps(props);
+    this.handlers.update(props);
   }
 
   remove(parent: GjsElement): void {
-    this.gobject.destroy();
+    this.handlers.unbindAll();
+    this.widget.destroy();
   }
 
   render(): void {
-    this.gobject.show_all();
+    this.widget.show_all();
   }
 }

@@ -1,14 +1,21 @@
 import type { GjsElement } from "../gjs-element";
 
+export const GjsElementKinds = [
+  "WINDOW",
+  "BUTTON",
+  "BOX",
+  "LABEL",
+  "APPLICATION",
+  "TEXT_ENTRY",
+  "TEXT_AREA",
+];
+
 export const isGjsElement = (element: any): element is GjsElement => {
   return (
     typeof element === "object" &&
     element !== null &&
     "kind" in element &&
-    (element.kind === "WINDOW" ||
-      element.kind === "BUTTON" ||
-      element.kind === "BOX" ||
-      element.kind === "LABEL")
+    GjsElementKinds.includes(element.kind)
   );
 };
 

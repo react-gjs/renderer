@@ -1,5 +1,6 @@
 import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
+import type { DiffedProps } from "../utils/map-properties";
 
 export class ApplicationElement implements GjsElement {
   readonly kind = "APPLICATION";
@@ -18,7 +19,7 @@ export class ApplicationElement implements GjsElement {
     this.rootElement = child;
   }
 
-  updateProps(props: object): void {
+  updateProps(props: DiffedProps): void {
     throw new Error("Application element can't have it's props be updated.");
   }
 

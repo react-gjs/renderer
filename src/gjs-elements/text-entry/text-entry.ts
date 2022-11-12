@@ -3,41 +3,38 @@ import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
 import type { MarginProp } from "../utils/apply-margin";
 import { applyMargin, MarginDataType } from "../utils/apply-margin";
+import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
 
-export type BoxProps = {
-  spacing?: number;
-  baselinePosition?: Gtk.BaselinePosition;
-  orientation?: Gtk.Orientation;
+export type TextEntryProps = {
+  value?: string;
   margin?: MarginProp;
   verticalAlign?: Gtk.Align;
   horizontalAlign?: Gtk.Align;
+  onChange?: (value: string) => void;
+  onKeyPress?: () => void;
 };
 
-export class BoxElement implements GjsElement {
-  readonly kind = "BOX";
+export class TextEntryElement implements GjsElement {
+  readonly kind = "TEXT_ENTRY";
 
-  private widget = new Gtk.Box();
+  private textBuffer = new Gtk.EntryBuffer();
+  private widget = new Gtk.Entry({
+    buffer: this.textBuffer,
+    visible: true,
+  });
   private parent: Gtk.Container | null = null;
 
-  private readonly mapProps = createPropMap<BoxProps>((props) =>
+  private readonly handlers = new EventHandlers<Gtk.Entry, TextEntryProps>(
+    this.widget
+  );
+
+  private readonly mapProps = createPropMap<TextEntryProps>((props) =>
     props
-      .spacing(DataType.Number, (v = 0) => {
-        this.widget.spacing = v;
+      .value(DataType.String, (v = "") => {
+        this.widget.set_text(v);
       })
-      .baselinePosition(
-        DataType.Enum(Gtk.BaselinePosition),
-        (v = Gtk.BaselinePosition.TOP) => {
-          this.widget.baseline_position = v;
-        }
-      )
-      .orientation(
-        DataType.Enum(Gtk.Orientation),
-        (v = Gtk.Orientation.HORIZONTAL) => {
-          this.widget.orientation = v;
-        }
-      )
       .margin(MarginDataType, (v = 0) => {
         applyMargin(this.widget, v);
       })
@@ -50,6 +47,9 @@ export class BoxElement implements GjsElement {
   );
 
   constructor(props: any) {
+    this.handlers.bind("changed", "onChange", () => [this.widget.text]);
+    this.handlers.bind("key-press-event", "onKeyPress");
+
     this.updateProps(props);
   }
 
@@ -59,20 +59,17 @@ export class BoxElement implements GjsElement {
   }
 
   appendChild(child: GjsElement | string): void {
-    if (typeof child === "string") {
-      throw new Error("Box can only have other elements as it's children.");
-    } else {
-      child.appendTo(this.widget);
-      this.widget.show_all();
-    }
+    throw new Error("Text Entry cannot have children.");
   }
 
   remove(parent: GjsElement): void {
+    this.handlers.unbindAll();
     this.widget.destroy();
   }
 
   updateProps(props: DiffedProps): void {
     this.mapProps(props);
+    this.handlers.update(props);
   }
 
   render() {
