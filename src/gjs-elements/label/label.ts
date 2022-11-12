@@ -16,7 +16,7 @@ export type LabelProps = {
   horizontalAlign?: Gtk.Align;
   lines?: number;
   selectable?: boolean;
-  children?: string;
+  children?: string | string[];
   margin?: MarginProp;
 };
 
@@ -52,9 +52,12 @@ export class LabelElement implements GjsElement {
           this.widget.justify = v;
         }
       )
-      .children(DataType.String, (v = "") => {
-        this.appendChild(v);
-      })
+      .children(
+        DataType.OneOf(DataType.String, DataType.ArrayOf(DataType.String)),
+        (v = "") => {
+          this.appendChild(v);
+        }
+      )
       .margin(MarginDataType, (v = 0) => {
         applyMargin(this.widget, v);
       })
@@ -75,9 +78,21 @@ export class LabelElement implements GjsElement {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | string | string[]): void {
     if (typeof child === "string") {
       this.widget.set_text(child);
+    } else if (
+      Array.isArray(child) &&
+      child.every((c) => typeof c === "string")
+    ) {
+      let text = "";
+
+      for (let i = 0; i < child.length; i++) {
+        const subtext = child[i];
+        text += subtext;
+      }
+
+      this.widget.set_text(text);
     } else {
       throw new TypeError("Label can only have text as it's children.");
     }

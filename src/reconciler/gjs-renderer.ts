@@ -163,7 +163,12 @@ export const GjsRenderer = Reconciler({
   prepareScopeUpdate(scopeInstance, instance) {},
   scheduleTimeout: setTimeout,
   shouldSetTextContent(type: any, props: any) {
-    return typeof props.children === "string";
+    const children = props.children;
+    return (
+      typeof children === "string" ||
+      (Array.isArray(children) &&
+        children.every((child) => typeof child === "string"))
+    );
   },
   commitUpdate(
     instance: any,
