@@ -24,11 +24,11 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA"> {
   readonly kind = "TEXT_AREA";
 
   private textBuffer = new Gtk.TextBuffer();
-  private widget = new Gtk.TextView({
+  private parent: Gtk.Container | null = null;
+  widget = new Gtk.TextView({
     buffer: this.textBuffer,
     vexpand: true,
   });
-  private parent: Gtk.Container | null = null;
 
   private readonly handlers = new EventHandlers<Gtk.TextView, TextAreaProps>(
     this.widget

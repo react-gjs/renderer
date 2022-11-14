@@ -20,8 +20,8 @@ export interface BoxProps extends BoxPropsMixin {
 export class BoxElement implements GjsElement<"BOX"> {
   readonly kind = "BOX";
 
-  private widget = new Gtk.Box();
   private parent: Gtk.Container | null = null;
+  widget = new Gtk.Box();
 
   private readonly propsMapper = createPropMap<BoxProps>(
     createAlignmentPropMapper(this.widget),

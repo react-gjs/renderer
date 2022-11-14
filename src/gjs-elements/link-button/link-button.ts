@@ -27,8 +27,8 @@ export interface LinkButtonProps extends LinkButtonPropsMixin {
 export class LinkButtonElement implements GjsElement<"LINK_BUTTON"> {
   readonly kind = "LINK_BUTTON";
 
-  private widget = new Gtk.LinkButton();
   private parent: Gtk.Container | null = null;
+  widget = new Gtk.LinkButton();
 
   private readonly handlers = new EventHandlers<Gtk.Button, LinkButtonProps>(
     this.widget

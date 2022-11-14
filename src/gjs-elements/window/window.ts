@@ -20,8 +20,8 @@ export type WindowProps = {
 export class WindowElement implements GjsElement<"WINDOW"> {
   readonly kind = "WINDOW";
 
-  private widget = new Gtk.Window();
   private parent: Gtk.Container | null = null;
+  widget = new Gtk.Window();
 
   private readonly handlers = new EventHandlers(this.widget);
 

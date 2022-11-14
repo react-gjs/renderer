@@ -6,6 +6,8 @@ import type { SyntheticEmitter } from "./utils/synthetic-emitter";
 export interface GjsElement<K extends GjsElementTypes | "APPLICATION"> {
   readonly kind: K;
 
+  widget: Gtk.Widget;
+
   appendTo(parent: Gtk.Container): void;
   appendChild(child: GjsElement<any> | string): void;
   updateProps(props: DiffedProps): void;

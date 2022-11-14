@@ -34,8 +34,8 @@ const WidgetDataType = DataType.Custom(
 export class ButtonElement implements GjsElement<"BUTTON"> {
   readonly kind = "BUTTON";
 
-  private widget = new Gtk.Button();
   private parent: Gtk.Container | null = null;
+  widget = new Gtk.Button();
 
   private readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(
     this.widget

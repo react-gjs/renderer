@@ -21,8 +21,8 @@ export interface SwitchProps extends SwitchPropsMixin {
 export class SwitchElement implements GjsElement<"SWITCH"> {
   readonly kind = "SWITCH";
 
-  private widget = new Gtk.Switch();
   private parent: Gtk.Container | null = null;
+  widget = new Gtk.Switch();
 
   private readonly handlers = new EventHandlers<Gtk.Switch, SwitchProps>(
     this.widget

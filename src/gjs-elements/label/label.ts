@@ -27,8 +27,8 @@ export interface LabelProps extends LabelPropsMixin {
 export class LabelElement implements GjsElement<"LABEL"> {
   readonly kind = "LABEL";
 
-  private widget = new Gtk.Label();
   private parent: Gtk.Container | null = null;
+  widget = new Gtk.Label();
 
   private readonly propsMapper = createPropMap<LabelProps>(
     createAlignmentPropMapper(this.widget),

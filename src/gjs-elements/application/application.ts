@@ -2,7 +2,7 @@ import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/map-properties";
 
-export class ApplicationElement implements GjsElement<"APPLICATION"> {
+export class ApplicationElement {
   readonly kind = "APPLICATION";
 
   private rootElement: GjsElement<any> | string | null = null;

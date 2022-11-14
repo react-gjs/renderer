@@ -118,8 +118,7 @@ export const GjsRenderer = Reconciler({
     }
   },
   beforeActiveInstanceBlur() {},
-  cancelTimeout(id) {},
-  clearContainer(container) {},
+  cancelTimeout: clearTimeout,
   createInstance(
     type: GjsElementTypes,
     props: any,
@@ -148,7 +147,9 @@ export const GjsRenderer = Reconciler({
     return undefined;
   },
   getInstanceFromScope(scopeInstance) {},
-  getPublicInstance(instance) {},
+  getPublicInstance(instance) {
+    return instance;
+  },
   getRootHostContext(rootContainer) {
     return rootHostContext;
   },
@@ -209,5 +210,8 @@ export const GjsRenderer = Reconciler({
     if (GjsElementManager.isGjsElement(instance)) {
       instance.render();
     }
+  },
+  clearContainer(container) {
+    console.log("clearing container");
   },
 });

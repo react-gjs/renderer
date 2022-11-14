@@ -23,11 +23,11 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
   readonly kind = "TEXT_ENTRY";
 
   private textBuffer = new Gtk.EntryBuffer();
-  private widget = new Gtk.Entry({
+  private parent: Gtk.Container | null = null;
+  widget = new Gtk.Entry({
     buffer: this.textBuffer,
     visible: true,
   });
-  private parent: Gtk.Container | null = null;
 
   private readonly handlers = new EventHandlers<Gtk.Entry, TextEntryProps>(
     this.widget
