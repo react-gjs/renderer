@@ -2,10 +2,10 @@ import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/map-properties";
 
-export class ApplicationElement implements GjsElement {
+export class ApplicationElement implements GjsElement<"APPLICATION"> {
   readonly kind = "APPLICATION";
 
-  private rootElement: GjsElement | string | null = null;
+  private rootElement: GjsElement<any> | string | null = null;
 
   constructor() {
     Gtk.init(null);
@@ -15,7 +15,7 @@ export class ApplicationElement implements GjsElement {
     throw new Error("Application element can't be appended to a container.");
   }
 
-  appendChild(child: string | GjsElement): void {
+  appendChild(child: string | GjsElement<any>): void {
     this.rootElement = child;
   }
 
@@ -23,7 +23,7 @@ export class ApplicationElement implements GjsElement {
     throw new Error("Application element can't have it's props be updated.");
   }
 
-  remove(parent: GjsElement): void {
+  remove(parent: GjsElement<any>): void {
     Gtk.main_quit();
   }
 

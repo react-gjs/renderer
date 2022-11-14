@@ -15,7 +15,7 @@ export type BoxProps = {
   horizontalAlign?: Gtk.Align;
 };
 
-export class BoxElement implements GjsElement {
+export class BoxElement implements GjsElement<"BOX"> {
   readonly kind = "BOX";
 
   private widget = new Gtk.Box();
@@ -58,7 +58,7 @@ export class BoxElement implements GjsElement {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement<any> | string): void {
     if (typeof child === "string") {
       throw new Error("Box can only have other elements as it's children.");
     } else {
@@ -67,7 +67,7 @@ export class BoxElement implements GjsElement {
     }
   }
 
-  remove(parent: GjsElement): void {
+  remove(parent: GjsElement<any>): void {
     this.widget.destroy();
   }
 

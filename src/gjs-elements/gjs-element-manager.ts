@@ -32,7 +32,7 @@ export class GjsElementManager {
     return this.elements.has(kind);
   }
 
-  static isGjsElement(element: any): element is GjsElement {
+  static isGjsElement(element: any): element is GjsElement<any> {
     return (
       typeof element === "object" &&
       element !== null &&

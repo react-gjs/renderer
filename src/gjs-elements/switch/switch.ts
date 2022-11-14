@@ -7,34 +7,26 @@ import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
 
-export type TextEntryProps = {
-  value?: string;
+export type SwitchProps = {
   margin?: MarginProp;
   verticalAlign?: Gtk.Align;
   horizontalAlign?: Gtk.Align;
-  onChange?: (value: string) => void;
-  onKeyPress?: () => void;
+  value?: boolean;
+  onToggle?: (value: boolean) => void;
 };
 
-export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
-  readonly kind = "TEXT_ENTRY";
+export class SwitchElement implements GjsElement<"SWITCH"> {
+  readonly kind = "SWITCH";
 
-  private textBuffer = new Gtk.EntryBuffer();
-  private widget = new Gtk.Entry({
-    buffer: this.textBuffer,
-    visible: true,
-  });
+  private widget = new Gtk.Switch();
   private parent: Gtk.Container | null = null;
 
-  private readonly handlers = new EventHandlers<Gtk.Entry, TextEntryProps>(
+  private readonly handlers = new EventHandlers<Gtk.Switch, SwitchProps>(
     this.widget
   );
 
-  private readonly mapProps = createPropMap<TextEntryProps>((props) =>
+  private readonly mapProps = createPropMap<SwitchProps>((props) =>
     props
-      .value(DataType.String, (v = "") => {
-        this.widget.set_text(v);
-      })
       .margin(MarginDataType, (v = 0) => {
         applyMargin(this.widget, v);
       })
@@ -44,11 +36,13 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
       .horizontalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
         this.widget.halign = v;
       })
+      .value(DataType.Boolean, (v = false) => {
+        this.widget.set_state(v);
+      })
   );
 
   constructor(props: any) {
-    this.handlers.bind("changed", "onChange", () => [this.widget.text]);
-    this.handlers.bind("key-press-event", "onKeyPress");
+    this.handlers.bind("state-changed", "onToggle", () => [this.widget.state]);
 
     this.updateProps(props);
   }
@@ -58,18 +52,18 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement<any> | string): void {
-    throw new Error("Text Entry cannot have children.");
-  }
-
-  remove(parent: GjsElement<any>): void {
-    this.handlers.unbindAll();
-    this.widget.destroy();
+  appendChild(child: string | GjsElement<any>): void {
+    throw new Error("Switch does not support children.");
   }
 
   updateProps(props: DiffedProps): void {
     this.mapProps(props);
     this.handlers.update(props);
+  }
+
+  remove(parent: GjsElement<any>): void {
+    this.handlers.unbindAll();
+    this.widget.destroy();
   }
 
   render() {

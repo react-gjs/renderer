@@ -17,7 +17,7 @@ export type TextAreaProps = {
   onKeyPress?: () => void;
 };
 
-export class TextAreaElement implements GjsElement {
+export class TextAreaElement implements GjsElement<"TEXT_AREA"> {
   readonly kind = "TEXT_AREA";
 
   private textBuffer = new Gtk.TextBuffer();
@@ -69,11 +69,11 @@ export class TextAreaElement implements GjsElement {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement<any> | string): void {
     throw new Error("Text Area cannot have children.");
   }
 
-  remove(parent: GjsElement): void {
+  remove(parent: GjsElement<any>): void {
     this.handlers.unbindAll();
     this.widget.destroy();
   }

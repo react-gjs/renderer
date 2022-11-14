@@ -4,6 +4,7 @@ import { BoxElement } from "../gjs-elements/box/box";
 import { ButtonElement } from "../gjs-elements/button/button";
 import { GjsElementManager } from "../gjs-elements/gjs-element-manager";
 import { LabelElement } from "../gjs-elements/label/label";
+import { SwitchElement } from "../gjs-elements/switch/switch";
 import { TextAreaElement } from "../gjs-elements/text-area/text-area";
 import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
@@ -18,6 +19,7 @@ GjsElementManager.register("LABEL", LabelElement);
 GjsElementManager.register("TEXT_ENTRY", TextEntryElement);
 GjsElementManager.register("TEXT_AREA", TextAreaElement);
 GjsElementManager.register("WINDOW", WindowElement);
+GjsElementManager.register("SWITCH", SwitchElement);
 
 const rootHostContext = {};
 const childHostContext = {};

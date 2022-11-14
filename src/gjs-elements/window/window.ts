@@ -17,7 +17,7 @@ export type WindowProps = {
   onResize?: (width: number, height: number) => void;
 };
 
-export class WindowElement implements GjsElement {
+export class WindowElement implements GjsElement<"WINDOW"> {
   readonly kind = "WINDOW";
 
   private widget = new Gtk.Window();
@@ -56,7 +56,7 @@ export class WindowElement implements GjsElement {
     this.parent = parent;
   }
 
-  appendChild(child: string | GjsElement): void {
+  appendChild(child: string | GjsElement<any>): void {
     if (typeof child === "string") {
       throw new Error("Window can only have other elements as it's children.");
     }
@@ -69,7 +69,7 @@ export class WindowElement implements GjsElement {
     this.handlers.update(props);
   }
 
-  remove(parent: GjsElement): void {
+  remove(parent: GjsElement<any>): void {
     this.handlers.unbindAll();
     this.widget.destroy();
   }

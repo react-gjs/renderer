@@ -20,7 +20,7 @@ export type LabelProps = {
   margin?: MarginProp;
 };
 
-export class LabelElement implements GjsElement {
+export class LabelElement implements GjsElement<"LABEL"> {
   readonly kind = "LABEL";
 
   private widget = new Gtk.Label();
@@ -78,7 +78,7 @@ export class LabelElement implements GjsElement {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement | string | string[]): void {
+  appendChild(child: GjsElement<any> | string | string[]): void {
     if (typeof child === "string") {
       this.widget.set_text(child);
     } else if (
@@ -98,7 +98,7 @@ export class LabelElement implements GjsElement {
     }
   }
 
-  remove(parent: GjsElement): void {
+  remove(parent: GjsElement<any>): void {
     this.widget.destroy();
   }
 
