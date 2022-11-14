@@ -4,6 +4,7 @@ import { BoxElement } from "../gjs-elements/box/box";
 import { ButtonElement } from "../gjs-elements/button/button";
 import { GjsElementManager } from "../gjs-elements/gjs-element-manager";
 import { LabelElement } from "../gjs-elements/label/label";
+import { LinkButtonElement } from "../gjs-elements/link-button/link-button";
 import { SwitchElement } from "../gjs-elements/switch/switch";
 import { TextAreaElement } from "../gjs-elements/text-area/text-area";
 import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
@@ -15,6 +16,7 @@ import type { GjsElementTypes } from "./gjs-element-types";
 
 GjsElementManager.register("BOX", BoxElement);
 GjsElementManager.register("BUTTON", ButtonElement);
+GjsElementManager.register("LINK_BUTTON", LinkButtonElement);
 GjsElementManager.register("LABEL", LabelElement);
 GjsElementManager.register("TEXT_ENTRY", TextEntryElement);
 GjsElementManager.register("TEXT_AREA", TextAreaElement);

@@ -3,6 +3,7 @@ import type Gtk from "gi://Gtk?version=3.0";
 export type GjsElementTypes =
   | "WINDOW"
   | "BUTTON"
+  | "LINK_BUTTON"
   | "BOX"
   | "LABEL"
   | "TEXT_ENTRY"
