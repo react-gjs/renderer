@@ -1,24 +1,28 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
 import Pango from "gi://Pango";
+import type { EllipsizeMode, Justification, WrapMode } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
-import type { MarginProp } from "../utils/apply-margin";
-import { applyMargin, MarginDataType } from "../utils/apply-margin";
+import type { ElementMargin } from "../utils/apply-margin";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
+import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 
-export type LabelProps = {
+type LabelPropsMixin = AlignmentProps & MarginProps;
+
+export interface LabelProps extends LabelPropsMixin {
   wrap?: boolean;
-  wrapMode?: Pango.WrapMode;
-  ellipsize?: Pango.EllipsizeMode;
-  justify?: Gtk.Justification;
-  verticalAlign?: Gtk.Align;
-  horizontalAlign?: Gtk.Align;
+  wrapMode?: WrapMode;
+  ellipsize?: EllipsizeMode;
+  justify?: Justification;
   lines?: number;
   selectable?: boolean;
   children?: string | string[];
-  margin?: MarginProp;
-};
+  margin?: ElementMargin;
+}
 
 export class LabelElement implements GjsElement<"LABEL"> {
   readonly kind = "LABEL";
@@ -26,47 +30,41 @@ export class LabelElement implements GjsElement<"LABEL"> {
   private widget = new Gtk.Label();
   private parent: Gtk.Container | null = null;
 
-  private readonly mapProps = createPropMap<LabelProps>((props) =>
-    props
-      .wrap(DataType.Boolean, (v = true) => {
-        this.widget.wrap = v;
-      })
-      .selectable(DataType.Boolean, (v = false) => {
-        this.widget.selectable = v;
-      })
-      .lines(DataType.Number, (v = -1) => {
-        this.widget.lines = v;
-      })
-      .ellipsize(
-        DataType.Enum(Pango.EllipsizeMode),
-        (v = Pango.EllipsizeMode.NONE) => {
-          this.widget.ellipsize = v;
-        }
-      )
-      .wrapMode(DataType.Enum(Pango.WrapMode), (v = Pango.WrapMode.CHAR) => {
-        this.widget.wrap_mode = v;
-      })
-      .justify(
-        DataType.Enum(Gtk.Justification),
-        (v = Gtk.Justification.CENTER) => {
-          this.widget.justify = v;
-        }
-      )
-      .children(
-        DataType.OneOf(DataType.String, DataType.ArrayOf(DataType.String)),
-        (v = "") => {
-          this.appendChild(v);
-        }
-      )
-      .margin(MarginDataType, (v = 0) => {
-        applyMargin(this.widget, v);
-      })
-      .verticalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
-        this.widget.valign = v;
-      })
-      .horizontalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
-        this.widget.halign = v;
-      })
+  private readonly mapProps = createPropMap<LabelProps>(
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    (props) =>
+      props
+        .wrap(DataType.Boolean, (v = true) => {
+          this.widget.wrap = v;
+        })
+        .selectable(DataType.Boolean, (v = false) => {
+          this.widget.selectable = v;
+        })
+        .lines(DataType.Number, (v = -1) => {
+          this.widget.lines = v;
+        })
+        .ellipsize(
+          DataType.Enum(Pango.EllipsizeMode),
+          (v = Pango.EllipsizeMode.NONE) => {
+            this.widget.ellipsize = v;
+          }
+        )
+        .wrapMode(DataType.Enum(Pango.WrapMode), (v = Pango.WrapMode.CHAR) => {
+          this.widget.wrap_mode = v;
+        })
+        .justify(
+          DataType.Enum(Gtk.Justification),
+          (v = Gtk.Justification.CENTER) => {
+            this.widget.justify = v;
+          }
+        )
+        .children(
+          DataType.OneOf(DataType.String, DataType.ArrayOf(DataType.String)),
+          (v = "") => {
+            this.appendChild(v);
+          }
+        )
   );
 
   constructor(props: any) {

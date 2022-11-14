@@ -1,19 +1,21 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
+import type { BaselinePosition, Orientation } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
-import type { MarginProp } from "../utils/apply-margin";
-import { applyMargin, MarginDataType } from "../utils/apply-margin";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
+import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 
-export type BoxProps = {
+type BoxPropsMixin = AlignmentProps & MarginProps;
+
+export interface BoxProps extends BoxPropsMixin {
   spacing?: number;
-  baselinePosition?: Gtk.BaselinePosition;
-  orientation?: Gtk.Orientation;
-  margin?: MarginProp;
-  verticalAlign?: Gtk.Align;
-  horizontalAlign?: Gtk.Align;
-};
+  baselinePosition?: BaselinePosition;
+  orientation?: Orientation;
+}
 
 export class BoxElement implements GjsElement<"BOX"> {
   readonly kind = "BOX";
@@ -21,32 +23,26 @@ export class BoxElement implements GjsElement<"BOX"> {
   private widget = new Gtk.Box();
   private parent: Gtk.Container | null = null;
 
-  private readonly mapProps = createPropMap<BoxProps>((props) =>
-    props
-      .spacing(DataType.Number, (v = 0) => {
-        this.widget.spacing = v;
-      })
-      .baselinePosition(
-        DataType.Enum(Gtk.BaselinePosition),
-        (v = Gtk.BaselinePosition.TOP) => {
-          this.widget.baseline_position = v;
-        }
-      )
-      .orientation(
-        DataType.Enum(Gtk.Orientation),
-        (v = Gtk.Orientation.HORIZONTAL) => {
-          this.widget.orientation = v;
-        }
-      )
-      .margin(MarginDataType, (v = 0) => {
-        applyMargin(this.widget, v);
-      })
-      .verticalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
-        this.widget.valign = v;
-      })
-      .horizontalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
-        this.widget.halign = v;
-      })
+  private readonly mapProps = createPropMap<BoxProps>(
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    (props) =>
+      props
+        .spacing(DataType.Number, (v = 0) => {
+          this.widget.spacing = v;
+        })
+        .baselinePosition(
+          DataType.Enum(Gtk.BaselinePosition),
+          (v = Gtk.BaselinePosition.TOP) => {
+            this.widget.baseline_position = v;
+          }
+        )
+        .orientation(
+          DataType.Enum(Gtk.Orientation),
+          (v = Gtk.Orientation.HORIZONTAL) => {
+            this.widget.orientation = v;
+          }
+        )
   );
 
   constructor(props: any) {

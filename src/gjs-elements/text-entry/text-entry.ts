@@ -1,20 +1,23 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
-import type { MarginProp } from "../utils/apply-margin";
-import { applyMargin, MarginDataType } from "../utils/apply-margin";
+import type { ElementMargin } from "../utils/apply-margin";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
+import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 
-export type TextEntryProps = {
+type ButtonPropsMixin = AlignmentProps & MarginProps;
+
+export interface TextEntryProps extends ButtonPropsMixin {
   value?: string;
-  margin?: MarginProp;
-  verticalAlign?: Gtk.Align;
-  horizontalAlign?: Gtk.Align;
+  margin?: ElementMargin;
   onChange?: (value: string) => void;
   onKeyPress?: () => void;
-};
+}
 
 export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
   readonly kind = "TEXT_ENTRY";
@@ -30,19 +33,12 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
     this.widget
   );
 
-  private readonly mapProps = createPropMap<TextEntryProps>((props) =>
-    props
-      .value(DataType.String, (v = "") => {
+  private readonly mapProps = createPropMap<TextEntryProps>(
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    (props) =>
+      props.value(DataType.String, (v = "") => {
         this.widget.set_text(v);
-      })
-      .margin(MarginDataType, (v = 0) => {
-        applyMargin(this.widget, v);
-      })
-      .verticalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
-        this.widget.valign = v;
-      })
-      .horizontalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
-        this.widget.halign = v;
       })
   );
 

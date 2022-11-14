@@ -1,27 +1,31 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
+import type { PositionType } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
-import type { MarginProp } from "../utils/apply-margin";
-import { applyMargin, MarginDataType } from "../utils/apply-margin";
+import type { ElementMargin } from "../utils/apply-margin";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
+import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 
-export type ButtonProps = {
+type ButtonPropsMixin = AlignmentProps & MarginProps;
+
+export interface ButtonProps extends ButtonPropsMixin {
   label?: string;
   image?: Gtk.Widget;
-  imagePosition?: Gtk.PositionType;
+  imagePosition?: PositionType;
   useUnderline?: boolean;
-  margin?: MarginProp;
-  verticalAlign?: Gtk.Align;
-  horizontalAlign?: Gtk.Align;
+  margin?: ElementMargin;
   onClick?: () => void;
   onActivate?: () => void;
   onEnter?: () => void;
   onLeave?: () => void;
   onPressed?: () => void;
   onReleased?: () => void;
-};
+}
 
 const WidgetDataType = DataType.Custom(
   (v: any): v is Gtk.Widget => typeof v === "object"
@@ -37,32 +41,26 @@ export class ButtonElement implements GjsElement<"BUTTON"> {
     this.widget
   );
 
-  private readonly mapProps = createPropMap<ButtonProps>((props) =>
-    props
-      .label(DataType.String, (v = "") => {
-        this.widget.label = v;
-      })
-      .image(WidgetDataType, (v) => {
-        this.widget.set_image(v ?? null);
-      })
-      .imagePosition(
-        DataType.Enum(Gtk.PositionType),
-        (v = Gtk.PositionType.LEFT) => {
-          this.widget.image_position = v;
-        }
-      )
-      .useUnderline(DataType.Boolean, (v = false) => {
-        this.widget.use_underline = v;
-      })
-      .margin(MarginDataType, (v = 0) => {
-        applyMargin(this.widget, v);
-      })
-      .verticalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
-        this.widget.valign = v;
-      })
-      .horizontalAlign(DataType.Enum(Gtk.Align), (v = Gtk.Align.START) => {
-        this.widget.halign = v;
-      })
+  private readonly mapProps = createPropMap<ButtonProps>(
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    (props) =>
+      props
+        .label(DataType.String, (v = "") => {
+          this.widget.label = v;
+        })
+        .image(WidgetDataType, (v) => {
+          this.widget.set_image(v ?? null);
+        })
+        .imagePosition(
+          DataType.Enum(Gtk.PositionType),
+          (v = Gtk.PositionType.LEFT) => {
+            this.widget.image_position = v;
+          }
+        )
+        .useUnderline(DataType.Boolean, (v = false) => {
+          this.widget.use_underline = v;
+        })
   );
 
   constructor(props: any) {

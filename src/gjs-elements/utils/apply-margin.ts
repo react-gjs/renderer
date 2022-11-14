@@ -1,25 +1,20 @@
-import { DataType } from "dilswer";
-
-export type MarginProp =
+export type ElementMargin =
   | number
   | [number]
   | [number, number]
   | [number, number, number]
   | [number, number, number, number];
 
-export const MarginDataType = DataType.OneOf(
-  DataType.Number,
-  DataType.ArrayOf(DataType.Number)
-);
+export type WidgetWithMargin = {
+  margin: number;
+  margin_top: number;
+  margin_end: number;
+  margin_bottom: number;
+  margin_start: number;
+};
 
 export const applyMargin = (
-  widget: {
-    margin: number;
-    margin_top: number;
-    margin_end: number;
-    margin_bottom: number;
-    margin_start: number;
-  },
+  widget: WidgetWithMargin,
   margin: number | number[]
 ) => {
   if (typeof margin === "number") {
