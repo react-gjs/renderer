@@ -2,17 +2,22 @@ import Reconciler from "react-reconciler";
 import { DefaultEventPriority } from "react-reconciler/constants";
 import { BoxElement } from "../gjs-elements/box/box";
 import { ButtonElement } from "../gjs-elements/button/button";
+import { GjsElementManager } from "../gjs-elements/gjs-element-manager";
 import { LabelElement } from "../gjs-elements/label/label";
 import { TextAreaElement } from "../gjs-elements/text-area/text-area";
 import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
-import {
-  isGjsElement,
-  isGjsElementOrString,
-} from "../gjs-elements/utils/is-gjs-element";
+import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
 import type { DiffedProps } from "../gjs-elements/utils/map-properties";
 import { UnsetProp } from "../gjs-elements/utils/map-properties";
 import { WindowElement } from "../gjs-elements/window/window";
 import type { GjsElementTypes } from "./gjs-element-types";
+
+GjsElementManager.register("BOX", BoxElement);
+GjsElementManager.register("BUTTON", ButtonElement);
+GjsElementManager.register("LABEL", LabelElement);
+GjsElementManager.register("TEXT_ENTRY", TextEntryElement);
+GjsElementManager.register("TEXT_AREA", TextAreaElement);
+GjsElementManager.register("WINDOW", WindowElement);
 
 const rootHostContext = {};
 const childHostContext = {};
@@ -78,19 +83,28 @@ export const GjsRenderer = Reconciler({
   supportsPersistence: false,
   afterActiveInstanceBlur() {},
   appendChildToContainer(container: any, child: any) {
-    if (isGjsElementOrString(child) && isGjsElement(container)) {
+    if (
+      isGjsElementOrString(child) &&
+      GjsElementManager.isGjsElement(container)
+    ) {
       container.appendChild(child);
       container.render();
     }
   },
   appendInitialChild(parentInstance: any, child: any) {
-    if (isGjsElementOrString(child) && isGjsElement(parentInstance)) {
+    if (
+      isGjsElementOrString(child) &&
+      GjsElementManager.isGjsElement(parentInstance)
+    ) {
       parentInstance.appendChild(child);
       parentInstance.render();
     }
   },
   appendChild(parentInstance: any, child: any) {
-    if (isGjsElementOrString(child) && isGjsElement(parentInstance)) {
+    if (
+      isGjsElementOrString(child) &&
+      GjsElementManager.isGjsElement(parentInstance)
+    ) {
       parentInstance.appendChild(child);
       parentInstance.render();
     }
@@ -105,24 +119,9 @@ export const GjsRenderer = Reconciler({
     hostContext,
     internalHandle
   ) {
-    props = diffProps({}, props, true);
+    const diffedProps = diffProps({}, props, true);
 
-    switch (type) {
-      case "BOX":
-        return new BoxElement(props);
-      case "LABEL":
-        return new LabelElement(props);
-      case "BUTTON":
-        return new ButtonElement(props);
-      case "TEXT_ENTRY":
-        return new TextEntryElement(props);
-      case "TEXT_AREA":
-        return new TextAreaElement(props);
-      case "WINDOW":
-        return new WindowElement(props);
-      default:
-        throw new Error(`Element type not supported. (${type})`);
-    }
+    return GjsElementManager.create(type, diffedProps);
   },
   createTextInstance(text, rootContainer, hostContext, internalHandle) {
     throw new Error("Text Instances are not supported");
@@ -157,7 +156,11 @@ export const GjsRenderer = Reconciler({
     rootContainer,
     hostContext
   ) {
-    return diffProps(oldProps, newProps, isGjsElement(instance));
+    return diffProps(
+      oldProps,
+      newProps,
+      GjsElementManager.isGjsElement(instance)
+    );
   },
   resetAfterCommit(containerInfo) {},
   prepareScopeUpdate(scopeInstance, instance) {},
@@ -178,24 +181,24 @@ export const GjsRenderer = Reconciler({
     nextProps: any,
     internalHandle
   ) {
-    if (isGjsElement(instance)) {
+    if (GjsElementManager.isGjsElement(instance)) {
       instance.updateProps(updatePayload);
       instance.render();
     }
   },
   commitTextUpdate(textInstance: any, oldText, newText) {},
   removeChild(parentInstance: any, child: any) {
-    if (isGjsElement(child)) {
+    if (GjsElementManager.isGjsElement(child)) {
       child.remove(parentInstance);
     }
   },
   removeChildFromContainer(container: any, child: any) {
-    if (isGjsElement(child)) {
+    if (GjsElementManager.isGjsElement(child)) {
       child.remove(container);
     }
   },
   commitMount(instance, type, props, internalInstanceHandle) {
-    if (isGjsElement(instance)) {
+    if (GjsElementManager.isGjsElement(instance)) {
       instance.render();
     }
   },

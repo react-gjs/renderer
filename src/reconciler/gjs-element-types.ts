@@ -6,7 +6,8 @@ export type GjsElementTypes =
   | "BOX"
   | "LABEL"
   | "TEXT_ENTRY"
-  | "TEXT_AREA";
+  | "TEXT_AREA"
+  | "BUTTON_BOX";
 
 export type GjsInstances =
   | Gtk.Window
