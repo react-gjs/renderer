@@ -1,7 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
 import { Orientation, SelectionMode } from "../../g-enums";
-import type { FlowBoxEntryElement } from "../flow-box-entry/flow-box-entry";
 import type { GjsElement } from "../gjs-element";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
@@ -10,6 +9,7 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { FlowBoxEntryElement } from "./flow-box-entry";
 
 type FlowBoxPropsMixin = AlignmentProps & MarginProps;
 

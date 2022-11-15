@@ -3,7 +3,6 @@
 ## High Priority
 
 - Grid
-- ButtonBox
 - CheckButton
 - ComboBox (selector)
 - ScrolledWindow
@@ -13,7 +12,6 @@
 - Popover
 - RadioButton
 - SpinButton (number input)
-- Switch
 
 ## Medium Priority
 
