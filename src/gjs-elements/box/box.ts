@@ -23,7 +23,7 @@ export class BoxElement implements GjsElement<"BOX"> {
   private widget = new Gtk.Box();
   private parent: Gtk.Container | null = null;
 
-  private readonly mapProps = createPropMap<BoxProps>(
+  private readonly propsMapper = createPropMap<BoxProps>(
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -64,11 +64,12 @@ export class BoxElement implements GjsElement<"BOX"> {
   }
 
   remove(parent: GjsElement<any>): void {
+    this.propsMapper.cleanupAll();
     this.widget.destroy();
   }
 
   updateProps(props: DiffedProps): void {
-    this.mapProps(props);
+    this.propsMapper.update(props);
   }
 
   render() {

@@ -1,51 +1,42 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
+import type { FlowBoxElement } from "../flow-box/flow-box";
 import type { GjsElement } from "../gjs-element";
-import type { ElementMargin } from "../utils/apply-margin";
-import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { SyntheticEmitter } from "../utils/synthetic-emitter";
 
-type ButtonPropsMixin = AlignmentProps & MarginProps;
+type FlowBoxEntryPropsMixin = AlignmentProps & MarginProps;
 
-export interface TextEntryProps extends ButtonPropsMixin {
-  value?: string;
-  margin?: ElementMargin;
-  onChange?: (value: string) => void;
-  onKeyPress?: () => void;
+export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
+  onSelect?: () => void;
 }
 
-export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
-  readonly kind = "TEXT_ENTRY";
+export class FlowBoxEntryElement implements GjsElement<"FLOW_BOX_ENTRY"> {
+  readonly kind = "FLOW_BOX_ENTRY";
 
-  private textBuffer = new Gtk.EntryBuffer();
-  private widget = new Gtk.Entry({
-    buffer: this.textBuffer,
-    visible: true,
-  });
+  private widget = new Gtk.FlowBoxChild();
   private parent: Gtk.Container | null = null;
 
-  private readonly handlers = new EventHandlers<Gtk.Entry, TextEntryProps>(
-    this.widget
-  );
+  emitter = new SyntheticEmitter<{ selected: [] }>();
 
-  private readonly propsMapper = createPropMap<TextEntryProps>(
+  private readonly propMapper = createPropMap<FlowBoxEntryProps>(
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
-      props.value(DataType.String, (v = "") => {
-        this.widget.set_text(v);
+      props.onSelect(DataType.Function, (callback) => {
+        if (callback) {
+          const listener = this.emitter.on("selected", () => callback());
+          return () => listener.remove();
+        }
       })
   );
 
   constructor(props: any) {
-    this.handlers.bind("changed", "onChange", () => [this.widget.text]);
-    this.handlers.bind("key-press-event", "onKeyPress");
-
     this.updateProps(props);
   }
 
@@ -55,18 +46,23 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
   }
 
   appendChild(child: GjsElement<any> | string): void {
-    throw new Error("Text Entry cannot have children.");
+    if (typeof child === "string") {
+      throw new Error("Box can only have other elements as it's children.");
+    } else {
+      child.appendTo(this.widget);
+      this.widget.show_all();
+    }
   }
 
   remove(parent: GjsElement<any>): void {
-    this.propsMapper.cleanupAll();
-    this.handlers.unbindAll();
+    this.emitter.clear();
+    (parent as FlowBoxElement).childDestroyed(this);
+    this.propMapper.cleanupAll();
     this.widget.destroy();
   }
 
   updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
-    this.handlers.update(props);
+    this.propMapper.update(props);
   }
 
   render() {

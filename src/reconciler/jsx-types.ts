@@ -1,5 +1,7 @@
 import type { BoxProps } from "../gjs-elements/box/box";
 import type { ButtonProps } from "../gjs-elements/button/button";
+import type { FlowBoxEntryProps } from "../gjs-elements/flow-box-entry/flow-box-entry";
+import type { FlowBoxProps } from "../gjs-elements/flow-box/flow-box";
 import type { LabelProps } from "../gjs-elements/label/label";
 import type { SwitchProps } from "../gjs-elements/switch/switch";
 import type { TextAreaProps } from "../gjs-elements/text-area/text-area";
@@ -13,13 +15,16 @@ export type ComponentWithChildren<P> = {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      WINDOW: ComponentWithChildren<WindowProps>;
-      BUTTON: ComponentWithChildren<ButtonProps>;
       BOX: ComponentWithChildren<BoxProps>;
+      BUTTON: ComponentWithChildren<ButtonProps>;
+      FLOW_BOX: ComponentWithChildren<FlowBoxProps>;
+      FLOW_BOX_ENTRY: ComponentWithChildren<FlowBoxEntryProps>;
       LABEL: ComponentWithChildren<LabelProps>;
-      TEXT_ENTRY: TextEntryProps;
-      TEXT_AREA: TextAreaProps;
+      LINK_BUTTON: ComponentWithChildren<ButtonProps>;
       SWITCH: SwitchProps;
+      TEXT_AREA: TextAreaProps;
+      TEXT_ENTRY: TextEntryProps;
+      WINDOW: ComponentWithChildren<WindowProps>;
     }
   }
 }

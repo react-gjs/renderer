@@ -5,7 +5,7 @@ export type PropMapper<K extends string | symbol | number = string> = Record<
   K,
   <T extends AnyDataType>(
     type: T,
-    mapper: (v: GetDataType<T> | undefined) => void
+    mapper: (v: GetDataType<T> | undefined) => void | (() => void)
   ) => PropMapper<K>
 >;
 
@@ -18,7 +18,11 @@ export const createPropMap = <P = Record<string, any>>(
 ) => {
   const map = new Map<
     string,
-    [validator: (v: any) => boolean, callback: (v: any) => void]
+    {
+      validate: (v: any) => boolean;
+      callback: (v: any) => void | (() => void);
+      nextCleanup?: () => void;
+    }
   >();
 
   const mapper = new Proxy(
@@ -27,9 +31,9 @@ export const createPropMap = <P = Record<string, any>>(
       get: (_, propName: string) => {
         return (
           dataType: AnyDataType,
-          callback: (value: GetDataType<AnyDataType>) => void
+          callback: (value: GetDataType<AnyDataType>) => void | (() => void)
         ) => {
-          map.set(propName, [createValidator(dataType), callback]);
+          map.set(propName, { validate: createValidator(dataType), callback });
           return mapper;
         };
       },
@@ -40,21 +44,34 @@ export const createPropMap = <P = Record<string, any>>(
     getMaps[i](mapper);
   }
 
-  return (props: DiffedProps) => {
+  const update = (props: DiffedProps) => {
     for (let i = 0; i < props.length; i++) {
       const [propName, value] = props[i];
       const entry = map.get(propName);
       if (entry) {
-        const [validate, callback] = entry;
-
         if (value === UnsetProp) {
-          callback(undefined);
-        } else if (validate(value)) {
-          callback(value);
+          if (entry.nextCleanup) entry.nextCleanup();
+          entry.nextCleanup = entry.callback(undefined) ?? undefined;
+        } else if (entry.validate(value)) {
+          if (entry.nextCleanup) entry.nextCleanup();
+          entry.nextCleanup = entry.callback(value) ?? undefined;
         } else {
           console.error(new TypeError(`Invalid prop type. (${propName})`));
         }
       }
     }
   };
+
+  // set default values
+  for (const entry of map.values()) {
+    entry.nextCleanup = entry.callback(undefined) ?? undefined;
+  }
+
+  const cleanupAll = () => {
+    for (const entry of map.values()) {
+      if (entry.nextCleanup) entry.nextCleanup();
+    }
+  };
+
+  return { update, cleanupAll };
 };

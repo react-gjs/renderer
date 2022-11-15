@@ -28,7 +28,7 @@ export class SwitchElement implements GjsElement<"SWITCH"> {
     this.widget
   );
 
-  private readonly mapProps = createPropMap<SwitchProps>(
+  private readonly propsMapper = createPropMap<SwitchProps>(
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -53,11 +53,12 @@ export class SwitchElement implements GjsElement<"SWITCH"> {
   }
 
   updateProps(props: DiffedProps): void {
-    this.mapProps(props);
+    this.propsMapper.update(props);
     this.handlers.update(props);
   }
 
   remove(parent: GjsElement<any>): void {
+    this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
   }

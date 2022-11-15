@@ -30,7 +30,7 @@ export class LabelElement implements GjsElement<"LABEL"> {
   private widget = new Gtk.Label();
   private parent: Gtk.Container | null = null;
 
-  private readonly mapProps = createPropMap<LabelProps>(
+  private readonly propsMapper = createPropMap<LabelProps>(
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -97,11 +97,12 @@ export class LabelElement implements GjsElement<"LABEL"> {
   }
 
   remove(parent: GjsElement<any>): void {
+    this.propsMapper.cleanupAll();
     this.widget.destroy();
   }
 
   updateProps(props: DiffedProps): void {
-    this.mapProps(props);
+    this.propsMapper.update(props);
   }
 
   render() {

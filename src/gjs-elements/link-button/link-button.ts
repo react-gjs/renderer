@@ -34,7 +34,7 @@ export class LinkButtonElement implements GjsElement<"LINK_BUTTON"> {
     this.widget
   );
 
-  private readonly mapProps = createPropMap<LinkButtonProps>(
+  private readonly propsMapper = createPropMap<LinkButtonProps>(
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -73,11 +73,12 @@ export class LinkButtonElement implements GjsElement<"LINK_BUTTON"> {
   }
 
   updateProps(props: DiffedProps): void {
-    this.mapProps(props);
+    this.propsMapper.update(props);
     this.handlers.update(props);
   }
 
   remove(parent: GjsElement<any>): void {
+    this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
   }

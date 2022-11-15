@@ -1,5 +1,5 @@
-import type { GjsElementTypes } from "../reconciler/gjs-element-types";
 import type { GjsElement } from "./gjs-element";
+import type { GjsElementTypes } from "./gjs-element-types";
 import type { DiffedProps } from "./utils/map-properties";
 
 export interface GjsElementConstructor<
@@ -9,8 +9,8 @@ export interface GjsElementConstructor<
 }
 
 export class GjsElementManager {
-  static elements = new Map<string, GjsElementConstructor<any>>();
-  static elementKinds: string[] = [];
+  private static elements = new Map<string, GjsElementConstructor<any>>();
+  private static elementKinds: string[] = [];
 
   static register<K extends GjsElementTypes | "APPLICATION">(
     kind: K,
@@ -20,6 +20,7 @@ export class GjsElementManager {
     this.elementKinds.push(kind);
   }
 
+  /** @internal */
   static create(kind: string, props: DiffedProps) {
     const element = this.elements.get(kind);
     if (!element) {
@@ -28,10 +29,12 @@ export class GjsElementManager {
     return new element(props);
   }
 
+  /** @internal */
   static isValidKind(kind: string) {
     return this.elements.has(kind);
   }
 
+  /** @internal */
   static isGjsElement(element: any): element is GjsElement<any> {
     return (
       typeof element === "object" &&

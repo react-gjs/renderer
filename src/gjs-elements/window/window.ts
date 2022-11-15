@@ -25,7 +25,7 @@ export class WindowElement implements GjsElement<"WINDOW"> {
 
   private readonly handlers = new EventHandlers(this.widget);
 
-  private readonly mapProps = createPropMap<WindowProps>((props) =>
+  private readonly propsMapper = createPropMap<WindowProps>((props) =>
     props
       .title(DataType.String, (v = "") => {
         this.widget.title = v;
@@ -65,11 +65,12 @@ export class WindowElement implements GjsElement<"WINDOW"> {
   }
 
   updateProps(props: DiffedProps): void {
-    this.mapProps(props);
+    this.propsMapper.update(props);
     this.handlers.update(props);
   }
 
   remove(parent: GjsElement<any>): void {
+    this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
   }

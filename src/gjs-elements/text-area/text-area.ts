@@ -34,7 +34,7 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA"> {
     this.widget
   );
 
-  private readonly mapProps = createPropMap<TextAreaProps>(
+  private readonly propsMapper = createPropMap<TextAreaProps>(
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -70,12 +70,13 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA"> {
   }
 
   remove(parent: GjsElement<any>): void {
+    this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
   }
 
   updateProps(props: DiffedProps): void {
-    this.mapProps(props);
+    this.propsMapper.update(props);
     this.handlers.update(props);
   }
 

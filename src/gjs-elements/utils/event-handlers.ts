@@ -73,10 +73,11 @@ export class EventHandlers<
 
   bindInternal<K extends string>(
     signal: K,
-    handler: W["connect"] extends EventConnect<K> ? () => void : never,
-    getArgs?: (...args: any[]) => any[]
+    handler: W["connect"] extends EventConnect<K>
+      ? (...args: any[]) => void
+      : never
   ) {
-    const bind = new EventBind(this.widget, signal, getArgs);
+    const bind = new EventBind(this.widget, signal, (...args) => args);
     bind.updateHandler(handler);
     this.internalBinds.push(bind);
   }

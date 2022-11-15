@@ -21,3 +21,6 @@ export const EllipsizeMode = Pango.EllipsizeMode;
 
 export type WrapMode = Pango.WrapMode;
 export const WrapMode = Pango.WrapMode;
+
+export type SelectionMode = Gtk.SelectionMode;
+export const SelectionMode = Gtk.SelectionMode;
