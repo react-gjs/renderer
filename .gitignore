@@ -3,4 +3,6 @@ coverage
 dist
 yarn-error.log
 .npmrc
-.yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/install-state.gz
