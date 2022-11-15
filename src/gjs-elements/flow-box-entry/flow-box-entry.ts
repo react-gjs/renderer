@@ -19,7 +19,7 @@ export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
 export class FlowBoxEntryElement implements GjsElement<"FLOW_BOX_ENTRY"> {
   readonly kind = "FLOW_BOX_ENTRY";
 
-  private widget = new Gtk.FlowBoxChild();
+  widget = new Gtk.FlowBoxChild();
   private parent: Gtk.Container | null = null;
 
   emitter = new SyntheticEmitter<{ selected: [] }>();

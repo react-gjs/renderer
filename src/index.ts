@@ -2,6 +2,7 @@ import type D from "./gjs-declarations/index";
 export * from "./g-enums";
 export { GjsElementManager } from "./gjs-elements/gjs-element-manager";
 export * from "./gjs-elements/gjs-element-types";
+export { KeyPressModifiers } from "./gjs-elements/utils/parse-event-key";
 export * from "./intrinsic-components";
 export * from "./process-exit";
 export * from "./reconciler/index";

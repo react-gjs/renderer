@@ -1,10 +1,14 @@
 import { DataType } from "dilswer";
+import Gdk from "gi://Gdk?version=3.0";
 import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
+import type { SyntheticEvent } from "../utils/event-handlers";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
+import type { KeyPressEvent } from "../utils/parse-event-key";
+import { parseEventKey } from "../utils/parse-event-key";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -15,8 +19,9 @@ type ButtonPropsMixin = AlignmentProps & MarginProps;
 export interface TextEntryProps extends ButtonPropsMixin {
   value?: string;
   margin?: ElementMargin;
-  onChange?: (value: string) => void;
-  onKeyPress?: () => void;
+  onChange?: (event: SyntheticEvent<{ text: string }>) => void;
+  onKeyPress?: (event: SyntheticEvent<KeyPressEvent>) => void;
+  onKeyRelease?: (event: SyntheticEvent<KeyPressEvent>) => void;
 }
 
 export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
@@ -43,8 +48,17 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
   );
 
   constructor(props: any) {
-    this.handlers.bind("changed", "onChange", () => [this.widget.text]);
-    this.handlers.bind("key-press-event", "onKeyPress");
+    this.handlers.bind("changed", "onChange", () => ({
+      text: this.widget.text,
+    }));
+    this.handlers.bind("key-press-event", "onKeyPress", (event: Gdk.EventKey) =>
+      parseEventKey(event, Gdk.EventType.KEY_PRESS)
+    );
+    this.handlers.bind(
+      "key-release-event",
+      "onKeyRelease",
+      (event: Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_RELEASE)
+    );
 
     this.updateProps(props);
   }

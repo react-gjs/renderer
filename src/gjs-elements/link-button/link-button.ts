@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
+import type { SyntheticEvent } from "../utils/event-handlers";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
@@ -16,12 +17,12 @@ export interface LinkButtonProps extends LinkButtonPropsMixin {
   label?: string;
   useUnderline?: boolean;
   margin?: ElementMargin;
-  onClick?: () => void;
-  onActivate?: () => void;
-  onEnter?: () => void;
-  onLeave?: () => void;
-  onPressed?: () => void;
-  onReleased?: () => void;
+  onClick?: (event: SyntheticEvent) => void;
+  onActivate?: (event: SyntheticEvent) => void;
+  onEnter?: (event: SyntheticEvent) => void;
+  onLeave?: (event: SyntheticEvent) => void;
+  onPressed?: (event: SyntheticEvent) => void;
+  onReleased?: (event: SyntheticEvent) => void;
 }
 
 export class LinkButtonElement implements GjsElement<"LINK_BUTTON"> {

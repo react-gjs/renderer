@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
+import type { SyntheticEvent } from "../utils/event-handlers";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
@@ -15,7 +16,7 @@ type SwitchPropsMixin = AlignmentProps & MarginProps;
 export interface SwitchProps extends SwitchPropsMixin {
   margin?: ElementMargin;
   value?: boolean;
-  onToggle?: (value: boolean) => void;
+  onToggle?: (event: SyntheticEvent<{ state: boolean }>) => void;
 }
 
 export class SwitchElement implements GjsElement<"SWITCH"> {
@@ -38,7 +39,9 @@ export class SwitchElement implements GjsElement<"SWITCH"> {
   );
 
   constructor(props: any) {
-    this.handlers.bind("state-changed", "onToggle", () => [this.widget.state]);
+    this.handlers.bind("state-changed", "onToggle", () => ({
+      state: this.widget.state,
+    }));
 
     this.updateProps(props);
   }

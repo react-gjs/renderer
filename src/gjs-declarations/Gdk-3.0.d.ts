@@ -3091,8 +3091,11 @@ declare namespace Gdk {
      * |[<!-- language="C" -->
      *
      * // We want to ignore irrelevant modifiers like ScrollLock
-     * #define ALL_ACCELS_MASK (GDK_CONTROL_MASK | GDK_SHIFT_MASK
+     * #define ALL_ACCELS_MASK (GDK_CONTROL_MASK |
+     * GDK_SHIFT_MASK
+     *
      * | GDK_MOD1_MASK) gdk_keymap_translate_keyboard_state
+     *
      * (keymap, event->hardware_keycode, event->state,
      * event->group, &keyval, NULL, NULL, &consumed); if (keyval
      * == GDK_PLUS && (event->state & ~consumed &
@@ -7313,56 +7316,10 @@ declare namespace Gdk {
   interface EventKey {}
   class EventKey {
     public constructor(options?: Partial<EventKeyInitOptions>);
-    /**
-     * The type of the event (%GDK_KEY_PRESS or
-     * %GDK_KEY_RELEASE).
-     */
-    public type: EventType;
-    /** The window which received the event. */
-    public window: Window;
-    /** %TRUE if the event was sent explicitly. */
-    public send_event: number;
-    /** The time of the event in milliseconds. */
-    public time: number;
-    /**
-     * A bit-mask representing the state of the modifier keys
-     * (e.g. Control, Shift and Alt) and the pointer buttons. See
-     * {@link ModifierType}.
-     */
-    public state: ModifierType;
-    /**
-     * The key that was pressed or released. See the
-     * `gdk/gdkkeysyms.h` header file for a complete list of GDK
-     * key codes.
-     */
-    public keyval: number;
-    /** The length of #string. */
-    public length: number;
-    /**
-     * A string containing an approximation of the text that
-     * would result from this keypress. The only correct way to
-     * handle text input of text is using input methods (see
-     * #GtkIMContext), so this field is deprecated and should
-     * never be used. {@link (gdk.unicode_to_keyval} provides a
-     * non-deprecated way of getting an approximate translation
-     * for a key.) The string is encoded in the encoding of the
-     * current locale (Note: this for backwards compatibility:
-     * strings in GTK+ and GDK are typically in UTF-8.) and
-     * NUL-terminated. In some cases, the translation of the key
-     * code will be a single NUL byte, in which case looking at
-     * #length is necessary to distinguish it from the an empty
-     * translation.
-     */
-    public string: string;
-    /** The raw code of the key that was pressed or released. */
-    public hardware_keycode: number;
-    /** The keyboard group. */
-    public group: number;
-    /**
-     * A flag that indicates if #hardware_keycode is mapped to a
-     * modifier. Since 2.10
-     */
-    public is_modifier: number;
+
+    get_keyval(): [boolean, number];
+    get_state(): [boolean, number];
+    get_event_type(): number;
   }
 
   export interface EventMotionInitOptions {}

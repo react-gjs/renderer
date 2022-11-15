@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
 import type { GjsElement } from "../gjs-element";
+import type { SyntheticEvent } from "../utils/event-handlers";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
@@ -9,12 +10,12 @@ export type WindowProps = {
   title?: string;
   defaultWidth?: number;
   defaultHeight?: number;
-  onDestroy?: () => void;
-  onDragBegin?: () => void;
-  onDragEnd?: () => void;
-  onFocus?: () => void;
-  onHide?: () => void;
-  onResize?: (width: number, height: number) => void;
+  onDestroy?: (event: SyntheticEvent) => void;
+  onDragBegin?: (event: SyntheticEvent) => void;
+  onDragEnd?: (event: SyntheticEvent) => void;
+  onFocus?: (event: SyntheticEvent) => void;
+  onHide?: (event: SyntheticEvent) => void;
+  onResize?: (event: SyntheticEvent<{ width: number; height: number }>) => void;
 };
 
 export class WindowElement implements GjsElement<"WINDOW"> {
@@ -44,10 +45,10 @@ export class WindowElement implements GjsElement<"WINDOW"> {
     this.handlers.bind("drag-end", "onDragEnd");
     this.handlers.bind("focus", "onFocus");
     this.handlers.bind("hide", "onHide");
-    this.handlers.bind("configure-event", "onResize", () => [
-      this.widget.get_allocated_width(),
-      this.widget.get_allocated_height(),
-    ]);
+    this.handlers.bind("configure-event", "onResize", () => ({
+      width: this.widget.get_allocated_width(),
+      height: this.widget.get_allocated_height(),
+    }));
 
     this.updateProps(props);
   }
