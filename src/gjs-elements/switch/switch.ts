@@ -1,5 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
+import { Align } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -30,18 +31,21 @@ export class SwitchElement implements GjsElement<"SWITCH"> {
   );
 
   private readonly propsMapper = createPropMap<SwitchProps>(
-    createAlignmentPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget, { h: Align.CENTER }),
     createMarginPropMapper(this.widget),
     (props) =>
       props.value(DataType.Boolean, (v = false) => {
-        this.widget.set_state(v);
+        this.widget.state = v;
+        this.widget.active = v;
       })
   );
 
   constructor(props: any) {
-    this.handlers.bind("state-changed", "onToggle", () => ({
-      state: this.widget.state,
-    }));
+    this.handlers.bind("state-set", "onToggle", (state) => {
+      return {
+        state,
+      };
+    });
 
     this.updateProps(props);
   }

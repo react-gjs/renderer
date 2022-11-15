@@ -60,7 +60,7 @@ class EventBind {
 
           this.handler(syntheticEvent);
 
-          return propagate;
+          return !propagate;
         } catch (e) {
           // if argGetter throws it's a no-op
           return true;

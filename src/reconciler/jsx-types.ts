@@ -1,8 +1,9 @@
 import type Gtk from "gi://Gtk?version=3.0";
 import type { BoxProps } from "../gjs-elements/box/box";
 import type { ButtonProps } from "../gjs-elements/button/button";
-import type { FlowBoxEntryProps } from "../gjs-elements/flow-box-entry/flow-box-entry";
+import type { CheckButtonProps } from "../gjs-elements/check-button/check-button";
 import type { FlowBoxProps } from "../gjs-elements/flow-box/flow-box";
+import type { FlowBoxEntryProps } from "../gjs-elements/flow-box/flow-box-entry";
 import type { GjsElement } from "../gjs-elements/gjs-element";
 import type { GjsElementTypes } from "../gjs-elements/gjs-element-types";
 import type { LabelProps } from "../gjs-elements/label/label";
@@ -34,6 +35,10 @@ declare global {
       BUTTON: IntrinsicComponent<
         ComponentWithChildren<ButtonProps>,
         Gtk.Button
+      >;
+      CHECK_BUTTON: IntrinsicComponent<
+        ComponentWithChildren<CheckButtonProps>,
+        Gtk.CheckButton
       >;
       FLOW_BOX: IntrinsicComponent<
         ComponentWithChildren<FlowBoxProps>,

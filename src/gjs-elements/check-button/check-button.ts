@@ -1,7 +1,5 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk?version=3.0";
-import type { PositionType } from "../../g-enums";
-import { Align } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -13,14 +11,14 @@ import { createAlignmentPropMapper } from "../utils/property-maps-factories/crea
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 
-type ButtonPropsMixin = AlignmentProps & MarginProps;
+type CheckButtonPropsMixin = AlignmentProps & MarginProps;
 
-export interface ButtonProps extends ButtonPropsMixin {
+export interface CheckButtonProps extends CheckButtonPropsMixin {
   label?: string;
-  image?: Gtk.Widget;
-  imagePosition?: PositionType;
   useUnderline?: boolean;
   margin?: ElementMargin;
+  active?: boolean;
+  onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
   onClick?: (event: SyntheticEvent) => void;
   onActivate?: (event: SyntheticEvent) => void;
   onEnter?: (event: SyntheticEvent) => void;
@@ -29,37 +27,28 @@ export interface ButtonProps extends ButtonPropsMixin {
   onReleased?: (event: SyntheticEvent) => void;
 }
 
-const WidgetDataType = DataType.Custom(
-  (v: any): v is Gtk.Widget => typeof v === "object"
-);
-
-export class ButtonElement implements GjsElement<"BUTTON"> {
-  readonly kind = "BUTTON";
+export class CheckButtonElement implements GjsElement<"CHECK_BUTTON"> {
+  readonly kind = "CHECK_BUTTON";
 
   private parent: Gtk.Container | null = null;
-  widget = new Gtk.Button();
+  widget = new Gtk.CheckButton();
 
-  private readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(
-    this.widget
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.CheckButton,
+    CheckButtonProps
+  >(this.widget);
 
-  private readonly propsMapper = createPropMap<ButtonProps>(
-    createAlignmentPropMapper(this.widget, { h: Align.BASELINE }),
+  private readonly propsMapper = createPropMap<CheckButtonProps>(
+    createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
       props
+        .active(DataType.Boolean, (v = false) => {
+          this.widget.active = v;
+        })
         .label(DataType.String, (v = "") => {
           this.widget.label = v;
         })
-        .image(WidgetDataType, (v) => {
-          this.widget.set_image(v ?? null);
-        })
-        .imagePosition(
-          DataType.Enum(Gtk.PositionType),
-          (v = Gtk.PositionType.LEFT) => {
-            this.widget.image_position = v;
-          }
-        )
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
@@ -72,6 +61,9 @@ export class ButtonElement implements GjsElement<"BUTTON"> {
     this.handlers.bind("leave", "onLeave");
     this.handlers.bind("pressed", "onPressed");
     this.handlers.bind("released", "onReleased");
+    this.handlers.bind("toggled", "onChange", () => ({
+      isActive: this.widget.active,
+    }));
 
     this.updateProps(props);
   }

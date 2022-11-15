@@ -2,6 +2,7 @@ import Reconciler from "react-reconciler";
 import { DefaultEventPriority } from "react-reconciler/constants";
 import { BoxElement } from "../gjs-elements/box/box";
 import { ButtonElement } from "../gjs-elements/button/button";
+import { CheckButtonElement } from "../gjs-elements/check-button/check-button";
 import { FlowBoxElement } from "../gjs-elements/flow-box/flow-box";
 import { FlowBoxEntryElement } from "../gjs-elements/flow-box/flow-box-entry";
 import { GjsElementManager } from "../gjs-elements/gjs-element-manager";
@@ -18,6 +19,7 @@ import { WindowElement } from "../gjs-elements/window/window";
 
 GjsElementManager.register("BOX", BoxElement);
 GjsElementManager.register("BUTTON", ButtonElement);
+GjsElementManager.register("CHECK_BUTTON", CheckButtonElement);
 GjsElementManager.register("FLOW_BOX", FlowBoxElement);
 GjsElementManager.register("FLOW_BOX_ENTRY", FlowBoxEntryElement);
 GjsElementManager.register("LABEL", LabelElement);
@@ -211,7 +213,5 @@ export const GjsRenderer = Reconciler({
       instance.render();
     }
   },
-  clearContainer(container) {
-    console.log("clearing container");
-  },
+  clearContainer(container) {},
 });

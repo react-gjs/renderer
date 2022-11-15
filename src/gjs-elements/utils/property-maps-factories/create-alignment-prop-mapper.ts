@@ -7,16 +7,22 @@ export type AlignmentProps = {
   horizontalAlign?: Align;
 };
 
-export const createAlignmentPropMapper = (widget: {
-  halign: Align;
-  valign: Align;
-}) => {
+export const createAlignmentPropMapper = (
+  widget: {
+    halign: Align;
+    valign: Align;
+  },
+  defaults?: { h?: Align; v?: Align }
+) => {
+  const defaultV = defaults?.v ?? Align.START;
+  const defaultH = defaults?.h ?? Align.BASELINE;
+
   return (mapper: PropMapper<keyof AlignmentProps>) =>
     mapper
-      .horizontalAlign(DataType.Enum(Align), (v = Align.START) => {
+      .horizontalAlign(DataType.Enum(Align), (v = defaultH) => {
         widget.halign = v;
       })
-      .verticalAlign(DataType.Enum(Align), (v = Align.START) => {
+      .verticalAlign(DataType.Enum(Align), (v = defaultV) => {
         widget.valign = v;
       });
 };
