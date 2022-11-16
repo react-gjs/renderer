@@ -9,15 +9,20 @@ export interface GjsElementConstructor<
 }
 
 export class GjsElementManager {
-  private static elements = new Map<string, GjsElementConstructor<any>>();
   private static elementKinds: string[] = [];
+  private static elements = new Map<string, GjsElementConstructor<any>>();
+  private static elementsReverseMap = new Map<
+    GjsElementConstructor<any>,
+    string
+  >();
 
   static register<K extends GjsElementTypes | "APPLICATION">(
     kind: K,
     element: GjsElementConstructor<K>
   ) {
-    this.elements.set(kind, element);
     this.elementKinds.push(kind);
+    this.elements.set(kind, element);
+    this.elementsReverseMap.set(element, kind);
   }
 
   /** @internal */
@@ -35,12 +40,21 @@ export class GjsElementManager {
   }
 
   /** @internal */
-  static isGjsElement(element: any): element is GjsElement<any> {
+  static isGjsElement(element: any): element is GjsElement {
     return (
       typeof element === "object" &&
       element !== null &&
       "kind" in element &&
       this.elementKinds.includes(element.kind)
     );
+  }
+
+  /** @internal */
+  static isGjsElementOfKind<E extends GjsElement>(
+    element: any,
+    constructor: new (props: any) => E
+  ): element is E {
+    const kindName = this.elementsReverseMap.get(constructor);
+    return this.isGjsElement(element) && element.kind === kindName;
   }
 }

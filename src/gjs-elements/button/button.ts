@@ -33,10 +33,10 @@ const WidgetDataType = DataType.Custom(
   (v: any): v is Gtk.Widget => typeof v === "object"
 );
 
-export class ButtonElement implements GjsElement<"BUTTON"> {
+export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   readonly kind = "BUTTON";
 
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
   widget = new Gtk.Button();
 
   private readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(
@@ -76,16 +76,16 @@ export class ButtonElement implements GjsElement<"BUTTON"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: string | GjsElement<any>): void {
+  appendChild(child: string | GjsElement): void {
     if (typeof child === "string") {
       this.widget.label = child;
     } else {
-      child.appendTo(this.widget);
+      child.notifyWillAppendTo(this);
+      this.widget.add(child.widget);
     }
     this.widget.show_all();
   }
@@ -95,13 +95,13 @@ export class ButtonElement implements GjsElement<"BUTTON"> {
     this.handlers.update(props);
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }

@@ -3,6 +3,6 @@ import { GjsElementManager } from "../gjs-element-manager";
 
 export const isGjsElementOrString = (
   element: any
-): element is GjsElement<any> | string => {
+): element is GjsElement | string => {
   return GjsElementManager.isGjsElement(element) || typeof element === "string";
 };

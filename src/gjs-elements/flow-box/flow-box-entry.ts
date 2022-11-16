@@ -1,7 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { FlowBoxElement } from "../flow-box/flow-box";
+import { FlowBoxElement } from "../flow-box/flow-box";
 import type { GjsElement } from "../gjs-element";
+import { GjsElementManager } from "../gjs-element-manager";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -16,11 +17,13 @@ export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
   onSelect?: () => void;
 }
 
-export class FlowBoxEntryElement implements GjsElement<"FLOW_BOX_ENTRY"> {
+export class FlowBoxEntryElement
+  implements GjsElement<"FLOW_BOX_ENTRY", Gtk.FlowBoxChild>
+{
   readonly kind = "FLOW_BOX_ENTRY";
 
   widget = new Gtk.FlowBoxChild();
-  private parent: Gtk.Container | null = null;
+  private parent: FlowBoxElement | null = null;
 
   emitter = new SyntheticEmitter<{ selected: [] }>();
 
@@ -40,23 +43,28 @@ export class FlowBoxEntryElement implements GjsElement<"FLOW_BOX_ENTRY"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
+    if (!GjsElementManager.isGjsElementOfKind(parent, FlowBoxElement)) {
+      throw new Error(
+        "FlowBoxEntry can only be appended to a FlowBox container."
+      );
+    }
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement<any> | string): void {
+  appendChild(child: GjsElement | string): void {
     if (typeof child === "string") {
       throw new Error("Box can only have other elements as it's children.");
     } else {
-      child.appendTo(this.widget);
+      child.notifyWillAppendTo(this);
+      this.widget.add(child.widget);
       this.widget.show_all();
     }
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.emitter.clear();
-    (parent as FlowBoxElement).childDestroyed(this);
+    this.parent?.childDestroyed(this);
     this.propMapper.cleanupAll();
     this.widget.destroy();
   }
@@ -66,6 +74,6 @@ export class FlowBoxEntryElement implements GjsElement<"FLOW_BOX_ENTRY"> {
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }

@@ -25,11 +25,12 @@ export interface TextAreaProps extends TextAreaPropsMixin {
   onKeyRelease?: (event: SyntheticEvent<KeyPressEvent>) => void;
 }
 
-export class TextAreaElement implements GjsElement<"TEXT_AREA"> {
+export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
   readonly kind = "TEXT_AREA";
 
   private textBuffer = new Gtk.TextBuffer();
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
+
   widget = new Gtk.TextView({
     buffer: this.textBuffer,
     vexpand: true,
@@ -71,16 +72,15 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement<any> | string): void {
+  appendChild(child: GjsElement | string): void {
     throw new Error("Text Area cannot have children.");
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
@@ -92,6 +92,6 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA"> {
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }

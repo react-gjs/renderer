@@ -20,10 +20,10 @@ export interface SwitchProps extends SwitchPropsMixin {
   onToggle?: (event: SyntheticEvent<{ state: boolean }>) => void;
 }
 
-export class SwitchElement implements GjsElement<"SWITCH"> {
+export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
   readonly kind = "SWITCH";
 
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
   widget = new Gtk.Switch();
 
   private readonly handlers = new EventHandlers<Gtk.Switch, SwitchProps>(
@@ -50,12 +50,11 @@ export class SwitchElement implements GjsElement<"SWITCH"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: string | GjsElement<any>): void {
+  appendChild(child: string | GjsElement): void {
     throw new Error("Switch does not support children.");
   }
 
@@ -64,13 +63,13 @@ export class SwitchElement implements GjsElement<"SWITCH"> {
     this.handlers.update(props);
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }

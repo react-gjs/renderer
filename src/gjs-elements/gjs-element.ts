@@ -3,15 +3,18 @@ import type { GjsElementTypes } from "./gjs-element-types";
 import type { DiffedProps } from "./utils/map-properties";
 import type { SyntheticEmitter } from "./utils/synthetic-emitter";
 
-export interface GjsElement<K extends GjsElementTypes | "APPLICATION"> {
+export interface GjsElement<
+  K extends GjsElementTypes | "APPLICATION" = GjsElementTypes,
+  W extends Gtk.Widget = Gtk.Widget
+> {
   readonly kind: K;
 
-  widget: Gtk.Widget;
+  widget: W;
 
-  appendTo(parent: Gtk.Container): void;
-  appendChild(child: GjsElement<any> | string): void;
+  notifyWillAppendTo(parent: GjsElement): void;
+  appendChild(child: GjsElement | string): void;
   updateProps(props: DiffedProps): void;
-  remove(parent: GjsElement<any>): void;
+  remove(parent: GjsElement): void;
 
   render(): void;
 

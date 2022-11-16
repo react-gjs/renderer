@@ -24,11 +24,11 @@ export interface TextEntryProps extends ButtonPropsMixin {
   onKeyRelease?: (event: SyntheticEvent<KeyPressEvent>) => void;
 }
 
-export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
+export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
   readonly kind = "TEXT_ENTRY";
 
   private textBuffer = new Gtk.EntryBuffer();
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
   widget = new Gtk.Entry({
     buffer: this.textBuffer,
     visible: true,
@@ -63,16 +63,15 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement<any> | string): void {
+  appendChild(child: GjsElement | string): void {
     throw new Error("Text Entry cannot have children.");
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
@@ -84,6 +83,6 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY"> {
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }

@@ -24,10 +24,10 @@ export interface LabelProps extends LabelPropsMixin {
   margin?: ElementMargin;
 }
 
-export class LabelElement implements GjsElement<"LABEL"> {
+export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   readonly kind = "LABEL";
 
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
   widget = new Gtk.Label();
 
   private readonly propsMapper = createPropMap<LabelProps>(
@@ -71,12 +71,11 @@ export class LabelElement implements GjsElement<"LABEL"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement<any> | string | string[]): void {
+  appendChild(child: GjsElement | string | string[]): void {
     if (typeof child === "string") {
       this.widget.set_text(child);
     } else if (
@@ -96,7 +95,7 @@ export class LabelElement implements GjsElement<"LABEL"> {
     }
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.propsMapper.cleanupAll();
     this.widget.destroy();
   }
@@ -106,6 +105,6 @@ export class LabelElement implements GjsElement<"LABEL"> {
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }

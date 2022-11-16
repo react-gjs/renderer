@@ -17,10 +17,10 @@ export interface BoxProps extends BoxPropsMixin {
   orientation?: Orientation;
 }
 
-export class BoxElement implements GjsElement<"BOX"> {
+export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
   readonly kind = "BOX";
 
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
   widget = new Gtk.Box();
 
   private readonly propsMapper = createPropMap<BoxProps>(
@@ -49,21 +49,21 @@ export class BoxElement implements GjsElement<"BOX"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement<any> | string): void {
+  appendChild(child: GjsElement | string): void {
     if (typeof child === "string") {
       throw new Error("Box can only have other elements as it's children.");
     } else {
-      child.appendTo(this.widget);
+      child.notifyWillAppendTo(this);
+      this.widget.add(child.widget);
       this.widget.show_all();
     }
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.propsMapper.cleanupAll();
     this.widget.destroy();
   }
@@ -73,6 +73,6 @@ export class BoxElement implements GjsElement<"BOX"> {
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }

@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { Orientation, SelectionMode } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
+import { GjsElementManager } from "../gjs-element-manager";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
@@ -9,7 +10,7 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
-import type { FlowBoxEntryElement } from "./flow-box-entry";
+import { FlowBoxEntryElement } from "./flow-box-entry";
 
 type FlowBoxPropsMixin = AlignmentProps & MarginProps;
 
@@ -23,11 +24,11 @@ export interface FlowBoxProps extends FlowBoxPropsMixin {
   selectionMode?: SelectionMode;
 }
 
-export class FlowBoxElement implements GjsElement<"FLOW_BOX"> {
+export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
   readonly kind = "FLOW_BOX";
 
   widget = new Gtk.FlowBox();
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
 
   private children: Array<FlowBoxEntryElement> = [];
 
@@ -79,18 +80,18 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: GjsElement<any> | string): void {
+  appendChild(child: GjsElement | string): void {
     if (typeof child === "string") {
       throw new Error("Box can only have other elements as it's children.");
     } else {
-      if (child.kind === "FLOW_BOX_ENTRY") {
+      if (GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)) {
+        child.notifyWillAppendTo(this);
         this.widget.add(this.widget);
-        this.children.push(child as FlowBoxEntryElement);
+        this.children.push(child);
         this.widget.show_all();
       } else {
         throw new Error("FlowBox can only have FlexBoxEntry as it's children.");
@@ -109,7 +110,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX"> {
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 
   childDestroyed(child: FlowBoxEntryElement) {

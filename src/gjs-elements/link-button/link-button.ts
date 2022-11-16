@@ -25,10 +25,12 @@ export interface LinkButtonProps extends LinkButtonPropsMixin {
   onReleased?: (event: SyntheticEvent) => void;
 }
 
-export class LinkButtonElement implements GjsElement<"LINK_BUTTON"> {
+export class LinkButtonElement
+  implements GjsElement<"LINK_BUTTON", Gtk.LinkButton>
+{
   readonly kind = "LINK_BUTTON";
 
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
   widget = new Gtk.LinkButton();
 
   private readonly handlers = new EventHandlers<Gtk.Button, LinkButtonProps>(
@@ -59,16 +61,16 @@ export class LinkButtonElement implements GjsElement<"LINK_BUTTON"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: string | GjsElement<any>): void {
+  appendChild(child: string | GjsElement): void {
     if (typeof child === "string") {
       this.widget.label = child;
     } else {
-      child.appendTo(this.widget);
+      child.notifyWillAppendTo(this);
+      this.widget.add(child.widget);
     }
     this.widget.show_all();
   }
@@ -78,13 +80,13 @@ export class LinkButtonElement implements GjsElement<"LINK_BUTTON"> {
     this.handlers.update(props);
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }

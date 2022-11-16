@@ -27,10 +27,12 @@ export interface CheckButtonProps extends CheckButtonPropsMixin {
   onReleased?: (event: SyntheticEvent) => void;
 }
 
-export class CheckButtonElement implements GjsElement<"CHECK_BUTTON"> {
+export class CheckButtonElement
+  implements GjsElement<"CHECK_BUTTON", Gtk.CheckButton>
+{
   readonly kind = "CHECK_BUTTON";
 
-  private parent: Gtk.Container | null = null;
+  private parent: GjsElement | null = null;
   widget = new Gtk.CheckButton();
 
   private readonly handlers = new EventHandlers<
@@ -68,16 +70,16 @@ export class CheckButtonElement implements GjsElement<"CHECK_BUTTON"> {
     this.updateProps(props);
   }
 
-  appendTo(parent: Gtk.Container): void {
-    parent.add(this.widget);
+  notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
   }
 
-  appendChild(child: string | GjsElement<any>): void {
+  appendChild(child: string | GjsElement): void {
     if (typeof child === "string") {
       this.widget.label = child;
     } else {
-      child.appendTo(this.widget);
+      child.notifyWillAppendTo(this);
+      this.widget.add(child.widget);
     }
     this.widget.show_all();
   }
@@ -87,13 +89,13 @@ export class CheckButtonElement implements GjsElement<"CHECK_BUTTON"> {
     this.handlers.update(props);
   }
 
-  remove(parent: GjsElement<any>): void {
+  remove(parent: GjsElement): void {
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
   }
 
   render() {
-    this.parent?.show_all();
+    this.parent?.widget.show_all();
   }
 }
