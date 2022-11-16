@@ -4,12 +4,14 @@ import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
+import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { SyntheticEmitter } from "../utils/synthetic-emitter";
 import { GridElement } from "./grid";
 
-type GridItemPropsMixin = MarginProps;
+type GridItemPropsMixin = AlignmentProps & MarginProps;
 
 export interface GridItemProps extends GridItemPropsMixin {
   columnSpan?: number;
@@ -31,6 +33,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM", Gtk.Box> {
   emitter = new SyntheticEmitter<GridItemEvents>();
 
   private readonly propsMapper = createPropMap<GridItemProps>(
+    createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
       props

@@ -44,7 +44,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   );
 
   private readonly propsMapper = createPropMap<ButtonProps>(
-    createAlignmentPropMapper(this.widget, { h: Align.BASELINE }),
+    createAlignmentPropMapper(this.widget, { h: Align.FILL }),
     createMarginPropMapper(this.widget),
     (props) =>
       props

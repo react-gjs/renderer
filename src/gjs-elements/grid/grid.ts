@@ -18,6 +18,18 @@ export interface GridProps extends GridPropsMixin {
   columns: number;
   columnSpacing?: number;
   rowSpacing?: number;
+  /**
+   * Whether the grid rows should all have the same height.
+   *
+   * @default false
+   */
+  sameRowHeight?: boolean;
+  /**
+   * Whether the grid columns should all have the same width.
+   *
+   * @default true
+   */
+  sameColumnWidth?: boolean;
 }
 
 export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
@@ -50,6 +62,14 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
         .rowSpacing(DataType.Number, (V = 0) => {
           this.widget.set_row_spacing(V);
         })
+        .sameColumnWidth(DataType.Boolean, (V = true) => {
+          console.log("column_homogeneous set to", V);
+
+          this.widget.column_homogeneous = V;
+        })
+        .sameRowHeight(DataType.Boolean, (V = false) => {
+          this.widget.row_homogeneous = V;
+        })
   );
 
   constructor(props: any) {
@@ -68,8 +88,8 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
       this.widget.attach(
         child.element.widget,
-        y,
         x,
+        y,
         child.columnSpan,
         child.rowSpan
       );
