@@ -16,6 +16,8 @@ export const UnsetProp = Symbol("UnsetProp");
 export const createPropMap = <P = Record<string, any>>(
   ...getMaps: Array<(sw: PropMapper<keyof P>) => void>
 ) => {
+  const currentProps = {} as P;
+
   const map = new Map<
     string,
     {
@@ -50,9 +52,11 @@ export const createPropMap = <P = Record<string, any>>(
       const entry = map.get(propName);
       if (entry) {
         if (value === UnsetProp) {
+          Object.defineProperty(currentProps, propName, { value: undefined });
           if (entry.nextCleanup) entry.nextCleanup();
           entry.nextCleanup = entry.callback(undefined) ?? undefined;
         } else if (entry.validate(value)) {
+          Object.defineProperty(currentProps, propName, { value });
           if (entry.nextCleanup) entry.nextCleanup();
           entry.nextCleanup = entry.callback(value) ?? undefined;
         } else {
@@ -73,5 +77,5 @@ export const createPropMap = <P = Record<string, any>>(
     }
   };
 
-  return { update, cleanupAll };
+  return { update, cleanupAll, currentProps };
 };

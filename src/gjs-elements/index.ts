@@ -3,6 +3,8 @@ export type { ButtonElement } from "./button/button";
 export type { CheckButtonElement } from "./check-button/check-button";
 export type { FlowBoxElement } from "./flow-box/flow-box";
 export type { FlowBoxEntryElement } from "./flow-box/flow-box-entry";
+export type { GridElement } from "./grid/grid";
+export type { GridItemElement } from "./grid/grid-item";
 export type { LabelElement } from "./label/label";
 export type { LinkButtonElement } from "./link-button/link-button";
 export type { SwitchElement } from "./switch/switch";

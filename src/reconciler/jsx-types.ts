@@ -12,6 +12,11 @@ import type {
   FlowBoxEntryElement,
   FlowBoxEntryProps,
 } from "../gjs-elements/flow-box/flow-box-entry";
+import type { GridElement, GridProps } from "../gjs-elements/grid/grid";
+import type {
+  GridItemElement,
+  GridItemProps,
+} from "../gjs-elements/grid/grid-item";
 import type { LabelElement, LabelProps } from "../gjs-elements/label/label";
 import type { LinkButtonElement } from "../gjs-elements/link-button/link-button";
 import type { SwitchElement, SwitchProps } from "../gjs-elements/switch/switch";
@@ -56,6 +61,11 @@ declare global {
       FLOW_BOX_ENTRY: IntrinsicComponent<
         ComponentWithChildren<FlowBoxEntryProps>,
         FlowBoxEntryElement
+      >;
+      GRID: IntrinsicComponent<ComponentWithChildren<GridProps>, GridElement>;
+      GRID_ITEM: IntrinsicComponent<
+        ComponentWithChildren<GridItemProps>,
+        GridItemElement
       >;
       LABEL: IntrinsicComponent<
         ComponentWithChildren<LabelProps>,
