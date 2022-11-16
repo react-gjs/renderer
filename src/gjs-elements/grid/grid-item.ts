@@ -1,21 +1,17 @@
 import { DataType } from "dilswer";
-import Gtk from "gi://Gtk";
+import type Gtk from "gi://Gtk";
+import type React from "react";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
-import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
-import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
-import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
-import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { SyntheticEmitter } from "../utils/synthetic-emitter";
 import { GridElement } from "./grid";
 
-type GridItemPropsMixin = AlignmentProps & MarginProps;
-
-export interface GridItemProps extends GridItemPropsMixin {
+export interface GridItemProps {
   columnSpan?: number;
   rowSpan?: number;
+  children: React.ReactElement;
 }
 
 export type GridItemEvents = {
@@ -24,29 +20,33 @@ export type GridItemEvents = {
   itemDestroyed: [GridItemElement];
 };
 
-export class GridItemElement implements GjsElement<"GRID_ITEM", Gtk.Box> {
+export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   readonly kind = "GRID_ITEM";
 
   private parent: GjsElement | null = null;
-  widget = new Gtk.Box();
+  private childElement: GjsElement | null = null;
 
   emitter = new SyntheticEmitter<GridItemEvents>();
 
-  private readonly propsMapper = createPropMap<GridItemProps>(
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    (props) =>
-      props
-        .columnSpan(DataType.Number, (V = 1) => {
-          this.emitter.emit("columnSpanChanged", V);
-        })
-        .rowSpan(DataType.Number, (V = 1) => {
-          this.emitter.emit("rowSpanChanged", V);
-        })
+  private readonly propsMapper = createPropMap<GridItemProps>((props) =>
+    props
+      .columnSpan(DataType.Number, (V = 1) => {
+        this.emitter.emit("columnSpanChanged", V);
+      })
+      .rowSpan(DataType.Number, (V = 1) => {
+        this.emitter.emit("rowSpanChanged", V);
+      })
   );
 
   constructor(props: any) {
     this.updateProps(props);
+  }
+
+  get widget(): Gtk.Widget {
+    if (!this.childElement) {
+      throw new Error("GridItem must have a child.");
+    }
+    return this.childElement.widget;
   }
 
   getSpans() {
@@ -66,15 +66,24 @@ export class GridItemElement implements GjsElement<"GRID_ITEM", Gtk.Box> {
   appendChild(child: GjsElement | string): void {
     if (typeof child === "string") {
       throw new Error("Box can only have other elements as it's children.");
+    } else if (this.childElement != null) {
+      throw new Error("GridItem can only have one child.");
     } else {
       child.notifyWillAppendTo(this);
-      this.widget.add(child.widget);
-      this.widget.show_all();
+      this.childElement = child;
     }
   }
 
+  notifyWillUnmount() {
+    this.childElement = null;
+  }
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.emitter.emit("itemDestroyed", this);
+
+    this.childElement = null;
 
     this.emitter.clear();
     this.propsMapper.cleanupAll();

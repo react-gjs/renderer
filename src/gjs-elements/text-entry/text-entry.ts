@@ -71,7 +71,11 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
     throw new Error("Text Entry cannot have children.");
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();

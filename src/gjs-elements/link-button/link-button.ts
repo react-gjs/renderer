@@ -80,7 +80,11 @@ export class LinkButtonElement
     this.handlers.update(props);
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();

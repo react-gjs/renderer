@@ -63,8 +63,6 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
           this.widget.set_row_spacing(V);
         })
         .sameColumnWidth(DataType.Boolean, (V = true) => {
-          console.log("column_homogeneous set to", V);
-
           this.widget.column_homogeneous = V;
         })
         .sameRowHeight(DataType.Boolean, (V = false) => {
@@ -145,7 +143,11 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     }
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.children.cleanup();
     this.propsMapper.cleanupAll();
     this.widget.destroy();

@@ -99,7 +99,11 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
     }
   }
 
-  remove(): void {
+  notifyWillUnmount() {}
+
+  remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.propMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();

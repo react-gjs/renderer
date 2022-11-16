@@ -1,6 +1,5 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { Align } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -31,7 +30,7 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
   );
 
   private readonly propsMapper = createPropMap<SwitchProps>(
-    createAlignmentPropMapper(this.widget, { h: Align.CENTER }),
+    createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
       props.value(DataType.Boolean, (v = false) => {
@@ -63,7 +62,11 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
     this.handlers.update(props);
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();

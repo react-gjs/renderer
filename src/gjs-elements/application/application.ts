@@ -23,6 +23,8 @@ export class ApplicationElement {
     throw new Error("Application element can't have it's props be updated.");
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
     Gtk.main_quit();
   }

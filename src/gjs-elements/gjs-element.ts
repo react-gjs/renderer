@@ -23,6 +23,11 @@ export interface GjsElement<
    */
   notifyWillAppendTo(parent: GjsElement): void;
   /**
+   * This function is called by the child element before it
+   * removes itself.
+   */
+  notifyWillUnmount(child: GjsElement): void;
+  /**
    * This function is called by the React Reconciler when a new
    * element instance is to be added to this element.
    */

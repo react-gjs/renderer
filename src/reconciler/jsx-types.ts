@@ -63,10 +63,7 @@ declare global {
         FlowBoxEntryElement
       >;
       GRID: IntrinsicComponent<ComponentWithChildren<GridProps>, GridElement>;
-      GRID_ITEM: IntrinsicComponent<
-        ComponentWithChildren<GridItemProps>,
-        GridItemElement
-      >;
+      GRID_ITEM: IntrinsicComponent<GridItemProps, GridItemElement>;
       LABEL: IntrinsicComponent<
         ComponentWithChildren<LabelProps>,
         LabelElement

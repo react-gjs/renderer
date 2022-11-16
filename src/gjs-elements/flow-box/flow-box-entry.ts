@@ -62,7 +62,11 @@ export class FlowBoxEntryElement
     }
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.emitter.clear();
     this.parent?.childDestroyed(this);
     this.propMapper.cleanupAll();

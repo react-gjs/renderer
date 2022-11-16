@@ -39,7 +39,7 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
         )
         .orientation(
           DataType.Enum(Gtk.Orientation),
-          (v = Gtk.Orientation.HORIZONTAL) => {
+          (v = Gtk.Orientation.VERTICAL) => {
             this.widget.orientation = v;
           }
         )
@@ -63,7 +63,11 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
     }
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.propsMapper.cleanupAll();
     this.widget.destroy();
   }

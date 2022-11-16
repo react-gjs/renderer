@@ -15,7 +15,7 @@ export const createAlignmentPropMapper = (
   defaults?: { h?: Align; v?: Align }
 ) => {
   const defaultV = defaults?.v ?? Align.START;
-  const defaultH = defaults?.h ?? Align.BASELINE;
+  const defaultH = defaults?.h ?? Align.CENTER;
 
   return (mapper: PropMapper<keyof AlignmentProps>) =>
     mapper

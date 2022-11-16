@@ -80,7 +80,11 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
     throw new Error("Text Area cannot have children.");
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();

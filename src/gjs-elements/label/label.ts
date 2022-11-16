@@ -95,7 +95,11 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
     }
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.propsMapper.cleanupAll();
     this.widget.destroy();
   }

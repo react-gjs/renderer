@@ -1,7 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { PositionType } from "../../g-enums";
-import { Align } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -44,7 +43,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   );
 
   private readonly propsMapper = createPropMap<ButtonProps>(
-    createAlignmentPropMapper(this.widget, { h: Align.FILL }),
+    createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
       props
@@ -95,7 +94,11 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     this.handlers.update(props);
   }
 
+  notifyWillUnmount() {}
+
   remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
     this.propsMapper.cleanupAll();
     this.handlers.unbindAll();
     this.widget.destroy();
