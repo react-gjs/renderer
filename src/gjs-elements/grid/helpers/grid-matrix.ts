@@ -11,32 +11,26 @@ export class GridMatrix {
     this.matrix.push(new Array(this.width).fill(false));
   }
 
-  private getRowAvailableSpace(y: number) {
-    let result = 0;
+  /**
+   * Finds the first N cells within the row that are not taken,
+   * and returns the index of the first of those cells, if theres
+   * is no N free cells in the row, returns null.
+   */
+  private getFirstNFreeCellsInRow(y: number, n: number, onlyAfterIndex = -1) {
+    const row = this.matrix[y];
+    let result = [];
 
-    for (let i = this.width - 1; i >= 0; i--) {
-      if (!this.matrix[y][i]) {
-        result++;
+    for (let i = onlyAfterIndex + 1; i < this.width; i++) {
+      if (!row[i]) {
+        result.push(i);
       } else {
-        break;
+        result = [];
       }
+
+      if (result.length === n) return result[0];
     }
 
-    return result;
-  }
-
-  private getLastFreeCellInRow(y: number) {
-    if (this.matrix[y][this.width - 1]) {
-      throw new Error("No free cells in row.");
-    }
-
-    for (let i = this.width - 1; i >= 0; i--) {
-      if (this.matrix[y][i]) {
-        return i + 1;
-      }
-    }
-
-    return 0;
+    return null;
   }
 
   private markCellsAsUsed(
@@ -77,22 +71,29 @@ export class GridMatrix {
       return { x: 0, y: 0 };
     }
 
-    let nextRow = this.currentRow;
+    const currentRowX = this.getFirstNFreeCellsInRow(
+      this.currentRow,
+      colSpan,
+      this.lastUsedCoordinates.x
+    );
+
+    if (currentRowX != null) {
+      return { x: currentRowX, y: this.currentRow };
+    }
+
+    let nextRowIndex = this.currentRow + 1;
 
     while (true) {
-      const lastRowAvailableSpace = this.getRowAvailableSpace(nextRow);
-
-      if (colSpan > lastRowAvailableSpace) {
-        if (this.matrix.length == this.currentRow) {
-          this.addNextRow();
-          this.currentRow++;
-          return { x: 0, y: this.currentRow };
-        }
-        nextRow++;
-      } else {
-        const targetX = this.getLastFreeCellInRow(nextRow);
-        return { x: targetX, y: nextRow };
+      if (nextRowIndex > this.matrix.length - 1) {
+        this.addNextRow();
       }
+      const x = this.getFirstNFreeCellsInRow(nextRowIndex, colSpan);
+      if (x !== null) {
+        this.currentRow = nextRowIndex;
+        return { x, y: nextRowIndex };
+      }
+
+      nextRowIndex++;
     }
   }
 
