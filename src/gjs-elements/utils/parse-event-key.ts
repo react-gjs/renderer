@@ -1,3 +1,5 @@
+import type Gdk from "gi://Gdk";
+
 export enum KeyPressModifiers {
   NONE = "NONE",
   SHIFT = "SHIFT",

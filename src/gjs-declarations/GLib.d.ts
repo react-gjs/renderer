@@ -1,8 +1,11 @@
+import GObject from "gi://GObject";
+import Pango from "gi://Pango";
+
 /**
  * Generated with https://github.com/Gr3q/GIR2TS - If possible do
  * not modify.
  */
-declare namespace GLib {
+declare module "gi://GLib" {
   export interface ArrayInitOptions {}
   /** Contains the public fields of a GArray. */
   interface Array {}

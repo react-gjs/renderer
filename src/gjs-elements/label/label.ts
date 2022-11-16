@@ -1,5 +1,5 @@
 import { DataType } from "dilswer";
-import Gtk from "gi://Gtk?version=3.0";
+import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 import type { EllipsizeMode, Justification, WrapMode } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";

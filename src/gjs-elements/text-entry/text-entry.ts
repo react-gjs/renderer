@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk?version=3.0";
-import Gtk from "gi://Gtk?version=3.0";
+import Gtk from "gi://Gtk";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { SyntheticEvent } from "../utils/event-handlers";

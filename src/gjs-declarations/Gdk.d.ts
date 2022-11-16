@@ -1,8 +1,14 @@
+import Gio from "gi://Gio";
+import GLib from "gi://GLib";
+import GObject from "gi://GObject";
+import Gtk from "gi://Gtk";
+import Pango from "gi://Pango";
+
 /**
  * Generated with https://github.com/Gr3q/GIR2TS - If possible do
  * not modify.
  */
-declare namespace Gdk {
+declare module "gi://Gdk" {
   /**
    * This construct is only for enabling class multi-inheritance,
    * use {@link AppLaunchContext} instead.
@@ -1611,8 +1617,8 @@ declare namespace Gdk {
      *
      * GTK+ will call this function automatically for #GtkWindow
      * with custom startup-notification identifier unless
-     * {@link NsGtk.Window.set_auto_startup_notification} is
-     * called to disable that feature.
+     * {@link Gtk.Window.set_auto_startup_notification} is called
+     * to disable that feature.
      *
      * @param startup_id A startup-notification identifier, for
      *   which notification process should be completed
@@ -4780,7 +4786,7 @@ declare namespace Gdk {
      * Attempt to deiconify (unminimize) #window. On X11 the
      * window manager may choose to ignore the request to
      * deiconify. When using GTK+, use
-     * {@link NsGtk.Window.deiconify} instead of the {@link Window}
+     * {@link Gtk.Window.deiconify} instead of the {@link Window}
      * variant. Or better yet, you probably want to use
      * gtk_window_present_with_time(), which raises the window,
      * focuses it, unminimizes it, and puts it on the current
@@ -4851,7 +4857,7 @@ declare namespace Gdk {
     flush(): void;
     /**
      * Sets keyboard focus to #window. In most cases,
-     * {@link NsGtk.Window.present_with_time} should be used on a
+     * {@link Gtk.Window.present_with_time} should be used on a
      * #GtkWindow, rather than calling this function.
      *
      * @param timestamp Timestamp of the event triggering the
@@ -5463,14 +5469,14 @@ declare namespace Gdk {
      * For toplevel windows, withdraws them, so they will no
      * longer be known to the window manager; for all windows,
      * unmaps them, so they won’t be displayed. Normally done
-     * automatically as part of {@link NsGtk.Widget.hide}.
+     * automatically as part of {@link Gtk.Widget.hide}.
      */
     hide(): void;
     /**
      * Asks to iconify (minimize) #window. The window manager may
      * choose to ignore the request, but normally will honor it.
-     * Using {@link NsGtk.Window.iconify} is preferred, if you
-     * have a #GtkWindow widget.
+     * Using {@link Gtk.Window.iconify} is preferred, if you have
+     * a #GtkWindow widget.
      *
      * This function only makes sense when #window is a toplevel
      * window.
@@ -5679,10 +5685,9 @@ declare namespace Gdk {
     /**
      * Repositions a window relative to its parent window. For
      * toplevel windows, window managers may ignore or modify the
-     * move; you should probably use {@link NsGtk.Window.move} on
-     * a #GtkWindow widget anyway, instead of using GDK
-     * functions. For child windows, the move will reliably
-     * succeed.
+     * move; you should probably use {@link Gtk.Window.move} on a
+     * #GtkWindow widget anyway, instead of using GDK functions.
+     * For child windows, the move will reliably succeed.
      *
      * If you’re also planning to resize the window, use
      * gdk_window_move_resize() to both move and resize
@@ -5818,7 +5823,7 @@ declare namespace Gdk {
      * Resizes #window; for toplevel windows, asks the window
      * manager to resize the window. The window manager may not
      * allow the resize. When using GTK+, use
-     * {@link NsGtk.Window.resize} instead of this low-level GDK
+     * {@link Gtk.Window.resize} instead of this low-level GDK
      * function.
      *
      * Windows may not be resized below 1x1.
@@ -5889,7 +5894,7 @@ declare namespace Gdk {
      *   However, when using GTK+, influence the background of a
      *   widget using a style class or CSS — if you’re an
      *   application — or with
-     *   {@link NsGtk.StyleContext.set_background} — if you're
+     *   {@link Gtk.StyleContext.set_background} — if you're
      *   implementing a custom widget.
      * @param color A {@link Color}
      */
@@ -5987,8 +5992,8 @@ declare namespace Gdk {
      * traditional Motif window manager hints that tell the
      * window manager which decorations you would like your
      * window to have. Usually you should use
-     * {@link NsGtk.Window.set_decorated} on a #GtkWindow instead
-     * of using the GDK function directly.
+     * {@link Gtk.Window.set_decorated} on a #GtkWindow instead of
+     * using the GDK function directly.
      *
      * The #decorations argument is the logical OR of the fields
      * in the #GdkWMDecoration enumeration. If #GDK_DECOR_ALL is
@@ -6276,7 +6281,7 @@ declare namespace Gdk {
      * Instead, use `gdk_window_set_opaque_region (window, NULL)`
      * to tell the compositor that the entire window is
      * (potentially) non-opaque, and draw your content with
-     * alpha, or use {@link NsGtk.Widget.set_opacity} to set an
+     * alpha, or use {@link Gtk.Widget.set_opacity} to set an
      * overall opacity for your widgets.
      *
      * For child windows this function only works for non-native
@@ -6354,7 +6359,7 @@ declare namespace Gdk {
     set_pass_through(pass_through: boolean): void;
     /**
      * When using GTK+, typically you should use
-     * {@link NsGtk.Window.set_role} instead of this low-level
+     * {@link Gtk.Window.set_role} instead of this low-level
      * function.
      *
      * The window manager and session manager use a window’s role
@@ -6435,8 +6440,8 @@ declare namespace Gdk {
     set_source_events(source: InputSource, event_mask: EventMask): void;
     /**
      * When using GTK+, typically you should use
-     * {@link NsGtk.Window.set_startup_id} instead of this
-     * low-level function.
+     * {@link Gtk.Window.set_startup_id} instead of this low-level
+     * function.
      *
      * @param startup_id A string with startup-notification
      *   identifier
@@ -6483,7 +6488,7 @@ declare namespace Gdk {
      * #parent. This allows the window manager to do things like
      * center #window on #parent and keep #window above #parent.
      *
-     * See {@link NsGtk.Window.set_transient_for} if you’re using
+     * See {@link Gtk.Window.set_transient_for} if you’re using
      * #GtkWindow or #GtkDialog.
      *
      * @param parent Another toplevel {@link Window}
@@ -6586,7 +6591,7 @@ declare namespace Gdk {
      * “Pins” a window such that it’s on all workspaces and does
      * not scroll with viewports, for window managers that have
      * scrollable viewports. (When using #GtkWindow,
-     * {@link NsGtk.Window.stick} may be more useful.)
+     * {@link Gtk.Window.stick} may be more useful.)
      *
      * On the X11 platform, this function depends on window
      * manager support, so may have no effect with many window
@@ -7991,7 +7996,7 @@ declare namespace Gdk {
    * The {@link Geometry} struct gives the window manager
    * information about a window’s geometry constraints. Normally
    * you would set these on the GTK+ level using
-   * {@link NsGtk.Window.set_geometry_hints}. #GtkWindow then sets
+   * {@link Gtk.Window.set_geometry_hints}. #GtkWindow then sets
    * the hints on the #GdkWindow it creates.
    *
    * Gdk_window_set_geometry_hints() expects the hints to be
@@ -8089,7 +8094,7 @@ declare namespace Gdk {
     public min_aspect: number;
     /** Maximum width/height ratio */
     public max_aspect: number;
-    /** Window gravity, see {@link NsGtk.Window.set_gravity} */
+    /** Window gravity, see {@link Gtk.Window.set_gravity} */
     public win_gravity: Gravity;
   }
 
@@ -8334,9 +8339,9 @@ declare namespace Gdk {
     public window_type: WindowType;
     /** Cursor for the window (see {@link Gdk.Window.set_cursor}) */
     public cursor: Cursor;
-    /** Don’t use (see {@link NsGtk.Window.set_wmclass}) */
+    /** Don’t use (see {@link Gtk.Window.set_wmclass}) */
     public wmclass_name: string;
-    /** Don’t use (see {@link NsGtk.Window.set_wmclass}) */
+    /** Don’t use (see {@link Gtk.Window.set_wmclass}) */
     public wmclass_class: string;
     /** %TRUE to bypass the window manager */
     public override_redirect: boolean;
@@ -9078,7 +9083,7 @@ declare namespace Gdk {
 
   /**
    * Defines the reference point of a window and the meaning of
-   * coordinates passed to {@link NsGtk.Window.move}. See
+   * coordinates passed to {@link Gtk.Window.move}. See
    * gtk_window_move() and the "implementation notes" section of
    * the [Extended Window Manager
    * Hints](http://www.freedesktop.org/Standards/wm-spec)
@@ -10010,7 +10015,7 @@ declare namespace Gdk {
    * is significant, though they don't directly refer to
    * #GdkGeometry fields. #GDK_HINT_USER_POS will be set
    * automatically by #GtkWindow if you call
-   * {@link NsGtk.Window.move}. #GDK_HINT_USER_POS and
+   * {@link Gtk.Window.move}. #GDK_HINT_USER_POS and
    * #GDK_HINT_USER_SIZE should be set if the user specified a
    * size/position using a --geometry command-line argument;
    * gtk_window_parse_geometry() automatically sets these flags.
@@ -10808,7 +10813,7 @@ declare namespace Gdk {
      * Note that GTK+ uses this to install its own event handler,
      * so it is usually not useful for GTK+ applications.
      * (Although an application can call this function then call
-     * {@link NsGtk.main.do_event} to pass events to GTK+.)
+     * {@link Gtk.main.do_event} to pass events to GTK+.)
      *
      * @param func The function to call to handle events from
      *   GDK.
@@ -11451,7 +11456,7 @@ declare namespace Gdk {
    * Note that GTK+ uses this to install its own event handler,
    * so it is usually not useful for GTK+ applications. (Although
    * an application can call this function then call
-   * {@link NsGtk.main.do_event} to pass events to GTK+.)
+   * {@link Gtk.main.do_event} to pass events to GTK+.)
    *
    * @param func The function to call to handle events from GDK.
    * @param data User data to pass to the function.
@@ -11781,8 +11786,8 @@ declare namespace Gdk {
    *
    * GTK+ will call this function automatically after opening the
    * first #GtkWindow unless
-   * {@link NsGtk.Window.set_auto_startup_notification} is called
-   * to disable that feature.
+   * {@link Gtk.Window.set_auto_startup_notification} is called to
+   * disable that feature.
    */
   function notify_startup_complete(): void;
 
@@ -11792,8 +11797,8 @@ declare namespace Gdk {
    *
    * GTK+ will call this function automatically for #GtkWindow
    * with custom startup-notification identifier unless
-   * {@link NsGtk.Window.set_auto_startup_notification} is called
-   * to disable that feature.
+   * {@link Gtk.Window.set_auto_startup_notification} is called to
+   * disable that feature.
    *
    * @param startup_id A startup-notification identifier, for
    *   which notification process should be completed
@@ -11843,7 +11848,7 @@ declare namespace Gdk {
    * The context must be freed when you’re finished with it.
    *
    * When using GTK+, normally you should use
-   * {@link NsGtk.Widget.get_pango_context} instead of this
+   * {@link Gtk.Widget.get_pango_context} instead of this
    * function, to get the appropriate context for the widget you
    * intend to render text onto.
    *
@@ -11864,7 +11869,7 @@ declare namespace Gdk {
    * The context must be freed when you’re finished with it.
    *
    * When using GTK+, normally you should use
-   * {@link NsGtk.Widget.get_pango_context} instead of this
+   * {@link Gtk.Widget.get_pango_context} instead of this
    * function, to get the appropriate context for the widget you
    * intend to render text onto.
    *
@@ -11887,7 +11892,7 @@ declare namespace Gdk {
    * The context must be freed when you’re finished with it.
    *
    * When using GTK+, normally you should use
-   * {@link NsGtk.Widget.get_pango_context} instead of this
+   * {@link Gtk.Widget.get_pango_context} instead of this
    * function, to get the appropriate context for the widget you
    * intend to render text onto.
    *

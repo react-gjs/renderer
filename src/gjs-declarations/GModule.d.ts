@@ -1,8 +1,10 @@
+import GLib from "gi://GLib";
+
 /**
  * Generated with https://github.com/Gr3q/GIR2TS - If possible do
  * not modify.
  */
-declare namespace GModule {
+declare module "gi://GModule" {
   export interface ModuleInitOptions {}
   /**
    * The #GModule struct is an opaque data structure to represent

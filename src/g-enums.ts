@@ -1,4 +1,4 @@
-import Gtk from "gi://Gtk?version=3.0";
+import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 
 export type Align = Gtk.Align;

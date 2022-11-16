@@ -1,4 +1,4 @@
-import Gtk from "gi://Gtk?version=3.0";
+import Gtk from "gi://Gtk";
 import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/map-properties";
 

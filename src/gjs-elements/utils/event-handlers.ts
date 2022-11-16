@@ -1,4 +1,4 @@
-import type Gtk from "gi://Gtk?version=3.0";
+import type Gtk from "gi://Gtk";
 import type { DiffedProps } from "./map-properties";
 import { UnsetProp } from "./map-properties";
 

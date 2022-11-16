@@ -1,5 +1,5 @@
 import { DataType } from "dilswer";
-import Gtk from "gi://Gtk?version=3.0";
+import Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/map-properties";

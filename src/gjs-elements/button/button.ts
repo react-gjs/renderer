@@ -1,5 +1,5 @@
 import { DataType } from "dilswer";
-import Gtk from "gi://Gtk?version=3.0";
+import Gtk from "gi://Gtk";
 import type { PositionType } from "../../g-enums";
 import { Align } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";

@@ -1,5 +1,5 @@
 import { DataType } from "dilswer";
-import Gtk from "gi://Gtk?version=3.0";
+import Gtk from "gi://Gtk";
 import type { FlowBoxElement } from "../flow-box/flow-box";
 import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/map-properties";

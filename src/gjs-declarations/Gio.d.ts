@@ -1,8 +1,15 @@
+import Atk from "gi://Atk";
+import Gdk from "gi://Gdk";
+import GLib from "gi://GLib";
+import GObject from "gi://GObject";
+import Gtk from "gi://Gtk";
+import Pango from "gi://Pango";
+
 /**
  * Generated with https://github.com/Gr3q/GIR2TS - If possible do
  * not modify.
  */
-declare namespace Gio {
+declare module "gi://Gio" {
   /**
    * This construct is only for enabling class multi-inheritance,
    * use {@link AppInfoMonitor} instead.
@@ -3657,9 +3664,10 @@ declare namespace Gio {
      *
      * Note that all #GVariant values passed to functions in
      * #vtable will match the signature given in #interface_info
-     * - if a remote caller passes incorrect values, the
-     * `org.freedesktop.DBus.Error.InvalidArgs` is returned to
-     * the remote caller.
+     *
+     * - If a remote caller passes incorrect values, the
+     *   `org.freedesktop.DBus.Error.InvalidArgs` is returned to
+     *   the remote caller.
      *
      * Additionally, if the remote caller attempts to invoke
      * methods or access properties not mentioned in
@@ -11085,7 +11093,7 @@ declare namespace Gio {
      * @returns Number of bytes read, or -1 on error, or 0 on end
      *   of file.
      *
-     *       a buffer to read data into (which should be at least count bytes long).
+     *         a buffer to read data into (which should be at least count bytes long).
      */
     read(count: number, cancellable: Cancellable | null): [number, number[]];
     /**
@@ -11118,7 +11126,7 @@ declare namespace Gio {
      *   ignore.
      * @returns %TRUE on success, %FALSE if there was an error
      *
-     *       a buffer to read data into (which should be at least count bytes long).
+     *         a buffer to read data into (which should be at least count bytes long).
      *
      *   Location to store the number of bytes that was read from
      *   the stream
@@ -12567,8 +12575,7 @@ declare namespace Gio {
      * be added as submenus of the third. In XML format, this
      * would look something like the following:
      *
-     * |[<menu id='edit-menu'>
-     *   <section>
+     * |[<menu id='edit-menu'>  <section>
      *     <item label='Undo'/>
      *     <item label='Redo'/>
      *   </section>
@@ -12588,8 +12595,7 @@ declare namespace Gio {
      * to read (and therefore not recommended except for the
      * purpose of understanding what is really going on).
      *
-     * |[<menu id='edit-menu'>
-     *   <item>
+     * |[<menu id='edit-menu'>  <item>
      *     <link name='section'>
      *       <item label='Undo'/>
      *       <item label='Redo'/>
@@ -16836,6 +16842,7 @@ declare namespace Gio {
    * For example:
    *
    * |[ <!-- Translators: A list of words which are not allowed to be typed, in
+   *
    *       GVariant serialization syntax.
    *       See: https://developer.gnome.org/glib/stable/gvariant-text.html -->
    *
@@ -16878,8 +16885,7 @@ declare namespace Gio {
    *
    * An example for default value:
    *
-   * |[<schemalist>
-   *   <schema id="org.gtk.Test" path="/org/gtk/Test/" gettext-domain="test">
+   * |[<schemalist>  <schema id="org.gtk.Test" path="/org/gtk/Test/" gettext-domain="test">
    *
    *     <key name="greeting" type="s">
    *       <default l10n="messages">"Hello, earthlings"</default>
@@ -16896,20 +16902,20 @@ declare namespace Gio {
    *     <key name="empty-string" type="s">
    *       <default>""</default>
    *       <summary>Empty strings have to be provided in GVariant form</summary>
-   *     </key>  </schema>
-   * </schemalist>
+   *     </key>  </schema></schemalist>
    * ]|
    *
    * An example for ranges, choices and enumerated types:
    *
-   * |[<schemalist>  <enum id="org.gtk.Test.myenum">
+   * |[<schemalist> <enum id="org.gtk.Test.myenum">
+   *
    *     <value nick="first" value="1"/>
    *     <value nick="second" value="2"/>
-   *   </enum>  <flags id="org.gtk.Test.myflags">
-   *     <value nick="flag1" value="1"/>
-   *     <value nick="flag2" value="2"/>
-   *     <value nick="flag3" value="4"/>
-   *   </flags>  <schema id="org.gtk.Test">
+   *
+   * </enum> <flags id="org.gtk.Test.myflags"> <value
+   * nick="flag1" value="1"/> <value nick="flag2" value="2"/>
+   * <value nick="flag3" value="4"/> </flags> <schema
+   * id="org.gtk.Test">
    *
    *     <key name="key-with-range" type="i">
    *       <range min="1" max="100"/>
@@ -16935,8 +16941,7 @@ declare namespace Gio {
    *
    *     <key name='flags-key' flags='org.gtk.Test.myflags'>
    *       <default>["flag1","flag2"]</default>
-   *     </key>  </schema>
-   * </schemalist>
+   *     </key>  </schema></schemalist>
    * ]|
    *
    * ## Vendor overrides
@@ -17002,8 +17007,7 @@ declare namespace Gio {
    * etc. If any of the paths are well-known they can be
    * specified as <child> elements in the parent schema, e.g.:
    *
-   * |[<schema id="org.foo.MyApp" path="/org/foo/MyApp/">
-   *   <child name="main" schema="org.foo.MyApp.Window"/>
+   * |[<schema id="org.foo.MyApp" path="/org/foo/MyApp/">  <child name="main" schema="org.foo.MyApp.Window"/>
    * </schema>
    * ]|
    *
@@ -17044,8 +17048,7 @@ declare namespace Gio {
    *
    * [type: gettext/gsettings]data/org.foo.MyApp.gschema.xml ]|
    *
-   * GSettings will use gettext to look up translations for the
-   * <summary> and <description> elements, and also any <default>
+   * GSettings will use gettext to look up translations for the<summary> and <description> elements, and also any <default>
    * elements which have a `l10n` attribute set. Translations
    * must not be included in the `.gschema.xml` file by the build
    * system, for example by using intltool XML rules with a
@@ -17429,7 +17432,7 @@ declare namespace Gio {
      *
      *   The location to save the relative keys
      *
-     *            the location to save the values, or %NULL
+     *              the location to save the values, or %NULL
      */
     public static flatten_tree(
       tree: GLib.Tree
@@ -19135,7 +19138,7 @@ declare namespace Gio {
      * @returns Number of bytes read, or 0 if the connection was
      *   closed by the peer, or -1 on error
      *
-     *       a buffer to read data into (which should be at least #size bytes long).
+     *         a buffer to read data into (which should be at least #size bytes long).
      *
      *   The number of bytes you want to read from the socket
      */
@@ -19155,7 +19158,7 @@ declare namespace Gio {
      *
      *   A pointer to a #GSocketAddress pointer, or %NULL
      *
-     *       a buffer to read data into (which should be at least #size bytes long).
+     *         a buffer to read data into (which should be at least #size bytes long).
      *
      *   The number of bytes you want to read from the socket
      */
@@ -19343,7 +19346,7 @@ declare namespace Gio {
      * @returns Number of bytes read, or 0 if the connection was
      *   closed by the peer, or -1 on error
      *
-     *       a buffer to read data into (which should be at least #size bytes long).
+     *         a buffer to read data into (which should be at least #size bytes long).
      *
      *   The number of bytes you want to read from the socket
      */
@@ -22940,7 +22943,9 @@ declare namespace Gio {
    * #GMainContext and priority).
    *
    * Here is an example for chained asynchronous operations:
-   * |[<!-- language="C" --> typedef struct { Cake *cake;
+   *
+   * |[<!-- language="C" --> typedef struct { Cake \*cake;
+   *
    * CakeFrostingType frosting; char *message; } BakingData;
    *
    *     static void
@@ -23803,7 +23808,7 @@ declare namespace Gio {
    * icons present in an icon theme, so that icons can be looked
    * up quickly. #GThemedIcon does not provide actual pixmaps for
    * icons, just the icon names. Ideally something like
-   * {@link NsGtk.IconTheme.choose_icon} should be used to resolve
+   * {@link Gtk.IconTheme.choose_icon} should be used to resolve
    * the list of names so that fallback icons work nicely with
    * themes that inherit other themes.
    */
@@ -24051,13 +24056,15 @@ declare namespace Gio {
      * property) can be set when constructing a key (for example,
      * from a file). Since GLib 2.70, it is now also readable;
      * however, be aware that if the private key is backed by a
-     * PKCS #11 URI - for example, if it is stored on a smartcard
-     * - then this property will be %NULL. If so, the private key
-     * must be referenced via its PKCS #11 URI,
-     * #GTlsCertificate:private-key-pkcs11-uri. You must check
-     * both properties to see if the certificate really has a
-     * private key. When this property is read, the output format
-     * will be unencrypted PKCS #8.
+     * PKCS #11 URI - for example, if it is stored on a
+     * smartcard
+     *
+     * - Then this property will be %NULL. If so, the private key
+     *   must be referenced via its PKCS #11 URI,
+     *   #GTlsCertificate:private-key-pkcs11-uri. You must check
+     *   both properties to see if the certificate really has a
+     *   private key. When this property is read, the output
+     *   format will be unencrypted PKCS #8.
      */
     private_key_pem: string;
     /**
@@ -29883,8 +29890,7 @@ declare namespace Gio {
    *
    * An example resource description:
    *
-   * |[<?xml version="1.0" encoding="UTF-8"?><gresources>
-   *   <gresource prefix="/org/gtk/Example">
+   * |[<?xml version="1.0" encoding="UTF-8"?><gresources>  <gresource prefix="/org/gtk/Example">
    *     <file>data/splashscreen.png</file>
    *     <file compressed="true">dialog.ui</file>
    *     <file preprocess="xml-stripblanks">menumarkup.xml</file>
@@ -41378,8 +41384,9 @@ declare namespace Gio {
     NORMAL = 0,
     /**
      * For notifications that do not require immediate attention
-     * - typically used for contextual background information,
-     * such as contact birthdays or local weather
+     *
+     * - Typically used for contextual background information, such
+     *   as contact birthdays or local weather
      */
     LOW = 1,
     /**

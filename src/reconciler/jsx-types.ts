@@ -1,4 +1,4 @@
-import type Gtk from "gi://Gtk?version=3.0";
+import type Gtk from "gi://Gtk";
 import type { BoxProps } from "../gjs-elements/box/box";
 import type { ButtonProps } from "../gjs-elements/button/button";
 import type { CheckButtonProps } from "../gjs-elements/check-button/check-button";

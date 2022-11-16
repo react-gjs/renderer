@@ -1,8 +1,11 @@
+import GLib from "gi://GLib";
+import GObject from "gi://GObject";
+
 /**
  * Generated with https://github.com/Gr3q/GIR2TS - If possible do
  * not modify.
  */
-declare namespace GObject {
+declare module "gi://GObject" {
   /**
    * This construct is only for enabling class multi-inheritance,
    * use {@link Binding} instead.

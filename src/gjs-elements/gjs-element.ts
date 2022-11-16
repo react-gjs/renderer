@@ -1,4 +1,4 @@
-import type Gtk from "gi://Gtk?version=3.0";
+import type Gtk from "gi://Gtk";
 import type { GjsElementTypes } from "./gjs-element-types";
 import type { DiffedProps } from "./utils/map-properties";
 import type { SyntheticEmitter } from "./utils/synthetic-emitter";

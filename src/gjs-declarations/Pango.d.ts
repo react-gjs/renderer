@@ -1,8 +1,12 @@
+import GLib from "gi://GLib";
+import GObject from "gi://GObject";
+import Gtk from "gi://Gtk";
+
 /**
  * Generated with https://github.com/Gr3q/GIR2TS - If possible do
  * not modify.
  */
-declare namespace Pango {
+declare module "gi://Pango" {
   /**
    * This construct is only for enabling class multi-inheritance,
    * use {@link Context} instead.
@@ -781,7 +785,7 @@ declare namespace Pango {
      * If you are using Pango as part of a higher-level system,
      * that system may have it's own way of create a
      * `PangoContext`. For instance, the GTK toolkit has, among
-     * others, {@link NsGtk.Widget.get_pango_context}. Use those
+     * others, {@link Gtk.Widget.get_pango_context}. Use those
      * instead.
      *
      * @returns The newly allocated `PangoContext`, which should
