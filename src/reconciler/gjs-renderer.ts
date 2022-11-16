@@ -156,6 +156,7 @@ export const GjsRenderer = Reconciler({
   removeChildFromContainer(container: any, child: any) {
     if (GjsElementManager.isGjsElement(child)) {
       child.remove(container);
+      container.render();
     }
   },
   commitMount(instance, type, props, internalInstanceHandle) {

@@ -7,16 +7,54 @@ export interface GjsElement<
   K extends GjsElementTypes | "APPLICATION" = GjsElementTypes,
   W extends Gtk.Widget = Gtk.Widget
 > {
+  /**
+   * String identifier that can be used to distinguis between
+   * different GjsElement classes.
+   */
   readonly kind: K;
 
+  /** The Gtk Widget that is used to render the element. */
   widget: W;
 
+  /**
+   * This function is called by it's parent element before it is
+   * appended to it. If this function throws an error, the
+   * element will not be appended.
+   */
   notifyWillAppendTo(parent: GjsElement): void;
+  /**
+   * This function is called by the React Reconciler when a new
+   * element instance is to be added to this element.
+   */
   appendChild(child: GjsElement | string): void;
+  /**
+   * This function is called by the React Reconciler when the
+   * React provided props are updated.
+   *
+   * Props are already diffed against the props from the previous
+   * render cycle.
+   */
   updateProps(props: DiffedProps): void;
+  /**
+   * This function is called by the React Reconciler when the
+   * element is to be removed from it's parent.
+   */
   remove(parent: GjsElement): void;
 
+  /**
+   * This function is called by the React Reconciler after
+   * mutating the element via `appendChild`,
+   * 'updateProps`or`remove`.
+   */
   render(): void;
 
+  /**
+   * Some GjsElement implementation might have a Event Emitter
+   * that is used by the Elements internally.
+   *
+   * This interface is for example used by the FlowBox Element
+   * and the FlowBoxEntry Element, to communicate with each other
+   * when a item is selected.
+   */
   emitter?: SyntheticEmitter<any>;
 }
