@@ -5,6 +5,7 @@ import type { default as GtkModules } from "./gtk-modules-declarations";
 export * from "./g-enums";
 export { GjsElementManager } from "./gjs-elements/gjs-element-manager";
 export * from "./gjs-elements/gjs-element-types";
+export * from "./gjs-elements/index";
 export { KeyPressModifiers } from "./gjs-elements/utils/parse-event-key";
 export * from "./intrinsic-components";
 export * from "./process-exit";
