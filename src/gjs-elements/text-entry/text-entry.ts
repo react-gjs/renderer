@@ -89,4 +89,8 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
   render() {
     this.parent?.widget.show_all();
   }
+
+  insertBefore(): void {
+    throw new Error("TextEntry does not support children.");
+  }
 }

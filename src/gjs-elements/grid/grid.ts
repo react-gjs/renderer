@@ -2,12 +2,14 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import { ensureNotString } from "../utils/ensure-not-string";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SyntheticEmitter } from "../utils/synthetic-emitter";
 import { GridItemElement } from "./grid-item";
 import { GridItemsList } from "./helpers/grid-items-list";
 import { GridMatrix } from "./helpers/grid-matrix";
@@ -73,6 +75,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   constructor(props: any) {
     this.updateProps(props);
   }
+  emitter?: SyntheticEmitter<any> | undefined;
 
   private rearrangeChildren() {
     for (let i = this.previousColumnCount - 1; i >= 0; i--) {
@@ -133,13 +136,11 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   appendChild(child: GjsElement | string): void {
-    if (typeof child === "string") {
-      throw new Error("Box can only have other elements as it's children.");
-    } else {
-      if (GjsElementManager.isGjsElementOfKind(child, GridItemElement)) {
-        child.notifyWillAppendTo(this);
-        this.children.add(child);
-      }
+    ensureNotString(child);
+
+    if (GjsElementManager.isGjsElementOfKind(child, GridItemElement)) {
+      child.notifyWillAppendTo(this);
+      this.children.add(child);
     }
   }
 
@@ -159,5 +160,20 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   render() {
     this.parent?.widget.show_all();
+  }
+
+  insertBefore(newChild: string | GjsElement, beforeChild: GjsElement): void {
+    ensureNotString(newChild);
+
+    const position = this.children.getIndexOf(beforeChild);
+
+    if (position === -1) {
+      throw new Error("The beforeChild was not found.");
+    }
+
+    if (GjsElementManager.isGjsElementOfKind(newChild, GridItemElement)) {
+      newChild.notifyWillAppendTo(this);
+      this.children.add(newChild, position);
+    }
   }
 }

@@ -102,4 +102,8 @@ export class CheckButtonElement
   render() {
     this.parent?.widget.show_all();
   }
+
+  insertBefore(): void {
+    throw new Error("CheckButton can have only one child.");
+  }
 }

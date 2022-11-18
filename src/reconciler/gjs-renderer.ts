@@ -169,4 +169,25 @@ export const GjsRenderer = Reconciler({
     }
   },
   clearContainer(container) {},
+  resetTextContent(instance) {},
+  insertBefore(parentInstance, child, beforeChild) {
+    if (
+      GjsElementManager.isGjsElement(parentInstance) &&
+      GjsElementManager.isGjsElement(child) &&
+      GjsElementManager.isGjsElement(beforeChild)
+    ) {
+      parentInstance.insertBefore(child, beforeChild);
+      parentInstance.render();
+    }
+  },
+  insertInContainerBefore(container, child, beforeChild) {
+    if (
+      GjsElementManager.isGjsElement(container) &&
+      GjsElementManager.isGjsElement(child) &&
+      GjsElementManager.isGjsElement(beforeChild)
+    ) {
+      container.insertBefore(child, beforeChild);
+      container.render();
+    }
+  },
 });

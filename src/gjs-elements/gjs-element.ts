@@ -39,6 +39,7 @@ export interface GjsElement<
    * Props are already diffed against the props from the previous
    * render cycle.
    */
+  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void;
   updateProps(props: DiffedProps): void;
   /**
    * This function is called by the React Reconciler when the

@@ -127,4 +127,8 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
   render() {
     this.parent?.widget.show_all();
   }
+
+  insertBefore(): void {
+    throw new Error("Image cannot have children.");
+  }
 }

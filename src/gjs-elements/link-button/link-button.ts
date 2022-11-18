@@ -93,4 +93,8 @@ export class LinkButtonElement
   render() {
     this.parent?.widget.show_all();
   }
+
+  insertBefore(): void {
+    throw new Error("LinkButton can have only one child.");
+  }
 }

@@ -1,3 +1,4 @@
+import type { GjsElement } from "../../gjs-element";
 import { Dispatcher } from "../../utils/dispatcher";
 import type { GridItemElement } from "../grid-item";
 
@@ -31,7 +32,11 @@ export class GridItemsList {
     return [...this.items];
   }
 
-  add(child: GridItemElement) {
+  getIndexOf(child: GjsElement) {
+    return this.items.findIndex((item) => item.element === (child as any));
+  }
+
+  add(child: GridItemElement, atIndex?: number) {
     const id = Symbol();
 
     const { colSpan, rowSpan } = child.getSpans();
@@ -45,7 +50,11 @@ export class GridItemsList {
       dispatcher: new Dispatcher(20),
     };
 
-    this.items.push(childEntry);
+    if (atIndex === undefined) {
+      this.items.push(childEntry);
+    } else {
+      this.items.splice(atIndex, 0, childEntry);
+    }
 
     childEntry.listeners.push(
       child.emitter.on("columnSpanChanged", (newColSpan) => {

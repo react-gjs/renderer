@@ -83,6 +83,9 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     if (typeof child === "string") {
       this.widget.label = child;
     } else {
+      if (this.widget.get_children().data) {
+        throw new Error("Button can have only one child.");
+      }
       child.notifyWillAppendTo(this);
       this.widget.add(child.widget);
     }
@@ -106,5 +109,9 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
 
   render() {
     this.parent?.widget.show_all();
+  }
+
+  insertBefore(): void {
+    throw new Error("Button can have only one child.");
   }
 }

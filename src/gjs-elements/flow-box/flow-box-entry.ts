@@ -3,6 +3,7 @@ import Gtk from "gi://Gtk";
 import { FlowBoxElement } from "../flow-box/flow-box";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import { ensureNotString } from "../utils/ensure-not-string";
 import type { SyntheticEvent } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
@@ -11,6 +12,7 @@ import { createAlignmentPropMapper } from "../utils/property-maps-factories/crea
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { SyntheticEmitter } from "../utils/synthetic-emitter";
+import { ChildOrderController } from "../utils/widget-operations/child-order-controller";
 
 type FlowBoxEntryPropsMixin = AlignmentProps & MarginProps;
 
@@ -25,6 +27,7 @@ export class FlowBoxEntryElement
 
   widget = new Gtk.FlowBoxChild();
   private parent: FlowBoxElement | null = null;
+  private children = new ChildOrderController(Gtk.FlowBox, this.widget);
 
   emitter = new SyntheticEmitter<{ selected: [boolean] }>();
 
@@ -60,16 +63,16 @@ export class FlowBoxEntryElement
   }
 
   appendChild(child: GjsElement | string): void {
-    if (typeof child === "string") {
-      throw new Error("Box can only have other elements as it's children.");
-    } else {
-      child.notifyWillAppendTo(this);
-      this.widget.add(child.widget);
-      this.widget.show_all();
-    }
+    ensureNotString(child);
+
+    child.notifyWillAppendTo(this);
+    this.children.addChild(child);
+    this.widget.show_all();
   }
 
-  notifyWillUnmount() {}
+  notifyWillUnmount(child: GjsElement): void {
+    this.children.removeChild(child);
+  }
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
@@ -85,5 +88,13 @@ export class FlowBoxEntryElement
 
   render() {
     this.parent?.widget.show_all();
+  }
+
+  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+    ensureNotString(newChild);
+
+    newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild);
+    this.widget.show_all();
   }
 }

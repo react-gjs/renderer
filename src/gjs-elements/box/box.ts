@@ -2,12 +2,14 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../g-enums";
 import type { GjsElement } from "../gjs-element";
+import { ensureNotString } from "../utils/ensure-not-string";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { ChildOrderController } from "../utils/widget-operations/child-order-controller";
 
 type BoxPropsMixin = AlignmentProps & MarginProps;
 
@@ -22,6 +24,7 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
 
   private parent: GjsElement | null = null;
   widget = new Gtk.Box();
+  private children = new ChildOrderController(Gtk.Box, this.widget);
 
   private readonly propsMapper = createPropMap<BoxProps>(
     createAlignmentPropMapper(this.widget),
@@ -54,16 +57,16 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
   }
 
   appendChild(child: GjsElement | string): void {
-    if (typeof child === "string") {
-      throw new Error("Box can only have other elements as it's children.");
-    } else {
-      child.notifyWillAppendTo(this);
-      this.widget.add(child.widget);
-      this.widget.show_all();
-    }
+    ensureNotString(child);
+
+    child.notifyWillAppendTo(this);
+    this.children.addChild(child);
+    this.widget.show_all();
   }
 
-  notifyWillUnmount() {}
+  notifyWillUnmount(child: GjsElement): void {
+    this.children.removeChild(child);
+  }
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
@@ -78,5 +81,13 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
 
   render() {
     this.parent?.widget.show_all();
+  }
+
+  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+    ensureNotString(newChild);
+
+    newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild);
+    this.widget.show_all();
   }
 }

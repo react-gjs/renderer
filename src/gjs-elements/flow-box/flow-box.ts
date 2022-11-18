@@ -148,4 +148,36 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
   render() {
     this.parent?.widget.show_all();
   }
+
+  insertBefore(newChild: GjsElement, beforeChild: GjsElement): void {
+    if (GjsElementManager.isGjsElementOfKind(newChild, FlowBoxEntryElement)) {
+      newChild.notifyWillAppendTo(this);
+
+      const beforeIndex = this.children.findIndex(
+        (c) => c.element === beforeChild
+      );
+
+      const childrenAfter = this.children.slice(beforeIndex);
+      const tmpContainer = new Gtk.FlowBox();
+
+      for (let i = 0; i < childrenAfter.length; i++) {
+        tmpContainer.add(childrenAfter[i].element.widget);
+        this.widget.remove(childrenAfter[i].element.widget);
+      }
+
+      this.widget.add(newChild.widget);
+
+      for (let i = 0; i < childrenAfter.length; i++) {
+        this.widget.add(childrenAfter[i].element.widget);
+        tmpContainer.remove(childrenAfter[i].element.widget);
+      }
+
+      tmpContainer.destroy();
+
+      this.children.splice(beforeIndex, 0, {
+        element: newChild,
+        isSelected: false,
+      });
+    }
+  }
 }

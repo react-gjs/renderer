@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import type Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 import type { GjsElement } from "../gjs-element";
+import { ensureNotString } from "../utils/ensure-not-string";
 import type { SyntheticEvent } from "../utils/event-handlers";
 import { EventHandlers } from "../utils/event-handlers";
 import type { MouseButtonPressEvent } from "../utils/gdk-events/mouse-button-press-event";
@@ -12,6 +13,7 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { ChildOrderController } from "../utils/widget-operations/child-order-controller";
 
 type PressablePropsMixin = AlignmentProps & MarginProps;
 
@@ -31,6 +33,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
 
   private parent: GjsElement | null = null;
   widget = new Gtk.EventBox();
+  private children = new ChildOrderController(Gtk.EventBox, this.widget);
 
   private handlers = new EventHandlers<Gtk.EventBox, PressableProps>(
     this.widget
@@ -65,16 +68,16 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   }
 
   appendChild(child: GjsElement | string): void {
-    if (typeof child === "string") {
-      throw new Error("Box can only have other elements as it's children.");
-    } else {
-      child.notifyWillAppendTo(this);
-      this.widget.add(child.widget);
-      this.widget.show_all();
-    }
+    ensureNotString(child);
+
+    child.notifyWillAppendTo(this);
+    this.children.addChild(child);
+    this.widget.show_all();
   }
 
-  notifyWillUnmount() {}
+  notifyWillUnmount(child: GjsElement): void {
+    this.children.removeChild(child);
+  }
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
@@ -89,5 +92,15 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
 
   render() {
     this.parent?.widget.show_all();
+  }
+
+  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+    ensureNotString(newChild);
+
+    newChild.notifyWillAppendTo(this);
+
+    this.children.insertBefore(newChild, beforeChild);
+
+    this.widget.show_all();
   }
 }

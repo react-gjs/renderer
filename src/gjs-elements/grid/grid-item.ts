@@ -3,6 +3,7 @@ import type Gtk from "gi://Gtk";
 import type React from "react";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import { ensureNotString } from "../utils/ensure-not-string";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
 import { SyntheticEmitter } from "../utils/synthetic-emitter";
@@ -64,9 +65,9 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   }
 
   appendChild(child: GjsElement | string): void {
-    if (typeof child === "string") {
-      throw new Error("Box can only have other elements as it's children.");
-    } else if (this.childElement != null) {
+    ensureNotString(child);
+
+    if (this.childElement != null) {
       throw new Error("GridItem can only have one child.");
     } else {
       child.notifyWillAppendTo(this);
@@ -96,5 +97,9 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   render() {
     this.parent?.widget.show_all();
+  }
+
+  insertBefore(): void {
+    throw new Error("GridItem can only have one child.");
   }
 }

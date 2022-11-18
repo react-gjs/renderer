@@ -1,10 +1,12 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { GjsElement } from "../gjs-element";
+import { ensureNotString } from "../utils/ensure-not-string";
 import type { SyntheticEvent } from "../utils/event-handlers";
 import { EventHandlers } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
+import { ChildOrderController } from "../utils/widget-operations/child-order-controller";
 
 export type WindowProps = {
   title?: string;
@@ -23,6 +25,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
   private parent: GjsElement | null = null;
   widget = new Gtk.Window();
+  private children = new ChildOrderController(Gtk.Window, this.widget);
 
   private readonly handlers = new EventHandlers(this.widget);
 
@@ -58,12 +61,10 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   }
 
   appendChild(child: string | GjsElement): void {
-    if (typeof child === "string") {
-      throw new Error("Window can only have other elements as it's children.");
-    }
+    ensureNotString(child);
 
     child.notifyWillAppendTo(this);
-    this.widget.add(child.widget);
+    this.children.addChild(child);
   }
 
   updateProps(props: DiffedProps): void {
@@ -71,7 +72,9 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     this.handlers.update(props);
   }
 
-  notifyWillUnmount() {}
+  notifyWillUnmount(child: GjsElement): void {
+    this.children.removeChild(child);
+  }
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
@@ -82,6 +85,14 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   }
 
   render(): void {
+    this.widget.show_all();
+  }
+
+  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+    ensureNotString(newChild);
+
+    newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild);
     this.widget.show_all();
   }
 }

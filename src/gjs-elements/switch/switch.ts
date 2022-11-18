@@ -53,7 +53,7 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
     this.parent = parent;
   }
 
-  appendChild(child: string | GjsElement): void {
+  appendChild(): void {
     throw new Error("Switch does not support children.");
   }
 
@@ -74,5 +74,9 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
 
   render() {
     this.parent?.widget.show_all();
+  }
+
+  insertBefore(): void {
+    throw new Error("Switch does not support children.");
   }
 }

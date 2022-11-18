@@ -10,6 +10,7 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SyntheticEmitter } from "../utils/synthetic-emitter";
 
 type LabelPropsMixin = AlignmentProps & MarginProps;
 
@@ -70,6 +71,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   constructor(props: any) {
     this.updateProps(props);
   }
+  emitter?: SyntheticEmitter<any> | undefined;
 
   notifyWillAppendTo(parent: GjsElement): void {
     this.parent = parent;
@@ -110,5 +112,9 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   render() {
     this.parent?.widget.show_all();
+  }
+
+  insertBefore(): void {
+    throw new Error("Label cannot have children.");
   }
 }

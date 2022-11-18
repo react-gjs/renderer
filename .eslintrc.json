@@ -62,6 +62,7 @@
     "no-constant-condition": 0,
     "no-prototype-builtins": 0,
     "no-control-regex": 0,
+    "no-inner-declarations": 0,
     "@typescript-eslint/no-misused-new": 0,
     "@typescript-eslint/ban-types": [
       "error",

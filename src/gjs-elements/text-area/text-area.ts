@@ -98,4 +98,8 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
   render() {
     this.parent?.widget.show_all();
   }
+
+  insertBefore(): void {
+    throw new Error("TextArea does not support children.");
+  }
 }

@@ -13396,6 +13396,19 @@ declare module "gi://Gtk" {
      */
     add(widget: Widget): void;
     /**
+     * Removes widget from this. widget must be inside this.
+Note that this will own a reference to widget, and that this
+may be the last reference held; so removing a widget from its
+container can destroy that widget. If you want to use widget
+again, you need to add a reference to it before removing it from
+a container, using GObject.Object. If you don’t want to use widget
+again it’s usually more efficient to simply destroy it directly
+using Gtk.Widget.destroy since this will remove it from the
+container and help break any circular reference count cycles.
+     * @param widget a current child of this
+     */
+    remove(widget: Widget): void;
+    /**
      * Adds #widget to #container, setting child properties at
      * the same time. See {@link Gtk.Container.add} and
      * gtk_container_child_set() for more details.
