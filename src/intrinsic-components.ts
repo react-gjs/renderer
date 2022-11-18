@@ -21,6 +21,8 @@ export const Label = IntrinsicElem("LABEL");
 export const LinkButton = IntrinsicElem("LINK_BUTTON");
 /** Equivalent to the Gtk.Image widget. */
 export const Image = IntrinsicElem("IMAGE");
+/** Equivalent to the Gtk.EventBox widget. */
+export const Pressable = IntrinsicElem("PRESSABLE");
 /** Equivalent to the Gtk.Switch widget. */
 export const Switch = IntrinsicElem("SWITCH");
 /** Equivalent to the Gtk.TextView widget. */

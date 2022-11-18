@@ -7068,52 +7068,57 @@ declare module "gi://Gdk" {
      * %GDK_2BUTTON_PRESS, %GDK_3BUTTON_PRESS or
      * %GDK_BUTTON_RELEASE).
      */
-    public type: EventType;
+    public get_event_type(): EventType;
     /** The window which received the event. */
-    public window: Window;
-    /** %TRUE if the event was sent explicitly. */
-    public send_event: number;
+    public get_window(): Window;
     /** The time of the event in milliseconds. */
-    public time: number;
-    /** The x coordinate of the pointer relative to the window. */
-    public x: number;
-    /** The y coordinate of the pointer relative to the window. */
-    public y: number;
+    public get_time(): number;
     /**
-     * #x, #y translated to the axes of #device, or %NULL if
-     * #device is the mouse.
-     */
-    public axes: number;
+     * Extract the event window relative x/y coordinates from an event.
+     *
+     * Returns: %TRUE if the event delivered event window coordinates
+     **/
+    public get_coords(): [fetched: boolean, x: number, y: number];
     /**
      * A bit-mask representing the state of the modifier keys
      * (e.g. Control, Shift and Alt) and the pointer buttons. See
      * {@link ModifierType}.
+     *
+     * Returns: %TRUE if there was a state field in the event
      */
-    public state: ModifierType;
+    public get_state(): [boolean, ModifierType];
     /**
      * The button which was pressed or released, numbered from 1
      * to 5. Normally button 1 is the left mouse button, 2 is the
      * middle button, and 3 is the right button. On 2-button
      * mice, the middle button can often be simulated by pressing
      * both mouse buttons together.
+     *
+     * Returns: %TRUE if the event delivered a button number
      */
-    public button: number;
+    public get_button(): [boolean, number];
     /**
      * The master device that the event originated from. Use
      * {@link Gdk.event.get_source_device} to get the slave
      * device.
      */
-    public device: Device;
+    public get_device(): Device;
     /**
-     * The x coordinate of the pointer relative to the root of
-     * the screen.
-     */
-    public x_root: number;
+     * Extract the root window relative x/y coordinates from an event.
+     *
+     * Returns: %TRUE if the event delivered event window coordinates
+     **/
+    public get_root_coords(): [
+      fetched: boolean,
+      x_root: number,
+      y_root: number
+    ];
     /**
-     * The y coordinate of the pointer relative to the root of
-     * the screen.
+     * Extracts the click count from an event.
+     *
+     * Returns: %TRUE if the event delivered a click count
      */
-    public y_root: number;
+    public get_click_count(): [boolean, number];
   }
 
   export interface EventConfigureInitOptions {}
@@ -7324,7 +7329,7 @@ declare module "gi://Gdk" {
 
     get_keyval(): [boolean, number];
     get_state(): [boolean, number];
-    get_event_type(): number;
+    get_event_type(): EventType;
   }
 
   export interface EventMotionInitOptions {}

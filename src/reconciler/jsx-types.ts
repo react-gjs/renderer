@@ -20,6 +20,10 @@ import type {
 import type { ImageElement, ImageProps } from "../gjs-elements/image/image";
 import type { LabelElement, LabelProps } from "../gjs-elements/label/label";
 import type { LinkButtonElement } from "../gjs-elements/link-button/link-button";
+import type {
+  PressableElement,
+  PressableProps,
+} from "../gjs-elements/pressable/pressable";
 import type { SwitchElement, SwitchProps } from "../gjs-elements/switch/switch";
 import type {
   TextAreaElement,
@@ -74,6 +78,7 @@ declare global {
         ComponentWithChildren<ButtonProps>,
         LinkButtonElement
       >;
+      PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
       SWITCH: IntrinsicComponent<SwitchProps, SwitchElement>;
       TEXT_AREA: IntrinsicComponent<TextAreaProps, TextAreaElement>;
       TEXT_ENTRY: IntrinsicComponent<TextEntryProps, TextEntryElement>;

@@ -9,6 +9,7 @@ export interface GjsElementTypeRegistry {
   IMAGE: "IMAGE";
   LABEL: "LABEL";
   LINK_BUTTON: "LINK_BUTTON";
+  PRESSABLE: "PRESSABLE";
   SWITCH: "SWITCH";
   TEXT_AREA: "TEXT_AREA";
   TEXT_ENTRY: "TEXT_ENTRY";
