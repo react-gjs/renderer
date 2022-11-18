@@ -3,6 +3,7 @@ import Gtk from "gi://Gtk";
 import { FlowBoxElement } from "../flow-box/flow-box";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import type { SyntheticEvent } from "../utils/event-handlers";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -14,7 +15,7 @@ import { SyntheticEmitter } from "../utils/synthetic-emitter";
 type FlowBoxEntryPropsMixin = AlignmentProps & MarginProps;
 
 export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
-  onSelect?: () => void;
+  onSelect?: (event: SyntheticEvent<{ isSelected: boolean }>) => void;
 }
 
 export class FlowBoxEntryElement
@@ -25,7 +26,7 @@ export class FlowBoxEntryElement
   widget = new Gtk.FlowBoxChild();
   private parent: FlowBoxElement | null = null;
 
-  emitter = new SyntheticEmitter<{ selected: [] }>();
+  emitter = new SyntheticEmitter<{ selected: [boolean] }>();
 
   private readonly propMapper = createPropMap<FlowBoxEntryProps>(
     createAlignmentPropMapper(this.widget),
@@ -33,7 +34,13 @@ export class FlowBoxEntryElement
     (props) =>
       props.onSelect(DataType.Function, (callback) => {
         if (callback) {
-          const listener = this.emitter.on("selected", () => callback());
+          const listener = this.emitter.on("selected", (isSelected) =>
+            callback({
+              isSelected,
+              target: this.widget,
+              stopPropagation: () => {}, // no-op
+            })
+          );
           return () => listener.remove();
         }
       })
@@ -68,7 +75,6 @@ export class FlowBoxEntryElement
     parent.notifyWillUnmount(this);
 
     this.emitter.clear();
-    this.parent?.childDestroyed(this);
     this.propMapper.cleanupAll();
     this.widget.destroy();
   }

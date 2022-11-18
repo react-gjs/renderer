@@ -22,6 +22,7 @@ export interface FlowBoxProps extends FlowBoxPropsMixin {
   minChildrenPerLine?: number;
   rowSpacing?: number;
   selectionMode?: SelectionMode;
+  sameSizeChildren?: boolean;
 }
 
 export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
@@ -30,7 +31,10 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
   widget = new Gtk.FlowBox();
   private parent: GjsElement | null = null;
 
-  private children: Array<FlowBoxEntryElement> = [];
+  private children: Array<{
+    element: FlowBoxEntryElement;
+    isSelected: boolean;
+  }> = [];
 
   private handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(this.widget);
 
@@ -42,7 +46,10 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
         .orientation(
           DataType.Enum(Gtk.Orientation),
           (v = Orientation.HORIZONTAL) => {
-            this.widget.orientation = v;
+            this.widget.orientation =
+              v === Orientation.HORIZONTAL
+                ? Orientation.VERTICAL
+                : Orientation.HORIZONTAL;
           }
         )
         .selectionMode(
@@ -66,14 +73,34 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
         .rowSpacing(DataType.Number, (v = 0) => {
           this.widget.row_spacing = v;
         })
+        .sameSizeChildren(DataType.Boolean, (v = false) => {
+          this.widget.homogeneous = v;
+        })
   );
 
   constructor(props: any) {
-    this.handlers.bindInternal("child-activated", (child: Gtk.FlowBoxChild) => {
-      // @ts-ignore
-      const childElement = this.children.find((c) => c.widget === child);
-      if (childElement) {
-        childElement.emitter.emit("activated");
+    this.handlers.bindInternal("selected-children-changed", () => {
+      const newUnselected: FlowBoxEntryElement[] = [];
+      const newSelected: FlowBoxEntryElement[] = [];
+
+      for (const childEntry of this.children) {
+        const currentlySelected = childEntry.element.widget.is_selected();
+        if (currentlySelected !== childEntry.isSelected) {
+          if (currentlySelected) {
+            newSelected.push(childEntry.element);
+          } else {
+            newUnselected.push(childEntry.element);
+          }
+          childEntry.isSelected = currentlySelected;
+        }
+      }
+
+      for (let i = 0; i < newUnselected.length; i++) {
+        newUnselected[i].emitter.emit("selected", false);
+      }
+
+      for (let i = 0; i < newSelected.length; i++) {
+        newSelected[i].emitter.emit("selected", true);
       }
     });
 
@@ -90,8 +117,11 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
     } else {
       if (GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)) {
         child.notifyWillAppendTo(this);
-        this.widget.add(this.widget);
-        this.children.push(child);
+        this.widget.add(child.widget);
+        this.children.push({
+          element: child,
+          isSelected: false,
+        });
         this.widget.show_all();
       } else {
         throw new Error("FlowBox can only have FlexBoxEntry as it's children.");
@@ -99,7 +129,9 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
     }
   }
 
-  notifyWillUnmount() {}
+  notifyWillUnmount(child: GjsElement) {
+    this.children = this.children.filter((c) => c.element !== child);
+  }
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
@@ -115,9 +147,5 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
 
   render() {
     this.parent?.widget.show_all();
-  }
-
-  childDestroyed(child: FlowBoxEntryElement) {
-    this.children = this.children.filter((c) => c !== child);
   }
 }

@@ -4662,9 +4662,9 @@ declare module "gi://GLib" {
      */
     public data: any;
     /** Contains the link to the next element in the list */
-    public next: GLib.List;
+    public next: List;
     /** Contains the link to the previous element in the list */
-    public prev: GLib.List;
+    public prev: List;
   }
 
   export interface LogFieldInitOptions {}

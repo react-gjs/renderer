@@ -19,7 +19,7 @@ export class SyntheticEmitter<E extends Record<string, any[]>> {
     };
   }
 
-  emit<K extends string>(event: K, ...args: E[K]): void {
+  emit<K extends keyof E>(event: K, ...args: E[K]): void {
     const listeners = this.listeners.get(event);
 
     if (listeners) {
