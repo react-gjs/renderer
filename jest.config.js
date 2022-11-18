@@ -1,8 +1,8 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+/** @type {import("ts-jest/dist/types").InitialOptionsTsJest} */
 module.exports = {
-  testRegex: ".*__tests__/.+(\.test\.(ts|js|tsx|jsx))$",
+  testRegex: ".*__tests__/.+(.test.(ts|js|tsx|jsx))$",
   transform: {
-    "^.+\.(js|jsx|ts|tsx)$": [
+    "^.+.(js|jsx|ts|tsx)$": [
       "@swc/jest",
       {
         jsc: {
@@ -24,10 +24,9 @@ module.exports = {
           type: "es6",
           strict: true,
         },
-      }
+      },
     ],
   },
-  testEnvironment: "jsdom",
   roots: ["<rootDir>"],
   collectCoverageFrom: ["src/**/*.(ts|js|tsx|jsx)"],
   coverageReporters: ["html", "text"],
