@@ -24,3 +24,6 @@ export const WrapMode = Pango.WrapMode;
 
 export type SelectionMode = Gtk.SelectionMode;
 export const SelectionMode = Gtk.SelectionMode;
+
+export type ImageType = Gtk.ImageType;
+export const ImageType = Gtk.ImageType;

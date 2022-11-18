@@ -2,13 +2,10 @@
 
 ## High Priority
 
-- Grid
-- CheckButton
 - ComboBox (selector)
 - ScrolledWindow
 - FlowBox
 - Image
-- LinkButton
 - Popover
 - RadioButton
 - SpinButton (number input)

@@ -13,7 +13,7 @@ export const MarginDataType = DataType.OneOf(
 );
 
 export const createMarginPropMapper = (widget: WidgetWithMargin) => {
-  return (mapper: PropMapper<"margin">) =>
+  return (mapper: PropMapper<keyof MarginProps, any>) =>
     mapper.margin(MarginDataType, (v = 0) => {
       applyMargin(widget, v);
     });

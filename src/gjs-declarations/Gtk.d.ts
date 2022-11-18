@@ -1,5 +1,7 @@
 import Atk from "gi://Atk";
+import cairo from "gi://cairo";
 import Gdk from "gi://Gdk";
+import GdkPixbuf from "gi://GdkPixbuf";
 import Gio from "gi://Gio";
 import GLib from "gi://GLib";
 import GObject from "gi://GObject";

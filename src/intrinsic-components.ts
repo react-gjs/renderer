@@ -14,15 +14,13 @@ export const FlowBox = IntrinsicElem("FLOW_BOX");
 export const FlowBoxEntry = IntrinsicElem("FLOW_BOX_ENTRY");
 /** Equivalent to the Gtk.Grid widget. */
 export const Grid = IntrinsicElem("GRID");
-/**
- * Equivalent to the Gtk.BOX widget. But can be used only as a
- * child of a Grid container.
- */
 export const GridItem = IntrinsicElem("GRID_ITEM");
 /** Equivalent to the Gtk.Button widget. */
 export const Label = IntrinsicElem("LABEL");
 /** Equivalent to the Gtk.LinkButton widget. */
 export const LinkButton = IntrinsicElem("LINK_BUTTON");
+/** Equivalent to the Gtk.Image widget. */
+export const Image = IntrinsicElem("IMAGE");
 /** Equivalent to the Gtk.Switch widget. */
 export const Switch = IntrinsicElem("SWITCH");
 /** Equivalent to the Gtk.TextView widget. */

@@ -17,6 +17,7 @@ import type {
   GridItemElement,
   GridItemProps,
 } from "../gjs-elements/grid/grid-item";
+import type { ImageElement, ImageProps } from "../gjs-elements/image/image";
 import type { LabelElement, LabelProps } from "../gjs-elements/label/label";
 import type { LinkButtonElement } from "../gjs-elements/link-button/link-button";
 import type { SwitchElement, SwitchProps } from "../gjs-elements/switch/switch";
@@ -64,6 +65,7 @@ declare global {
       >;
       GRID: IntrinsicComponent<ComponentWithChildren<GridProps>, GridElement>;
       GRID_ITEM: IntrinsicComponent<GridItemProps, GridItemElement>;
+      IMAGE: IntrinsicComponent<ImageProps, ImageElement>;
       LABEL: IntrinsicComponent<
         ComponentWithChildren<LabelProps>,
         LabelElement

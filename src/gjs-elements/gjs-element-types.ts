@@ -6,6 +6,7 @@ export interface GjsElementTypeRegistry {
   FLOW_BOX: "FLOW_BOX";
   GRID: "GRID";
   GRID_ITEM: "GRID_ITEM";
+  IMAGE: "IMAGE";
   LABEL: "LABEL";
   LINK_BUTTON: "LINK_BUTTON";
   SWITCH: "SWITCH";

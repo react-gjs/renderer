@@ -17,7 +17,7 @@ export const createAlignmentPropMapper = (
   const defaultV = defaults?.v ?? Align.START;
   const defaultH = defaults?.h ?? Align.CENTER;
 
-  return (mapper: PropMapper<keyof AlignmentProps>) =>
+  return (mapper: PropMapper<keyof AlignmentProps, any>) =>
     mapper
       .horizontalAlign(DataType.Enum(Align), (v = defaultH) => {
         widget.halign = v;
