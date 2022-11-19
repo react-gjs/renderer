@@ -2,10 +2,7 @@
 
 ## High Priority
 
-- ComboBox (selector)
 - ScrolledWindow
-- FlowBox
-- Image
 - Popover
 - RadioButton
 - SpinButton (number input)

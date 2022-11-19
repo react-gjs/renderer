@@ -2,16 +2,24 @@
 
 A React renderer for the [Gnome JS](https://gjs.guide/about/). It provides components and methods allowing to use React to build native Gnome GTK applications.
 
+_This is still a work in progress, bugs and missing features are expected._
+
 ## Components implemented so far:
 
-- **Window** - build on top of Gtk.Window
 - **Box** - build on top of Gtk.Box
 - **Button** - build on top of Gtk.Button
-- **LinkButton** - build on top of Gtk.LinkButton
+- **CheckButton** - build on top of Gtk.CheckButton
+- **FlowBox** - build on top of Gtk.FlowBox
+- **Grid** - build on top of Gtk.Grid
+- **Image** - build on top of Gtk.Image
 - **Label** - build on top of Gtk.Label
+- **LinkButton** - build on top of Gtk.LinkButton
+- **Pressable** - build on top of Gtk.EventBox
+- **Selector** - build on top of Gtk.ComboBox
+- **Switch** - build on top of Gtk.Switch
 - **TextEntry** - build on top of Gtk.Entry
 - **TextArea** - build on top of Gtk.TextView
-- **Switch** - build on top of Gtk.Switch
+- **Window** - build on top of Gtk.Window
 
 ## Usage
 
