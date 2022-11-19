@@ -63,4 +63,9 @@ export interface GjsElement<
    * when a item is selected.
    */
   emitter?: SyntheticEmitter<any>;
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps;
 }

@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk?version=3.0";
 import Gtk from "gi://Gtk";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -92,5 +93,12 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
 
   insertBefore(): void {
     throw new Error("TextEntry does not support children.");
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

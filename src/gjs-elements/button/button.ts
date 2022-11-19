@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { PositionType } from "../../g-enums";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -113,5 +114,12 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
 
   insertBefore(): void {
     throw new Error("Button can have only one child.");
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

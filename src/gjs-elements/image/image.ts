@@ -3,6 +3,7 @@ import cairo from "gi://cairo";
 import GdkPixbuf from "gi://GdkPixbuf";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/map-properties";
 import { createPropMap } from "../utils/map-properties";
@@ -130,5 +131,12 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
   insertBefore(): void {
     throw new Error("Image cannot have children.");
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

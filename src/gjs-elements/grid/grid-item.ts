@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import type Gtk from "gi://Gtk";
 import type React from "react";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import { ensureNotString } from "../utils/ensure-not-string";
@@ -101,5 +102,12 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   insertBefore(): void {
     throw new Error("GridItem can only have one child.");
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

@@ -1,11 +1,14 @@
 import type { AnyDataType, GetDataType } from "dilswer";
 import { createValidator } from "dilswer";
+import { OrderedMap } from "./ordered-map";
 
 type KeysOf<P> = P extends P ? keyof P : never;
 
-export type PropsReader<P> = {
+export type _PropsReader<P> = {
   [K in KeysOf<P>]?: P extends Record<K, infer T> ? T : never;
 };
+
+export type PropsReader<P> = _PropsReader<Required<P>>;
 
 export type UpdateRedirect<P> = {
   instead(propertyName: KeysOf<P>): void;
@@ -52,7 +55,7 @@ export const createPropMap = <P = Record<string, any>>(
     },
   });
 
-  const map = new Map<string, MapEntry<P>>();
+  const map = new OrderedMap<string, MapEntry<P>>();
 
   const mapper = new Proxy(
     {},
@@ -81,7 +84,7 @@ export const createPropMap = <P = Record<string, any>>(
   }
 
   const update = (props: DiffedProps) => {
-    const updated: Array<[MapEntry<P>, any]> = [];
+    const updated = new Map<string, [MapEntry<P>, any]>();
 
     for (let i = 0; i < props.length; i++) {
       const [propName, value] = props[i];
@@ -90,12 +93,16 @@ export const createPropMap = <P = Record<string, any>>(
       if (entry) {
         if (value === UnsetProp) {
           currentProps[propName] = undefined;
-          updated.push([entry, undefined]);
+          updated.set(propName, [entry, undefined]);
         } else if (entry.validate(value)) {
           currentProps[propName] = value;
-          updated.push([entry, value]);
+          updated.set(propName, [entry, value]);
         } else {
-          console.error(new TypeError(`Invalid prop type. (${propName})`));
+          console.error(
+            new TypeError(
+              `Invalid prop type. (${propName}) Received value: ${value}`
+            )
+          );
         }
       }
     }
@@ -111,16 +118,18 @@ export const createPropMap = <P = Record<string, any>>(
 
     const redirect: UpdateRedirect<P> = {
       instead: (propName) => {
-        if (updated.some(([entry]) => entry.propName === propName)) {
+        if (updated.has(propName as string)) {
           return; // no-op, mapping function was already called this cycle
         }
         updateEntry(map.get(propName as string)!, currentProps[propName]);
       },
     };
 
-    for (let i = 0; i < updated.length; i++) {
-      const [entry, value] = updated[i];
-      updateEntry(entry, value);
+    for (const propName of map.keys()) {
+      const [entry, value] = updated.get(propName) ?? [];
+      if (entry) {
+        updateEntry(entry, value);
+      }
     }
   };
 

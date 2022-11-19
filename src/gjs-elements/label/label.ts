@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 import type { EllipsizeMode, Justification, WrapMode } from "../../g-enums";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { DiffedProps } from "../utils/map-properties";
@@ -116,5 +117,12 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   insertBefore(): void {
     throw new Error("Label cannot have children.");
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

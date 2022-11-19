@@ -9434,4 +9434,7 @@ declare module "gi://GObject" {
    *   ref-counted.
    */
   const VALUE_NOCOPY_CONTENTS: number;
+
+  export const TYPE_STRING: Type;
+  export const TYPE_INT: Type;
 }

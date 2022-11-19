@@ -13,6 +13,7 @@ import { ImageElement } from "../gjs-elements/image/image";
 import { LabelElement } from "../gjs-elements/label/label";
 import { LinkButtonElement } from "../gjs-elements/link-button/link-button";
 import { PressableElement } from "../gjs-elements/pressable/pressable";
+import { SelectorElement } from "../gjs-elements/selector/selector";
 import { SwitchElement } from "../gjs-elements/switch/switch";
 import { TextAreaElement } from "../gjs-elements/text-area/text-area";
 import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
@@ -31,6 +32,7 @@ GjsElementManager.register("IMAGE", ImageElement);
 GjsElementManager.register("LABEL", LabelElement);
 GjsElementManager.register("LINK_BUTTON", LinkButtonElement);
 GjsElementManager.register("PRESSABLE", PressableElement);
+GjsElementManager.register("SELECTOR", SelectorElement);
 GjsElementManager.register("SWITCH", SwitchElement);
 GjsElementManager.register("TEXT_AREA", TextAreaElement);
 GjsElementManager.register("TEXT_ENTRY", TextEntryElement);
@@ -121,11 +123,10 @@ export const GjsRenderer = Reconciler({
     rootContainer,
     hostContext
   ) {
-    return diffProps(
-      oldProps,
-      newProps,
-      GjsElementManager.isGjsElement(instance)
-    );
+    if (GjsElementManager.isGjsElement(instance)) {
+      return instance.diffProps(oldProps, newProps);
+    }
+    return diffProps(oldProps, newProps, false);
   },
   resetAfterCommit(containerInfo) {},
   prepareScopeUpdate(scopeInstance, instance) {},

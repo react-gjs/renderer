@@ -158,3 +158,9 @@ export class EventHandlers<
     this.internalBinds.forEach((bind) => bind.remove());
   }
 }
+
+export class EventNoop extends Error {
+  constructor() {
+    super("EventNoop");
+  }
+}

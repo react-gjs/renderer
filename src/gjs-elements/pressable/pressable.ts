@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import type Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { ensureNotString } from "../utils/ensure-not-string";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -102,5 +103,12 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
     this.children.insertBefore(newChild, beforeChild);
 
     this.widget.show_all();
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

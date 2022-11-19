@@ -1,5 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import { ensureNotString } from "../utils/ensure-not-string";
@@ -175,5 +176,12 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
       newChild.notifyWillAppendTo(this);
       this.children.add(newChild, position);
     }
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

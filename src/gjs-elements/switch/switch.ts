@@ -1,5 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -78,5 +79,12 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
 
   insertBefore(): void {
     throw new Error("Switch does not support children.");
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

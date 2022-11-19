@@ -30848,7 +30848,7 @@ container and help break any circular reference count cycles.
      *
      * @param iter Row iterator
      */
-    set(iter: TreeIter): void;
+    set(iter: TreeIter, columnRenderers: number[], columnValues: any[]): void;
     /**
      * This function is meant primarily for #GObjects that
      * inherit from {@link ListStore}, and should only be used
@@ -30859,7 +30859,7 @@ container and help break any circular reference count cycles.
      * @param n_columns Number of columns for the list store
      * @param types An array length n of #GTypes
      */
-    set_column_types(n_columns: number, types: GObject.Type[]): void;
+    set_column_types(types: GObject.Type[]): void;
     /**
      * See {@link Gtk.ListStore.set}; this version takes a va_list
      * for use by language bindings.

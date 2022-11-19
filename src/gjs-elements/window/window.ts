@@ -1,5 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { ensureNotString } from "../utils/ensure-not-string";
 import type { SyntheticEvent } from "../utils/event-handlers";
@@ -94,5 +95,12 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild);
     this.widget.show_all();
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

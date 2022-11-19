@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../g-enums";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { ensureNotString } from "../utils/ensure-not-string";
 import type { DiffedProps } from "../utils/map-properties";
@@ -89,5 +90,12 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
     newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild);
     this.widget.show_all();
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

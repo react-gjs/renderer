@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { Orientation, SelectionMode } from "../../g-enums";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import { EventHandlers } from "../utils/event-handlers";
@@ -179,5 +180,12 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
         isSelected: false,
       });
     }
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }

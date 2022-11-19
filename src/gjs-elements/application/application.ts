@@ -1,4 +1,5 @@
 import Gtk from "gi://Gtk";
+import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/map-properties";
 
@@ -33,5 +34,12 @@ export class ApplicationElement {
 
   start(): void {
     Gtk.main();
+  }
+
+  diffProps(
+    oldProps: Record<string, any>,
+    newProps: Record<string, any>
+  ): DiffedProps {
+    return diffProps(oldProps, newProps, true);
   }
 }
