@@ -48,6 +48,7 @@ export const UnsetProp = Symbol("UnsetProp");
 export class PropertyMapper<P = Record<string, any>> {
   private properties = {} as Record<string | symbol, any>;
   private map = new OrderedMap<string, MapEntry<P>>();
+  private isFirstUpdate = true;
 
   currentProps = new Proxy(this.properties, {
     get: (target, prop) => target[prop],
@@ -86,13 +87,6 @@ export class PropertyMapper<P = Record<string, any>> {
       getMaps[i](caseCollector);
     }
 
-    // set default values
-    for (const entry of this.map.values()) {
-      entry.nextCleanup =
-        entry.callback(undefined, this.currentProps, { instead: () => {} }) ??
-        undefined;
-    }
-
     this.element.onUpdate((props) => {
       this.update(props);
     });
@@ -103,6 +97,16 @@ export class PropertyMapper<P = Record<string, any>> {
   }
 
   private update(props: DiffedProps) {
+    if (this.isFirstUpdate) {
+      // set default values
+      for (const entry of this.map.values()) {
+        entry.nextCleanup =
+          entry.callback(undefined, this.currentProps, { instead: () => {} }) ??
+          undefined;
+      }
+      this.isFirstUpdate = false;
+    }
+
     const updated = new Map<string, [MapEntry<P>, any]>();
 
     for (let i = 0; i < props.length; i++) {
@@ -161,5 +165,9 @@ export class PropertyMapper<P = Record<string, any>> {
     }
 
     this.map.clear();
+  }
+
+  skipDefaults() {
+    this.isFirstUpdate = false;
   }
 }

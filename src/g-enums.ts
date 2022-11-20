@@ -39,3 +39,6 @@ export const PolicyType = Gtk.PolicyType;
 
 export type ShadowType = Gtk.ShadowType;
 export const ShadowType = Gtk.ShadowType;
+
+export type PopoverConstraint = Gtk.PopoverConstraint;
+export const PopoverConstraint = Gtk.PopoverConstraint;

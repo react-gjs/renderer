@@ -35,3 +35,5 @@ export const TextArea = IntrinsicElem("TEXT_AREA");
 export const TextInput = IntrinsicElem("TEXT_ENTRY");
 /** Equivalent to the Gtk.Window widget. */
 export const Window = IntrinsicElem("WINDOW");
+
+export { Popover } from "./gjs-elements/popover/component";

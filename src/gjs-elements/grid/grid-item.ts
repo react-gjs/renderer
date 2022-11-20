@@ -1,5 +1,5 @@
 import { DataType } from "dilswer";
-import type Gtk from "gi://Gtk";
+import Gtk from "gi://Gtk";
 import type React from "react";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
@@ -25,15 +25,16 @@ export type GridItemEvents = {
 
 export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   readonly kind = "GRID_ITEM";
+  private emptyReplacement = new Gtk.Box();
   private childElement: GjsElement | null = null;
   get widget(): Gtk.Widget {
     if (!this.childElement) {
-      throw new Error("GridItem must have a child.");
+      throw this.emptyReplacement;
     }
     return this.childElement.widget;
   }
 
-  private parent: GjsElement | null = null;
+  private parent: GridElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
   emitter = new SyntheticEmitter<GridItemEvents>(this.lifecycle);
@@ -76,6 +77,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
     } else {
       child.notifyWillAppendTo(this);
       this.childElement = child;
+      this.parent?.onChildAdded();
     }
   }
 
@@ -110,6 +112,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   notifyWillUnmount() {
     this.childElement = null;
+    this.parent?.onChildChange();
   }
 
   // #endregion

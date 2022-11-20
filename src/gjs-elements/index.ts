@@ -8,6 +8,7 @@ export type { GridItemElement } from "./grid/grid-item";
 export type { ImageElement } from "./image/image";
 export type { LabelElement } from "./label/label";
 export type { LinkButtonElement } from "./link-button/link-button";
+export type { PopoverProps } from "./popover/component";
 export type { PressableElement } from "./pressable/pressable";
 export type { ScrollBoxElement } from "./scroll-box/scroll-box";
 export type { SelectorElement } from "./selector/selector";
