@@ -1,6 +1,6 @@
 import type { GjsElement } from "./gjs-element";
 import type { GjsElementTypes } from "./gjs-element-types";
-import type { DiffedProps } from "./utils/map-properties";
+import type { DiffedProps } from "./utils/element-extenders/map-properties";
 
 export interface GjsElementConstructor<
   K extends GjsElementTypes | "APPLICATION"

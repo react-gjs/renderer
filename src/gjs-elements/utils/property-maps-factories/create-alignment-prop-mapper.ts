@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import { Align } from "../../../g-enums";
-import type { PropMapper } from "../map-properties";
+import type { PropCaseCollector } from "../element-extenders/map-properties";
 
 export type AlignmentProps = {
   verticalAlign?: Align;
@@ -17,7 +17,7 @@ export const createAlignmentPropMapper = (
   const defaultV = defaults?.v ?? Align.START;
   const defaultH = defaults?.h ?? Align.CENTER;
 
-  return (mapper: PropMapper<keyof AlignmentProps, any>) =>
+  return (mapper: PropCaseCollector<keyof AlignmentProps, any>) =>
     mapper
       .horizontalAlign(DataType.Enum(Align), (v = defaultH) => {
         widget.halign = v;

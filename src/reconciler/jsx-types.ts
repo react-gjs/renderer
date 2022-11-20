@@ -19,7 +19,10 @@ import type {
 } from "../gjs-elements/grid/grid-item";
 import type { ImageElement, ImageProps } from "../gjs-elements/image/image";
 import type { LabelElement, LabelProps } from "../gjs-elements/label/label";
-import type { LinkButtonElement } from "../gjs-elements/link-button/link-button";
+import type {
+  LinkButtonElement,
+  LinkButtonProps,
+} from "../gjs-elements/link-button/link-button";
 import type {
   PressableElement,
   PressableProps,
@@ -63,10 +66,7 @@ declare global {
         ComponentWithChildren<ButtonProps>,
         ButtonElement
       >;
-      CHECK_BUTTON: IntrinsicComponent<
-        ComponentWithChildren<CheckButtonProps>,
-        CheckButtonElement
-      >;
+      CHECK_BUTTON: IntrinsicComponent<CheckButtonProps, CheckButtonElement>;
       FLOW_BOX: IntrinsicComponent<
         ComponentWithChildren<FlowBoxProps>,
         FlowBoxElement
@@ -82,10 +82,7 @@ declare global {
         ComponentWithChildren<LabelProps>,
         LabelElement
       >;
-      LINK_BUTTON: IntrinsicComponent<
-        ComponentWithChildren<ButtonProps>,
-        LinkButtonElement
-      >;
+      LINK_BUTTON: IntrinsicComponent<LinkButtonProps, LinkButtonElement>;
       PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
       SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;

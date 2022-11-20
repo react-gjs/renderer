@@ -4,16 +4,17 @@ import type { PositionType } from "../../g-enums";
 import { CornerType, PolicyType, ShadowType } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
+import { EventHandlers } from "../utils/element-extenders/event-handlers";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { ensureNotString } from "../utils/ensure-not-string";
-import type { SyntheticEvent } from "../utils/event-handlers";
-import { EventHandlers } from "../utils/event-handlers";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
-import { ChildOrderController } from "../utils/widget-operations/child-order-controller";
 
 type ScrollBoxPropsMixin = AlignmentProps & MarginProps;
 
@@ -37,16 +38,19 @@ export class ScrollBoxElement
   implements GjsElement<"SCROLL_BOX", Gtk.ScrolledWindow>
 {
   readonly kind = "SCROLL_BOX";
+  widget = new Gtk.ScrolledWindow();
 
   private parent: GjsElement | null = null;
-  widget = new Gtk.ScrolledWindow();
-  private children = new ChildOrderController(Gtk.ScrolledWindow, this.widget);
 
+  private readonly lifecycle = new ElementLifecycleController();
+  private children = new ChildOrderController(this.lifecycle, this.widget);
   private handlers = new EventHandlers<Gtk.ScrolledWindow, ScrollBoxProps>(
+    this.lifecycle,
     this.widget
   );
 
-  private readonly propsMapper = createPropMap<ScrollBoxProps>(
+  private readonly propsMapper = new PropertyMapper<ScrollBoxProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -98,11 +102,15 @@ export class ScrollBoxElement
     });
 
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(child: GjsElement | string): void {
     ensureNotString(child);
@@ -116,38 +124,37 @@ export class ScrollBoxElement
     this.widget.show_all();
   }
 
-  notifyWillUnmount(child: GjsElement): void {
-    this.children.removeChild(child);
+  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+    throw new Error("ScrollBox can only have one child.");
   }
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
 
-    this.propsMapper.cleanupAll();
-    this.handlers.unbindAll();
-    this.widget.destroy();
-  }
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
 
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
-    this.handlers.update(props);
+    this.widget.destroy();
   }
 
   render() {
     this.parent?.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
-    ensureNotString(newChild);
+  // #endregion
 
-    if (this.children.count() > 0) {
-      throw new Error("ScrollBox can only have one child.");
-    }
+  // #region Element internal signals
 
-    newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild);
-    this.widget.show_all();
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
   }
+
+  notifyWillUnmount(child: GjsElement): void {
+    this.children.removeChild(child);
+  }
+
+  // #endregion
+
+  // #region Utils for external use
 
   diffProps(
     oldProps: Record<string, any>,
@@ -155,4 +162,6 @@ export class ScrollBoxElement
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import type { ElementMargin, WidgetWithMargin } from "../apply-margin";
 import { applyMargin } from "../apply-margin";
-import type { PropMapper } from "../map-properties";
+import type { PropCaseCollector } from "../element-extenders/map-properties";
 
 export type MarginProps = {
   margin?: ElementMargin;
@@ -13,7 +13,7 @@ export const MarginDataType = DataType.OneOf(
 );
 
 export const createMarginPropMapper = (widget: WidgetWithMargin) => {
-  return (mapper: PropMapper<keyof MarginProps, any>) =>
+  return (mapper: PropCaseCollector<keyof MarginProps, any>) =>
     mapper.margin(MarginDataType, (v = 0) => {
       applyMargin(widget, v);
     });

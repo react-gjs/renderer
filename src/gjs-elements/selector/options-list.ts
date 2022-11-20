@@ -1,5 +1,6 @@
 import GObject from "gi://GObject";
 import Gtk from "gi://Gtk";
+import type { ElementLifecycle } from "../element-extender";
 
 export class OptionsList {
   private listStore = new Gtk.ListStore();
@@ -12,7 +13,7 @@ export class OptionsList {
     value: any;
   }> = [];
 
-  constructor() {
+  constructor(private lifecycle: ElementLifecycle) {
     this.listStore.set_column_types([GObject.TYPE_STRING, GObject.TYPE_INT]);
 
     this.comboBox = new Gtk.ComboBox({
@@ -20,15 +21,19 @@ export class OptionsList {
     });
     this.comboBox.pack_start(this.textRenderer, true);
     this.comboBox.add_attribute(this.textRenderer, "text", 0);
-  }
 
-  getComboBox() {
-    return this.comboBox;
+    lifecycle.beforeDestroy(() => {
+      this.clear();
+    });
   }
 
   clear() {
     this.listStore.clear();
     this.currentOptions = [];
+  }
+
+  getComboBox() {
+    return this.comboBox;
   }
 
   add(label: string, value: any) {

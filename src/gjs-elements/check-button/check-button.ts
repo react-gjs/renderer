@@ -3,10 +3,11 @@ import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
-import type { SyntheticEvent } from "../utils/event-handlers";
-import { EventHandlers } from "../utils/event-handlers";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
+import { EventHandlers } from "../utils/element-extenders/event-handlers";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -19,6 +20,7 @@ export interface CheckButtonProps extends CheckButtonPropsMixin {
   useUnderline?: boolean;
   margin?: ElementMargin;
   active?: boolean;
+  children?: string;
   onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
   onClick?: (event: SyntheticEvent) => void;
   onActivate?: (event: SyntheticEvent) => void;
@@ -32,16 +34,17 @@ export class CheckButtonElement
   implements GjsElement<"CHECK_BUTTON", Gtk.CheckButton>
 {
   readonly kind = "CHECK_BUTTON";
-
-  private parent: GjsElement | null = null;
   widget = new Gtk.CheckButton();
 
+  private parent: GjsElement | null = null;
+
+  private readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.CheckButton,
     CheckButtonProps
-  >(this.widget);
-
-  private readonly propsMapper = createPropMap<CheckButtonProps>(
+  >(this.lifecycle, this.widget);
+  private readonly propsMapper = new PropertyMapper<CheckButtonProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -69,34 +72,35 @@ export class CheckButtonElement
     }));
 
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(child: string | GjsElement): void {
     if (typeof child === "string") {
       this.widget.label = child;
-    } else {
-      child.notifyWillAppendTo(this);
-      this.widget.add(child.widget);
+      this.widget.show_all();
+      return;
     }
-    this.widget.show_all();
+
+    throw new Error("CheckButton cannot have children.");
   }
 
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
-    this.handlers.update(props);
+  insertBefore(): void {
+    throw new Error("CheckButton cannot have children.");
   }
-
-  notifyWillUnmount() {}
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
 
-    this.propsMapper.cleanupAll();
-    this.handlers.unbindAll();
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
+
     this.widget.destroy();
   }
 
@@ -104,9 +108,19 @@ export class CheckButtonElement
     this.parent?.widget.show_all();
   }
 
-  insertBefore(): void {
-    throw new Error("CheckButton can have only one child.");
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
   }
+
+  notifyWillUnmount() {}
+
+  // #endregion
+
+  // #region Utils for external use
 
   diffProps(
     oldProps: Record<string, any>,
@@ -114,4 +128,6 @@ export class CheckButtonElement
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

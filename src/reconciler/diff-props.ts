@@ -1,5 +1,5 @@
-import type { DiffedProps } from "../gjs-elements/utils/map-properties";
-import { UnsetProp } from "../gjs-elements/utils/map-properties";
+import type { DiffedProps } from "../gjs-elements/utils/element-extenders/map-properties";
+import { UnsetProp } from "../gjs-elements/utils/element-extenders/map-properties";
 
 const compareMargins = (oldArray: any[], newArray: any[]) => {
   if (typeof oldArray !== typeof newArray) {

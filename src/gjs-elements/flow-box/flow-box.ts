@@ -4,9 +4,10 @@ import { Orientation, SelectionMode } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
-import { EventHandlers } from "../utils/event-handlers";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import { EventHandlers } from "../utils/element-extenders/event-handlers";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -28,18 +29,22 @@ export interface FlowBoxProps extends FlowBoxPropsMixin {
 
 export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
   readonly kind = "FLOW_BOX";
-
   widget = new Gtk.FlowBox();
-  private parent: GjsElement | null = null;
 
   private children: Array<{
     element: FlowBoxEntryElement;
     isSelected: boolean;
   }> = [];
 
-  private handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(this.widget);
+  private parent: GjsElement | null = null;
 
-  private readonly propMapper = createPropMap<FlowBoxProps>(
+  private readonly lifecycle = new ElementLifecycleController();
+  private handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(
+    this.lifecycle,
+    this.widget
+  );
+  private readonly propMapper = new PropertyMapper<FlowBoxProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -106,11 +111,15 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
     });
 
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(child: GjsElement | string): void {
     if (typeof child === "string") {
@@ -128,26 +137,6 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
         throw new Error("FlowBox can only have FlexBoxEntry as it's children.");
       }
     }
-  }
-
-  notifyWillUnmount(child: GjsElement) {
-    this.children = this.children.filter((c) => c.element !== child);
-  }
-
-  remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
-
-    this.propMapper.cleanupAll();
-    this.handlers.unbindAll();
-    this.widget.destroy();
-  }
-
-  updateProps(props: DiffedProps): void {
-    this.propMapper.update(props);
-  }
-
-  render() {
-    this.parent?.widget.show_all();
   }
 
   insertBefore(newChild: GjsElement, beforeChild: GjsElement): void {
@@ -182,10 +171,40 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
     }
   }
 
+  remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
+
+    this.widget.destroy();
+  }
+
+  render() {
+    this.parent?.widget.show_all();
+  }
+
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
+  }
+
+  notifyWillUnmount(child: GjsElement) {
+    this.children = this.children.filter((c) => c.element !== child);
+  }
+
+  // #endregion
+
+  // #region Utils for external use
+
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

@@ -1,6 +1,7 @@
 import type { AnyDataType, GetDataType } from "dilswer";
 import { createValidator } from "dilswer";
-import { OrderedMap } from "./ordered-map";
+import type { ElementLifecycle } from "../../element-extender";
+import { OrderedMap } from "../ordered-map";
 
 type KeysOf<P> = P extends P ? keyof P : never;
 
@@ -14,7 +15,7 @@ export type UpdateRedirect<P> = {
   instead(propertyName: KeysOf<P>): void;
 };
 
-export type PropMapper<
+export type PropCaseCollector<
   K extends string | symbol | number = string,
   P = {}
 > = Record<
@@ -26,7 +27,7 @@ export type PropMapper<
       allProps: PropsReader<P>,
       redirect: UpdateRedirect<P>
     ) => void | (() => void)
-  ) => PropMapper<K, P>
+  ) => PropCaseCollector<K, P>
 >;
 
 export type DiffedProps = [propName: string, value: any][];
@@ -44,58 +45,76 @@ type MapEntry<P> = {
 
 export const UnsetProp = Symbol("UnsetProp");
 
-export const createPropMap = <P = Record<string, any>>(
-  ...getMaps: Array<(sw: PropMapper<KeysOf<P>, P>) => void>
-) => {
-  const currentProps = {} as any;
-  const propsReader = new Proxy(currentProps, {
+export class PropertyMapper<P = Record<string, any>> {
+  private properties = {} as Record<string | symbol, any>;
+  private map = new OrderedMap<string, MapEntry<P>>();
+
+  currentProps = new Proxy(this.properties, {
     get: (target, prop) => target[prop],
     set: () => {
       throw new Error("These props are read-only.");
     },
-  });
+  }) as PropsReader<P>;
 
-  const map = new OrderedMap<string, MapEntry<P>>();
+  constructor(
+    private element: ElementLifecycle,
+    ...getMaps: Array<(caseCollector: PropCaseCollector<KeysOf<P>, P>) => void>
+  ) {
+    const caseCollector = new Proxy(
+      {},
+      {
+        get: (_, propName: string) => {
+          return (
+            dataType: AnyDataType,
+            callback: (
+              value: GetDataType<AnyDataType>,
+              allProps: PropsReader<P>
+            ) => void | (() => void)
+          ) => {
+            this.map.set(propName, {
+              propName,
+              validate: createValidator(dataType),
+              callback,
+            });
+            return caseCollector;
+          };
+        },
+      }
+    ) as PropCaseCollector<KeysOf<P>, P>;
 
-  const mapper = new Proxy(
-    {},
-    {
-      get: (_, propName: string) => {
-        return (
-          dataType: AnyDataType,
-          callback: (
-            value: GetDataType<AnyDataType>,
-            allProps: PropsReader<P>
-          ) => void | (() => void)
-        ) => {
-          map.set(propName, {
-            propName,
-            validate: createValidator(dataType),
-            callback,
-          });
-          return mapper;
-        };
-      },
+    for (let i = 0; i < getMaps.length; i++) {
+      getMaps[i](caseCollector);
     }
-  ) as PropMapper<KeysOf<P>, P>;
 
-  for (let i = 0; i < getMaps.length; i++) {
-    getMaps[i](mapper);
+    // set default values
+    for (const entry of this.map.values()) {
+      entry.nextCleanup =
+        entry.callback(undefined, this.currentProps, { instead: () => {} }) ??
+        undefined;
+    }
+
+    this.element.onUpdate((props) => {
+      this.update(props);
+    });
+
+    this.element.beforeDestroy(() => {
+      this.cleanupAll();
+    });
   }
 
-  const update = (props: DiffedProps) => {
+  private update(props: DiffedProps) {
     const updated = new Map<string, [MapEntry<P>, any]>();
 
     for (let i = 0; i < props.length; i++) {
       const [propName, value] = props[i];
-      const entry = map.get(propName);
+      const entry = this.map.get(propName);
 
       if (entry) {
         if (value === UnsetProp) {
-          currentProps[propName] = undefined;
+          this.properties[propName] = undefined;
           updated.set(propName, [entry, undefined]);
         } else if (entry.validate(value)) {
-          currentProps[propName] = value;
+          this.properties[propName] = value;
           updated.set(propName, [entry, value]);
         } else {
           console.error(
@@ -113,7 +132,7 @@ export const createPropMap = <P = Record<string, any>>(
       }
 
       entry.nextCleanup =
-        entry.callback(value, propsReader, redirect) ?? undefined;
+        entry.callback(value, this.currentProps, redirect) ?? undefined;
     };
 
     const redirect: UpdateRedirect<P> = {
@@ -121,30 +140,26 @@ export const createPropMap = <P = Record<string, any>>(
         if (updated.has(propName as string)) {
           return; // no-op, mapping function was already called this cycle
         }
-        updateEntry(map.get(propName as string)!, currentProps[propName]);
+        updateEntry(
+          this.map.get(propName as string)!,
+          this.properties[propName as string]
+        );
       },
     };
 
-    for (const propName of map.keys()) {
+    for (const propName of this.map.keys()) {
       const [entry, value] = updated.get(propName) ?? [];
       if (entry) {
         updateEntry(entry, value);
       }
     }
-  };
-
-  // set default values
-  for (const entry of map.values()) {
-    entry.nextCleanup =
-      entry.callback(undefined, propsReader, { instead: () => {} }) ??
-      undefined;
   }
 
-  const cleanupAll = () => {
-    for (const entry of map.values()) {
+  private cleanupAll() {
+    for (const entry of this.map.values()) {
       if (entry.nextCleanup) entry.nextCleanup();
     }
-  };
 
-  return { update, cleanupAll, currentProps: propsReader as PropsReader<P> };
-};
+    this.map.clear();
+  }
+}

@@ -4,10 +4,11 @@ import type { PositionType } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
-import type { SyntheticEvent } from "../utils/event-handlers";
-import { EventHandlers } from "../utils/event-handlers";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
+import { EventHandlers } from "../utils/element-extenders/event-handlers";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -35,15 +36,17 @@ const WidgetDataType = DataType.Custom(
 
 export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   readonly kind = "BUTTON";
-
-  private parent: GjsElement | null = null;
   widget = new Gtk.Button();
 
+  private parent: GjsElement | null = null;
+
+  private readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(
+    this.lifecycle,
     this.widget
   );
-
-  private readonly propsMapper = createPropMap<ButtonProps>(
+  private readonly propsMapper = new PropertyMapper<ButtonProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -74,11 +77,15 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     this.handlers.bind("released", "onReleased");
 
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(child: string | GjsElement): void {
     if (typeof child === "string") {
@@ -93,18 +100,15 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     this.widget.show_all();
   }
 
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
-    this.handlers.update(props);
+  insertBefore(): void {
+    throw new Error("Button can have only one child.");
   }
-
-  notifyWillUnmount() {}
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
 
-    this.propsMapper.cleanupAll();
-    this.handlers.unbindAll();
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
+
     this.widget.destroy();
   }
 
@@ -112,9 +116,19 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     this.parent?.widget.show_all();
   }
 
-  insertBefore(): void {
-    throw new Error("Button can have only one child.");
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
   }
+
+  notifyWillUnmount() {}
+
+  // #endregion
+
+  // #region Utils for external use
 
   diffProps(
     oldProps: Record<string, any>,
@@ -122,4 +136,6 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

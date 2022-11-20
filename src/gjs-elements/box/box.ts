@@ -3,14 +3,15 @@ import Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { ensureNotString } from "../utils/ensure-not-string";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
-import { ChildOrderController } from "../utils/widget-operations/child-order-controller";
 
 type BoxPropsMixin = AlignmentProps & MarginProps;
 
@@ -22,12 +23,17 @@ export interface BoxProps extends BoxPropsMixin {
 
 export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
   readonly kind = "BOX";
+  widget = new Gtk.Box();
 
   private parent: GjsElement | null = null;
-  widget = new Gtk.Box();
-  private children = new ChildOrderController(Gtk.Box, this.widget);
 
-  private readonly propsMapper = createPropMap<BoxProps>(
+  private readonly lifecycle = new ElementLifecycleController();
+  private readonly children = new ChildOrderController(
+    this.lifecycle,
+    this.widget
+  );
+  private readonly propsMapper = new PropertyMapper<BoxProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -51,11 +57,15 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
 
   constructor(props: any) {
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(child: GjsElement | string): void {
     ensureNotString(child);
@@ -63,25 +73,6 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
     this.widget.show_all();
-  }
-
-  notifyWillUnmount(child: GjsElement): void {
-    this.children.removeChild(child);
-  }
-
-  remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
-
-    this.propsMapper.cleanupAll();
-    this.widget.destroy();
-  }
-
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
-  }
-
-  render() {
-    this.parent?.widget.show_all();
   }
 
   insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
@@ -92,10 +83,40 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
     this.widget.show_all();
   }
 
+  remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
+
+    this.widget.destroy();
+  }
+
+  render() {
+    this.parent?.widget.show_all();
+  }
+
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
+  }
+
+  notifyWillUnmount(child: GjsElement): void {
+    this.children.removeChild(child);
+  }
+
+  // #endregion
+
+  // #region Utils for external use
+
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

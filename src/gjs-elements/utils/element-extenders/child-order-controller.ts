@@ -1,11 +1,12 @@
 import type Gtk from "gi://Gtk";
+import type { ElementLifecycle } from "../../element-extender";
 import type { GjsElement } from "../../gjs-element";
 
 export class ChildOrderController {
   private children: GjsElement[] = [];
 
   constructor(
-    private containerConstructor: new () => Gtk.Container,
+    private element: ElementLifecycle,
     private container: Gtk.Container,
     customAddMethod?: (child: GjsElement) => void
   ) {

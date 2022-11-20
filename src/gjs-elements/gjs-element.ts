@@ -1,7 +1,7 @@
 import type Gtk from "gi://Gtk";
 import type { GjsElementTypes } from "./gjs-element-types";
-import type { DiffedProps } from "./utils/map-properties";
-import type { SyntheticEmitter } from "./utils/synthetic-emitter";
+import type { DiffedProps } from "./utils/element-extenders/map-properties";
+import type { SyntheticEmitter } from "./utils/element-extenders/synthetic-emitter";
 
 export interface GjsElement<
   K extends GjsElementTypes | "APPLICATION" = GjsElementTypes,

@@ -3,10 +3,14 @@ import type Gtk from "gi://Gtk";
 import { Align } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
-import type { SyntheticEvent } from "../utils/event-handlers";
-import { EventHandlers, EventNoop } from "../utils/event-handlers";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
+import {
+  EventHandlers,
+  EventNoop,
+} from "../utils/element-extenders/event-handlers";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -46,14 +50,16 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
 
   private parent: GjsElement | null = null;
 
-  private optionsList = new OptionsList();
+  private readonly lifecycle = new ElementLifecycleController();
+  private readonly optionsList = new OptionsList(this.lifecycle);
   widget = this.optionsList.getComboBox();
-
   private readonly handlers = new EventHandlers<Gtk.ComboBox, SelectorProps>(
+    this.lifecycle,
     this.widget
   );
 
-  private readonly propsMapper = createPropMap<SelectorProps>(
+  private readonly propsMapper = new PropertyMapper<SelectorProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget, { v: Align.START }),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -92,6 +98,8 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
     });
 
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
   private getCurrentActiveOption(): { index: number; value?: any } {
@@ -104,26 +112,25 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
     return { index: -1 };
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(): void {
     throw new Error("Selector does not support children.");
   }
 
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
-    this.handlers.update(props);
+  insertBefore(): void {
+    throw new Error("Switch does not support children.");
   }
-
-  notifyWillUnmount() {}
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
 
-    this.propsMapper.cleanupAll();
-    this.handlers.unbindAll();
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
+
     this.widget.destroy();
   }
 
@@ -131,9 +138,19 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
     this.parent?.widget.show_all();
   }
 
-  insertBefore(): void {
-    throw new Error("Switch does not support children.");
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
   }
+
+  notifyWillUnmount() {}
+
+  // #endregion
+
+  // #region Utils for external use
 
   diffProps(
     oldProps: Record<string, any>,
@@ -151,4 +168,6 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
 
     return diffProps(restOldProps, rest, true).concat([]);
   }
+
+  // #endregion
 }

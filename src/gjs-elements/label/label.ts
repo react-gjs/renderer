@@ -5,13 +5,13 @@ import type { EllipsizeMode, Justification, WrapMode } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
-import type { SyntheticEmitter } from "../utils/synthetic-emitter";
 
 type LabelPropsMixin = AlignmentProps & MarginProps;
 
@@ -28,11 +28,13 @@ export interface LabelProps extends LabelPropsMixin {
 
 export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   readonly kind = "LABEL";
-
-  private parent: GjsElement | null = null;
   widget = new Gtk.Label();
 
-  private readonly propsMapper = createPropMap<LabelProps>(
+  private parent: GjsElement | null = null;
+
+  private readonly lifecycle = new ElementLifecycleController();
+  private readonly propsMapper = new PropertyMapper<LabelProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -71,12 +73,15 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   constructor(props: any) {
     this.updateProps(props);
-  }
-  emitter?: SyntheticEmitter<any> | undefined;
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
+
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
+  }
+
+  // #region This widget direct mutations
 
   appendChild(child: GjsElement | string | string[]): void {
     if (typeof child === "string") {
@@ -98,26 +103,35 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
     }
   }
 
-  notifyWillUnmount() {}
+  insertBefore(): void {
+    throw new Error("Label cannot have children.");
+  }
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
 
-    this.propsMapper.cleanupAll();
-    this.widget.destroy();
-  }
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
 
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
+    this.widget.destroy();
   }
 
   render() {
     this.parent?.widget.show_all();
   }
 
-  insertBefore(): void {
-    throw new Error("Label cannot have children.");
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
   }
+
+  notifyWillUnmount() {}
+
+  // #endregion
+
+  // #region Utils for external use
 
   diffProps(
     oldProps: Record<string, any>,
@@ -125,4 +139,6 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

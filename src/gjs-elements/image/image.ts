@@ -5,8 +5,9 @@ import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -39,11 +40,13 @@ const DEFAULT_ICON_SIZE = 32;
 
 export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
   readonly kind = "IMAGE";
-
-  private parent: GjsElement | null = null;
   widget = new Gtk.Image();
 
-  private readonly propsMapper = createPropMap<ImageProps>(
+  private parent: GjsElement | null = null;
+
+  private readonly lifecycle = new ElementLifecycleController();
+  private readonly propsMapper = new PropertyMapper<ImageProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -94,6 +97,8 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
   constructor(props: any) {
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
   private setSrcFromString(src: string) {
@@ -104,34 +109,45 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
     }
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(child: GjsElement | string): void {
     throw new Error("Image cannot have children.");
   }
 
-  notifyWillUnmount() {}
+  insertBefore(): void {
+    throw new Error("Image cannot have children.");
+  }
 
   remove(parent: GjsElement): void {
     parent.notifyWillUnmount(this);
 
-    this.propsMapper.cleanupAll();
-    this.widget.destroy();
-  }
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
 
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
+    this.widget.destroy();
   }
 
   render() {
     this.parent?.widget.show_all();
   }
 
-  insertBefore(): void {
-    throw new Error("Image cannot have children.");
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
   }
+
+  notifyWillUnmount() {}
+
+  // #endregion
+
+  // #region Utils for external use
 
   diffProps(
     oldProps: Record<string, any>,
@@ -139,4 +155,6 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

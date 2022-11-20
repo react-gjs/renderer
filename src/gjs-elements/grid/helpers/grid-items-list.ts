@@ -1,3 +1,4 @@
+import type { ElementLifecycle } from "../../element-extender";
 import type { GjsElement } from "../../gjs-element";
 import { Dispatcher } from "../../utils/dispatcher";
 import type { GridItemElement } from "../grid-item";
@@ -21,12 +22,15 @@ export class GridItemsList {
   private items: Array<ItemEntry> = [];
 
   constructor(
+    private lifecycle: ElementLifecycle,
     private onChildChangeInterface: {
       onChildChange(params: ChildrenInfo): void;
       onChildAdded(params: ChildrenInfo): void;
       onChildRemoved(params: GridItemElement): void;
     }
-  ) {}
+  ) {
+    lifecycle.beforeDestroy(() => this.cleanup());
+  }
 
   getAll(): ChildrenInfo[] {
     return [...this.items];
@@ -56,6 +60,7 @@ export class GridItemsList {
       this.items.splice(atIndex, 0, childEntry);
     }
 
+    // Subscribe to the child prop changes
     childEntry.listeners.push(
       child.emitter.on("columnSpanChanged", (newColSpan) => {
         childEntry.columnSpan = newColSpan;
@@ -72,6 +77,7 @@ export class GridItemsList {
       child.emitter.on("itemDestroyed", () => {
         this.items = this.items.filter((item) => item.id !== id);
         childEntry.dispatcher.cancelPreviousDispatch();
+        childEntry.listeners.forEach((listener) => listener.remove());
         this.onChildChangeInterface.onChildRemoved(child);
       })
     );
@@ -79,7 +85,7 @@ export class GridItemsList {
     this.onChildChangeInterface.onChildAdded(childEntry);
   }
 
-  cleanup() {
+  private cleanup() {
     this.items.forEach((item) => {
       item.listeners.forEach((listener) => listener.remove());
       item.dispatcher.cancelPreviousDispatch();

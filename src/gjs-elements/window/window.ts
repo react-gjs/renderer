@@ -2,12 +2,13 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
+import { EventHandlers } from "../utils/element-extenders/event-handlers";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { ensureNotString } from "../utils/ensure-not-string";
-import type { SyntheticEvent } from "../utils/event-handlers";
-import { EventHandlers } from "../utils/event-handlers";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
-import { ChildOrderController } from "../utils/widget-operations/child-order-controller";
 
 export type WindowProps = {
   title?: string;
@@ -23,24 +24,29 @@ export type WindowProps = {
 
 export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   readonly kind = "WINDOW";
+  widget = new Gtk.Window();
 
   private parent: GjsElement | null = null;
-  widget = new Gtk.Window();
-  private children = new ChildOrderController(Gtk.Window, this.widget);
 
-  private readonly handlers = new EventHandlers(this.widget);
-
-  private readonly propsMapper = createPropMap<WindowProps>((props) =>
-    props
-      .title(DataType.String, (v = "") => {
-        this.widget.title = v;
-      })
-      .defaultWidth(DataType.Number, (v = -1) => {
-        this.widget.default_width = v;
-      })
-      .defaultHeight(DataType.Number, (v = -1) => {
-        this.widget.default_height = v;
-      })
+  private readonly lifecycle = new ElementLifecycleController();
+  private readonly children = new ChildOrderController(
+    this.lifecycle,
+    this.widget
+  );
+  private readonly handlers = new EventHandlers(this.lifecycle, this.widget);
+  private readonly propsMapper = new PropertyMapper<WindowProps>(
+    this.lifecycle,
+    (props) =>
+      props
+        .title(DataType.String, (v = "") => {
+          this.widget.title = v;
+        })
+        .defaultWidth(DataType.Number, (v = -1) => {
+          this.widget.default_width = v;
+        })
+        .defaultHeight(DataType.Number, (v = -1) => {
+          this.widget.default_height = v;
+        })
   );
 
   constructor(props: any) {
@@ -55,38 +61,21 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     }));
 
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(child: string | GjsElement): void {
     ensureNotString(child);
 
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
-  }
-
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
-    this.handlers.update(props);
-  }
-
-  notifyWillUnmount(child: GjsElement): void {
-    this.children.removeChild(child);
-  }
-
-  remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
-
-    this.propsMapper.cleanupAll();
-    this.handlers.unbindAll();
-    this.widget.destroy();
-  }
-
-  render(): void {
-    this.widget.show_all();
   }
 
   insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
@@ -97,10 +86,40 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     this.widget.show_all();
   }
 
+  remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
+
+    this.widget.destroy();
+  }
+
+  render(): void {
+    this.widget.show_all();
+  }
+
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
+  }
+
+  notifyWillUnmount(child: GjsElement): void {
+    this.children.removeChild(child);
+  }
+
+  // #endregion
+
+  // #region Utils for external use
+
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

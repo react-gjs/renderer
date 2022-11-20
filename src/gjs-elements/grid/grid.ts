@@ -3,14 +3,14 @@ import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
+import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { ensureNotString } from "../utils/ensure-not-string";
-import type { DiffedProps } from "../utils/map-properties";
-import { createPropMap } from "../utils/map-properties";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
-import type { SyntheticEmitter } from "../utils/synthetic-emitter";
 import { GridItemElement } from "./grid-item";
 import { GridItemsList } from "./helpers/grid-items-list";
 import { GridMatrix } from "./helpers/grid-matrix";
@@ -37,11 +37,10 @@ export interface GridProps extends GridPropsMixin {
 
 export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   readonly kind = "GRID";
-
-  private parent: GjsElement | null = null;
   widget = new Gtk.Grid();
 
-  private children = new GridItemsList(this);
+  private parent: GjsElement | null = null;
+
   private columns = 1;
 
   /**
@@ -50,7 +49,10 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
    */
   private previousColumnCount = 0;
 
-  private readonly propsMapper = createPropMap<GridProps>(
+  private readonly lifecycle = new ElementLifecycleController();
+  private readonly children = new GridItemsList(this.lifecycle, this);
+  private readonly propsMapper = new PropertyMapper<GridProps>(
+    this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
@@ -75,8 +77,9 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   constructor(props: any) {
     this.updateProps(props);
+
+    this.lifecycle.emitLifecycleEventAfterCreate();
   }
-  emitter?: SyntheticEmitter<any> | undefined;
 
   private rearrangeChildren() {
     for (let i = this.previousColumnCount - 1; i >= 0; i--) {
@@ -132,9 +135,11 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     this.rearrangeChildren();
   }
 
-  notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+  updateProps(props: DiffedProps): void {
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
+
+  // #region This widget direct mutations
 
   appendChild(child: GjsElement | string): void {
     ensureNotString(child);
@@ -143,24 +148,6 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
       child.notifyWillAppendTo(this);
       this.children.add(child);
     }
-  }
-
-  notifyWillUnmount() {}
-
-  remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
-
-    this.children.cleanup();
-    this.propsMapper.cleanupAll();
-    this.widget.destroy();
-  }
-
-  updateProps(props: DiffedProps): void {
-    this.propsMapper.update(props);
-  }
-
-  render() {
-    this.parent?.widget.show_all();
   }
 
   insertBefore(newChild: string | GjsElement, beforeChild: GjsElement): void {
@@ -178,10 +165,38 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     }
   }
 
+  remove(parent: GjsElement): void {
+    parent.notifyWillUnmount(this);
+
+    this.lifecycle.emitLifecycleEventBeforeDestroy();
+
+    this.widget.destroy();
+  }
+
+  render() {
+    this.parent?.widget.show_all();
+  }
+
+  // #endregion
+
+  // #region Element internal signals
+
+  notifyWillAppendTo(parent: GjsElement): void {
+    this.parent = parent;
+  }
+
+  notifyWillUnmount() {}
+
+  // #endregion
+
+  // #region Utils for external use
+
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
+
+  // #endregion
 }

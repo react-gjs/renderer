@@ -1,4 +1,5 @@
 import type Gtk from "gi://Gtk";
+import type { ElementLifecycle } from "../../element-extender";
 import type { DiffedProps } from "./map-properties";
 import { UnsetProp } from "./map-properties";
 
@@ -100,7 +101,35 @@ export class EventHandlers<
   private bindEvents = new Map<string, EventBind>();
   private internalBinds: Array<EventBind> = [];
 
-  constructor(private widget: W) {}
+  constructor(private element: ElementLifecycle, private widget: W) {
+    this.element.onUpdate((props) => this.update(props));
+    this.element.beforeDestroy(() => {
+      this.unbindAll();
+    });
+  }
+
+  private update(props: DiffedProps) {
+    for (let i = 0; i < props.length; i++) {
+      const [propName, propValue] = props[i];
+      const bind = this.bindEvents.get(propName);
+
+      if (bind) {
+        if (typeof propValue === "function") {
+          bind.updateHandler(propValue);
+        }
+        if (propValue === UnsetProp) {
+          bind.updateHandler();
+        }
+      }
+    }
+  }
+
+  private unbindAll() {
+    this.bindEvents.forEach((bind) => bind.remove());
+    this.internalBinds.forEach((bind) => bind.remove());
+    this.bindEvents.clear();
+    this.internalBinds = [];
+  }
 
   bindInternal<K extends string, A extends any[]>(
     signal: K,
@@ -135,27 +164,6 @@ export class EventHandlers<
       propName as string,
       new EventBind(this.widget, signal, getArgs)
     );
-  }
-
-  update(props: DiffedProps) {
-    for (let i = 0; i < props.length; i++) {
-      const [propName, propValue] = props[i];
-      const bind = this.bindEvents.get(propName);
-
-      if (bind) {
-        if (typeof propValue === "function") {
-          bind.updateHandler(propValue);
-        }
-        if (propValue === UnsetProp) {
-          bind.updateHandler();
-        }
-      }
-    }
-  }
-
-  unbindAll() {
-    this.bindEvents.forEach((bind) => bind.remove());
-    this.internalBinds.forEach((bind) => bind.remove());
   }
 }
 
