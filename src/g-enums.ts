@@ -30,3 +30,12 @@ export const SelectionMode = Gtk.SelectionMode;
 
 export type ImageType = Gtk.ImageType;
 export const ImageType = Gtk.ImageType;
+
+export type CornerType = Gtk.CornerType;
+export const CornerType = Gtk.CornerType;
+
+export type PolicyType = Gtk.PolicyType;
+export const PolicyType = Gtk.PolicyType;
+
+export type ShadowType = Gtk.ShadowType;
+export const ShadowType = Gtk.ShadowType;

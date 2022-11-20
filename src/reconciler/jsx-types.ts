@@ -25,6 +25,10 @@ import type {
   PressableProps,
 } from "../gjs-elements/pressable/pressable";
 import type {
+  ScrollBoxElement,
+  ScrollBoxProps,
+} from "../gjs-elements/scroll-box/scroll-box";
+import type {
   SelectorElement,
   SelectorProps,
 } from "../gjs-elements/selector/selector";
@@ -83,6 +87,7 @@ declare global {
         LinkButtonElement
       >;
       PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
+      SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
       SWITCH: IntrinsicComponent<SwitchProps, SwitchElement>;
       TEXT_AREA: IntrinsicComponent<TextAreaProps, TextAreaElement>;

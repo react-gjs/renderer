@@ -12,6 +12,10 @@ export class ChildOrderController {
     if (customAddMethod) this.addChild = customAddMethod;
   }
 
+  count() {
+    return this.children.length;
+  }
+
   addChild = (child: GjsElement) => {
     this.container.add(child.widget);
     this.children.push(child);
