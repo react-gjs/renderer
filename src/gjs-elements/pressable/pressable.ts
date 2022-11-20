@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import type Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
+import type React from "react";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
@@ -28,6 +29,7 @@ export interface PressableProps extends PressablePropsMixin {
    * any mouse events.
    */
   interceptChildEvents?: boolean;
+  children?: React.ReactElement;
 }
 
 export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {

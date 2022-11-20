@@ -2,8 +2,6 @@
 
 ## High Priority
 
-- ScrolledWindow
-- Popover
 - RadioButton
 - SpinButton (number input)
 
