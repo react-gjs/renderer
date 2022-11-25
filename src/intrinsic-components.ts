@@ -27,6 +27,8 @@ export const Pressable = IntrinsicElem("PRESSABLE");
 export const ScrollBox = IntrinsicElem("SCROLL_BOX");
 /** Built on top of the Gtk.ComboBox widget. */
 export const Selector = IntrinsicElem("SELECTOR");
+/** Equivalent to the Gtk.Separator widget. */
+export const Separator = IntrinsicElem("SEPARATOR");
 /** Equivalent to the Gtk.Switch widget. */
 export const Switch = IntrinsicElem("SWITCH");
 /** Equivalent to the Gtk.TextView widget. */

@@ -35,6 +35,10 @@ import type {
   SelectorElement,
   SelectorProps,
 } from "../gjs-elements/selector/selector";
+import type {
+  SeparatorElement,
+  SeparatorProps,
+} from "../gjs-elements/separator/separator";
 import type { SwitchElement, SwitchProps } from "../gjs-elements/switch/switch";
 import type {
   TextAreaElement,
@@ -86,6 +90,7 @@ declare global {
       PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
       SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
+      SEPARATOR: IntrinsicComponent<SeparatorProps, SeparatorElement>;
       SWITCH: IntrinsicComponent<SwitchProps, SwitchElement>;
       TEXT_AREA: IntrinsicComponent<TextAreaProps, TextAreaElement>;
       TEXT_ENTRY: IntrinsicComponent<TextEntryProps, TextEntryElement>;
