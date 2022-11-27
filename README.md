@@ -14,12 +14,26 @@ _This is still a work in progress, bugs and missing features are expected._
 - **Image** - build on top of Gtk.Image
 - **Label** - build on top of Gtk.Label
 - **LinkButton** - build on top of Gtk.LinkButton
+- **Popover** - build on top of Gtk.Popover
 - **Pressable** - build on top of Gtk.EventBox
+- **ScrollBox** - build on top of Gtk.ScrolledWindow
 - **Selector** - build on top of Gtk.ComboBox
+- **Separator** - build on top of Gtk.Separator
 - **Switch** - build on top of Gtk.Switch
-- **TextEntry** - build on top of Gtk.Entry
 - **TextArea** - build on top of Gtk.TextView
+- **TextEntry** - build on top of Gtk.Entry
 - **Window** - build on top of Gtk.Window
+- **Markup** - a special component for Gtk.Label allowing to use Pango markup
+  - **Big** - A markup component for the Pango `<big>` tag
+  - **Bold** - A markup component for the Pango `<b>` tag
+  - **Italic** - A markup component for the Pango `<i>` tag
+  - **Monospace** - A markup component for the Pango `<tt>` tag
+  - **Small** - A markup component for the Pango `<small>` tag
+  - **Span** - A markup component for the Pango `<span>` tag
+  - **Strike** - A markup component for the Pango `<s>` tag
+  - **Sub** - A markup component for the Pango `<sub>` tag
+  - **Sup** - A markup component for the Pango `<sup>` tag
+  - **Underline** - A markup component for the Pango `<u>` tag
 
 ## Usage
 
