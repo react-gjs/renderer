@@ -22,7 +22,7 @@
     "email": ""
   },
   "dependencies": {
-    "dilswer": "^1.3.0",
+    "dilswer": "latest",
     "react-reconciler": "^0.29.0"
   },
   "devDependencies": {

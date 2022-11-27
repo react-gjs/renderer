@@ -12,6 +12,18 @@ import { GridItemElement } from "../gjs-elements/grid/grid-item";
 import { ImageElement } from "../gjs-elements/image/image";
 import { LabelElement } from "../gjs-elements/label/label";
 import { LinkButtonElement } from "../gjs-elements/link-button/link-button";
+import { MarkupElement } from "../gjs-elements/markup/markup";
+import { MBoldElement } from "../gjs-elements/markup/markup-elements/b";
+import { MBigElement } from "../gjs-elements/markup/markup-elements/big";
+import { MItalicElement } from "../gjs-elements/markup/markup-elements/i";
+import { MStrikethroughElement } from "../gjs-elements/markup/markup-elements/s";
+import { MSmallElement } from "../gjs-elements/markup/markup-elements/small";
+import { MSpanElement } from "../gjs-elements/markup/markup-elements/span";
+import { MSubElement } from "../gjs-elements/markup/markup-elements/sub";
+import { MSupElement } from "../gjs-elements/markup/markup-elements/sup";
+import { MMonospaceElement } from "../gjs-elements/markup/markup-elements/tt";
+import { MUnderlineElement } from "../gjs-elements/markup/markup-elements/u";
+import { TextNode } from "../gjs-elements/markup/text-node";
 import { PopoverElement } from "../gjs-elements/popover/popover";
 import { PopoverContentElement } from "../gjs-elements/popover/popover-content";
 import { PopoverTargetElement } from "../gjs-elements/popover/popover-target";
@@ -36,6 +48,17 @@ GjsElementManager.register("GRID_ITEM", GridItemElement);
 GjsElementManager.register("IMAGE", ImageElement);
 GjsElementManager.register("LABEL", LabelElement);
 GjsElementManager.register("LINK_BUTTON", LinkButtonElement);
+GjsElementManager.register("MARKUP", MarkupElement);
+GjsElementManager.register("M_BIG", MBigElement);
+GjsElementManager.register("M_BOLD", MBoldElement);
+GjsElementManager.register("M_ITALIC", MItalicElement);
+GjsElementManager.register("M_MONOSPACE", MMonospaceElement);
+GjsElementManager.register("M_SMALL", MSmallElement);
+GjsElementManager.register("M_SPAN", MSpanElement);
+GjsElementManager.register("M_STRIKETHROUGH", MStrikethroughElement);
+GjsElementManager.register("M_SUBSCRIPT", MSubElement);
+GjsElementManager.register("M_SUPERSCRIPT", MSupElement);
+GjsElementManager.register("M_UNDERLINE", MUnderlineElement);
 GjsElementManager.register("POPOVER", PopoverElement);
 GjsElementManager.register("POPOVER_CONTENT", PopoverContentElement);
 GjsElementManager.register("POPOVER_TARGET", PopoverTargetElement);
@@ -48,8 +71,12 @@ GjsElementManager.register("TEXT_AREA", TextAreaElement);
 GjsElementManager.register("TEXT_ENTRY", TextEntryElement);
 GjsElementManager.register("WINDOW", WindowElement);
 
-const rootHostContext = {};
-const childHostContext = {};
+type HostContext = {
+  isInTextContext: boolean;
+};
+
+const rootHostContext: HostContext = { isInTextContext: false };
+const childHostContext: HostContext = { isInTextContext: false };
 
 export const GjsRenderer = Reconciler({
   isPrimaryRenderer: true,
@@ -98,15 +125,26 @@ export const GjsRenderer = Reconciler({
 
     return GjsElementManager.create(type, diffedProps);
   },
-  createTextInstance(text, rootContainer, hostContext, internalHandle) {
-    throw new Error("Text Instances are not supported");
+  createTextInstance(
+    text,
+    rootContainer,
+    hostContext: HostContext,
+    internalHandle
+  ) {
+    if (!hostContext.isInTextContext) {
+      throw new Error("Text Instances are not supported");
+    }
+
+    return new TextNode(text);
   },
   detachDeletedInstance(node) {},
   finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
     return true;
   },
-  getChildHostContext(parentHostContext, type, rootContainer) {
-    return childHostContext;
+  getChildHostContext(parentHostContext, type, rootContainer): HostContext {
+    return {
+      isInTextContext: type === "LABEL" || type.startsWith("M_"),
+    };
   },
   getCurrentEventPriority() {
     return DefaultEventPriority;
@@ -142,12 +180,13 @@ export const GjsRenderer = Reconciler({
   prepareScopeUpdate(scopeInstance, instance) {},
   scheduleTimeout: setTimeout,
   shouldSetTextContent(type: any, props: any) {
-    const children = props.children;
-    return (
-      typeof children === "string" ||
-      (Array.isArray(children) &&
-        children.every((child) => typeof child === "string"))
-    );
+    // const children = props.children;
+    // return (
+    //   typeof children === "string" ||
+    //   (Array.isArray(children) &&
+    //     children.every((child) => typeof child === "string"))
+    // );
+    return false;
   },
   commitUpdate(
     instance: any,
@@ -166,6 +205,7 @@ export const GjsRenderer = Reconciler({
   removeChild(parentInstance: any, child: any) {
     if (GjsElementManager.isGjsElement(child)) {
       child.remove(parentInstance);
+      parentInstance.render();
     }
   },
   removeChildFromContainer(container: any, child: any) {

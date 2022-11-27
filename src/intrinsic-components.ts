@@ -14,6 +14,7 @@ export const FlowBox = IntrinsicElem("FLOW_BOX");
 export const FlowBoxEntry = IntrinsicElem("FLOW_BOX_ENTRY");
 /** Equivalent to the Gtk.Grid widget. */
 export const Grid = IntrinsicElem("GRID");
+/** A component that must wrap each child of a `<Grid />`. */
 export const GridItem = IntrinsicElem("GRID_ITEM");
 /** Equivalent to the Gtk.Button widget. */
 export const Label = IntrinsicElem("LABEL");
@@ -39,3 +40,31 @@ export const TextInput = IntrinsicElem("TEXT_ENTRY");
 export const Window = IntrinsicElem("WINDOW");
 
 export { Popover } from "./gjs-elements/popover/component";
+
+// #region Markup
+
+/**
+ * Equivalent to the Gtk.Label widget. Allows to use a Pango
+ * Markup syntax for displaying text.
+ */
+export const Markup = IntrinsicElem("MARKUP");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Span = IntrinsicElem("M_SPAN");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Big = IntrinsicElem("M_BIG");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Bold = IntrinsicElem("M_BOLD");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Italic = IntrinsicElem("M_ITALIC");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Monospace = IntrinsicElem("M_MONOSPACE");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Small = IntrinsicElem("M_SMALL");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Strike = IntrinsicElem("M_STRIKETHROUGH");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Sub = IntrinsicElem("M_SUBSCRIPT");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Sup = IntrinsicElem("M_SUPERSCRIPT");
+/** A Markup element. Must be used inside a `<Markup />`. */
+export const Underline = IntrinsicElem("M_UNDERLINE");

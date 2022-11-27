@@ -23,6 +23,17 @@ import type {
   LinkButtonElement,
   LinkButtonProps,
 } from "../gjs-elements/link-button/link-button";
+import type { MarkupElement, MarkupProps } from "../gjs-elements/markup/markup";
+import type { MBoldProps } from "../gjs-elements/markup/markup-elements/b";
+import type { MBigProps } from "../gjs-elements/markup/markup-elements/big";
+import type { MItalicProps } from "../gjs-elements/markup/markup-elements/i";
+import type { MStrikethroughProps } from "../gjs-elements/markup/markup-elements/s";
+import type { MSmallProps } from "../gjs-elements/markup/markup-elements/small";
+import type { MSpanProps } from "../gjs-elements/markup/markup-elements/span";
+import type { MSubProps } from "../gjs-elements/markup/markup-elements/sub";
+import type { MSupProps } from "../gjs-elements/markup/markup-elements/sup";
+import type { MMonospaceProps } from "../gjs-elements/markup/markup-elements/tt";
+import type { MUnderlineProps } from "../gjs-elements/markup/markup-elements/u";
 import type {
   PressableElement,
   PressableProps,
@@ -87,6 +98,17 @@ declare global {
         LabelElement
       >;
       LINK_BUTTON: IntrinsicComponent<LinkButtonProps, LinkButtonElement>;
+      MARKUP: IntrinsicComponent<MarkupProps, MarkupElement>;
+      M_BIG: MBigProps;
+      M_BOLD: MBoldProps;
+      M_ITALIC: MItalicProps;
+      M_MONOSPACE: MMonospaceProps;
+      M_SMALL: MSmallProps;
+      M_SPAN: MSpanProps;
+      M_STRIKETHROUGH: MStrikethroughProps;
+      M_SUBSCRIPT: MSubProps;
+      M_SUPERSCRIPT: MSupProps;
+      M_UNDERLINE: MUnderlineProps;
       PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
       SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
