@@ -13,6 +13,7 @@ import { createAlignmentPropMapper } from "../utils/property-maps-factories/crea
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import type { BaseMarkupElement } from "./markup-elem";
+import type { TextNode } from "./text-node";
 import { isMarkupElement } from "./utils/is-markup-elements";
 
 type MarkupPropsMixin = AlignmentProps & MarginProps;
@@ -80,12 +81,8 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string | string[]): void {
-    if (
-      typeof child !== "object" ||
-      Array.isArray(child) ||
-      !isMarkupElement(child)
-    ) {
+  appendChild(child: GjsElement | TextNode): void {
+    if (child.kind === "TEXT_NODE" || !isMarkupElement(child)) {
       throw new Error(
         "Markdown root element can only have other markdown elements, like <span />, <i />, etc."
       );
@@ -95,14 +92,10 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   }
 
   insertBefore(
-    child: GjsElement | string | string[],
-    beforeChild: GjsElement | string | string[]
+    child: GjsElement | TextNode,
+    beforeChild: GjsElement | TextNode
   ): void {
-    if (
-      typeof child !== "object" ||
-      Array.isArray(child) ||
-      !isMarkupElement(child)
-    ) {
+    if (child.kind === "TEXT_NODE" || !isMarkupElement(child)) {
       throw new Error(
         "Markdown root element can only have other markdown elements, like <span />, <i />, etc."
       );

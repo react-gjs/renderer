@@ -1,5 +1,6 @@
 import type Gtk from "gi://Gtk";
 import type { GjsElementTypes } from "./gjs-element-types";
+import type { TextNode } from "./markup/text-node";
 import type { DiffedProps } from "./utils/element-extenders/map-properties";
 import type { SyntheticEmitter } from "./utils/element-extenders/synthetic-emitter";
 
@@ -31,7 +32,7 @@ export interface GjsElement<
    * This function is called by the React Reconciler when a new
    * element instance is to be added to this element.
    */
-  appendChild(child: GjsElement | string): void;
+  appendChild(child: GjsElement | TextNode): void;
   /**
    * This function is called by the React Reconciler when the
    * React provided props are updated.
@@ -39,7 +40,10 @@ export interface GjsElement<
    * Props are already diffed against the props from the previous
    * render cycle.
    */
-  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void;
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement | TextNode
+  ): void;
   updateProps(props: DiffedProps): void;
   /**
    * This function is called by the React Reconciler when the

@@ -4,6 +4,7 @@ import Gtk from "gi://Gtk";
 import type React from "react";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import type { TextNode } from "../markup/text-node";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
@@ -77,7 +78,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | TextNode): void {
     ensureNotString(child);
 
     child.notifyWillAppendTo(this);
@@ -85,7 +86,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotString(newChild);
 
     newChild.notifyWillAppendTo(this);

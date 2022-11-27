@@ -3,6 +3,7 @@ import type { BaselinePosition, Orientation } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import type { TextNode } from "../markup/text-node";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { ensureNotString } from "../utils/ensure-not-string";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -46,7 +47,7 @@ export class PopoverTargetElement
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | TextNode): void {
     ensureNotString(child);
 
     if (this.childElement != null) {
@@ -58,7 +59,7 @@ export class PopoverTargetElement
     }
   }
 
-  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     throw new Error("PopoverTarget can only have one child.");
   }
 

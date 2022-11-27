@@ -4,6 +4,7 @@ import { Orientation, SelectionMode } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import type { TextNode } from "../markup/text-node";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
@@ -121,7 +122,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | TextNode): void {
     if (typeof child === "string") {
       throw new Error("Box can only have other elements as it's children.");
     } else {

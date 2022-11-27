@@ -4,6 +4,7 @@ import type React from "react";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import type { TextNode } from "../markup/text-node";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
@@ -69,7 +70,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | TextNode): void {
     ensureNotString(child);
 
     if (this.childElement != null) {

@@ -46,7 +46,7 @@ export class MSpanElement {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string | string[]): void {
+  appendChild(child: GjsElement | TextNode): void {
     if (!isMarkupElement(child)) {
       throw new Error(
         "Markdown elements can only have other markdown elements or strings as children."
@@ -57,8 +57,8 @@ export class MSpanElement {
   }
 
   insertBefore(
-    child: GjsElement | string | string[],
-    beforeChild: GjsElement | string | string[]
+    child: GjsElement | TextNode,
+    beforeChild: GjsElement | TextNode
   ): void {
     if (!isMarkupElement(child)) {
       throw new Error(

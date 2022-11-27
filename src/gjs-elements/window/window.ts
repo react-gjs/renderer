@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import type { TextNode } from "../markup/text-node";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
@@ -71,14 +72,14 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
   // #region This widget direct mutations
 
-  appendChild(child: string | GjsElement): void {
+  appendChild(child: GjsElement | TextNode): void {
     ensureNotString(child);
 
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
   }
 
-  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotString(newChild);
 
     newChild.notifyWillAppendTo(this);

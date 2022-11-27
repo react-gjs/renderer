@@ -3,6 +3,7 @@ import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import type { TextNode } from "../markup/text-node";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
@@ -141,7 +142,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | TextNode): void {
     ensureNotString(child);
 
     if (GjsElementManager.isGjsElementOfKind(child, GridItemElement)) {
@@ -150,7 +151,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     }
   }
 
-  insertBefore(newChild: string | GjsElement, beforeChild: GjsElement): void {
+  insertBefore(newChild: TextNode | GjsElement, beforeChild: GjsElement): void {
     ensureNotString(newChild);
 
     const position = this.children.getIndexOf(beforeChild);

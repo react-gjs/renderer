@@ -4,6 +4,7 @@ import type { PositionType } from "../../g-enums";
 import { CornerType, PolicyType, ShadowType } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import type { TextNode } from "../markup/text-node";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
@@ -112,7 +113,7 @@ export class ScrollBoxElement
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | TextNode): void {
     ensureNotString(child);
 
     if (this.children.count() > 0) {
@@ -124,7 +125,7 @@ export class ScrollBoxElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | string, beforeChild: GjsElement): void {
+  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     throw new Error("ScrollBox can only have one child.");
   }
 

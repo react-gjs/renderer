@@ -131,7 +131,7 @@ export const GjsRenderer = Reconciler({
     hostContext: HostContext,
     internalHandle
   ) {
-    if (!hostContext.isInTextContext) {
+    if (hostContext.isInTextContext !== true) {
       throw new Error("Text Instances are not supported");
     }
 

@@ -5,6 +5,7 @@ import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import type { TextNode } from "../markup/text-node";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
@@ -115,7 +116,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | TextNode): void {
     throw new Error("Image cannot have children.");
   }
 

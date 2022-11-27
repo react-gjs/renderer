@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import type { TextNode } from "../markup/text-node";
 import type { ElementMargin } from "../utils/apply-margin";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
@@ -82,9 +83,13 @@ export class CheckButtonElement
 
   // #region This widget direct mutations
 
-  appendChild(child: string | GjsElement): void {
+  appendChild(child: TextNode | GjsElement): void {
     if (typeof child === "string") {
       this.widget.label = child;
+      this.widget.show_all();
+      return;
+    } else if (child.kind === "TEXT_NODE") {
+      this.widget.label = child.getText();
       this.widget.show_all();
       return;
     }

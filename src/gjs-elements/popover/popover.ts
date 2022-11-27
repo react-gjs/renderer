@@ -4,6 +4,7 @@ import { PopoverConstraint, PositionType } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
+import type { TextNode } from "../markup/text-node";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
@@ -90,7 +91,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string): void {
+  appendChild(child: GjsElement | TextNode): void {
     if (GjsElementManager.isGjsElementOfKind(child, PopoverContentElement)) {
       if (this.hasContentChild) {
         throw new Error("Popover can only have one child");
@@ -116,7 +117,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
     }
   }
 
-  insertBefore(newChild: GjsElement | string): void {
+  insertBefore(newChild: GjsElement | TextNode): void {
     this.appendChild(newChild);
   }
 

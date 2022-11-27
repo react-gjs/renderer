@@ -4,6 +4,7 @@ import Pango from "gi://Pango";
 import type { EllipsizeMode, Justification, WrapMode } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import type { TextNode } from "../markup/text-node";
 import type { ElementMargin } from "../utils/apply-margin";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
@@ -63,12 +64,6 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
             this.widget.justify = v;
           }
         )
-        .children(
-          DataType.OneOf(DataType.String, DataType.ArrayOf(DataType.String)),
-          (v = "") => {
-            this.appendChild(v);
-          }
-        )
   );
 
   constructor(props: any) {
@@ -83,21 +78,11 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | string | string[]): void {
+  appendChild(child: GjsElement | TextNode): void {
     if (typeof child === "string") {
       this.widget.set_text(child);
-    } else if (
-      Array.isArray(child) &&
-      child.every((c) => typeof c === "string")
-    ) {
-      let text = "";
-
-      for (let i = 0; i < child.length; i++) {
-        const subtext = child[i];
-        text += subtext;
-      }
-
-      this.widget.set_text(text);
+    } else if (child.kind === "TEXT_NODE") {
+      this.widget.set_text((child as TextNode).getText());
     } else {
       throw new TypeError("Label can only have text as it's children.");
     }
