@@ -42,3 +42,6 @@ export const ShadowType = Gtk.ShadowType;
 
 export type PopoverConstraint = Gtk.PopoverConstraint;
 export const PopoverConstraint = Gtk.PopoverConstraint;
+
+export type StackTransitionType = Gtk.StackTransitionType;
+export const StackTransitionType = Gtk.StackTransitionType;

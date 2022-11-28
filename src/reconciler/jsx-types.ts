@@ -58,6 +58,10 @@ import type {
   SeparatorElement,
   SeparatorProps,
 } from "../gjs-elements/separator/separator";
+import type {
+  StackItemElement,
+  StackItemProps,
+} from "../gjs-elements/stack/stack-item";
 import type { SwitchElement, SwitchProps } from "../gjs-elements/switch/switch";
 import type {
   TextAreaElement,
@@ -118,11 +122,18 @@ declare global {
       M_SUPERSCRIPT: MSupProps;
       M_UNDERLINE: MUnderlineProps;
       PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
-      RADIO_BOX: IntrinsicComponent<RadioBoxProps, RadioBoxElement>;
+      RADIO_BOX: IntrinsicComponent<
+        ComponentWithChildren<RadioBoxProps>,
+        RadioBoxElement
+      >;
       RADIO_BUTTON: IntrinsicComponent<RadioButtonProps, RadioButtonElement>;
       SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
       SEPARATOR: IntrinsicComponent<SeparatorProps, SeparatorElement>;
+      STACK_ITEM: IntrinsicComponent<
+        ComponentWithChildren<StackItemProps>,
+        StackItemElement
+      >;
       SWITCH: IntrinsicComponent<SwitchProps, SwitchElement>;
       TEXT_AREA: IntrinsicComponent<TextAreaProps, TextAreaElement>;
       TEXT_ENTRY: IntrinsicComponent<TextEntryProps, TextEntryElement>;

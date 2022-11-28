@@ -10,7 +10,11 @@ export class ChildOrderController {
     private container: Gtk.Container,
     customAddMethod?: (child: GjsElement) => void
   ) {
-    if (customAddMethod) this.addChild = customAddMethod;
+    if (customAddMethod)
+      this.addChild = (child: GjsElement) => {
+        customAddMethod(child);
+        this.children.push(child);
+      };
   }
 
   count() {
