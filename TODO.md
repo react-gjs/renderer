@@ -2,22 +2,23 @@
 
 ## High Priority
 
-- RadioButton
 - SpinButton (number input)
+- ButtonBox
+- Stack + StackSwitcher
+- Revealer
+- Expander
 
 ## Medium Priority
 
 - SizeGroup
 - ActionBar
 - Dialog
-- Expander
 - FileChooser
 - Frame
 - Infobar
 - ProgressBar
 - Range
 - Scale
-- Separator
 - LevelBar
 - Menu
 - MenuButton
@@ -28,6 +29,13 @@
 - Toolbar
 - ToolItem
 - SeparatorToolItem
+- TreeModel
+- HedearBar
+- TitleBar
+- ListBox
+- ModelButton
+- SeparatorMenuItem
+- SeparatorToolItem
 
 ## Low Priority
 
@@ -36,3 +44,7 @@
 - Paned
 - LockButton
 - SearchBar
+- HandleBox
+- Notebook
+- Overlay
+- VolumeButton
