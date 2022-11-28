@@ -1,6 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
@@ -22,6 +24,12 @@ export interface SwitchProps extends SwitchPropsMixin {
 }
 
 export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "SWITCH";
   widget = new Gtk.Switch();
 
@@ -44,7 +52,7 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
       })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.handlers.bind("state-set", "onToggle", (state) => {
       return {
         state,

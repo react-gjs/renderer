@@ -4,6 +4,8 @@ import GdkPixbuf from "gi://GdkPixbuf";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { TextNode } from "../markup/text-node";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
@@ -40,6 +42,12 @@ const IconDataType = DataType.OneOf(DataType.String, DataType.RecordOf({}));
 const DEFAULT_ICON_SIZE = 32;
 
 export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "IMAGE";
   widget = new Gtk.Image();
 
@@ -96,7 +104,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();

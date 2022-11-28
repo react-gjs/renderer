@@ -1,3 +1,5 @@
+import type { GjsContext } from "../reconciler/gjs-renderer";
+import type { HostContext } from "../reconciler/host-context";
 import type { GjsElement } from "./gjs-element";
 import type { GjsElementTypes } from "./gjs-element-types";
 import type { DiffedProps } from "./utils/element-extenders/map-properties";
@@ -5,16 +7,15 @@ import type { DiffedProps } from "./utils/element-extenders/map-properties";
 export interface GjsElementConstructor<
   K extends GjsElementTypes | "APPLICATION"
 > {
-  new (props: DiffedProps): GjsElement<K>;
+  new (props: DiffedProps, context: HostContext<GjsContext>): GjsElement<K>;
+
+  getContext(currentContext: HostContext<GjsContext>): HostContext<GjsContext>;
 }
 
 export class GjsElementManager {
   private static elementKinds: string[] = [];
   private static elements = new Map<string, GjsElementConstructor<any>>();
-  private static elementsReverseMap = new Map<
-    GjsElementConstructor<any>,
-    string
-  >();
+  private static elementsReverseMap = new Map<object, string>();
 
   static register<K extends GjsElementTypes | "APPLICATION">(
     kind: K,
@@ -26,12 +27,27 @@ export class GjsElementManager {
   }
 
   /** @internal */
-  static create(kind: string, props: DiffedProps) {
+  static create(
+    kind: string,
+    props: DiffedProps,
+    context: HostContext<GjsContext>
+  ) {
     const element = this.elements.get(kind);
     if (!element) {
       throw new Error(`Invalid element type: ${kind}`);
     }
-    return new element(props);
+    return new element(props, context);
+  }
+
+  static getContextForKind(
+    kind: string,
+    currentContext: HostContext<GjsContext>
+  ) {
+    const element = this.elements.get(kind);
+    if (!element) {
+      throw new Error(`Invalid element kind: ${kind}`);
+    }
+    return element.getContext(currentContext);
   }
 
   /** @internal */

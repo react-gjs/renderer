@@ -3,6 +3,8 @@ import Gtk from "gi://Gtk";
 import type { PositionType } from "../../g-enums";
 import { CornerType, PolicyType, ShadowType } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { TextNode } from "../markup/text-node";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
@@ -38,6 +40,12 @@ export interface ScrollBoxProps extends ScrollBoxPropsMixin {
 export class ScrollBoxElement
   implements GjsElement<"SCROLL_BOX", Gtk.ScrolledWindow>
 {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "SCROLL_BOX";
   widget = new Gtk.ScrolledWindow();
 
@@ -97,7 +105,7 @@ export class ScrollBoxElement
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.handlers.bind("edge-reached", "onEdgeReached", (e: PositionType) => {
       return { position: e };
     });

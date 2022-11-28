@@ -2,6 +2,8 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { TextNode } from "../markup/text-node";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
@@ -23,6 +25,12 @@ export interface RadioBoxProps extends RadioBoxPropsMixin {
 }
 
 export class RadioBoxElement implements GjsElement<"RADIO_BOX", Gtk.Box> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "RADIO_BOX";
   widget = new Gtk.Box();
   radioGroup = new Gtk.RadioButton();
@@ -57,7 +65,7 @@ export class RadioBoxElement implements GjsElement<"RADIO_BOX", Gtk.Box> {
         )
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();

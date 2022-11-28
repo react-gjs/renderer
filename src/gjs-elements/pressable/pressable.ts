@@ -3,6 +3,8 @@ import type Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 import type React from "react";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { TextNode } from "../markup/text-node";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
@@ -25,15 +27,20 @@ export interface PressableProps extends PressablePropsMixin {
   onClick?: (event: SyntheticEvent<MouseButtonPressEvent>) => void;
   onRelease?: (event: SyntheticEvent<MouseButtonPressEvent>) => void;
   /**
-   * If set to true, the pressable element will intercept mouse
-   * events on it's children. Meaning children will not receive
-   * any mouse events.
+   * If set to true, the pressable element will intercept mouse events on it's
+   * children. Meaning children will not receive any mouse events.
    */
   interceptChildEvents?: boolean;
   children?: React.ReactElement;
 }
 
 export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "PRESSABLE";
   widget = new Gtk.EventBox();
 
@@ -55,7 +62,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
       })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.widget.set_visible_window(false);
 
     this.handlers.bind("button-press-event", "onClick", (e: Gdk.EventButton) =>

@@ -1,6 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
@@ -37,6 +39,12 @@ export interface GridProps extends GridPropsMixin {
 }
 
 export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "GRID";
   widget = new Gtk.Grid();
 
@@ -44,10 +52,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   private columns = 1;
 
-  /**
-   * The column count that was used the last time the grid was
-   * re-arranged.
-   */
+  /** The column count that was used the last time the grid was re-arranged. */
   private previousColumnCount = 0;
 
   private readonly lifecycle = new ElementLifecycleController();
@@ -76,7 +81,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -107,8 +112,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   /**
-   * Callback that is called by the `GridItemsList` when a child
-   * spans change.
+   * Callback that is called by the `GridItemsList` when a child spans change.
    *
    * @internal
    */
@@ -117,8 +121,8 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   /**
-   * Callback that is called by the `GridItemsList` when a child
-   * is added to this container.
+   * Callback that is called by the `GridItemsList` when a child is added to
+   * this container.
    *
    * @internal
    */
@@ -127,8 +131,8 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   /**
-   * Callback that is called by the `GridItemsList` when a child
-   * is removed from this container.
+   * Callback that is called by the `GridItemsList` when a child is removed from
+   * this container.
    *
    * @internal
    */

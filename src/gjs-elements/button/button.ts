@@ -2,6 +2,8 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { PositionType } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { TextNode } from "../markup/text-node";
 import type { ElementMargin } from "../utils/apply-margin";
@@ -36,6 +38,12 @@ const WidgetDataType = DataType.Custom(
 );
 
 export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "BUTTON";
   widget = new Gtk.Button();
 
@@ -69,7 +77,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("activate", "onActivate");
     this.handlers.bind("enter", "onEnter");

@@ -1,6 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import { FlowBoxElement } from "../flow-box/flow-box";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
@@ -26,6 +28,12 @@ export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
 export class FlowBoxEntryElement
   implements GjsElement<"FLOW_BOX_ENTRY", Gtk.FlowBoxChild>
 {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "FLOW_BOX_ENTRY";
   widget = new Gtk.FlowBoxChild();
 
@@ -55,7 +63,7 @@ export class FlowBoxEntryElement
       })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();

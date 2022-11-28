@@ -1,6 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
@@ -32,6 +34,12 @@ export interface RadioButtonProps extends RadioButtonPropsMixin {
 export class RadioButtonElement
   implements GjsElement<"RADIO_BUTTON", Gtk.RadioButton>
 {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "RADIO_BUTTON";
   private w?: Gtk.RadioButton;
   get widget(): Gtk.RadioButton {
@@ -54,7 +62,7 @@ export class RadioButtonElement
 
   private unappliedProps: DiffedProps = [];
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.handlers.bind("clicked", "onClick");

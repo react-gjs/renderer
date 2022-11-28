@@ -1,8 +1,16 @@
 import type Gtk from "gi://Gtk";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 
 export class TextNode {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "TEXT_NODE";
 
   get widget(): Gtk.Widget {

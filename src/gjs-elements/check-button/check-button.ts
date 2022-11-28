@@ -1,6 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { TextNode } from "../markup/text-node";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
@@ -32,6 +34,12 @@ export interface CheckButtonProps extends CheckButtonPropsMixin {
 export class CheckButtonElement
   implements GjsElement<"CHECK_BUTTON", Gtk.CheckButton>
 {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "CHECK_BUTTON";
   widget = new Gtk.CheckButton();
 
@@ -59,7 +67,7 @@ export class CheckButtonElement
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("activate", "onActivate");
     this.handlers.bind("enter", "onEnter");

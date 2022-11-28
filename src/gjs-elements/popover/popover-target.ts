@@ -1,6 +1,8 @@
 import Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
@@ -21,6 +23,12 @@ export interface PopoverTargetProps extends PopoverTargetPropsMixin {
 export class PopoverTargetElement
   implements GjsElement<"POPOVER_TARGET", Gtk.Widget>
 {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "POPOVER_TARGET";
   private emptyReplacement = new Gtk.Box();
   private childElement: GjsElement | null = null;
@@ -39,7 +47,7 @@ export class PopoverTargetElement
 
   private hasContentChild = false;
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
   }
 

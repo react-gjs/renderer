@@ -39,6 +39,7 @@ import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
 import { WindowElement } from "../gjs-elements/window/window";
 import { diffProps } from "./diff-props";
+import { HostContext } from "./host-context";
 
 GjsElementManager.register("BOX", BoxElement);
 GjsElementManager.register("BUTTON", ButtonElement);
@@ -75,11 +76,9 @@ GjsElementManager.register("TEXT_AREA", TextAreaElement);
 GjsElementManager.register("TEXT_ENTRY", TextEntryElement);
 GjsElementManager.register("WINDOW", WindowElement);
 
-type HostContext = {
+export type GjsContext = {
   isInTextContext: boolean;
 };
-
-const rootHostContext: HostContext = { isInTextContext: false };
 
 export const GjsRenderer = Reconciler({
   isPrimaryRenderer: true,
@@ -121,20 +120,20 @@ export const GjsRenderer = Reconciler({
     type: GjsElementTypes,
     props: any,
     rootContainer,
-    hostContext,
+    hostContext: HostContext<GjsContext>,
     internalHandle
   ) {
     const diffedProps = diffProps({}, props, true);
 
-    return GjsElementManager.create(type, diffedProps);
+    return GjsElementManager.create(type, diffedProps, hostContext);
   },
   createTextInstance(
     text,
     rootContainer,
-    hostContext: HostContext,
+    hostContext: HostContext<GjsContext>,
     internalHandle
   ) {
-    if (hostContext.isInTextContext !== true) {
+    if (hostContext.get("isInTextContext") !== true) {
       throw new Error("Text Instances are not supported");
     }
 
@@ -144,10 +143,12 @@ export const GjsRenderer = Reconciler({
   finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
     return true;
   },
-  getChildHostContext(parentHostContext, type, rootContainer): HostContext {
-    return {
-      isInTextContext: type === "LABEL" || type.startsWith("M_"),
-    };
+  getChildHostContext(
+    parentHostContext: HostContext<GjsContext>,
+    type,
+    rootContainer
+  ): HostContext<GjsContext> {
+    return GjsElementManager.getContextForKind(type, parentHostContext);
   },
   getCurrentEventPriority() {
     return DefaultEventPriority;
@@ -160,7 +161,9 @@ export const GjsRenderer = Reconciler({
     return instance;
   },
   getRootHostContext(rootContainer) {
-    return rootHostContext;
+    return HostContext.init<GjsContext>({
+      isInTextContext: false,
+    });
   },
   prepareForCommit(containerInfo) {
     return null;
@@ -172,23 +175,16 @@ export const GjsRenderer = Reconciler({
     oldProps,
     newProps,
     rootContainer,
-    hostContext
+    hostContext: HostContext<GjsContext>
   ) {
     if (GjsElementManager.isGjsElement(instance)) {
       return instance.diffProps(oldProps, newProps);
     }
-    return diffProps(oldProps, newProps, false);
   },
   resetAfterCommit(containerInfo) {},
   prepareScopeUpdate(scopeInstance, instance) {},
   scheduleTimeout: setTimeout,
   shouldSetTextContent(type: any, props: any) {
-    // const children = props.children;
-    // return (
-    //   typeof children === "string" ||
-    //   (Array.isArray(children) &&
-    //     children.every((child) => typeof child === "string"))
-    // );
     return false;
   },
   commitUpdate(
@@ -199,7 +195,7 @@ export const GjsRenderer = Reconciler({
     nextProps: any,
     internalHandle
   ) {
-    if (GjsElementManager.isGjsElement(instance)) {
+    if (updatePayload && GjsElementManager.isGjsElement(instance)) {
       instance.updateProps(updatePayload);
       instance.render();
     }

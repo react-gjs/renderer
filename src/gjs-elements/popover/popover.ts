@@ -2,6 +2,8 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { PopoverConstraint, PositionType } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
@@ -29,6 +31,12 @@ export type PopoverInternalProps = {
 };
 
 export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "POPOVER";
   widget = new Gtk.Box();
   popover!: Gtk.Popover;
@@ -68,7 +76,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
   private hasTarget = false;
   private targetElement?: PopoverTargetElement;
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.propsMapper.skipDefaults();
     this.updateProps(props);
 

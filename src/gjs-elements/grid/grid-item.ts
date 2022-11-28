@@ -2,6 +2,8 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type React from "react";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
@@ -25,6 +27,12 @@ export type GridItemEvents = {
 };
 
 export class GridItemElement implements GjsElement<"GRID_ITEM"> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "GRID_ITEM";
   private emptyReplacement = new Gtk.Box();
   private childElement: GjsElement | null = null;
@@ -51,7 +59,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();

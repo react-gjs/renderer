@@ -3,6 +3,8 @@ import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 import type { EllipsizeMode, Justification, WrapMode } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
@@ -30,6 +32,12 @@ export interface MarkupProps extends MarkupPropsMixin {
 }
 
 export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "MARKUP";
   widget = new Gtk.Label();
 
@@ -69,7 +77,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
         )
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();

@@ -2,6 +2,8 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { Orientation, SelectionMode } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
@@ -29,6 +31,12 @@ export interface FlowBoxProps extends FlowBoxPropsMixin {
 }
 
 export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "FLOW_BOX";
   widget = new Gtk.FlowBox();
 
@@ -85,7 +93,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.handlers.bindInternal("selected-children-changed", () => {
       const newUnselected: FlowBoxEntryElement[] = [];
       const newSelected: FlowBoxEntryElement[] = [];

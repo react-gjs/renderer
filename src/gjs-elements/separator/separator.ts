@@ -1,5 +1,7 @@
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
@@ -16,6 +18,12 @@ export type SeparatorProps = SeparatorPropsMixin;
 export class SeparatorElement
   implements GjsElement<"SEPARATOR", Gtk.Separator>
 {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "SEPARATOR";
   widget = new Gtk.Separator();
 
@@ -28,7 +36,7 @@ export class SeparatorElement
     createMarginPropMapper(this.widget)
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();

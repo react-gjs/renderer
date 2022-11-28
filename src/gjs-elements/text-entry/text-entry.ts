@@ -2,6 +2,8 @@ import { DataType } from "dilswer";
 import Gdk from "gi://Gdk?version=3.0";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
@@ -27,6 +29,12 @@ export interface TextEntryProps extends ButtonPropsMixin {
 }
 
 export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "TEXT_ENTRY";
   private textBuffer = new Gtk.EntryBuffer();
   widget = new Gtk.Entry({
@@ -52,7 +60,7 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
       })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.handlers.bind("changed", "onChange", () => ({
       text: this.widget.text,
     }));

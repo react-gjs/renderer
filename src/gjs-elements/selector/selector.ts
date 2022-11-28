@@ -2,6 +2,8 @@ import { DataType } from "dilswer";
 import type Gtk from "gi://Gtk";
 import { Align } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
@@ -29,10 +31,7 @@ export interface SelectorProps<V extends string | number | undefined = any>
     event: SyntheticEvent<{
       /** Value of the selected option. */
       value?: V;
-      /**
-       * Index of the selected option. is -1 if no option is
-       * selected.
-       */
+      /** Index of the selected option. is -1 if no option is selected. */
       index: number;
     }>
   ) => void;
@@ -46,6 +45,12 @@ const SelectorOptionDataType = DataType.ArrayOf(
 );
 
 export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "SELECTOR";
 
   private parent: GjsElement | null = null;
@@ -88,7 +93,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.handlers.bind("changed", "onChange", () => {
       const option = this.getCurrentActiveOption();
 

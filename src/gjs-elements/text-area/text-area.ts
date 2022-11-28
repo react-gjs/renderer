@@ -2,6 +2,8 @@ import { DataType } from "dilswer";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
@@ -28,6 +30,12 @@ export interface TextAreaProps extends TextAreaPropsMixin {
 }
 
 export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "TEXT_AREA";
   private textBuffer = new Gtk.TextBuffer();
   widget = new Gtk.TextView({
@@ -53,8 +61,8 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
       })
   );
 
-  constructor(props: any) {
-    let lastText = props.value ?? "";
+  constructor(props: DiffedProps) {
+    let lastText = "";
 
     this.handlers.bind("key-release-event", "onChange", () => {
       const currentText = this.widget.get_buffer().text;
@@ -74,6 +82,10 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
     );
 
     this.updateProps(props);
+
+    if (this.propsMapper.currentProps.value) {
+      lastText = this.propsMapper.currentProps.value;
+    }
 
     this.lifecycle.emitLifecycleEventAfterCreate();
   }

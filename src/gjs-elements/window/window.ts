@@ -1,6 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { TextNode } from "../markup/text-node";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
@@ -24,6 +26,12 @@ export type WindowProps = {
 };
 
 export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
+  static getContext(
+    currentContext: HostContext<GjsContext>
+  ): HostContext<GjsContext> {
+    return currentContext;
+  }
+
   readonly kind = "WINDOW";
   widget = new Gtk.Window();
 
@@ -50,7 +58,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
         })
   );
 
-  constructor(props: any) {
+  constructor(props: DiffedProps) {
     this.handlers.bind("destroy", "onDestroy");
     this.handlers.bind("drag-begin", "onDragBegin");
     this.handlers.bind("drag-end", "onDragEnd");
