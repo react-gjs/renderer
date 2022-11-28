@@ -24,6 +24,10 @@ export const LinkButton = IntrinsicElem("LINK_BUTTON");
 export const Image = IntrinsicElem("IMAGE");
 /** Equivalent to the Gtk.EventBox widget. */
 export const Pressable = IntrinsicElem("PRESSABLE");
+/** Equivalent to the Gtk.Box widget. */
+export const RadioBox = IntrinsicElem("RADIO_BOX");
+/** Equivalent to the Gtk.RadioButton widget. */
+export const RadioButton = IntrinsicElem("RADIO_BUTTON");
 /** Equivalent to the Gtk.ScrolledWindow widget. */
 export const ScrollBox = IntrinsicElem("SCROLL_BOX");
 /** Built on top of the Gtk.ComboBox widget. */

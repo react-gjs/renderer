@@ -28,6 +28,8 @@ import { PopoverElement } from "../gjs-elements/popover/popover";
 import { PopoverContentElement } from "../gjs-elements/popover/popover-content";
 import { PopoverTargetElement } from "../gjs-elements/popover/popover-target";
 import { PressableElement } from "../gjs-elements/pressable/pressable";
+import { RadioBoxElement } from "../gjs-elements/radio/radio-box";
+import { RadioButtonElement } from "../gjs-elements/radio/radio-button";
 import { ScrollBoxElement } from "../gjs-elements/scroll-box/scroll-box";
 import { SelectorElement } from "../gjs-elements/selector/selector";
 import { SeparatorElement } from "../gjs-elements/separator/separator";
@@ -63,6 +65,8 @@ GjsElementManager.register("POPOVER", PopoverElement);
 GjsElementManager.register("POPOVER_CONTENT", PopoverContentElement);
 GjsElementManager.register("POPOVER_TARGET", PopoverTargetElement);
 GjsElementManager.register("PRESSABLE", PressableElement);
+GjsElementManager.register("RADIO_BOX", RadioBoxElement);
+GjsElementManager.register("RADIO_BUTTON", RadioButtonElement);
 GjsElementManager.register("SCROLL_BOX", ScrollBoxElement);
 GjsElementManager.register("SELECTOR", SelectorElement);
 GjsElementManager.register("SEPARATOR", SeparatorElement);
@@ -76,7 +80,6 @@ type HostContext = {
 };
 
 const rootHostContext: HostContext = { isInTextContext: false };
-const childHostContext: HostContext = { isInTextContext: false };
 
 export const GjsRenderer = Reconciler({
   isPrimaryRenderer: true,

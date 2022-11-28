@@ -39,6 +39,14 @@ import type {
   PressableProps,
 } from "../gjs-elements/pressable/pressable";
 import type {
+  RadioBoxElement,
+  RadioBoxProps,
+} from "../gjs-elements/radio/radio-box";
+import type {
+  RadioButtonElement,
+  RadioButtonProps,
+} from "../gjs-elements/radio/radio-button";
+import type {
   ScrollBoxElement,
   ScrollBoxProps,
 } from "../gjs-elements/scroll-box/scroll-box";
@@ -110,6 +118,8 @@ declare global {
       M_SUPERSCRIPT: MSupProps;
       M_UNDERLINE: MUnderlineProps;
       PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
+      RADIO_BOX: IntrinsicComponent<RadioBoxProps, RadioBoxElement>;
+      RADIO_BUTTON: IntrinsicComponent<RadioButtonProps, RadioButtonElement>;
       SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
       SEPARATOR: IntrinsicComponent<SeparatorProps, SeparatorElement>;

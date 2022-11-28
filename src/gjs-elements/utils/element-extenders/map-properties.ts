@@ -59,7 +59,21 @@ export class PropertyMapper<P = Record<string, any>> {
 
   constructor(
     private element: ElementLifecycle,
-    ...getMaps: Array<(caseCollector: PropCaseCollector<KeysOf<P>, P>) => void>
+    ...getCases: Array<(caseCollector: PropCaseCollector<KeysOf<P>, P>) => void>
+  ) {
+    this.addCases(...getCases);
+
+    this.element.onUpdate((props) => {
+      this.update(props);
+    });
+
+    this.element.beforeDestroy(() => {
+      this.cleanupAll();
+    });
+  }
+
+  addCases(
+    ...getCases: Array<(caseCollector: PropCaseCollector<KeysOf<P>, P>) => void>
   ) {
     const caseCollector = new Proxy(
       {},
@@ -83,17 +97,9 @@ export class PropertyMapper<P = Record<string, any>> {
       }
     ) as PropCaseCollector<KeysOf<P>, P>;
 
-    for (let i = 0; i < getMaps.length; i++) {
-      getMaps[i](caseCollector);
+    for (let i = 0; i < getCases.length; i++) {
+      getCases[i](caseCollector);
     }
-
-    this.element.onUpdate((props) => {
-      this.update(props);
-    });
-
-    this.element.beforeDestroy(() => {
-      this.cleanupAll();
-    });
   }
 
   private update(props: DiffedProps) {

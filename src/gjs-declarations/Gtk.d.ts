@@ -40290,7 +40290,7 @@ container and help break any circular reference count cycles.
      */
     public static new_from_widget(
       radio_group_member: RadioButton | null
-    ): Widget;
+    ): RadioButton;
     /**
      * Creates a new {@link RadioButton} with a text label.
      *
@@ -40303,7 +40303,7 @@ container and help break any circular reference count cycles.
     public static new_with_label(
       group: GLib.SList | null,
       label: string
-    ): Widget;
+    ): RadioButton;
     /**
      * Creates a new {@link RadioButton} with a text label, adding
      * it to the same group as #radio_group_member.
@@ -40317,7 +40317,7 @@ container and help break any circular reference count cycles.
     public static new_with_label_from_widget(
       radio_group_member: RadioButton | null,
       label: string
-    ): Widget;
+    ): RadioButton;
     /**
      * Creates a new {@link RadioButton} containing a label,
      * adding it to the same group as #group. The label will be
@@ -40333,7 +40333,7 @@ container and help break any circular reference count cycles.
     public static new_with_mnemonic(
       group: GLib.SList | null,
       label: string
-    ): Widget;
+    ): RadioButton;
     /**
      * Creates a new {@link RadioButton} containing a label. The
      * label will be created using
@@ -40349,7 +40349,7 @@ container and help break any circular reference count cycles.
     public static new_with_mnemonic_from_widget(
       radio_group_member: RadioButton | null,
       label: string
-    ): Widget;
+    ): RadioButton;
   }
 
   /**

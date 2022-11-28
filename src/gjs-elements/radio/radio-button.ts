@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
@@ -12,14 +13,13 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { RadioBoxElement } from "./radio-box";
 
-type CheckButtonPropsMixin = AlignmentProps & MarginProps;
+type RadioButtonPropsMixin = AlignmentProps & MarginProps;
 
-export interface CheckButtonProps extends CheckButtonPropsMixin {
+export interface RadioButtonProps extends RadioButtonPropsMixin {
   label?: string;
   useUnderline?: boolean;
-  active?: boolean;
-  children?: string;
   onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
   onClick?: (event: SyntheticEvent) => void;
   onActivate?: (event: SyntheticEvent) => void;
@@ -29,54 +29,60 @@ export interface CheckButtonProps extends CheckButtonPropsMixin {
   onReleased?: (event: SyntheticEvent) => void;
 }
 
-export class CheckButtonElement
-  implements GjsElement<"CHECK_BUTTON", Gtk.CheckButton>
+export class RadioButtonElement
+  implements GjsElement<"RADIO_BUTTON", Gtk.RadioButton>
 {
-  readonly kind = "CHECK_BUTTON";
-  widget = new Gtk.CheckButton();
+  readonly kind = "RADIO_BUTTON";
+  private w?: Gtk.RadioButton;
+  get widget(): Gtk.RadioButton {
+    if (!this.w) {
+      throw new Error("Widget does not exist.");
+    }
+    return this.w;
+  }
 
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
-    Gtk.CheckButton,
-    CheckButtonProps
+    Gtk.RadioButton,
+    RadioButtonProps
   >(this.lifecycle, this.widget);
-  private readonly propsMapper = new PropertyMapper<CheckButtonProps>(
-    this.lifecycle,
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    (props) =>
-      props
-        .active(DataType.Boolean, (v = false) => {
-          this.widget.active = v;
-        })
-        .label(DataType.String, (v = "") => {
-          this.widget.label = v;
-        })
-        .useUnderline(DataType.Boolean, (v = false) => {
-          this.widget.use_underline = v;
-        })
+  private readonly propsMapper = new PropertyMapper<RadioButtonProps>(
+    this.lifecycle
   );
 
+  private unappliedProps: DiffedProps = [];
+
   constructor(props: any) {
+    this.updateProps(props);
+
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("activate", "onActivate");
     this.handlers.bind("enter", "onEnter");
     this.handlers.bind("leave", "onLeave");
     this.handlers.bind("pressed", "onPressed");
     this.handlers.bind("released", "onReleased");
-    this.handlers.bind("toggled", "onChange", () => ({
-      isActive: this.widget.active,
-    }));
-
-    this.updateProps(props);
+    this.handlers.bind("toggled", "onChange", () => {
+      return {
+        isActive: this.widget.active,
+      };
+    });
 
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
   updateProps(props: DiffedProps): void {
-    this.lifecycle.emitLifecycleEventUpdate(props);
+    if (this.w) {
+      this.lifecycle.emitLifecycleEventUpdate(props);
+    } else {
+      for (const prop of props) {
+        this.unappliedProps = this.unappliedProps.filter(
+          ([name]) => name !== prop[0]
+        );
+        this.unappliedProps.push(prop);
+      }
+    }
   }
 
   // #region This widget direct mutations
@@ -84,19 +90,18 @@ export class CheckButtonElement
   appendChild(child: TextNode | GjsElement): void {
     if (typeof child === "string") {
       this.widget.label = child;
-      this.widget.show_all();
-      return;
-    } else if (child.kind === "TEXT_NODE") {
-      this.widget.label = child.getText();
-      this.widget.show_all();
-      return;
+    } else {
+      if (this.widget.get_children().data) {
+        throw new Error("Button can have only one child.");
+      }
+      child.notifyWillAppendTo(this);
+      this.widget.add(child.widget);
     }
-
-    throw new Error("CheckButton cannot have children.");
+    this.widget.show_all();
   }
 
   insertBefore(): void {
-    throw new Error("CheckButton cannot have children.");
+    throw new Error("Button can have only one child.");
   }
 
   remove(parent: GjsElement): void {
@@ -116,7 +121,31 @@ export class CheckButtonElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+    if (GjsElementManager.isGjsElementOfKind(parent, RadioBoxElement)) {
+      this.parent = parent;
+
+      const widget = (this.w = Gtk.RadioButton.new_from_widget(
+        parent.radioGroup
+      ));
+
+      this.propsMapper.addCases(
+        createAlignmentPropMapper(widget),
+        createMarginPropMapper(widget),
+        (props) =>
+          props
+            .label(DataType.String, (v = "") => {
+              widget.set_label(v);
+            })
+            .useUnderline(DataType.Boolean, (v = false) => {
+              this.widget.use_underline = v;
+            })
+      );
+
+      this.lifecycle.emitLifecycleEventUpdate(this.unappliedProps);
+      this.unappliedProps = [];
+    } else {
+      throw new Error("RadioButton can be only child of RadioBox.");
+    }
   }
 
   notifyWillUnmount() {}
