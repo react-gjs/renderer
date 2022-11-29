@@ -19,6 +19,8 @@ export type WindowProps = {
   decorate?: boolean;
   defaultHeight?: number;
   defaultWidth?: number;
+  minHeight?: number;
+  minWidth?: number;
   hideTitlebarWhenMaximized?: boolean;
   icon?: GdkPixbuf.Pixbuf;
   resizable?: boolean;
@@ -63,6 +65,12 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
         })
         .defaultHeight(DataType.Number, (v = -1) => {
           this.widget.default_height = v;
+        })
+        .minHeight(DataType.Number, (v = 0, allProps) => {
+          this.widget.set_size_request(allProps.minWidth ?? 0, v);
+        })
+        .minWidth(DataType.Number, (v = 0, allProps) => {
+          this.widget.set_size_request(v, allProps.minHeight ?? 0);
         })
         .decorate(DataType.Boolean, (v = true) => {
           this.widget.decorated = v;
