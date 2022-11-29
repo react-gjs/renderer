@@ -1,3 +1,4 @@
+import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 
@@ -45,3 +46,9 @@ export const PopoverConstraint = Gtk.PopoverConstraint;
 
 export type StackTransitionType = Gtk.StackTransitionType;
 export const StackTransitionType = Gtk.StackTransitionType;
+
+export type WindowType = Gtk.WindowType;
+export const WindowType = Gtk.WindowType;
+
+export type WindowTypeHint = Gdk.WindowTypeHint;
+export const WindowTypeHint = Gdk.WindowTypeHint;

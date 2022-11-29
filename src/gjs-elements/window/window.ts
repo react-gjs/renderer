@@ -1,5 +1,7 @@
 import { DataType } from "dilswer";
+import GdkPixbuf from "gi://GdkPixbuf";
 import Gtk from "gi://Gtk";
+import { WindowTypeHint } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
@@ -14,9 +16,15 @@ import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { ensureNotString } from "../utils/ensure-not-string";
 
 export type WindowProps = {
-  title?: string;
-  defaultWidth?: number;
+  decorate?: boolean;
   defaultHeight?: number;
+  defaultWidth?: number;
+  hideTitlebarWhenMaximized?: boolean;
+  icon?: GdkPixbuf.Pixbuf;
+  resizable?: boolean;
+  showCloseButton?: boolean;
+  title?: string;
+  windowTypeHint?: WindowTypeHint;
   onDestroy?: (event: SyntheticEvent) => void;
   onDragBegin?: (event: SyntheticEvent) => void;
   onDragEnd?: (event: SyntheticEvent) => void;
@@ -55,6 +63,34 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
         })
         .defaultHeight(DataType.Number, (v = -1) => {
           this.widget.default_height = v;
+        })
+        .decorate(DataType.Boolean, (v = true) => {
+          this.widget.decorated = v;
+        })
+        .hideTitlebarWhenMaximized(DataType.Boolean, (v = true) => {
+          this.widget.hide_titlebar_when_maximized = v;
+        })
+        .resizable(DataType.Boolean, (v = true) => {
+          this.widget.resizable = v;
+        })
+        .showCloseButton(DataType.Boolean, (v = true) => {
+          this.widget.deletable = v;
+        })
+        .windowTypeHint(
+          DataType.Enum(WindowTypeHint),
+          (v = WindowTypeHint.NORMAL) => {
+            this.widget.type_hint = v;
+          }
+        )
+        .icon(DataType.RecordOf({}), (v) => {
+          if (v) {
+            if (v instanceof GdkPixbuf.Pixbuf) {
+              this.widget.icon = v;
+              return;
+            }
+          }
+
+          this.widget.set_icon(null);
         })
   );
 
