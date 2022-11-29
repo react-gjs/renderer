@@ -5,6 +5,16 @@ import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 
 export class TextNode {
+  /** @internal */
+  static isTextNode(element: any): element is TextNode {
+    return (
+      typeof element === "object" &&
+      element !== null &&
+      "kind" in element &&
+      element.kind === "TEXT_NODE"
+    );
+  }
+
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
@@ -19,7 +29,7 @@ export class TextNode {
 
   private parent: GjsElement | null = null;
 
-  constructor(private readonly text: string) {}
+  constructor(private text: string) {}
 
   updateProps(): void {}
 
@@ -57,5 +67,9 @@ export class TextNode {
 
   getText(): string {
     return this.text;
+  }
+
+  updateText(text: string): void {
+    this.text = text;
   }
 }

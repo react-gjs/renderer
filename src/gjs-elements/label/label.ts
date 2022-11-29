@@ -42,6 +42,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   widget = new Gtk.Label();
 
   private parent: GjsElement | null = null;
+  private children: TextNode[] = [];
 
   private readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<LabelProps>(
@@ -82,6 +83,11 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
+  private paint() {
+    const text = this.children.map((c) => c.getText()).join("");
+    this.widget.set_text(text);
+  }
+
   updateProps(props: DiffedProps): void {
     this.lifecycle.emitLifecycleEventUpdate(props);
   }
@@ -89,17 +95,30 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    if (typeof child === "string") {
-      this.widget.set_text(child);
-    } else if (child.kind === "TEXT_NODE") {
-      this.widget.set_text((child as TextNode).getText());
+    if (child.kind === "TEXT_NODE") {
+      this.children.push(child);
+      this.paint();
     } else {
       throw new TypeError("Label can only have text as it's children.");
     }
   }
 
-  insertBefore(): void {
-    throw new Error("Label cannot have children.");
+  insertBefore(
+    child: GjsElement | TextNode,
+    beforeChild: GjsElement | TextNode
+  ): void {
+    if (child.kind === "TEXT_NODE") {
+      const beforeIndex = this.children.indexOf(beforeChild as TextNode);
+
+      if (beforeIndex === -1) {
+        throw new Error("Before child not found.");
+      }
+
+      this.children.splice(beforeIndex, 0, child);
+      this.paint();
+    } else {
+      throw new TypeError("Label can only have text as it's children.");
+    }
   }
 
   remove(parent: GjsElement): void {
@@ -111,6 +130,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   }
 
   render() {
+    this.paint();
     this.parent?.widget.show_all();
   }
 
@@ -122,7 +142,16 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
     this.parent = parent;
   }
 
-  notifyWillUnmount() {}
+  notifyWillUnmount(child: GjsElement | TextNode) {
+    const index = this.children.indexOf(child as TextNode);
+
+    if (index === -1) {
+      throw new Error("Child not found.");
+    }
+
+    this.children.splice(index, 1);
+    this.paint();
+  }
 
   // #endregion
 

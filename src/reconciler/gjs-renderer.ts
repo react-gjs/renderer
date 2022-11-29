@@ -206,7 +206,14 @@ export const GjsRenderer = Reconciler({
       instance.render();
     }
   },
-  commitTextUpdate(textInstance: any, oldText, newText) {},
+  commitTextUpdate(textInstance: any, oldText, newText) {
+    if (TextNode.isTextNode(textInstance)) {
+      if (oldText !== newText) {
+        textInstance.updateText(newText);
+        textInstance.render();
+      }
+    }
+  },
   removeChild(parentInstance: any, child: any) {
     if (GjsElementManager.isGjsElement(child)) {
       child.remove(parentInstance);
