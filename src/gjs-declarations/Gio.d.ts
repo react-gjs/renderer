@@ -1,9 +1,6 @@
-import Atk from "gi://Atk";
-import Gdk from "gi://Gdk";
 import GLib from "gi://GLib";
 import GObject from "gi://GObject";
 import Gtk from "gi://Gtk";
-import Pango from "gi://Pango";
 
 /**
  * Generated with https://github.com/Gr3q/GIR2TS - If possible do
@@ -7470,7 +7467,7 @@ declare module "gi://Gio" {
     read_line_async(
       io_priority: number,
       cancellable: Cancellable | null,
-      callback: AsyncReadyCallback | null
+      callback: AsyncReadyCallback<IDataInputStream> | null
     ): void;
     /**
      * Finish an asynchronous call started by
@@ -42676,7 +42673,7 @@ declare module "gi://Gio" {
    * {@link `*.async}` function was called, until after this
    * callback returns.
    */
-  interface AsyncReadyCallback {
+  interface AsyncReadyCallback<S extends GObject.Object = GObject.Object> {
     /**
      * Type definition for a function that will be called back
      * when an asynchronous operation within GIO has been
@@ -42697,7 +42694,7 @@ declare module "gi://Gio" {
      *   was started with.
      * @param res A #GAsyncResult.
      */
-    (source_object: GObject.Object | null, res: AsyncResult): void;
+    (source_object: S | null, res: AsyncResult): void;
   }
 
   /**
