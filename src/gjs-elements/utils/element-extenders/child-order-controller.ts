@@ -2,16 +2,16 @@ import type Gtk from "gi://Gtk";
 import type { ElementLifecycle } from "../../element-extender";
 import type { GjsElement } from "../../gjs-element";
 
-export class ChildOrderController {
-  private children: GjsElement[] = [];
+export class ChildOrderController<C extends GjsElement = GjsElement> {
+  private children: C[] = [];
 
   constructor(
     private element: ElementLifecycle,
     private container: Gtk.Container,
-    customAddMethod?: (child: GjsElement) => void
+    customAddMethod?: (child: C) => void
   ) {
     if (customAddMethod)
-      this.addChild = (child: GjsElement) => {
+      this.addChild = (child: C) => {
         customAddMethod(child);
         this.children.push(child);
       };
@@ -21,16 +21,16 @@ export class ChildOrderController {
     return this.children.length;
   }
 
-  addChild = (child: GjsElement) => {
+  addChild = (child: C) => {
     this.container.add(child.widget);
     this.children.push(child);
   };
 
-  removeChild(child: GjsElement) {
+  removeChild(child: C) {
     this.children = this.children.filter((c) => c !== child);
   }
 
-  insertBefore(newChild: GjsElement, beforeChild: GjsElement) {
+  insertBefore(newChild: C, beforeChild: GjsElement) {
     const beforeIndex = this.children.findIndex((c) => c === beforeChild);
 
     if (beforeIndex === -1) {

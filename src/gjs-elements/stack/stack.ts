@@ -25,6 +25,7 @@ export interface StackProps extends StackPropsMixin {
   transitionType?: StackTransitionType;
   interpolateSize?: boolean;
   sameSize?: boolean;
+  children?: React.ReactElement | React.ReactElement[];
 }
 
 export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
@@ -40,7 +41,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly children: ChildOrderController;
+  private readonly children: ChildOrderController<StackItemElement>;
   private readonly propsMapper = new PropertyMapper<StackProps>(this.lifecycle);
 
   constructor(props: DiffedProps) {
@@ -58,10 +59,10 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
       this.lifecycle,
       this.widget,
       (child) => {
-        const label = (widget as any as StackItemElement).label;
-        const uniqueName = (widget as any as StackItemElement).uniqueName;
+        const label = child.label;
+        const uniqueName = child.uniqueName;
 
-        this.widget.add_titled(widget, uniqueName, label);
+        this.widget.add_titled(child.widget, uniqueName, label);
       }
     );
 
@@ -143,7 +144,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   }
 
   notifyWillUnmount(child: GjsElement): void {
-    this.children.removeChild(child);
+    this.children.removeChild(child as StackItemElement);
   }
 
   // #endregion
