@@ -1,4 +1,6 @@
+import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
+import { Orientation } from "../../g-enums";
 import { diffProps } from "../../reconciler/diff-props";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
@@ -13,7 +15,9 @@ import { createMarginPropMapper } from "../utils/property-maps-factories/create-
 
 type SeparatorPropsMixin = AlignmentProps & MarginProps;
 
-export type SeparatorProps = SeparatorPropsMixin;
+export interface SeparatorProps extends SeparatorPropsMixin {
+  orientation?: Orientation;
+}
 
 export class SeparatorElement
   implements GjsElement<"SEPARATOR", Gtk.Separator>
@@ -33,7 +37,14 @@ export class SeparatorElement
   private readonly propsMapper = new PropertyMapper<SeparatorProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget)
+    createMarginPropMapper(this.widget),
+    (props) =>
+      props.orientation(
+        DataType.Enum(Orientation),
+        (v = Orientation.HORIZONTAL) => {
+          this.widget.set_orientation(v);
+        }
+      )
   );
 
   constructor(props: DiffedProps) {
