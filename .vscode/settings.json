@@ -10,5 +10,6 @@
       "url": "./node_modules/git-hook-tasks/dist/config/json-schema.json"
     }
   ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "task.allowAutomaticTasks": "on"
 }

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "./dist/index.js",
   "scripts": {
+    "repo-sync": "./scripts/repo-sync.sh",
     "fix:lint": "eslint --fix .",
     "fix:prettier": "prettier -w ./src .",
     "test:jest": "jest --coverage",
