@@ -105,6 +105,7 @@ export class PropertyMapper<P = Record<string, any>> {
   private update(props: DiffedProps) {
     const updated = new Map<string, [MapEntry<P>, any]>();
 
+    // collect props that need to be updated
     for (let i = 0; i < props.length; i++) {
       const [propName, value] = props[i];
       const entry = this.map.get(propName);
@@ -127,12 +128,17 @@ export class PropertyMapper<P = Record<string, any>> {
     }
 
     const updateEntry = (entry: MapEntry<P>, value: any) => {
-      if (entry.nextCleanup) {
-        entry.nextCleanup();
-      }
+      try {
+        // run the cleanup callback from the previous update
+        if (entry.nextCleanup) {
+          entry.nextCleanup();
+        }
 
-      entry.nextCleanup =
-        entry.callback(value, this.currentProps, redirect) ?? undefined;
+        entry.nextCleanup =
+          entry.callback(value, this.currentProps, redirect) ?? undefined;
+      } catch (e) {
+        console.error("Failed to apply a property update.", e);
+      }
     };
 
     const redirect: UpdateRedirect<P> = {
@@ -147,22 +153,33 @@ export class PropertyMapper<P = Record<string, any>> {
       },
     };
 
-    for (const propName of this.map.keys()) {
-      const [entry, value] = updated.get(propName) ?? [];
-      if (entry) {
-        updateEntry(entry, value);
-      }
-    }
-
     if (this.isFirstUpdate) {
-      // set default values for those that weren't set on the first update
-      for (const entry of this.map.values()) {
-        if (updated.has(entry.propName)) continue;
-        entry.nextCleanup =
-          entry.callback(undefined, this.currentProps, { instead: () => {} }) ??
-          undefined;
-      }
       this.isFirstUpdate = false;
+
+      for (const propName of this.map.keys()) {
+        // eslint-disable-next-line prefer-const
+        let [entry, value] = updated.get(propName) ?? [];
+        if (entry) {
+          updateEntry(entry, value);
+        } else {
+          entry = this.map.get(propName)!;
+          try {
+            entry.nextCleanup =
+              entry.callback(undefined, this.currentProps, {
+                instead: () => {},
+              }) ?? undefined;
+          } catch (e) {
+            console.error("Failed to apply a property update.", e);
+          }
+        }
+      }
+    } else {
+      for (const propName of this.map.keys()) {
+        const [entry, value] = updated.get(propName) ?? [];
+        if (entry) {
+          updateEntry(entry, value);
+        }
+      }
     }
   }
 
