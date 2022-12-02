@@ -103,16 +103,6 @@ export class PropertyMapper<P = Record<string, any>> {
   }
 
   private update(props: DiffedProps) {
-    if (this.isFirstUpdate) {
-      // set default values
-      for (const entry of this.map.values()) {
-        entry.nextCleanup =
-          entry.callback(undefined, this.currentProps, { instead: () => {} }) ??
-          undefined;
-      }
-      this.isFirstUpdate = false;
-    }
-
     const updated = new Map<string, [MapEntry<P>, any]>();
 
     for (let i = 0; i < props.length; i++) {
@@ -162,6 +152,17 @@ export class PropertyMapper<P = Record<string, any>> {
       if (entry) {
         updateEntry(entry, value);
       }
+    }
+
+    if (this.isFirstUpdate) {
+      // set default values for those that weren't set on the first update
+      for (const entry of this.map.values()) {
+        if (updated.has(entry.propName)) continue;
+        entry.nextCleanup =
+          entry.callback(undefined, this.currentProps, { instead: () => {} }) ??
+          undefined;
+      }
+      this.isFirstUpdate = false;
     }
   }
 

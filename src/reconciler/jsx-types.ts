@@ -35,6 +35,10 @@ import type { MSupProps } from "../gjs-elements/markup/markup-elements/sup";
 import type { MMonospaceProps } from "../gjs-elements/markup/markup-elements/tt";
 import type { MUnderlineProps } from "../gjs-elements/markup/markup-elements/u";
 import type {
+  NumberInputElement,
+  NumberInputProps,
+} from "../gjs-elements/number-input/number-input";
+import type {
   PressableElement,
   PressableProps,
 } from "../gjs-elements/pressable/pressable";
@@ -121,6 +125,7 @@ declare global {
       M_SUBSCRIPT: MSubProps;
       M_SUPERSCRIPT: MSupProps;
       M_UNDERLINE: MUnderlineProps;
+      NUMBER_INPUT: IntrinsicComponent<NumberInputProps, NumberInputElement>;
       PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
       RADIO_BOX: IntrinsicComponent<
         ComponentWithChildren<RadioBoxProps>,

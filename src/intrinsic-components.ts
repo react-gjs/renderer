@@ -20,6 +20,8 @@ export const GridItem = IntrinsicElem("GRID_ITEM");
 export const Label = IntrinsicElem("LABEL");
 /** Equivalent to the Gtk.LinkButton widget. */
 export const LinkButton = IntrinsicElem("LINK_BUTTON");
+/** Equivalent to the Gtk.SpinButton widget. */
+export const NumberInput = IntrinsicElem("NUMBER_INPUT");
 /** Equivalent to the Gtk.Image widget. */
 export const Image = IntrinsicElem("IMAGE");
 /** Equivalent to the Gtk.EventBox widget. */
@@ -34,10 +36,8 @@ export const ScrollBox = IntrinsicElem("SCROLL_BOX");
 export const Selector = IntrinsicElem("SELECTOR");
 /** Equivalent to the Gtk.Separator widget. */
 export const Separator = IntrinsicElem("SEPARATOR");
-/**
- * Equivalent to the Gtk.Box widget. Specifically made
- * to add items to a Stack.
- * */
+/** Equivalent to the Gtk.Box widget. Specifically made
+ * to add items to a Stack. */
 export const StackItem = IntrinsicElem("STACK_ITEM");
 /** Equivalent to the Gtk.Switch widget. */
 export const Switch = IntrinsicElem("SWITCH");

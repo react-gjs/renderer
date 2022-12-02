@@ -90,10 +90,7 @@ class EventBind {
   }
 }
 
-/**
- * A helper class to bind props callbacks to the widget's
- * `connect`.
- */
+/** A helper class to bind props callbacks to the widget's `connect`. */
 export class EventHandlers<
   W extends Widget<any>,
   P extends Record<string, any>
@@ -143,9 +140,8 @@ export class EventHandlers<
   }
 
   /**
-   * Binds the function that this elements receives in the
-   * specified "prop" to the signal type of the widget of this
-   * Element.
+   * Binds the function that this elements receives in the specified "prop" to
+   * the signal type of the widget of this Element.
    *
    * @example
    *   handler.bind("clicked", "onClick");

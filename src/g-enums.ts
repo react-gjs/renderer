@@ -52,3 +52,9 @@ export const WindowType = Gtk.WindowType;
 
 export type WindowTypeHint = Gdk.WindowTypeHint;
 export const WindowTypeHint = Gdk.WindowTypeHint;
+
+export type SpinButtonUpdatePolicy = Gtk.SpinButtonUpdatePolicy;
+export const SpinButtonUpdatePolicy = Gtk.SpinButtonUpdatePolicy;
+
+export type SpinType = Gtk.SpinType;
+export const SpinType = Gtk.SpinType;
