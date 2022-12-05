@@ -2,10 +2,8 @@
 
 ## High Priority
 
-- SpinButton (number input)
 - ButtonBox
 - Stack + StackSwitcher
-- Revealer
 - Expander
 
 ## Medium Priority

@@ -17,9 +17,11 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { OptionsList } from "./options-list";
 
-type SelectorPropsMixin = AlignmentProps & MarginProps;
+type SelectorPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface SelectorProps<V extends string | number | undefined = any>
   extends SelectorPropsMixin {
@@ -67,6 +69,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget, { v: Align.START }),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .options(SelectorOptionDataType, (v = []) => {

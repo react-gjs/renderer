@@ -14166,7 +14166,7 @@ container and help break any circular reference count cycles.
      *   occurred. To track errors while loading CSS, connect to
      *   the {@link CssProvider.parsing_error} signal.
      */
-    load_from_data(data: number[], length: number): boolean;
+    load_from_data(data: UInt8Array): boolean;
     /**
      * Loads the data contained in #file into #css_provider,
      * making it clear any previously loaded information.

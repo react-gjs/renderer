@@ -15,6 +15,8 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
 type ImageSrc =
   | {
@@ -30,7 +32,7 @@ type ImageSrc =
       useIconFallback?: boolean;
     };
 
-type ImagePropsMixin = AlignmentProps & MarginProps & ImageSrc;
+type ImagePropsMixin = AlignmentProps & MarginProps & ImageSrc & StyleProps;
 
 export type ImageProps = ImagePropsMixin & {
   pixelSize?: number;
@@ -58,6 +60,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .src(SrcDataType, (src, allProps) => {

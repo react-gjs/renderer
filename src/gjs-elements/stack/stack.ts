@@ -16,7 +16,7 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
-import { StackItemElement } from "./stack-item";
+import { StackScreenElement } from "./stack-screen";
 
 type StackPropsMixin = AlignmentProps & MarginProps;
 
@@ -41,7 +41,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly children: ChildOrderController<StackItemElement>;
+  private readonly children: ChildOrderController<StackScreenElement>;
   private readonly propsMapper = new PropertyMapper<StackProps>(this.lifecycle);
 
   constructor(props: DiffedProps) {
@@ -60,7 +60,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
       this.widget,
       (child) => {
         const label = child.label;
-        const uniqueName = child.uniqueName;
+        const uniqueName = child.uid;
 
         this.widget.add_titled(child.widget, uniqueName, label);
       }
@@ -102,7 +102,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   appendChild(child: GjsElement | TextNode): void {
     ensureNotString(child);
 
-    if (!GjsElementManager.isGjsElementOfKind(child, StackItemElement)) {
+    if (!GjsElementManager.isGjsElementOfKind(child, StackScreenElement)) {
       throw new Error("Stack can only have StackItem's as it's children.");
     }
 
@@ -114,7 +114,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotString(newChild);
 
-    if (!GjsElementManager.isGjsElementOfKind(newChild, StackItemElement)) {
+    if (!GjsElementManager.isGjsElementOfKind(newChild, StackScreenElement)) {
       throw new Error("Stack can only have StackItem's as it's children.");
     }
 
@@ -144,7 +144,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   }
 
   notifyWillUnmount(child: GjsElement): void {
-    this.children.removeChild(child as StackItemElement);
+    this.children.removeChild(child as StackScreenElement);
   }
 
   // #endregion

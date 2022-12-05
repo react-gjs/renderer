@@ -22,6 +22,7 @@ import { createMarginPropMapper } from "../utils/property-maps-factories/create-
 type FlowBoxEntryPropsMixin = AlignmentProps & MarginProps;
 
 export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
+  isDefault?: boolean;
   onSelect?: (event: SyntheticEvent<{ isSelected: boolean }>) => void;
 }
 
@@ -43,24 +44,29 @@ export class FlowBoxEntryElement
   private children = new ChildOrderController(this.lifecycle, this.widget);
 
   emitter = new SyntheticEmitter<{ selected: [boolean] }>(this.lifecycle);
+  isDefault = false;
 
   private readonly propMapper = new PropertyMapper<FlowBoxEntryProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     (props) =>
-      props.onSelect(DataType.Function, (callback) => {
-        if (callback) {
-          const listener = this.emitter.on("selected", (isSelected) =>
-            callback({
-              isSelected,
-              target: this.widget,
-              stopPropagation: () => {}, // no-op
-            })
-          );
-          return () => listener.remove();
-        }
-      })
+      props
+        .onSelect(DataType.Function, (callback) => {
+          if (callback) {
+            const listener = this.emitter.on("selected", (isSelected) =>
+              callback({
+                isSelected,
+                target: this.widget,
+                stopPropagation: () => {}, // no-op
+              })
+            );
+            return () => listener.remove();
+          }
+        })
+        .isDefault(DataType.Boolean, (isDefault = false) => {
+          this.isDefault = isDefault;
+        })
   );
 
   constructor(props: DiffedProps) {

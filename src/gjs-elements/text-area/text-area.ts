@@ -18,8 +18,10 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type TextAreaPropsMixin = AlignmentProps & MarginProps;
+type TextAreaPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface TextAreaProps extends TextAreaPropsMixin {
   value?: string;
@@ -55,6 +57,7 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props.value(DataType.String, (v = "") => {
         this.widget.get_buffer().set_text(v, getStrByteSize(v));

@@ -12,8 +12,10 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type StackSwitcherPropsMixin = AlignmentProps & MarginProps;
+type StackSwitcherPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface StackSwitcherProps extends StackSwitcherPropsMixin {
   iconSize?: number;
@@ -52,6 +54,7 @@ export class StackSwitcherElement
     this.propsMapper.addCases(
       createAlignmentPropMapper(this.widget),
       createMarginPropMapper(this.widget),
+      createStylePropMapper(this.widget),
       (props) =>
         props.iconSize(DataType.Number, (v = 32) => {
           this.widget.icon_size = v;

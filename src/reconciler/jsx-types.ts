@@ -63,9 +63,9 @@ import type {
   SeparatorProps,
 } from "../gjs-elements/separator/separator";
 import type {
-  StackItemElement,
-  StackItemProps,
-} from "../gjs-elements/stack/stack-item";
+  StackScreenElement,
+  StackScreenProps,
+} from "../gjs-elements/stack/stack-screen";
 import type { SwitchElement, SwitchProps } from "../gjs-elements/switch/switch";
 import type {
   TextAreaElement,
@@ -135,9 +135,9 @@ declare global {
       SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
       SEPARATOR: IntrinsicComponent<SeparatorProps, SeparatorElement>;
-      STACK_ITEM: IntrinsicComponent<
-        ComponentWithChildren<StackItemProps>,
-        StackItemElement
+      STACK_SCREEN: IntrinsicComponent<
+        ComponentWithChildren<StackScreenProps>,
+        StackScreenElement
       >;
       SWITCH: IntrinsicComponent<SwitchProps, SwitchElement>;
       TEXT_AREA: IntrinsicComponent<TextAreaProps, TextAreaElement>;

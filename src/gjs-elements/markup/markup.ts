@@ -14,11 +14,13 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 import type { BaseMarkupElement } from "./markup-elem";
 import type { TextNode } from "./text-node";
 import { isMarkupElement } from "./utils/is-markup-elements";
 
-type MarkupPropsMixin = AlignmentProps & MarginProps;
+type MarkupPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface MarkupProps extends MarkupPropsMixin {
   wrap?: boolean;
@@ -49,6 +51,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .wrap(DataType.Boolean, (v = true) => {

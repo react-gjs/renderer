@@ -15,9 +15,11 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { RadioBoxElement } from "./radio-box";
 
-type RadioButtonPropsMixin = AlignmentProps & MarginProps;
+type RadioButtonPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface RadioButtonProps extends RadioButtonPropsMixin {
   label?: string;
@@ -139,6 +141,7 @@ export class RadioButtonElement
       this.propsMapper.addCases(
         createAlignmentPropMapper(widget),
         createMarginPropMapper(widget),
+        createStylePropMapper(widget),
         (props) =>
           props
             .label(DataType.String, (v = "") => {

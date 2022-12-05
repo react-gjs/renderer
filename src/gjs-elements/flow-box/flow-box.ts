@@ -15,9 +15,11 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { FlowBoxEntryElement } from "./flow-box-entry";
 
-type FlowBoxPropsMixin = AlignmentProps & MarginProps;
+type FlowBoxPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface FlowBoxProps extends FlowBoxPropsMixin {
   orientation?: Orientation;
@@ -56,6 +58,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .orientation(
@@ -93,8 +96,11 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
         })
   );
 
+  private isAnyChildSelected = false;
+
   constructor(props: DiffedProps) {
     this.handlers.bindInternal("selected-children-changed", () => {
+      this.isAnyChildSelected = true;
       const newUnselected: FlowBoxEntryElement[] = [];
       const newSelected: FlowBoxEntryElement[] = [];
 
@@ -137,10 +143,15 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
       if (GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)) {
         child.notifyWillAppendTo(this);
         this.widget.add(child.widget);
-        this.children.push({
+        const entry = {
           element: child,
           isSelected: false,
-        });
+        };
+        this.children.push(entry);
+        if (child.isDefault && !this.isAnyChildSelected) {
+          this.widget.select_child(child.widget);
+          entry.isSelected = true;
+        }
         this.widget.show_all();
       } else {
         throw new Error("FlowBox can only have FlexBoxEntry as it's children.");

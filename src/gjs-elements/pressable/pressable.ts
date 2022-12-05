@@ -20,15 +20,18 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type PressablePropsMixin = AlignmentProps & MarginProps;
+type PressablePropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface PressableProps extends PressablePropsMixin {
   onClick?: (event: SyntheticEvent<MouseButtonPressEvent>) => void;
   onRelease?: (event: SyntheticEvent<MouseButtonPressEvent>) => void;
   /**
-   * If set to true, the pressable element will intercept mouse events on it's
-   * children. Meaning children will not receive any mouse events.
+   * If set to true, the pressable element will intercept mouse events
+   * on it's children. Meaning children will not receive any mouse
+   * events.
    */
   interceptChildEvents?: boolean;
   children?: React.ReactElement;
@@ -56,6 +59,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props.interceptChildEvents(DataType.Boolean, (v = false) => {
         this.widget.set_above_child(v);

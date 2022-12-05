@@ -21,8 +21,10 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type NumberInputPropsMixin = AlignmentProps & MarginProps;
+type NumberInputPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface NumberInputProps extends NumberInputPropsMixin {
   defaultValue?: number;
@@ -66,6 +68,7 @@ export class NumberInputElement
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .value(DataType.Number, (v, allProps) => {

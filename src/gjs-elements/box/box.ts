@@ -15,8 +15,10 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type BoxPropsMixin = AlignmentProps & MarginProps;
+type BoxPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface BoxProps extends BoxPropsMixin {
   spacing?: number;
@@ -45,6 +47,7 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .spacing(DataType.Number, (v = 0) => {

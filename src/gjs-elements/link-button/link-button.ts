@@ -15,8 +15,10 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type LinkButtonPropsMixin = AlignmentProps & MarginProps;
+type LinkButtonPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface LinkButtonProps extends LinkButtonPropsMixin {
   label?: string;
@@ -55,6 +57,7 @@ export class LinkButtonElement
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .label(DataType.String, (v = "") => {
@@ -72,6 +75,10 @@ export class LinkButtonElement
     this.handlers.bind("leave", "onLeave");
     this.handlers.bind("pressed", "onPressed");
     this.handlers.bind("released", "onReleased");
+
+    this.widget.connect("activate-link", () => {
+      return true;
+    });
 
     this.updateProps(props);
 

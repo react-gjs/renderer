@@ -14,8 +14,10 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type SwitchPropsMixin = AlignmentProps & MarginProps;
+type SwitchPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface SwitchProps extends SwitchPropsMixin {
   margin?: ElementMargin;
@@ -45,6 +47,7 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props.value(DataType.Boolean, (v = false) => {
         this.widget.state = v;

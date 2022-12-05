@@ -16,28 +16,33 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type StackItemPropsMixin = AlignmentProps & MarginProps;
+type StackScreenPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export interface StackItemProps extends StackItemPropsMixin {
+export interface StackScreenProps<R extends string = string>
+  extends StackScreenPropsMixin {
   label: string;
   spacing?: number;
   baselinePosition?: BaselinePosition;
   orientation?: Orientation;
+  uid?: R;
 }
 
-export class StackItemElement implements GjsElement<"STACK_ITEM", Gtk.Box> {
+export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "STACK_ITEM";
+  readonly kind = "STACK_SCREEN";
   widget = new Gtk.Box();
 
   label = "";
-  uniqueName = generateUID(16);
+
+  uid!: string;
 
   private parent: GjsElement | null = null;
 
@@ -46,10 +51,11 @@ export class StackItemElement implements GjsElement<"STACK_ITEM", Gtk.Box> {
     this.lifecycle,
     this.widget
   );
-  private readonly propsMapper = new PropertyMapper<StackItemProps>(
+  private readonly propsMapper = new PropertyMapper<StackScreenProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .label(DataType.String, (v = "") => {
@@ -70,6 +76,17 @@ export class StackItemElement implements GjsElement<"STACK_ITEM", Gtk.Box> {
             this.widget.orientation = v;
           }
         )
+        .uid(DataType.String, (v) => {
+          if (this.uid) {
+            console.error(new Error("StackItem uid cannot be changed."));
+          }
+
+          if (v) {
+            this.uid = v;
+          } else {
+            this.uid = generateUID(16);
+          }
+        })
   );
 
   constructor(props: DiffedProps) {

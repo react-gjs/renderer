@@ -14,11 +14,13 @@ import type { AlignmentProps } from "../utils/property-maps-factories/create-ali
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { GridItemElement } from "./grid-item";
 import { GridItemsList } from "./helpers/grid-items-list";
 import { GridMatrix } from "./helpers/grid-matrix";
 
-type GridPropsMixin = AlignmentProps & MarginProps;
+type GridPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface GridProps extends GridPropsMixin {
   columns: number;
@@ -52,7 +54,10 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   private columns = 1;
 
-  /** The column count that was used the last time the grid was re-arranged. */
+  /**
+   * The column count that was used the last time the grid was
+   * re-arranged.
+   */
   private previousColumnCount = 0;
 
   private readonly lifecycle = new ElementLifecycleController();
@@ -61,6 +66,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
     (props) =>
       props
         .columns(DataType.Number, (V = 1) => {
@@ -112,7 +118,8 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   /**
-   * Callback that is called by the `GridItemsList` when a child spans change.
+   * Callback that is called by the `GridItemsList` when a child spans
+   * change.
    *
    * @internal
    */
@@ -121,8 +128,8 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   /**
-   * Callback that is called by the `GridItemsList` when a child is added to
-   * this container.
+   * Callback that is called by the `GridItemsList` when a child is
+   * added to this container.
    *
    * @internal
    */
@@ -131,8 +138,8 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   /**
-   * Callback that is called by the `GridItemsList` when a child is removed from
-   * this container.
+   * Callback that is called by the `GridItemsList` when a child is
+   * removed from this container.
    *
    * @internal
    */
