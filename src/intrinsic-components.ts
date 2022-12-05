@@ -30,6 +30,8 @@ export const Pressable = IntrinsicElem("PRESSABLE");
 export const RadioBox = IntrinsicElem("RADIO_BOX");
 /** Equivalent to the Gtk.RadioButton widget. */
 export const RadioButton = IntrinsicElem("RADIO_BUTTON");
+/** Equivalent to the Gtk.Revealer widget. */
+export const Revealer = IntrinsicElem("REVEALER");
 /** Equivalent to the Gtk.ScrolledWindow widget. */
 export const ScrollBox = IntrinsicElem("SCROLL_BOX");
 /** Built on top of the Gtk.ComboBox widget. */

@@ -51,6 +51,10 @@ import type {
   RadioButtonProps,
 } from "../gjs-elements/radio/radio-button";
 import type {
+  RevealerElement,
+  RevealerProps,
+} from "../gjs-elements/revealer/revealer";
+import type {
   ScrollBoxElement,
   ScrollBoxProps,
 } from "../gjs-elements/scroll-box/scroll-box";
@@ -132,6 +136,10 @@ declare global {
         RadioBoxElement
       >;
       RADIO_BUTTON: IntrinsicComponent<RadioButtonProps, RadioButtonElement>;
+      REVEALER: IntrinsicComponent<
+        ComponentWithChildren<RevealerProps>,
+        RevealerElement
+      >;
       SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
       SEPARATOR: IntrinsicComponent<SeparatorProps, SeparatorElement>;
