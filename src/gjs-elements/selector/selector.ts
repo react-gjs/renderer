@@ -1,10 +1,10 @@
 import { DataType } from "dilswer";
 import type Gtk from "gi://Gtk";
 import { Align } from "../../g-enums";
-import { diffProps } from "../../reconciler/diff-props";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
+import { diffProps } from "../utils/diff-props";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
 import {

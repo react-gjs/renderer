@@ -1,6 +1,6 @@
 import Gtk from "gi://Gtk";
-import { diffProps } from "../../reconciler/diff-props";
 import type { GjsElement } from "../gjs-element";
+import { diffProps } from "../utils/diff-props";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 
 export class ApplicationElement {

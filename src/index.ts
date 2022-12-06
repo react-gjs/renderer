@@ -9,6 +9,6 @@ export * from "./gjs-elements/index";
 export { KeyPressModifiers } from "./gjs-elements/utils/gdk-events/key-press-event";
 export * from "./intrinsic-components";
 export * from "./process-exit";
-export * from "./reconciler/index";
 export * from "./reconciler/jsx-types";
+export * from "./reconciler/render";
 export type { GtkModules };

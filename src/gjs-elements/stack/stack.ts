@@ -1,12 +1,12 @@
 import { DataType } from "dilswer";
 import type Gtk from "gi://Gtk";
 import { StackTransitionType } from "../../g-enums";
-import { diffProps } from "../../reconciler/diff-props";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
+import { diffProps } from "../utils/diff-props";
 import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";

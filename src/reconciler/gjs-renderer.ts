@@ -41,9 +41,9 @@ import { StackSwitcherElement } from "../gjs-elements/stack/stack-switcher";
 import { SwitchElement } from "../gjs-elements/switch/switch";
 import { TextAreaElement } from "../gjs-elements/text-area/text-area";
 import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
+import { diffProps } from "../gjs-elements/utils/diff-props";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
 import { WindowElement } from "../gjs-elements/window/window";
-import { diffProps } from "./diff-props";
 import { HostContext } from "./host-context";
 
 GjsElementManager.register("BOX", BoxElement);

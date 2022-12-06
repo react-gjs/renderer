@@ -1,11 +1,11 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk?version=3.0";
 import Gtk from "gi://Gtk";
-import { diffProps } from "../../reconciler/diff-props";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { ElementMargin } from "../utils/apply-margin";
+import { diffProps } from "../utils/diff-props";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../utils/element-extenders/event-handlers";
