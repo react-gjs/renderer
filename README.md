@@ -14,11 +14,15 @@ _This is still a work in progress, bugs and missing features are expected._
 - **Image** - build on top of Gtk.Image
 - **Label** - build on top of Gtk.Label
 - **LinkButton** - build on top of Gtk.LinkButton
+- **NumberInput** - build on top of Gtk.SpinButton
 - **Popover** - build on top of Gtk.Popover
 - **Pressable** - build on top of Gtk.EventBox
+- **RadioButton** - build on top of Gtk.RadioButton
+- **Revealer** - build on top of Gtk.Revealer
 - **ScrollBox** - build on top of Gtk.ScrolledWindow
 - **Selector** - build on top of Gtk.ComboBox
 - **Separator** - build on top of Gtk.Separator
+- **Stack** - build on top of Gtk.Stack, usable only via `useStack` or `createStack` functions
 - **Switch** - build on top of Gtk.Switch
 - **TextArea** - build on top of Gtk.TextView
 - **TextEntry** - build on top of Gtk.Entry

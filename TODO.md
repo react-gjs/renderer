@@ -3,21 +3,18 @@
 ## High Priority
 
 - ButtonBox
-- Stack + StackSwitcher
 - Expander
+- Frame
+- Dialog
+- SizeGroup
 
 ## Medium Priority
 
-- SizeGroup
 - ActionBar
-- Dialog
 - FileChooser
-- Frame
 - Infobar
-- ProgressBar
 - Range
 - Scale
-- LevelBar
 - Menu
 - MenuButton
 - MenuItem
@@ -38,6 +35,8 @@
 ## Low Priority
 
 - Calendar
+- ProgressBar
+- LevelBar
 - ColorButton
 - Paned
 - LockButton
