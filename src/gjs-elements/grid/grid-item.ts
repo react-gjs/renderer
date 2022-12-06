@@ -24,6 +24,7 @@ export type GridItemEvents = {
   columnSpanChanged: [number];
   rowSpanChanged: [number];
   itemDestroyed: [GridItemElement];
+  itemUpdated: [GridItemElement];
 };
 
 export class GridItemElement implements GjsElement<"GRID_ITEM"> {
@@ -86,7 +87,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
     } else {
       child.notifyWillAppendTo(this);
       this.childElement = child;
-      this.parent?.onChildAdded();
+      this.emitter.emit("itemUpdated", this);
     }
   }
 
@@ -98,8 +99,8 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
     parent.notifyWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
-    this.emitter.emit("itemDestroyed", this);
     this.childElement = null;
+    this.emitter.emit("itemDestroyed", this);
 
     this.widget.destroy();
   }
@@ -121,7 +122,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   notifyWillUnmount() {
     this.childElement = null;
-    this.parent?.onChildChange();
+    this.emitter.emit("itemUpdated", this);
   }
 
   // #endregion

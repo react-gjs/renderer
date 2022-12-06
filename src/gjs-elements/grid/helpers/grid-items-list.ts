@@ -51,7 +51,7 @@ export class GridItemsList {
       columnSpan: colSpan,
       rowSpan: rowSpan,
       listeners: [],
-      dispatcher: new Dispatcher(20),
+      dispatcher: new Dispatcher(5),
     };
 
     if (atIndex === undefined) {
@@ -70,6 +70,11 @@ export class GridItemsList {
       }),
       child.emitter.on("rowSpanChanged", (newRowSpan) => {
         childEntry.rowSpan = newRowSpan;
+        childEntry.dispatcher.dispatch(() =>
+          this.onChildChangeInterface.onChildChange(childEntry)
+        );
+      }),
+      child.emitter.on("itemUpdated", () => {
         childEntry.dispatcher.dispatch(() =>
           this.onChildChangeInterface.onChildChange(childEntry)
         );
