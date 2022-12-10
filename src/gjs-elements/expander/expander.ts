@@ -1,17 +1,15 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import Pango from "gi://Pango";
-import type { EllipsizeMode, Justification, WrapMode } from "../../g-enums";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
 import type { TextNode } from "../markup/text-node";
-import type { ElementMargin } from "../utils/apply-margin";
 import { diffProps } from "../utils/diff-props";
+import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
-import { TextChildController } from "../utils/element-extenders/text-child-controller";
+import { ensureNotString } from "../utils/ensure-not-string";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -19,71 +17,55 @@ import { createMarginPropMapper } from "../utils/property-maps-factories/create-
 import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type LabelPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type ExpanderPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export interface LabelProps extends LabelPropsMixin {
-  wrap?: boolean;
-  wrapMode?: WrapMode;
-  ellipsize?: EllipsizeMode;
-  justify?: Justification;
-  lines?: number;
-  selectable?: boolean;
-  margin?: ElementMargin;
+export interface ExpanderProps extends ExpanderPropsMixin {
+  expanded?: boolean;
+  label?: string;
+  labelAlignFill?: boolean;
+  labelUnderline?: boolean;
+  resizeParent?: boolean;
 }
 
-export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
+export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
-    return currentContext.set({
-      isInTextContext: true,
-    });
+    return currentContext;
   }
 
-  readonly kind = "LABEL";
-  widget = new Gtk.Label();
+  readonly kind = "EXPANDER";
+  widget = new Gtk.Expander();
 
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly propsMapper = new PropertyMapper<LabelProps>(
+  private readonly children = new ChildOrderController(
+    this.lifecycle,
+    this.widget
+  );
+  private readonly propsMapper = new PropertyMapper<ExpanderProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props
-        .wrap(DataType.Boolean, (v = true) => {
-          this.widget.wrap = v;
+        .expanded(DataType.Boolean, (v = false) => {
+          this.widget.set_expanded(v);
         })
-        .selectable(DataType.Boolean, (v = false) => {
-          this.widget.selectable = v;
+        .label(DataType.String, (v = "") => {
+          this.widget.set_label(v);
         })
-        .lines(DataType.Number, (v = -1) => {
-          this.widget.lines = v;
+        .labelAlignFill(DataType.Boolean, (v = false) => {
+          this.widget.set_label_fill(v);
         })
-        .ellipsize(
-          DataType.Enum(Pango.EllipsizeMode),
-          (v = Pango.EllipsizeMode.NONE) => {
-            this.widget.ellipsize = v;
-          }
-        )
-        .wrapMode(DataType.Enum(Pango.WrapMode), (v = Pango.WrapMode.CHAR) => {
-          this.widget.wrap_mode = v;
+        .labelUnderline(DataType.Boolean, (v = false) => {
+          this.widget.set_use_underline(v);
         })
-        .justify(
-          DataType.Enum(Gtk.Justification),
-          (v = Gtk.Justification.CENTER) => {
-            this.widget.justify = v;
-          }
-        )
-  );
-
-  private readonly children = new TextChildController(
-    this.lifecycle,
-    (text) => {
-      this.widget.label = text;
-    }
+        .resizeParent(DataType.Boolean, (v = false) => {
+          this.widget.set_resize_toplevel(v);
+        })
   );
 
   constructor(props: DiffedProps) {
@@ -99,28 +81,19 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.addChild(child);
-      this.widget.show_all();
-      return;
-    }
+    ensureNotString(child);
 
-    throw new Error("Label cannot have non-text children.");
+    child.notifyWillAppendTo(this);
+    this.children.addChild(child);
+    this.widget.show_all();
   }
 
-  insertBefore(
-    child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
-  ): void {
-    if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.insertBefore(child, beforeChild);
-      this.widget.show_all();
-      return;
-    }
+  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+    ensureNotString(newChild);
 
-    throw new Error("Label cannot have non-text children.");
+    newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild);
+    this.widget.show_all();
   }
 
   remove(parent: GjsElement): void {
@@ -132,7 +105,6 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   }
 
   render() {
-    this.children.update();
     this.parent?.widget.show_all();
   }
 
@@ -144,7 +116,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
     this.parent = parent;
   }
 
-  notifyWillUnmount(child: GjsElement | TextNode) {
+  notifyWillUnmount(child: GjsElement): void {
     this.children.removeChild(child);
   }
 

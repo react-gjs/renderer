@@ -3,6 +3,7 @@ export interface GjsElementTypeRegistry {
   BUTTON: "BUTTON";
   BUTTON_BOX: "BUTTON_BOX";
   CHECK_BUTTON: "CHECK_BUTTON";
+  EXPANDER: "EXPANDER";
   FLOW_BOX_ENTRY: "FLOW_BOX_ENTRY";
   FLOW_BOX: "FLOW_BOX";
   GRID: "GRID";

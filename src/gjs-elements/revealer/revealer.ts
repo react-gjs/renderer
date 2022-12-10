@@ -12,7 +12,7 @@ import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { ensureNotString } from "../utils/ensure-not-string";
 
 export interface RevealerProps {
-  revealChild?: boolean;
+  visible?: boolean;
   transitionDuration?: number;
   transitionType?: Gtk.RevealerTransitionType;
 }
@@ -38,7 +38,7 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
     this.lifecycle,
     (props) =>
       props
-        .revealChild(DataType.Boolean, (v = false) => {
+        .visible(DataType.Boolean, (v = false) => {
           this.widget.reveal_child = v;
         })
         .transitionDuration(DataType.Number, (v = 500) => {

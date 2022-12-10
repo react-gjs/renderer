@@ -35,7 +35,6 @@ export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   verticalScrollbar?: PolicyType;
   shadow?: ShadowType;
   overlayScrolling?: boolean;
-  children: React.ReactElement;
   onEdgeReached?: (event: SyntheticEvent<{ position: PositionType }>) => void;
 }
 

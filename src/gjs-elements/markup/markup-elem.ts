@@ -1,4 +1,3 @@
-import type React from "react";
 import type { GjsElement } from "../gjs-element";
 import type { MarkupElement } from "./markup";
 
@@ -113,6 +112,4 @@ export interface MarkupElementProps {
   transform?: MarkupTextTransform;
   underline?: MarkupFontUnderline;
   underlineColor?: string;
-
-  children?: string | React.ReactElement | (React.ReactElement | string)[];
 }

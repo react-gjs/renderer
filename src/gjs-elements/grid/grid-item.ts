@@ -1,6 +1,5 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type React from "react";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -17,7 +16,6 @@ import { GridElement } from "./grid";
 export interface GridItemProps {
   columnSpan?: number;
   rowSpan?: number;
-  children: React.ReactElement;
 }
 
 export type GridItemEvents = {

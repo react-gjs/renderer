@@ -39,7 +39,9 @@ export class TextNode {
 
   insertBefore(): void {}
 
-  remove(parent: GjsElement): void {}
+  remove(parent: GjsElement): void {
+    this.parent?.notifyWillUnmount(this);
+  }
 
   render() {
     this.parent?.render();

@@ -11,6 +11,7 @@ import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
+import { TextChildController } from "../utils/element-extenders/text-child-controller";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -24,7 +25,6 @@ export interface LinkButtonProps extends LinkButtonPropsMixin {
   label?: string;
   useUnderline?: boolean;
   margin?: ElementMargin;
-  children?: string;
   onClick?: (event: SyntheticEvent) => void;
   onActivate?: (event: SyntheticEvent) => void;
   onEnter?: (event: SyntheticEvent) => void;
@@ -68,6 +68,13 @@ export class LinkButtonElement
         })
   );
 
+  private readonly children = new TextChildController(
+    this.lifecycle,
+    (text) => {
+      this.widget.label = text;
+    }
+  );
+
   constructor(props: DiffedProps) {
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("activate", "onActivate");
@@ -92,21 +99,28 @@ export class LinkButtonElement
   // #region This widget direct mutations
 
   appendChild(child: TextNode | GjsElement): void {
-    if (typeof child === "string") {
-      this.widget.label = child;
-      this.widget.show_all();
-      return;
-    } else if (child.kind === "TEXT_NODE") {
-      this.widget.label = child.getText();
+    if (child.kind === "TEXT_NODE") {
+      child.notifyWillAppendTo(this);
+      this.children.addChild(child);
       this.widget.show_all();
       return;
     }
 
-    throw new Error("LinkButton cannot have children.");
+    throw new Error("LinkButton cannot have non-text children.");
   }
 
-  insertBefore(): void {
-    throw new Error("LinkButton cannot have children.");
+  insertBefore(
+    child: TextNode | GjsElement,
+    beforeChild: TextNode | GjsElement
+  ): void {
+    if (child.kind === "TEXT_NODE") {
+      child.notifyWillAppendTo(this);
+      this.children.insertBefore(child, beforeChild);
+      this.widget.show_all();
+      return;
+    }
+
+    throw new Error("CheckButton cannot have non-text children.");
   }
 
   remove(parent: GjsElement): void {
@@ -118,6 +132,7 @@ export class LinkButtonElement
   }
 
   render() {
+    this.children.update();
     this.parent?.widget.show_all();
   }
 
@@ -129,7 +144,9 @@ export class LinkButtonElement
     this.parent = parent;
   }
 
-  notifyWillUnmount() {}
+  notifyWillUnmount(child: GjsElement | TextNode) {
+    this.children.removeChild(child);
+  }
 
   // #endregion
 

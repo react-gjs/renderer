@@ -1,3 +1,4 @@
+import type React from "react";
 import type { BoxElement, BoxProps } from "../gjs-elements/box/box";
 import type {
   ButtonBoxElement,
@@ -8,6 +9,10 @@ import type {
   CheckButtonElement,
   CheckButtonProps,
 } from "../gjs-elements/check-button/check-button";
+import type {
+  ExpanderElement,
+  ExpanderProps,
+} from "../gjs-elements/expander/expander";
 import type {
   FlowBoxElement,
   FlowBoxProps,
@@ -85,8 +90,18 @@ import type {
 } from "../gjs-elements/text-entry/text-entry";
 import type { WindowElement, WindowProps } from "../gjs-elements/window/window";
 
-export type ComponentWithChildren<P> = {
-  children?: React.ReactNode | React.ReactNode[];
+export type ComponentWithChildren<
+  P,
+  C extends React.ReactNode = React.ReactNode
+> = {
+  children?: C | C[];
+} & P;
+
+export type ComponentWithChild<
+  P,
+  C extends React.ReactNode = React.ReactNode
+> = {
+  children?: C;
 } & P;
 
 export type IntrinsicComponent<P, W> = {
@@ -109,7 +124,14 @@ declare global {
         ComponentWithChildren<ButtonBoxProps>,
         ButtonBoxElement
       >;
-      CHECK_BUTTON: IntrinsicComponent<CheckButtonProps, CheckButtonElement>;
+      CHECK_BUTTON: IntrinsicComponent<
+        ComponentWithChild<CheckButtonProps, string>,
+        CheckButtonElement
+      >;
+      EXPANDER: IntrinsicComponent<
+        ComponentWithChildren<ExpanderProps>,
+        ExpanderElement
+      >;
       FLOW_BOX: IntrinsicComponent<
         ComponentWithChildren<FlowBoxProps>,
         FlowBoxElement
@@ -119,14 +141,23 @@ declare global {
         FlowBoxEntryElement
       >;
       GRID: IntrinsicComponent<ComponentWithChildren<GridProps>, GridElement>;
-      GRID_ITEM: IntrinsicComponent<GridItemProps, GridItemElement>;
+      GRID_ITEM: IntrinsicComponent<
+        ComponentWithChild<GridItemProps, React.ReactElement>,
+        GridItemElement
+      >;
       IMAGE: IntrinsicComponent<ImageProps, ImageElement>;
       LABEL: IntrinsicComponent<
-        ComponentWithChildren<LabelProps>,
+        ComponentWithChildren<LabelProps, string>,
         LabelElement
       >;
-      LINK_BUTTON: IntrinsicComponent<LinkButtonProps, LinkButtonElement>;
-      MARKUP: IntrinsicComponent<MarkupProps, MarkupElement>;
+      LINK_BUTTON: IntrinsicComponent<
+        ComponentWithChildren<LinkButtonProps, string>,
+        LinkButtonElement
+      >;
+      MARKUP: IntrinsicComponent<
+        ComponentWithChildren<MarkupProps, string | React.ReactElement>,
+        MarkupElement
+      >;
       M_BIG: MBigProps;
       M_BOLD: MBoldProps;
       M_ITALIC: MItalicProps;
@@ -138,7 +169,10 @@ declare global {
       M_SUPERSCRIPT: MSupProps;
       M_UNDERLINE: MUnderlineProps;
       NUMBER_INPUT: IntrinsicComponent<NumberInputProps, NumberInputElement>;
-      PRESSABLE: IntrinsicComponent<PressableProps, PressableElement>;
+      PRESSABLE: IntrinsicComponent<
+        ComponentWithChild<PressableProps, React.ReactElement>,
+        PressableElement
+      >;
       RADIO_BOX: IntrinsicComponent<
         ComponentWithChildren<RadioBoxProps>,
         RadioBoxElement
@@ -148,7 +182,10 @@ declare global {
         ComponentWithChildren<RevealerProps>,
         RevealerElement
       >;
-      SCROLL_BOX: IntrinsicComponent<ScrollBoxProps, ScrollBoxElement>;
+      SCROLL_BOX: IntrinsicComponent<
+        ComponentWithChild<ScrollBoxProps, React.ReactElement>,
+        ScrollBoxElement
+      >;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
       SEPARATOR: IntrinsicComponent<SeparatorProps, SeparatorElement>;
       STACK_SCREEN: IntrinsicComponent<

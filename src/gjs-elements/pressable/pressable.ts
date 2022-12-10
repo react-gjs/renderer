@@ -1,7 +1,6 @@
 import { DataType } from "dilswer";
 import type Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-import type React from "react";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -34,7 +33,6 @@ export interface PressableProps extends PressablePropsMixin {
    * events.
    */
   interceptChildEvents?: boolean;
-  children?: React.ReactElement;
 }
 
 export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {

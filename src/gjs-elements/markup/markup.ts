@@ -29,7 +29,6 @@ export interface MarkupProps extends MarkupPropsMixin {
   justify?: Justification;
   lines?: number;
   selectable?: boolean;
-  children?: React.ReactElement | React.ReactElement[];
   margin?: ElementMargin;
 }
 

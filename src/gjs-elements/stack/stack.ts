@@ -58,11 +58,11 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
     this.children = new ChildOrderController(
       this.lifecycle,
       this.widget,
-      (child) => {
+      (widget, child) => {
         const label = child.label;
         const uniqueName = child.uid;
 
-        this.widget.add_titled(child.widget, uniqueName, label);
+        this.widget.add_titled(widget, uniqueName, label);
       }
     );
 

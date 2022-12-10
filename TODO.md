@@ -2,8 +2,6 @@
 
 ## High Priority
 
-- ButtonBox
-- Expander
 - Frame
 - Dialog
 - SizeGroup

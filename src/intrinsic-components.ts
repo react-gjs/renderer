@@ -10,6 +10,8 @@ export const Button = IntrinsicElem("BUTTON");
 export const ButtonBox = IntrinsicElem("BUTTON_BOX");
 /** Equivalent to the Gtk.CheckButton widget. */
 export const CheckButton = IntrinsicElem("CHECK_BUTTON");
+/** Equivalent to the Gtk.Expander widget. */
+export const Expander = IntrinsicElem("EXPANDER");
 /** Equivalent to the Gtk.FlexBox widget. */
 export const FlowBox = IntrinsicElem("FLOW_BOX");
 /** Equivalent to the Gtk.FlexBoxChild widget. */

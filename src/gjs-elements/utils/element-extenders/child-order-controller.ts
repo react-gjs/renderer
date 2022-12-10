@@ -8,23 +8,27 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
   constructor(
     private element: ElementLifecycle,
     private container: Gtk.Container,
-    customAddMethod?: (child: C) => void
-  ) {
-    if (customAddMethod)
-      this.addChild = (child: C) => {
-        customAddMethod(child);
-        this.children.push(child);
-      };
-  }
+    private addChildToContainer: (child: Gtk.Widget, element: C) => void = (
+      child: Gtk.Widget
+    ) => {
+      this.container.add(child);
+    },
+    private removeChildFromContainer: (
+      child: Gtk.Widget,
+      element: C
+    ) => void = (child: Gtk.Widget) => {
+      this.container.remove(child);
+    }
+  ) {}
 
   count() {
     return this.children.length;
   }
 
-  addChild = (child: C) => {
-    this.container.add(child.widget);
+  addChild(child: C) {
+    this.addChildToContainer(child.widget, child);
     this.children.push(child);
-  };
+  }
 
   removeChild(child: C) {
     this.children = this.children.filter((c) => c !== child);
@@ -40,13 +44,13 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
     const childrenAfter = this.children.slice(beforeIndex);
 
     for (let i = 0; i < childrenAfter.length; i++) {
-      this.container.remove(childrenAfter[i].widget);
+      this.removeChildFromContainer(childrenAfter[i].widget, childrenAfter[i]);
     }
 
-    this.container.add(newChild.widget);
+    this.addChildToContainer(newChild.widget, newChild);
 
     for (let i = 0; i < childrenAfter.length; i++) {
-      this.container.add(childrenAfter[i].widget);
+      this.addChildToContainer(childrenAfter[i].widget, childrenAfter[i]);
     }
 
     this.children.splice(beforeIndex, 0, newChild);

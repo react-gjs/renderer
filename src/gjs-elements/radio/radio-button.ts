@@ -11,6 +11,7 @@ import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
+import { TextChildController } from "../utils/element-extenders/text-child-controller";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -62,6 +63,13 @@ export class RadioButtonElement
     this.lifecycle
   );
 
+  private readonly children = new TextChildController(
+    this.lifecycle,
+    (text) => {
+      this.widget.label = text;
+    }
+  );
+
   private unappliedProps: DiffedProps = [];
 
   constructor(props: DiffedProps) {
@@ -98,20 +106,28 @@ export class RadioButtonElement
   // #region This widget direct mutations
 
   appendChild(child: TextNode | GjsElement): void {
-    if (typeof child === "string") {
-      this.widget.label = child;
-    } else {
-      if (this.widget.get_children().data) {
-        throw new Error("Button can have only one child.");
-      }
+    if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
-      this.widget.add(child.widget);
+      this.children.addChild(child);
+      this.widget.show_all();
+      return;
     }
-    this.widget.show_all();
+
+    throw new Error("RadioButton cannot have non-text children.");
   }
 
-  insertBefore(): void {
-    throw new Error("Button can have only one child.");
+  insertBefore(
+    child: TextNode | GjsElement,
+    beforeChild: TextNode | GjsElement
+  ): void {
+    if (child.kind === "TEXT_NODE") {
+      child.notifyWillAppendTo(this);
+      this.children.insertBefore(child, beforeChild);
+      this.widget.show_all();
+      return;
+    }
+
+    throw new Error("RadioButton cannot have non-text children.");
   }
 
   remove(parent: GjsElement): void {
@@ -123,6 +139,7 @@ export class RadioButtonElement
   }
 
   render() {
+    this.children.update();
     this.parent?.widget.show_all();
   }
 
@@ -159,7 +176,9 @@ export class RadioButtonElement
     }
   }
 
-  notifyWillUnmount() {}
+  notifyWillUnmount(child: GjsElement | TextNode) {
+    this.children.removeChild(child);
+  }
 
   // #endregion
 
