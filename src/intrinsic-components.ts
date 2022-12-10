@@ -16,6 +16,8 @@ export const Expander = IntrinsicElem("EXPANDER");
 export const FlowBox = IntrinsicElem("FLOW_BOX");
 /** Equivalent to the Gtk.FlexBoxChild widget. */
 export const FlowBoxEntry = IntrinsicElem("FLOW_BOX_ENTRY");
+/** Equivalent to the Gtk.Frame widget. */
+export const Frame = IntrinsicElem("FRAME");
 /** Equivalent to the Gtk.Grid widget. */
 export const Grid = IntrinsicElem("GRID");
 /** A component that must wrap each child of a `<Grid />`. */

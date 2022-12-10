@@ -21,6 +21,7 @@ import type {
   FlowBoxEntryElement,
   FlowBoxEntryProps,
 } from "../gjs-elements/flow-box/flow-box-entry";
+import type { FrameElement, FrameProps } from "../gjs-elements/frame/frame";
 import type { GridElement, GridProps } from "../gjs-elements/grid/grid";
 import type {
   GridItemElement,
@@ -139,6 +140,10 @@ declare global {
       FLOW_BOX_ENTRY: IntrinsicComponent<
         ComponentWithChildren<FlowBoxEntryProps>,
         FlowBoxEntryElement
+      >;
+      FRAME: IntrinsicComponent<
+        ComponentWithChildren<FrameProps>,
+        FrameElement
       >;
       GRID: IntrinsicComponent<ComponentWithChildren<GridProps>, GridElement>;
       GRID_ITEM: IntrinsicComponent<

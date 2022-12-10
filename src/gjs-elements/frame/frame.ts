@@ -1,5 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
+import { ShadowType } from "../../g-enums";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -17,25 +18,24 @@ import { createMarginPropMapper } from "../utils/property-maps-factories/create-
 import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type ExpanderPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type FramePropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export interface ExpanderProps extends ExpanderPropsMixin {
-  expanded?: boolean;
+export interface FrameProps extends FramePropsMixin {
   label?: string;
-  labelAlignFill?: boolean;
-  labelUnderline?: boolean;
-  resizeParent?: boolean;
+  labelAlignX?: number;
+  labelAlignY?: number;
+  shadowType?: ShadowType;
 }
 
-export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
+export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "EXPANDER";
-  widget = new Gtk.Expander();
+  readonly kind = "FRAME";
+  widget = new Gtk.Frame();
 
   private parent: GjsElement | null = null;
 
@@ -44,27 +44,24 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
     this.lifecycle,
     this.widget
   );
-  private readonly propsMapper = new PropertyMapper<ExpanderProps>(
+  private readonly propsMapper = new PropertyMapper<FrameProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props
-        .expanded(DataType.Boolean, (v = false) => {
-          this.widget.set_expanded(v);
-        })
         .label(DataType.String, (v = "") => {
           this.widget.set_label(v);
         })
-        .labelAlignFill(DataType.Boolean, (v = false) => {
-          this.widget.set_label_fill(v);
+        .labelAlignX(DataType.Number, (v = 0, allProps) => {
+          this.widget.set_label_align(v, allProps.labelAlignY ?? 0);
         })
-        .labelUnderline(DataType.Boolean, (v = false) => {
-          this.widget.set_use_underline(v);
+        .labelAlignY(DataType.Number, (v = 0, allProps) => {
+          this.widget.set_label_align(allProps.labelAlignX ?? 0, v);
         })
-        .resizeParent(DataType.Boolean, (v = false) => {
-          this.widget.set_resize_toplevel(v);
+        .shadowType(DataType.Enum(ShadowType), (v = ShadowType.IN) => {
+          this.widget.set_shadow_type(v);
         })
   );
 

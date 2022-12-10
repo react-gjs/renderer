@@ -6,6 +6,7 @@ export interface GjsElementTypeRegistry {
   EXPANDER: "EXPANDER";
   FLOW_BOX_ENTRY: "FLOW_BOX_ENTRY";
   FLOW_BOX: "FLOW_BOX";
+  FRAME: "FRAME";
   GRID: "GRID";
   GRID_ITEM: "GRID_ITEM";
   IMAGE: "IMAGE";
