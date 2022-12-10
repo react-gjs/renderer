@@ -1,6 +1,7 @@
 export interface GjsElementTypeRegistry {
   BOX: "BOX";
   BUTTON: "BUTTON";
+  BUTTON_BOX: "BUTTON_BOX";
   CHECK_BUTTON: "CHECK_BUTTON";
   FLOW_BOX_ENTRY: "FLOW_BOX_ENTRY";
   FLOW_BOX: "FLOW_BOX";

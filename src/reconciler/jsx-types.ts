@@ -1,4 +1,8 @@
 import type { BoxElement, BoxProps } from "../gjs-elements/box/box";
+import type {
+  ButtonBoxElement,
+  ButtonBoxProps,
+} from "../gjs-elements/button-box/button-box";
 import type { ButtonElement, ButtonProps } from "../gjs-elements/button/button";
 import type {
   CheckButtonElement,
@@ -100,6 +104,10 @@ declare global {
       BUTTON: IntrinsicComponent<
         ComponentWithChildren<ButtonProps>,
         ButtonElement
+      >;
+      BUTTON_BOX: IntrinsicComponent<
+        ComponentWithChildren<ButtonBoxProps>,
+        ButtonBoxElement
       >;
       CHECK_BUTTON: IntrinsicComponent<CheckButtonProps, CheckButtonElement>;
       FLOW_BOX: IntrinsicComponent<

@@ -6,6 +6,8 @@ const IntrinsicElem = <E extends GjsElementTypes>(v: E): E => v;
 export const Box = IntrinsicElem("BOX");
 /** Equivalent to the Gtk.Button widget. */
 export const Button = IntrinsicElem("BUTTON");
+/** Equivalent to the Gtk.ButtonBox widget. */
+export const ButtonBox = IntrinsicElem("BUTTON_BOX");
 /** Equivalent to the Gtk.CheckButton widget. */
 export const CheckButton = IntrinsicElem("CHECK_BUTTON");
 /** Equivalent to the Gtk.FlexBox widget. */

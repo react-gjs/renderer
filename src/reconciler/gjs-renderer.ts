@@ -1,6 +1,7 @@
 import Reconciler from "react-reconciler";
 import { DefaultEventPriority } from "react-reconciler/constants";
 import { BoxElement } from "../gjs-elements/box/box";
+import { ButtonBoxElement } from "../gjs-elements/button-box/button-box";
 import { ButtonElement } from "../gjs-elements/button/button";
 import { CheckButtonElement } from "../gjs-elements/check-button/check-button";
 import { FlowBoxElement } from "../gjs-elements/flow-box/flow-box";
@@ -48,6 +49,7 @@ import { HostContext } from "./host-context";
 
 GjsElementManager.register("BOX", BoxElement);
 GjsElementManager.register("BUTTON", ButtonElement);
+GjsElementManager.register("BUTTON_BOX", ButtonBoxElement);
 GjsElementManager.register("CHECK_BUTTON", CheckButtonElement);
 GjsElementManager.register("FLOW_BOX", FlowBoxElement);
 GjsElementManager.register("FLOW_BOX_ENTRY", FlowBoxEntryElement);
