@@ -1,5 +1,4 @@
 import Reconciler from "react-reconciler";
-import { DefaultEventPriority } from "react-reconciler/constants";
 import { BoxElement } from "../gjs-elements/box/box";
 import { ButtonBoxElement } from "../gjs-elements/button-box/button-box";
 import { ButtonElement } from "../gjs-elements/button/button";
@@ -47,6 +46,7 @@ import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
 import { diffProps } from "../gjs-elements/utils/diff-props";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
 import { WindowElement } from "../gjs-elements/window/window";
+import { EventPhaseController } from "./event-phase";
 import { HostContext } from "./host-context";
 
 GjsElementManager.register("BOX", BoxElement);
@@ -167,7 +167,7 @@ export const GjsRenderer = Reconciler({
     return GjsElementManager.getContextForKind(type, parentHostContext);
   },
   getCurrentEventPriority() {
-    return DefaultEventPriority;
+    return EventPhaseController.getCurrentPhase();
   },
   getInstanceFromNode(node) {
     return undefined;

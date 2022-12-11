@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { PositionType } from "../../g-enums";
+import { EventPhase } from "../../reconciler/event-phase";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -91,10 +92,10 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   constructor(props: DiffedProps) {
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("activate", "onActivate");
-    this.handlers.bind("enter", "onEnter");
-    this.handlers.bind("leave", "onLeave");
     this.handlers.bind("pressed", "onPressed");
     this.handlers.bind("released", "onReleased");
+    this.handlers.bind("enter", "onEnter", undefined, EventPhase.Action);
+    this.handlers.bind("leave", "onLeave", undefined, EventPhase.Action);
 
     this.updateProps(props);
 

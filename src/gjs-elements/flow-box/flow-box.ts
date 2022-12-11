@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { Orientation, SelectionMode } from "../../g-enums";
+import { EventPhase } from "../../reconciler/event-phase";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -99,31 +100,35 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
   private isAnyChildSelected = false;
 
   constructor(props: DiffedProps) {
-    this.handlers.bindInternal("selected-children-changed", () => {
-      this.isAnyChildSelected = true;
-      const newUnselected: FlowBoxEntryElement[] = [];
-      const newSelected: FlowBoxEntryElement[] = [];
+    this.handlers.bindInternal(
+      "selected-children-changed",
+      () => {
+        this.isAnyChildSelected = true;
+        const newUnselected: FlowBoxEntryElement[] = [];
+        const newSelected: FlowBoxEntryElement[] = [];
 
-      for (const childEntry of this.children) {
-        const currentlySelected = childEntry.element.widget.is_selected();
-        if (currentlySelected !== childEntry.isSelected) {
-          if (currentlySelected) {
-            newSelected.push(childEntry.element);
-          } else {
-            newUnselected.push(childEntry.element);
+        for (const childEntry of this.children) {
+          const currentlySelected = childEntry.element.widget.is_selected();
+          if (currentlySelected !== childEntry.isSelected) {
+            if (currentlySelected) {
+              newSelected.push(childEntry.element);
+            } else {
+              newUnselected.push(childEntry.element);
+            }
+            childEntry.isSelected = currentlySelected;
           }
-          childEntry.isSelected = currentlySelected;
         }
-      }
 
-      for (let i = 0; i < newUnselected.length; i++) {
-        newUnselected[i].emitter.emit("selected", false);
-      }
+        for (let i = 0; i < newUnselected.length; i++) {
+          newUnselected[i].emitter.emit("selected", false);
+        }
 
-      for (let i = 0; i < newSelected.length; i++) {
-        newSelected[i].emitter.emit("selected", true);
-      }
-    });
+        for (let i = 0; i < newSelected.length; i++) {
+          newSelected[i].emitter.emit("selected", true);
+        }
+      },
+      EventPhase.Input
+    );
 
     this.updateProps(props);
 

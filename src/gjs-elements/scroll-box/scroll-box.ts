@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { PositionType } from "../../g-enums";
 import { CornerType, PolicyType, ShadowType } from "../../g-enums";
+import { EventPhase } from "../../reconciler/event-phase";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -108,9 +109,14 @@ export class ScrollBoxElement
   );
 
   constructor(props: DiffedProps) {
-    this.handlers.bind("edge-reached", "onEdgeReached", (e: PositionType) => {
-      return { position: e };
-    });
+    this.handlers.bind(
+      "edge-reached",
+      "onEdgeReached",
+      (e: PositionType) => {
+        return { position: e };
+      },
+      EventPhase.Action
+    );
 
     this.updateProps(props);
 

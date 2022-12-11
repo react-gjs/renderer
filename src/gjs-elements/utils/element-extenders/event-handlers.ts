@@ -1,4 +1,8 @@
 import type Gtk from "gi://Gtk";
+import {
+  EventPhase,
+  EventPhaseController,
+} from "../../../reconciler/event-phase";
 import type { ElementLifecycle } from "../../element-extender";
 import type { DiffedProps } from "./map-properties";
 import { UnsetProp } from "./map-properties";
@@ -36,15 +40,15 @@ class EventBind {
   constructor(
     private widget: Widget<any>,
     private signal: string,
-    private argGetter: SyntheticEventPropsGenerator<any> = () => ({})
+    private argGetter: SyntheticEventPropsGenerator<any> = () => ({}),
+    private eventPhase: EventPhase = EventPhase.Input
   ) {}
 
   init() {
     if (this.isConnected) return;
 
-    this.id = this.widget.connect(
-      this.signal,
-      (target: any, ...args: any[]) => {
+    this.id = this.widget.connect(this.signal, (target: any, ...args: any[]) =>
+      EventPhaseController.startPhase(this.eventPhase, () => {
         try {
           let propagate = true;
 
@@ -64,9 +68,10 @@ class EventBind {
           return !propagate;
         } catch (e) {
           // if argGetter throws it's a no-op
+          // TODO: only silence no-op errors
           return true;
         }
-      }
+      })
     );
 
     this.isConnected = true;
@@ -132,16 +137,22 @@ export class EventHandlers<
     signal: K,
     handler: W["connect"] extends EventConnect<K, A>
       ? (...args: A) => void
-      : never
+      : never,
+    eventPhase: EventPhase = EventPhase.Default
   ) {
-    const bind = new EventBind(this.widget, signal, (...args) => args);
+    const bind = new EventBind(
+      this.widget,
+      signal,
+      (...args) => args,
+      eventPhase
+    );
     bind.updateHandler(handler);
     this.internalBinds.push(bind);
   }
 
   /**
-   * Binds the function that this elements receives in the specified "prop" to
-   * the signal type of the widget of this Element.
+   * Binds the function that this elements receives in the specified
+   * "prop" to the signal type of the widget of this Element.
    *
    * @example
    *   handler.bind("clicked", "onClick");
@@ -154,11 +165,12 @@ export class EventHandlers<
     propName: W["connect"] extends EventConnect<K, A>
       ? BindableProps<P>
       : never,
-    getArgs?: SyntheticEventPropsGenerator<A>
+    getArgs?: SyntheticEventPropsGenerator<A>,
+    eventPhase?: EventPhase
   ) {
     this.bindEvents.set(
       propName as string,
-      new EventBind(this.widget, signal, getArgs)
+      new EventBind(this.widget, signal, getArgs, eventPhase)
     );
   }
 }
