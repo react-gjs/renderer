@@ -81,6 +81,10 @@ import type {
   SeparatorProps,
 } from "../gjs-elements/separator/separator";
 import type {
+  SizeGroupBoxElement,
+  SizeGroupBoxProps,
+} from "../gjs-elements/size-group-box/size-group-box";
+import type {
   StackScreenElement,
   StackScreenProps,
 } from "../gjs-elements/stack/stack-screen";
@@ -201,6 +205,10 @@ declare global {
       >;
       SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
       SEPARATOR: IntrinsicComponent<SeparatorProps, SeparatorElement>;
+      SIZE_GROUP_BOX: IntrinsicComponent<
+        ComponentWithChildren<SizeGroupBoxProps>,
+        SizeGroupBoxElement
+      >;
       STACK_SCREEN: IntrinsicComponent<
         ComponentWithChildren<StackScreenProps>,
         StackScreenElement

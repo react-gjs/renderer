@@ -52,6 +52,8 @@ export const ScrollBox = IntrinsicElem("SCROLL_BOX");
 export const Selector = IntrinsicElem("SELECTOR");
 /** Equivalent to the Gtk.Separator widget. */
 export const Separator = IntrinsicElem("SEPARATOR");
+/** Built on top of Gtk.Box and Gtk.SizeGroup. */
+export const SizeGroupBox = IntrinsicElem("SIZE_GROUP_BOX");
 /**
  * Equivalent to the Gtk.Box widget. Specifically made to add items to
  * a Stack.
