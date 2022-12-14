@@ -3,6 +3,7 @@ import type { GjsElement } from "../../gjs-element";
 import type { TextNode } from "../../markup/text-node";
 
 export class TextChildController {
+  private previousText = "";
   private children: TextNode[] = [];
 
   constructor(
@@ -20,7 +21,14 @@ export class TextChildController {
   }
 
   update() {
-    this.setWidgetText(this.getText());
+    const text = this.getText();
+
+    if (this.previousText === text) {
+      return;
+    }
+
+    this.setWidgetText(text);
+    this.previousText = text;
   }
 
   count() {
