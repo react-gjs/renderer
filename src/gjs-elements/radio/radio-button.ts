@@ -41,7 +41,9 @@ export class RadioButtonElement
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
-    return currentContext;
+    return currentContext.set({
+      isInTextContext: true,
+    });
   }
 
   readonly kind = "RADIO_BUTTON";

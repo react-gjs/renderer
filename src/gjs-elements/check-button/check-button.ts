@@ -40,7 +40,9 @@ export class CheckButtonElement
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
-    return currentContext;
+    return currentContext.set({
+      isInTextContext: true,
+    });
   }
 
   readonly kind = "CHECK_BUTTON";

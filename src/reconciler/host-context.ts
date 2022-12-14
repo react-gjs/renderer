@@ -23,16 +23,16 @@ export class HostContext<D extends Record<string, any>> {
     return undefined;
   }
 
-  set<D2 extends Record<string, any>>(nextData: D2): HostContext<D & D2> {
+  set(nextData: Partial<D>): HostContext<D> {
     const newData = new Map(Object.entries(nextData));
 
     if (this.isAnyEntryDifferent(newData)) {
       const context = new HostContext();
       context.parentContext = this;
       context.data = newData;
-      return context as HostContext<D & D2>;
+      return context as HostContext<D>;
     }
 
-    return this as any as HostContext<D & D2>;
+    return this as any as HostContext<D>;
   }
 }

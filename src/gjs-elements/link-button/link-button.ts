@@ -40,7 +40,9 @@ export class LinkButtonElement
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
-    return currentContext;
+    return currentContext.set({
+      isInTextContext: true,
+    });
   }
 
   readonly kind = "LINK_BUTTON";
