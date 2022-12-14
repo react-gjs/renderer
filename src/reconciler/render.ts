@@ -17,5 +17,5 @@ export const render = (appContent: JSX.Element) => {
 
   GjsRenderer.updateContainer(appContent, container, null, () => {});
 
-  application.start();
+  return application.start();
 };

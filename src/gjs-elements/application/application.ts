@@ -33,7 +33,7 @@ export class ApplicationElement {
   render(): void {}
 
   start(): void {
-    Gtk.main();
+    return Gtk.main();
   }
 
   diffProps(
