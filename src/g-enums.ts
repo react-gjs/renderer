@@ -58,3 +58,6 @@ export const SpinButtonUpdatePolicy = Gtk.SpinButtonUpdatePolicy;
 
 export type SpinType = Gtk.SpinType;
 export const SpinType = Gtk.SpinType;
+
+export type ButtonBoxStyle = Gtk.ButtonBoxStyle;
+export const ButtonBoxStyle = Gtk.ButtonBoxStyle;

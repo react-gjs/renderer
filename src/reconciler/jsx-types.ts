@@ -1,9 +1,9 @@
 import type React from "react";
 import type { BoxElement, BoxProps } from "../gjs-elements/box/box";
 import type {
-  ButtonBoxElement,
-  ButtonBoxProps,
-} from "../gjs-elements/button-box/button-box";
+  ButtonGroupElement,
+  ButtonGroupProps,
+} from "../gjs-elements/button-group/button-group";
 import type { ButtonElement, ButtonProps } from "../gjs-elements/button/button";
 import type {
   CheckButtonElement,
@@ -121,9 +121,9 @@ declare global {
         ComponentWithChildren<ButtonProps>,
         ButtonElement
       >;
-      BUTTON_BOX: IntrinsicComponent<
-        ComponentWithChildren<ButtonBoxProps>,
-        ButtonBoxElement
+      BUTTON_GROUP: IntrinsicComponent<
+        ComponentWithChildren<ButtonGroupProps>,
+        ButtonGroupElement
       >;
       CHECK_BUTTON: IntrinsicComponent<
         ComponentWithChild<CheckButtonProps, string>,

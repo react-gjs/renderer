@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../g-enums";
+import { ButtonBoxStyle } from "../../g-enums";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -18,16 +19,17 @@ import { createMarginPropMapper } from "../utils/property-maps-factories/create-
 import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type ButtonBoxPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type ButtonGroupPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export interface ButtonBoxProps extends ButtonBoxPropsMixin {
+export interface ButtonGroupProps extends ButtonGroupPropsMixin {
   spacing?: number;
   baselinePosition?: BaselinePosition;
   orientation?: Orientation;
+  layout?: ButtonBoxStyle;
 }
 
-export class ButtonBoxElement
-  implements GjsElement<"BUTTON_BOX", Gtk.ButtonBox>
+export class ButtonGroupElement
+  implements GjsElement<"BUTTON_GROUP", Gtk.ButtonBox>
 {
   static getContext(
     currentContext: HostContext<GjsContext>
@@ -35,7 +37,7 @@ export class ButtonBoxElement
     return currentContext;
   }
 
-  readonly kind = "BUTTON_BOX";
+  readonly kind = "BUTTON_GROUP";
   widget = new Gtk.ButtonBox();
 
   private parent: GjsElement | null = null;
@@ -45,7 +47,7 @@ export class ButtonBoxElement
     this.lifecycle,
     this.widget
   );
-  private readonly propsMapper = new PropertyMapper<ButtonBoxProps>(
+  private readonly propsMapper = new PropertyMapper<ButtonGroupProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
@@ -67,6 +69,9 @@ export class ButtonBoxElement
             this.widget.orientation = v;
           }
         )
+        .layout(DataType.Enum(ButtonBoxStyle), (v = ButtonBoxStyle.EXPAND) => {
+          this.widget.layout_style = v;
+        })
   );
 
   constructor(props: DiffedProps) {

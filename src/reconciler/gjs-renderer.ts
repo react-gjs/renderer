@@ -1,6 +1,6 @@
 import Reconciler from "react-reconciler";
 import { BoxElement } from "../gjs-elements/box/box";
-import { ButtonBoxElement } from "../gjs-elements/button-box/button-box";
+import { ButtonGroupElement } from "../gjs-elements/button-group/button-group";
 import { ButtonElement } from "../gjs-elements/button/button";
 import { CheckButtonElement } from "../gjs-elements/check-button/check-button";
 import { ExpanderElement } from "../gjs-elements/expander/expander";
@@ -51,7 +51,7 @@ import { HostContext } from "./host-context";
 
 GjsElementManager.register("BOX", BoxElement);
 GjsElementManager.register("BUTTON", ButtonElement);
-GjsElementManager.register("BUTTON_BOX", ButtonBoxElement);
+GjsElementManager.register("BUTTON_GROUP", ButtonGroupElement);
 GjsElementManager.register("CHECK_BUTTON", CheckButtonElement);
 GjsElementManager.register("EXPANDER", ExpanderElement);
 GjsElementManager.register("FLOW_BOX", FlowBoxElement);
