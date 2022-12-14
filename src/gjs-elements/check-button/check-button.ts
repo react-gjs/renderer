@@ -12,6 +12,7 @@ import { EventHandlers } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { TextChildController } from "../utils/element-extenders/text-child-controller";
+import { parseCrossingEvent } from "../utils/gdk-events/pointer-event";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -28,10 +29,10 @@ export interface CheckButtonProps extends CheckButtonPropsMixin {
   onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
   onClick?: (event: SyntheticEvent) => void;
   onActivate?: (event: SyntheticEvent) => void;
-  onEnter?: (event: SyntheticEvent) => void;
-  onLeave?: (event: SyntheticEvent) => void;
   onPressed?: (event: SyntheticEvent) => void;
   onReleased?: (event: SyntheticEvent) => void;
+  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
 }
 
 export class CheckButtonElement
@@ -88,8 +89,18 @@ export class CheckButtonElement
     this.handlers.bind("toggled", "onChange", () => ({
       isActive: this.widget.active,
     }));
-    this.handlers.bind("enter", "onEnter", undefined, EventPhase.Action);
-    this.handlers.bind("leave", "onLeave", undefined, EventPhase.Action);
+    this.handlers.bind(
+      "enter-notify-event",
+      "onMouseEnter",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+    this.handlers.bind(
+      "leave-notify-event",
+      "onMouseLeave",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
 
     this.updateProps(props);
 

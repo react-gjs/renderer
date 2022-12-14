@@ -1,6 +1,10 @@
 import type React from "react";
 import type { BoxElement, BoxProps } from "../gjs-elements/box/box";
 import type {
+  ButtonBoxElement,
+  ButtonBoxProps,
+} from "../gjs-elements/button-box/button-box";
+import type {
   ButtonGroupElement,
   ButtonGroupProps,
 } from "../gjs-elements/button-group/button-group";
@@ -118,8 +122,12 @@ declare global {
     interface IntrinsicElements {
       BOX: IntrinsicComponent<ComponentWithChildren<BoxProps>, BoxElement>;
       BUTTON: IntrinsicComponent<
-        ComponentWithChildren<ButtonProps>,
+        ComponentWithChildren<ButtonProps, string>,
         ButtonElement
+      >;
+      BUTTON_BOX: IntrinsicComponent<
+        ComponentWithChildren<ButtonBoxProps>,
+        ButtonBoxElement
       >;
       BUTTON_GROUP: IntrinsicComponent<
         ComponentWithChildren<ButtonGroupProps>,

@@ -1,6 +1,4 @@
-import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { PositionType } from "../../g-enums";
 import { EventPhase } from "../../reconciler/event-phase";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
@@ -13,7 +11,7 @@ import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
-import { TextChildController } from "../utils/element-extenders/text-child-controller";
+import { ensureNotString } from "../utils/ensure-not-string";
 import { parseCrossingEvent } from "../utils/gdk-events/pointer-event";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -22,13 +20,9 @@ import { createMarginPropMapper } from "../utils/property-maps-factories/create-
 import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type ButtonPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type ButtonBoxPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export interface ButtonProps extends ButtonPropsMixin {
-  label?: string;
-  image?: Gtk.Widget;
-  imagePosition?: PositionType;
-  useUnderline?: boolean;
+export interface ButtonBoxProps extends ButtonBoxPropsMixin {
   margin?: ElementMargin;
   onClick?: (event: SyntheticEvent) => void;
   onActivate?: (event: SyntheticEvent) => void;
@@ -38,11 +32,7 @@ export interface ButtonProps extends ButtonPropsMixin {
   onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
 }
 
-const WidgetDataType = DataType.Custom(
-  (v: any): v is Gtk.Widget => typeof v === "object"
-);
-
-export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
+export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
@@ -51,45 +41,23 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     });
   }
 
-  readonly kind = "BUTTON";
+  readonly kind = "BUTTON_BOX";
   widget = new Gtk.Button();
+
+  child: GjsElement | null = null;
 
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(
+  private readonly handlers = new EventHandlers<Gtk.Button, ButtonBoxProps>(
     this.lifecycle,
     this.widget
   );
-  private readonly propsMapper = new PropertyMapper<ButtonProps>(
+  private readonly propsMapper = new PropertyMapper<ButtonBoxProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    (props) =>
-      props
-        .label(DataType.String, (v = "") => {
-          this.widget.label = v;
-        })
-        .image(WidgetDataType, (v) => {
-          this.widget.set_image(v ?? null);
-        })
-        .imagePosition(
-          DataType.Enum(Gtk.PositionType),
-          (v = Gtk.PositionType.LEFT) => {
-            this.widget.image_position = v;
-          }
-        )
-        .useUnderline(DataType.Boolean, (v = false) => {
-          this.widget.use_underline = v;
-        })
-  );
-
-  private readonly children = new TextChildController(
-    this.lifecycle,
-    (text) => {
-      this.widget.label = text;
-    }
+    createStylePropMapper(this.widget)
   );
 
   constructor(props: DiffedProps) {
@@ -122,28 +90,22 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   // #region This widget direct mutations
 
   appendChild(child: TextNode | GjsElement): void {
-    if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.addChild(child);
-      this.widget.show_all();
-      return;
+    ensureNotString(child);
+
+    if (this.child) {
+      throw new Error("Button can only have one child.");
     }
 
-    throw new Error("Button cannot have non-text children.");
+    child.notifyWillAppendTo(this);
+    this.widget.add(child.widget);
+    this.widget.show_all();
   }
 
   insertBefore(
     child: TextNode | GjsElement,
     beforeChild: TextNode | GjsElement
   ): void {
-    if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.insertBefore(child, beforeChild);
-      this.widget.show_all();
-      return;
-    }
-
-    throw new Error("Button cannot have non-text children.");
+    throw new Error("Button can only have one child.");
   }
 
   remove(parent: GjsElement): void {
@@ -155,7 +117,6 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   }
 
   render() {
-    this.children.update();
     this.parent?.widget.show_all();
   }
 
@@ -168,7 +129,9 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   }
 
   notifyWillUnmount(child: TextNode | GjsElement) {
-    this.children.removeChild(child);
+    if (this.child === child) {
+      this.child = null;
+    }
   }
 
   // #endregion

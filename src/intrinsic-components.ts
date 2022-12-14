@@ -4,10 +4,18 @@ const IntrinsicElem = <E extends GjsElementTypes>(v: E): E => v;
 
 /** Equivalent to the Gtk.Box widget. */
 export const Box = IntrinsicElem("BOX");
-/** Equivalent to the Gtk.Button widget. */
+/**
+ * Equivalent to the Gtk.Button widget. Only accepts strings as
+ * children.
+ */
 export const Button = IntrinsicElem("BUTTON");
+/**
+ * Equivalent to the Gtk.Button widget. Only accepts other React
+ * elements as children.
+ */
+export const ButtonBox = IntrinsicElem("BUTTON_BOX");
 /** Equivalent to the Gtk.ButtonBox widget. */
-export const ButtonBox = IntrinsicElem("BUTTON_GROUP");
+export const ButtonGroup = IntrinsicElem("BUTTON_GROUP");
 /** Equivalent to the Gtk.CheckButton widget. */
 export const CheckButton = IntrinsicElem("CHECK_BUTTON");
 /** Equivalent to the Gtk.Expander widget. */

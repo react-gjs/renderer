@@ -7166,20 +7166,22 @@ declare module "gi://Gdk" {
     public subwindow: Window;
     /** The time of the event in milliseconds. */
     public time: number;
-    /** The x coordinate of the pointer relative to the window. */
-    public x: number;
-    /** The y coordinate of the pointer relative to the window. */
-    public y: number;
     /**
-     * The x coordinate of the pointer relative to the root of
-     * the screen.
-     */
-    public x_root: number;
+     * Extract the event window relative x/y coordinates from an event.
+     *
+     * Returns: %TRUE if the event delivered event window coordinates
+     **/
+    public get_coords(): [fetched: boolean, x: number, y: number];
     /**
-     * The y coordinate of the pointer relative to the root of
-     * the screen.
-     */
-    public y_root: number;
+     * Extract the root window relative x/y coordinates from an event.
+     *
+     * Returns: %TRUE if the event delivered event window coordinates
+     **/
+    public get_root_coords(): [
+      fetched: boolean,
+      x_root: number,
+      y_root: number
+    ];
     /**
      * The crossing mode (%GDK_CROSSING_NORMAL,
      * %GDK_CROSSING_GRAB, %GDK_CROSSING_UNGRAB,

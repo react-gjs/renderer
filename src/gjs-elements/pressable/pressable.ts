@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import type Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
+import { EventPhase } from "../../reconciler/event-phase";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -15,6 +16,7 @@ import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { ensureNotString } from "../utils/ensure-not-string";
 import type { MouseButtonPressEvent } from "../utils/gdk-events/mouse-button-press-event";
 import { parseMouseButtonPressEvent } from "../utils/gdk-events/mouse-button-press-event";
+import { parseCrossingEvent } from "../utils/gdk-events/pointer-event";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -27,6 +29,8 @@ type PressablePropsMixin = AlignmentProps & MarginProps & StyleProps;
 export interface PressableProps extends PressablePropsMixin {
   onClick?: (event: SyntheticEvent<MouseButtonPressEvent>) => void;
   onRelease?: (event: SyntheticEvent<MouseButtonPressEvent>) => void;
+  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
   /**
    * If set to true, the pressable element will intercept mouse events
    * on it's children. Meaning children will not receive any mouse
@@ -74,6 +78,18 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
       "button-release-event",
       "onRelease",
       (e: Gdk.EventButton) => parseMouseButtonPressEvent(e)
+    );
+    this.handlers.bind(
+      "enter-notify-event",
+      "onMouseEnter",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+    this.handlers.bind(
+      "leave-notify-event",
+      "onMouseLeave",
+      parseCrossingEvent,
+      EventPhase.Action
     );
 
     this.updateProps(props);
