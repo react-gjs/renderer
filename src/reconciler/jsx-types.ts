@@ -163,16 +163,16 @@ declare global {
         ComponentWithChildren<MarkupProps, string | React.ReactElement>,
         MarkupElement
       >;
-      M_BIG: MBigProps;
-      M_BOLD: MBoldProps;
-      M_ITALIC: MItalicProps;
-      M_MONOSPACE: MMonospaceProps;
-      M_SMALL: MSmallProps;
-      M_SPAN: MSpanProps;
-      M_STRIKETHROUGH: MStrikethroughProps;
-      M_SUBSCRIPT: MSubProps;
-      M_SUPERSCRIPT: MSupProps;
-      M_UNDERLINE: MUnderlineProps;
+      M_BIG: ComponentWithChildren<MBigProps, string>;
+      M_BOLD: ComponentWithChildren<MBoldProps, string>;
+      M_ITALIC: ComponentWithChildren<MItalicProps, string>;
+      M_MONOSPACE: ComponentWithChildren<MMonospaceProps, string>;
+      M_SMALL: ComponentWithChildren<MSmallProps, string>;
+      M_SPAN: ComponentWithChildren<MSpanProps, string>;
+      M_STRIKETHROUGH: ComponentWithChildren<MStrikethroughProps, string>;
+      M_SUBSCRIPT: ComponentWithChildren<MSubProps, string>;
+      M_SUPERSCRIPT: ComponentWithChildren<MSupProps, string>;
+      M_UNDERLINE: ComponentWithChildren<MUnderlineProps, string>;
       NUMBER_INPUT: IntrinsicComponent<NumberInputProps, NumberInputElement>;
       PRESSABLE: IntrinsicComponent<
         ComponentWithChild<PressableProps, React.ReactElement>,
