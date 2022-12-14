@@ -64,7 +64,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
     (props) =>
       props
         .src(SrcDataType, (src, allProps) => {
-          if (allProps?.icon) {
+          if (src && allProps?.icon) {
             throw new Error(
               "'icon' and 'src' props cannot be both used at the same time."
             );
@@ -81,7 +81,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
           }
         })
         .icon(IconDataType, (icon, allProps) => {
-          if (allProps?.src) {
+          if (icon && allProps?.src) {
             throw new Error(
               "'icon' and 'src' props cannot be both used at the same time."
             );
