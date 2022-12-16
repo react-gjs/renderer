@@ -1,6 +1,7 @@
+import type Gtk from "gi://Gtk";
 import Reconciler from "react-reconciler";
 import { ActionBarElement } from "../gjs-elements/action-bar/action-bar";
-import type { ApplicationElement } from "../gjs-elements/application/application";
+import { ApplicationElement } from "../gjs-elements/application/application";
 import { BoxElement } from "../gjs-elements/box/box";
 import { ButtonBoxElement } from "../gjs-elements/button-box/button-box";
 import { ButtonGroupElement } from "../gjs-elements/button-group/button-group";
@@ -49,6 +50,7 @@ import { SwitchElement } from "../gjs-elements/switch/switch";
 import { TextAreaElement } from "../gjs-elements/text-area/text-area";
 import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
 import { diffProps } from "../gjs-elements/utils/diff-props";
+import { getGLibListIterable } from "../gjs-elements/utils/get-g-list-iterator";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
 import { WindowElement } from "../gjs-elements/window/window";
 import { EventPhaseController } from "./event-phase";
@@ -252,7 +254,18 @@ export const GjsRenderer = Reconciler({
       instance.render();
     }
   },
-  clearContainer(container) {},
+  clearContainer(container) {
+    if (container instanceof ApplicationElement) {
+      container.clear();
+    } else if (GjsElementManager.isGjsElement(container)) {
+      if ((container.widget as Gtk.Box).get_children) {
+        const children = (container.widget as Gtk.Box).get_children();
+        for (const child of getGLibListIterable<Gtk.Widget>(children)) {
+          child.destroy();
+        }
+      }
+    }
+  },
   resetTextContent(instance) {},
   insertBefore(parentInstance, child, beforeChild) {
     if (

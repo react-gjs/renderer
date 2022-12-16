@@ -6,7 +6,7 @@ import type { DiffedProps } from "../utils/element-extenders/map-properties";
 export class ApplicationElement {
   readonly kind = "APPLICATION";
 
-  private rootElement: GjsElement | string | null = null;
+  private rootElement: GjsElement | null = null;
 
   constructor() {
     Gtk.init(null);
@@ -16,7 +16,7 @@ export class ApplicationElement {
     throw new Error("Application element can't be appended to a container.");
   }
 
-  appendChild(child: string | GjsElement): void {
+  appendChild(child: GjsElement): void {
     this.rootElement = child;
   }
 
@@ -26,14 +26,21 @@ export class ApplicationElement {
 
   notifyWillUnmount() {}
 
-  remove(parent: GjsElement): void {
+  remove(): void {
     Gtk.main_quit();
   }
 
-  render(): void {}
+  render(): void {
+    this.rootElement?.render();
+  }
 
   start(): void {
     return Gtk.main();
+  }
+
+  clear() {
+    this.rootElement?.remove(this as any);
+    this.rootElement = null;
   }
 
   show() {}
