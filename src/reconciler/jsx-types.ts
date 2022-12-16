@@ -89,6 +89,10 @@ import type {
   SizeGroupBoxProps,
 } from "../gjs-elements/size-group-box/size-group-box";
 import type {
+  SpinnerElement,
+  SpinnerProps,
+} from "../gjs-elements/spinner/spinner";
+import type {
   StackScreenElement,
   StackScreenProps,
 } from "../gjs-elements/stack/stack-screen";
@@ -217,6 +221,7 @@ declare global {
         ComponentWithChildren<SizeGroupBoxProps>,
         SizeGroupBoxElement
       >;
+      SPINNER: IntrinsicComponent<SpinnerProps, SpinnerElement>;
       STACK_SCREEN: IntrinsicComponent<
         ComponentWithChildren<StackScreenProps>,
         StackScreenElement

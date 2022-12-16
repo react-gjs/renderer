@@ -54,6 +54,8 @@ export const ScrollBox = IntrinsicElem("SCROLL_BOX");
 export const Selector = IntrinsicElem("SELECTOR");
 /** Equivalent to the Gtk.Separator widget. */
 export const Separator = IntrinsicElem("SEPARATOR");
+/** Equivalent to the Gtk.Spinner widget. */
+export const Spinner = IntrinsicElem("SPINNER");
 /** Built on top of Gtk.Box and Gtk.SizeGroup. */
 export const SizeGroupBox = IntrinsicElem("SIZE_GROUP_BOX");
 /**
