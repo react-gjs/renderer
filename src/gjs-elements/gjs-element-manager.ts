@@ -66,11 +66,19 @@ export class GjsElementManager {
   }
 
   /** @internal */
-  static isGjsElementOfKind<E extends GjsElement>(
+  static isGjsElementOfKind<E extends new (props: any) => any>(
     element: any,
-    constructor: new (props: any) => E
-  ): element is E {
-    const kindName = this.elementsReverseMap.get(constructor);
-    return this.isGjsElement(element) && element.kind === kindName;
+    constructor: E | Array<E>
+  ): element is InstanceType<E> {
+    const constrList = Array.isArray(constructor) ? constructor : [constructor];
+
+    for (const constr of constrList) {
+      const kindName = this.elementsReverseMap.get(constr);
+      if (this.isGjsElement(element) && element.kind === kindName) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

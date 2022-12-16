@@ -65,6 +65,12 @@ export const ButtonBoxStyle = Gtk.ButtonBoxStyle;
 export type SizeGroupMode = Gtk.SizeGroupMode;
 export const SizeGroupMode = Gtk.SizeGroupMode;
 
+export type ToolbarStyle = Gtk.ToolbarStyle;
+export const ToolbarStyle = Gtk.ToolbarStyle;
+
+export type IconSize = Gtk.IconSize;
+export const IconSize = Gtk.IconSize;
+
 export enum ButtonType {
   FLAT,
   NORMAL,

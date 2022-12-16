@@ -49,6 +49,12 @@ import { StackSwitcherElement } from "../gjs-elements/stack/stack-switcher";
 import { SwitchElement } from "../gjs-elements/switch/switch";
 import { TextAreaElement } from "../gjs-elements/text-area/text-area";
 import { TextEntryElement } from "../gjs-elements/text-entry/text-entry";
+import { ToolbarElement } from "../gjs-elements/toolbar/toolbar";
+import { ToolbarButtonElement } from "../gjs-elements/toolbar/toolbar-button";
+import { ToolbarItemElement } from "../gjs-elements/toolbar/toolbar-item";
+import { ToolbarRadioButtonElement } from "../gjs-elements/toolbar/toolbar-radio-button";
+import { ToolbarSeparatorElement } from "../gjs-elements/toolbar/toolbar-separator";
+import { ToolbarToggleButtonElement } from "../gjs-elements/toolbar/toolbar-toggle-button";
 import { diffProps } from "../gjs-elements/utils/diff-props";
 import { getGLibListIterable } from "../gjs-elements/utils/get-g-list-iterator";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
@@ -101,6 +107,12 @@ GjsElementManager.register("STACK_SWITCHER", StackSwitcherElement);
 GjsElementManager.register("SWITCH", SwitchElement);
 GjsElementManager.register("TEXT_AREA", TextAreaElement);
 GjsElementManager.register("TEXT_ENTRY", TextEntryElement);
+GjsElementManager.register("TOOLBAR", ToolbarElement);
+GjsElementManager.register("TOOLBAR_BUTTON", ToolbarButtonElement);
+GjsElementManager.register("TOOLBAR_ITEM", ToolbarItemElement);
+GjsElementManager.register("TOOLBAR_RADIO_BUTTON", ToolbarRadioButtonElement);
+GjsElementManager.register("TOOLBAR_SEPARATOR", ToolbarSeparatorElement);
+GjsElementManager.register("TOOLBAR_TOGGLE_BUTTON", ToolbarToggleButtonElement);
 GjsElementManager.register("WINDOW", WindowElement);
 
 export type GjsContext = {

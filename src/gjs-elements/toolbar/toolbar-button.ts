@@ -14,30 +14,31 @@ import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { TextChildController } from "../utils/element-extenders/text-child-controller";
 import { parseCrossingEvent } from "../utils/gdk-events/pointer-event";
+import type { IconName } from "../utils/icons/icon-types";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
-import { RadioBoxElement } from "./radio-box";
+import { ToolbarElement } from "./toolbar";
 
-type RadioButtonPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type ToolbarButtonPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export interface RadioButtonProps extends RadioButtonPropsMixin {
+export interface ToolbarButtonProps extends ToolbarButtonPropsMixin {
   label?: string;
+  icon?: IconName;
   useUnderline?: boolean;
-  onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
+  focusOnClick?: boolean;
+  sameSize?: boolean;
+  expand?: boolean;
   onClick?: (event: SyntheticEvent) => void;
-  onActivate?: (event: SyntheticEvent) => void;
-  onPressed?: (event: SyntheticEvent) => void;
-  onReleased?: (event: SyntheticEvent) => void;
   onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
   onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
 }
 
-export class RadioButtonElement
-  implements GjsElement<"RADIO_BUTTON", Gtk.RadioButton>
+export class ToolbarButtonElement
+  implements GjsElement<"TOOLBAR_BUTTON", Gtk.ToolButton>
 {
   static getContext(
     currentContext: HostContext<GjsContext>
@@ -47,16 +48,43 @@ export class RadioButtonElement
     });
   }
 
-  readonly kind = "RADIO_BUTTON";
-
-  widget = new Gtk.RadioButton();
+  readonly kind = "TOOLBAR_BUTTON";
+  widget = new Gtk.ToolButton();
 
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private handlers!: EventHandlers<Gtk.RadioButton, RadioButtonProps>;
-  private readonly propsMapper = new PropertyMapper<RadioButtonProps>(
-    this.lifecycle
+  private readonly handlers = new EventHandlers<
+    Gtk.ToolButton,
+    ToolbarButtonProps
+  >(this.lifecycle, this.widget);
+  private readonly propsMapper = new PropertyMapper<ToolbarButtonProps>(
+    this.lifecycle,
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    (props) =>
+      props
+        .label(DataType.String, (v = "") => {
+          this.widget.label = v;
+        })
+        .useUnderline(DataType.Boolean, (v = false) => {
+          this.widget.use_underline = v;
+        })
+        .focusOnClick(DataType.Boolean, (v = true) => {
+          this.widget.focus_on_click = v;
+        })
+        .icon(DataType.String, (v) => {
+          if (v) {
+            this.widget.icon_name = v;
+          }
+        })
+        .sameSize(DataType.Boolean, (v = true) => {
+          this.widget.set_homogeneous(v);
+        })
+        .expand(DataType.Boolean, (v = false) => {
+          this.widget.set_expand(v);
+        })
   );
 
   private readonly children = new TextChildController(
@@ -66,26 +94,28 @@ export class RadioButtonElement
     }
   );
 
-  private isInitialized = false;
-  private unappliedProps: DiffedProps = [];
-
   constructor(props: DiffedProps) {
+    this.handlers.bind("clicked", "onClick");
+    this.handlers.bind(
+      "enter-notify-event",
+      "onMouseEnter",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+    this.handlers.bind(
+      "leave-notify-event",
+      "onMouseLeave",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
   updateProps(props: DiffedProps): void {
-    if (this.isInitialized) {
-      this.lifecycle.emitLifecycleEventUpdate(props);
-    } else {
-      for (const prop of props) {
-        this.unappliedProps = this.unappliedProps.filter(
-          ([name]) => name !== prop[0]
-        );
-        this.unappliedProps.push(prop);
-      }
-    }
+    this.lifecycle.emitLifecycleEventUpdate(props);
   }
 
   // #region This widget direct mutations
@@ -98,7 +128,7 @@ export class RadioButtonElement
       return;
     }
 
-    throw new Error("RadioButton cannot have non-text children.");
+    throw new Error("Button cannot have non-text children.");
   }
 
   insertBefore(
@@ -112,7 +142,7 @@ export class RadioButtonElement
       return;
     }
 
-    throw new Error("RadioButton cannot have non-text children.");
+    throw new Error("Button cannot have non-text children.");
   }
 
   remove(parent: GjsElement): void {
@@ -133,65 +163,14 @@ export class RadioButtonElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): void {
-    if (GjsElementManager.isGjsElementOfKind(parent, RadioBoxElement)) {
+    if (GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)) {
       this.parent = parent;
-
-      const widget = (this.widget = Gtk.RadioButton.new_from_widget(
-        parent.radioGroup
-      ));
-
-      this.isInitialized = true;
-
-      this.propsMapper.addCases(
-        createAlignmentPropMapper(widget),
-        createMarginPropMapper(widget),
-        createStylePropMapper(widget),
-        (props) =>
-          props
-            .label(DataType.String, (v = "") => {
-              widget.set_label(v);
-            })
-            .useUnderline(DataType.Boolean, (v = false) => {
-              this.widget.use_underline = v;
-            })
-      );
-
-      this.handlers = new EventHandlers<Gtk.RadioButton, RadioButtonProps>(
-        this.lifecycle,
-        this.widget
-      );
-
-      this.handlers.bind("clicked", "onClick");
-      this.handlers.bind("activate", "onActivate");
-      this.handlers.bind("pressed", "onPressed");
-      this.handlers.bind("released", "onReleased");
-      this.handlers.bind("toggled", "onChange", () => {
-        return {
-          isActive: this.widget.active,
-        };
-      });
-      this.handlers.bind(
-        "enter-notify-event",
-        "onMouseEnter",
-        parseCrossingEvent,
-        EventPhase.Action
-      );
-      this.handlers.bind(
-        "leave-notify-event",
-        "onMouseLeave",
-        parseCrossingEvent,
-        EventPhase.Action
-      );
-
-      this.lifecycle.emitLifecycleEventUpdate(this.unappliedProps);
-      this.unappliedProps = [];
-      this.children.update();
     } else {
-      throw new Error("RadioButton can be only child of RadioBox.");
+      throw new Error("ToolbarButton can only be a child of a toolbar.");
     }
   }
 
-  notifyWillUnmount(child: GjsElement | TextNode) {
+  notifyWillUnmount(child: TextNode | GjsElement) {
     this.children.removeChild(child);
   }
 

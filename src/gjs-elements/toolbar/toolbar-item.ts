@@ -1,6 +1,5 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { ShadowType } from "../../g-enums";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
@@ -18,24 +17,24 @@ import { createMarginPropMapper } from "../utils/property-maps-factories/create-
 import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-type FramePropsMixin = AlignmentProps & MarginProps & StyleProps;
+type ToolbarItemPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export interface FrameProps extends FramePropsMixin {
-  label?: string;
-  labelAlignX?: number;
-  labelAlignY?: number;
-  shadowType?: ShadowType;
+export interface ToolbarItemProps extends ToolbarItemPropsMixin {
+  sameSize?: boolean;
+  expand?: boolean;
 }
 
-export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
+export class ToolbarItemElement
+  implements GjsElement<"TOOLBAR_ITEM", Gtk.ToolItem>
+{
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "FRAME";
-  widget = new Gtk.Frame();
+  readonly kind = "TOOLBAR_ITEM";
+  widget = new Gtk.ToolItem();
 
   private parent: GjsElement | null = null;
 
@@ -44,24 +43,18 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
     this.lifecycle,
     this.widget
   );
-  private readonly propsMapper = new PropertyMapper<FrameProps>(
+  private readonly propsMapper = new PropertyMapper<ToolbarItemProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props
-        .label(DataType.OneOf(DataType.String, DataType.Null), (v = null) => {
-          this.widget.set_label(v);
+        .sameSize(DataType.Boolean, (v = true) => {
+          this.widget.set_homogeneous(v);
         })
-        .labelAlignX(DataType.Number, (v = 0, allProps) => {
-          this.widget.set_label_align(v, allProps.labelAlignY ?? 0);
-        })
-        .labelAlignY(DataType.Number, (v = 0, allProps) => {
-          this.widget.set_label_align(allProps.labelAlignX ?? 0, v);
-        })
-        .shadowType(DataType.Enum(ShadowType), (v = ShadowType.IN) => {
-          this.widget.set_shadow_type(v);
+        .expand(DataType.Boolean, (v = false) => {
+          this.widget.set_expand(v);
         })
   );
 
@@ -80,17 +73,17 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    if (this.children.count() > 0) {
-      throw new Error("Expander can only have one child.");
-    }
-
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
     this.widget.show_all();
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
-    throw new Error("Expander can only have one child.");
+    ensureNotText(newChild);
+
+    newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild);
+    this.widget.show_all();
   }
 
   remove(parent: GjsElement): void {

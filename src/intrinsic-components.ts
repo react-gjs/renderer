@@ -69,6 +69,18 @@ export const Switch = IntrinsicElem("SWITCH");
 export const TextArea = IntrinsicElem("TEXT_AREA");
 /** Equivalent to the Gtk.Entry widget. */
 export const TextInput = IntrinsicElem("TEXT_ENTRY");
+/** Equivalent to the Gtk.Toolbar widget. */
+export const Toolbar = IntrinsicElem("TOOLBAR");
+/** Equivalent to the Gtk.ToolButton widget. */
+export const ToolbarButton = IntrinsicElem("TOOLBAR_BUTTON");
+/** Equivalent to the Gtk.ToolItem widget. */
+export const ToolbarItem = IntrinsicElem("TOOLBAR_ITEM");
+/** Equivalent to the Gtk.RadioToolButton widget. */
+export const ToolbarRadioButton = IntrinsicElem("TOOLBAR_RADIO_BUTTON");
+/** Equivalent to the Gtk.ToggleToolButton widget. */
+export const ToolbarToggleButton = IntrinsicElem("TOOLBAR_TOGGLE_BUTTON");
+/** Equivalent to the Gtk.ToolSeparator widget. */
+export const ToolbarSeparator = IntrinsicElem("TOOLBAR_SEPARATOR");
 /** Equivalent to the Gtk.Window widget. */
 export const Window = IntrinsicElem("WINDOW");
 

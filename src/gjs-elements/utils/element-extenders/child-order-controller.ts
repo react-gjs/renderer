@@ -8,15 +8,15 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
   constructor(
     private element: ElementLifecycle,
     private container: Gtk.Container,
-    private addChildToContainer: (child: Gtk.Widget, element: C) => void = (
-      child: Gtk.Widget
+    private addChildToContainer: (child: C["widget"], element: C) => void = (
+      child: C["widget"]
     ) => {
       this.container.add(child);
     },
     private removeChildFromContainer: (
-      child: Gtk.Widget,
+      child: C["widget"],
       element: C
-    ) => void = (child: Gtk.Widget) => {
+    ) => void = (child: C["widget"]) => {
       this.container.remove(child);
     }
   ) {}

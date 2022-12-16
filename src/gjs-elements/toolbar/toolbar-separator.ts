@@ -1,67 +1,59 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { ShadowType } from "../../g-enums";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
 import type { GjsElement } from "../gjs-element";
-import type { TextNode } from "../markup/text-node";
+import { GjsElementManager } from "../gjs-element-manager";
 import { diffProps } from "../utils/diff-props";
-import { ChildOrderController } from "../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
-import { ensureNotText } from "../utils/ensure-not-string";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { ToolbarElement } from "./toolbar";
 
-type FramePropsMixin = AlignmentProps & MarginProps & StyleProps;
+type ToolbarSeparatorPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export interface FrameProps extends FramePropsMixin {
-  label?: string;
-  labelAlignX?: number;
-  labelAlignY?: number;
-  shadowType?: ShadowType;
+export interface ToolbarSeparatorProps extends ToolbarSeparatorPropsMixin {
+  sameSize?: boolean;
+  expand?: boolean;
+  show?: boolean;
 }
 
-export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
+export class ToolbarSeparatorElement
+  implements GjsElement<"TOOLBAR_SEPARATOR", Gtk.SeparatorToolItem>
+{
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "FRAME";
-  widget = new Gtk.Frame();
+  readonly kind = "TOOLBAR_SEPARATOR";
+  widget = new Gtk.SeparatorToolItem();
 
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly children = new ChildOrderController(
-    this.lifecycle,
-    this.widget
-  );
-  private readonly propsMapper = new PropertyMapper<FrameProps>(
+  private readonly propsMapper = new PropertyMapper<ToolbarSeparatorProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props
-        .label(DataType.OneOf(DataType.String, DataType.Null), (v = null) => {
-          this.widget.set_label(v);
+        .sameSize(DataType.Boolean, (v = true) => {
+          this.widget.set_homogeneous(v);
         })
-        .labelAlignX(DataType.Number, (v = 0, allProps) => {
-          this.widget.set_label_align(v, allProps.labelAlignY ?? 0);
+        .expand(DataType.Boolean, (v = false) => {
+          this.widget.set_expand(v);
         })
-        .labelAlignY(DataType.Number, (v = 0, allProps) => {
-          this.widget.set_label_align(allProps.labelAlignX ?? 0, v);
-        })
-        .shadowType(DataType.Enum(ShadowType), (v = ShadowType.IN) => {
-          this.widget.set_shadow_type(v);
+        .show(DataType.Boolean, (v = true) => {
+          this.widget.set_draw(v);
         })
   );
 
@@ -77,20 +69,12 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
 
   // #region This widget direct mutations
 
-  appendChild(child: GjsElement | TextNode): void {
-    ensureNotText(child);
-
-    if (this.children.count() > 0) {
-      throw new Error("Expander can only have one child.");
-    }
-
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
-    this.widget.show_all();
+  appendChild(): void {
+    throw new Error("Separator cannot have children.");
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
-    throw new Error("Expander can only have one child.");
+  insertBefore(): void {
+    throw new Error("Separator cannot have children.");
   }
 
   remove(parent: GjsElement): void {
@@ -110,12 +94,14 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): void {
-    this.parent = parent;
+    if (GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)) {
+      this.parent = parent;
+    } else {
+      throw new Error("ToolbarButton can only be a child of a toolbar.");
+    }
   }
 
-  notifyWillUnmount(child: GjsElement): void {
-    this.children.removeChild(child);
-  }
+  notifyWillUnmount() {}
 
   // #endregion
 

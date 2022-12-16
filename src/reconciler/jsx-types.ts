@@ -105,6 +105,30 @@ import type {
   TextEntryElement,
   TextEntryProps,
 } from "../gjs-elements/text-entry/text-entry";
+import type {
+  ToolbarElement,
+  ToolbarProps,
+} from "../gjs-elements/toolbar/toolbar";
+import type {
+  ToolbarButtonElement,
+  ToolbarButtonProps,
+} from "../gjs-elements/toolbar/toolbar-button";
+import type {
+  ToolbarItemElement,
+  ToolbarItemProps,
+} from "../gjs-elements/toolbar/toolbar-item";
+import type {
+  ToolbarRadioButtonElement,
+  ToolbarRadioButtonProps,
+} from "../gjs-elements/toolbar/toolbar-radio-button";
+import type {
+  ToolbarSeparatorElement,
+  ToolbarSeparatorProps,
+} from "../gjs-elements/toolbar/toolbar-separator";
+import type {
+  ToolbarToggleButtonElement,
+  ToolbarToggleButtonProps,
+} from "../gjs-elements/toolbar/toolbar-toggle-button";
 import type { WindowElement, WindowProps } from "../gjs-elements/window/window";
 
 export type ComponentWithChildren<
@@ -229,6 +253,30 @@ declare global {
       SWITCH: IntrinsicComponent<SwitchProps, SwitchElement>;
       TEXT_AREA: IntrinsicComponent<TextAreaProps, TextAreaElement>;
       TEXT_ENTRY: IntrinsicComponent<TextEntryProps, TextEntryElement>;
+      TOOLBAR: IntrinsicComponent<
+        ComponentWithChildren<ToolbarProps>,
+        ToolbarElement
+      >;
+      TOOLBAR_BUTTON: IntrinsicComponent<
+        ComponentWithChildren<ToolbarButtonProps>,
+        ToolbarButtonElement
+      >;
+      TOOLBAR_ITEM: IntrinsicComponent<
+        ComponentWithChildren<ToolbarItemProps>,
+        ToolbarItemElement
+      >;
+      TOOLBAR_RADIO_BUTTON: IntrinsicComponent<
+        ComponentWithChildren<ToolbarRadioButtonProps, string>,
+        ToolbarRadioButtonElement
+      >;
+      TOOLBAR_SEPARATOR: IntrinsicComponent<
+        ToolbarSeparatorProps,
+        ToolbarSeparatorElement
+      >;
+      TOOLBAR_TOGGLE_BUTTON: IntrinsicComponent<
+        ComponentWithChildren<ToolbarToggleButtonProps, string>,
+        ToolbarToggleButtonElement
+      >;
       WINDOW: IntrinsicComponent<
         ComponentWithChildren<WindowProps>,
         WindowElement
