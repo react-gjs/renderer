@@ -27,6 +27,7 @@ type SyntheticEventPropsGenerator<A extends any[] = any[]> = (
 
 export type SyntheticEvent<A extends Record<string, any> = {}> = A & {
   stopPropagation(): void;
+  originalEvent: any;
   target: Gtk.Widget;
 };
 
@@ -44,6 +45,15 @@ class EventBind {
     private eventPhase: EventPhase = EventPhase.Input
   ) {}
 
+  private showAsyncWarning = () => {
+    console.warn(
+      "Provided an async function as an event handler. It is advised to only use synchronous functions as event handlers."
+    );
+
+    // only show the warning the first time it's called
+    this.showAsyncWarning = () => {};
+  };
+
   init() {
     if (this.isConnected) return;
 
@@ -60,10 +70,15 @@ class EventBind {
 
           const syntheticEvent: SyntheticEvent<any> = Object.assign({}, a, {
             stopPropagation,
+            originalEvent: args[0],
             target,
           });
 
-          this.handler(syntheticEvent);
+          const handlerReturn = this.handler(syntheticEvent);
+
+          if (handlerReturn instanceof Promise) {
+            this.showAsyncWarning();
+          }
 
           return !propagate;
         } catch (e) {
