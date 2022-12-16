@@ -123,6 +123,14 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
 
   // #region Utils for external use
 
+  show() {
+    this.widget.visible = true;
+  }
+
+  hide() {
+    this.widget.visible = false;
+  }
+
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>

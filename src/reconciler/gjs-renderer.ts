@@ -219,7 +219,7 @@ export const GjsRenderer = Reconciler({
     updatePayload,
     type,
     prevProps,
-    nextProps: any,
+    nextProps,
     internalHandle
   ) {
     if (updatePayload && GjsElementManager.isGjsElement(instance)) {
@@ -272,6 +272,28 @@ export const GjsRenderer = Reconciler({
     ) {
       container.insertBefore(child, beforeChild);
       container.render();
+    }
+  },
+  hideInstance(instance) {
+    if (GjsElementManager.isGjsElement(instance)) {
+      instance.hide();
+    }
+  },
+  unhideInstance(instance, props) {
+    if (GjsElementManager.isGjsElement(instance)) {
+      instance.updateProps(instance.diffProps({}, props));
+      instance.show();
+    }
+  },
+  hideTextInstance(instance) {
+    if (TextNode.isTextNode(instance)) {
+      instance.hide();
+    }
+  },
+  unhideTextInstance(instance, text) {
+    if (TextNode.isTextNode(instance)) {
+      instance.updateText(text);
+      instance.show();
     }
   },
 });

@@ -36,6 +36,10 @@ export class ApplicationElement {
     return Gtk.main();
   }
 
+  show() {}
+
+  hide() {}
+
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>

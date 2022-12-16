@@ -90,6 +90,14 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
 
   // #region Utils for external use
 
+  show() {
+    this.widget.visible = true;
+  }
+
+  hide() {
+    this.widget.visible = false;
+  }
+
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>

@@ -27,6 +27,7 @@ export class TextNode {
     throw new Error("TextNode elements do not have widgets.");
   }
 
+  private isVisible = true;
   private parent: GjsElement | null = null;
 
   constructor(private text: string) {}
@@ -61,6 +62,16 @@ export class TextNode {
 
   // #region Utils for external use
 
+  show() {
+    this.isVisible = true;
+    this.render();
+  }
+
+  hide() {
+    this.isVisible = false;
+    this.render();
+  }
+
   diffProps(): DiffedProps {
     return [];
   }
@@ -68,7 +79,8 @@ export class TextNode {
   // #endregion
 
   getText(): string {
-    return this.text;
+    if (this.isVisible) return this.text;
+    else return "";
   }
 
   updateText(text: string): void {

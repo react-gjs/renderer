@@ -121,6 +121,14 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
 
   // #region Utils for external use
 
+  show() {
+    this.widget.visible = true;
+  }
+
+  hide() {
+    this.widget.visible = false;
+  }
+
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>
