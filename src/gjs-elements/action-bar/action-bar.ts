@@ -1,4 +1,3 @@
-import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
@@ -10,22 +9,28 @@ import { ElementLifecycleController } from "../utils/element-extenders/element-l
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { ensureNotText } from "../utils/ensure-not-string";
+import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import { createMarginPropMapper } from "../utils/property-maps-factories/create-margin-prop-mapper";
+import type { StyleProps } from "../utils/property-maps-factories/create-style-prop-mapper";
+import { createStylePropMapper } from "../utils/property-maps-factories/create-style-prop-mapper";
 
-export interface RevealerProps {
-  visible?: boolean;
-  transitionDuration?: number;
-  transitionType?: Gtk.RevealerTransitionType;
-}
+type ActionBarPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
-export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
+export type ActionBarProps = ActionBarPropsMixin;
+
+export class ActionBarElement
+  implements GjsElement<"ACTION_BAR", Gtk.ActionBar>
+{
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "REVEALER";
-  widget = new Gtk.Revealer();
+  readonly kind = "ACTION_BAR";
+  widget = new Gtk.ActionBar();
 
   private parent: GjsElement | null = null;
 
@@ -34,22 +39,11 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
     this.lifecycle,
     this.widget
   );
-  private readonly propsMapper = new PropertyMapper<RevealerProps>(
+  private readonly propsMapper = new PropertyMapper<ActionBarProps>(
     this.lifecycle,
-    (props) =>
-      props
-        .visible(DataType.Boolean, (v = false) => {
-          this.widget.reveal_child = v;
-        })
-        .transitionDuration(DataType.Number, (v = 500) => {
-          this.widget.transition_duration = v;
-        })
-        .transitionType(
-          DataType.Enum(Gtk.RevealerTransitionType),
-          (v = Gtk.RevealerTransitionType.NONE) => {
-            this.widget.transition_type = v;
-          }
-        )
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget)
   );
 
   constructor(props: DiffedProps) {

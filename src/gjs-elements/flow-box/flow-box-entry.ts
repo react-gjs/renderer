@@ -13,7 +13,7 @@ import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { SyntheticEmitter } from "../utils/element-extenders/synthetic-emitter";
-import { ensureNotString } from "../utils/ensure-not-string";
+import { ensureNotText } from "../utils/ensure-not-string";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -82,7 +82,7 @@ export class FlowBoxEntryElement
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    ensureNotString(child);
+    ensureNotText(child);
 
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
@@ -90,7 +90,7 @@ export class FlowBoxEntryElement
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
-    ensureNotString(newChild);
+    ensureNotText(newChild);
 
     newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild);

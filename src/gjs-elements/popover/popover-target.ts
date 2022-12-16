@@ -7,7 +7,7 @@ import { GjsElementManager } from "../gjs-element-manager";
 import type { TextNode } from "../markup/text-node";
 import { diffProps } from "../utils/diff-props";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
-import { ensureNotString } from "../utils/ensure-not-string";
+import { ensureNotText } from "../utils/ensure-not-string";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
 import { PopoverElement } from "./popover";
@@ -56,7 +56,7 @@ export class PopoverTargetElement
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    ensureNotString(child);
+    ensureNotText(child);
 
     if (this.childElement != null) {
       throw new Error("PopoverTarget can only have one child.");

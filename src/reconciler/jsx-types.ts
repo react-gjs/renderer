@@ -1,4 +1,8 @@
 import type React from "react";
+import type {
+  ActionBarElement,
+  ActionBarProps,
+} from "../gjs-elements/action-bar/action-bar";
 import type { BoxElement, BoxProps } from "../gjs-elements/box/box";
 import type {
   ButtonBoxElement,
@@ -124,6 +128,10 @@ export type IntrinsicComponent<P, W> = {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
+      ACTION_BAR: IntrinsicComponent<
+        ComponentWithChildren<ActionBarProps>,
+        ActionBarElement
+      >;
       BOX: IntrinsicComponent<ComponentWithChildren<BoxProps>, BoxElement>;
       BUTTON: IntrinsicComponent<
         ComponentWithChildren<ButtonProps, string>,

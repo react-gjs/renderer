@@ -1,4 +1,5 @@
 export interface GjsElementTypeRegistry {
+  ACTION_BAR: "ACTION_BAR";
   BOX: "BOX";
   BUTTON: "BUTTON";
   BUTTON_BOX: "BUTTON_BOX";
@@ -43,6 +44,8 @@ export interface GjsElementTypeRegistry {
   TEXT_AREA: "TEXT_AREA";
   TEXT_ENTRY: "TEXT_ENTRY";
   WINDOW: "WINDOW";
+
+  _PROXY_SOCKET: "_PROXY_SOCKET";
 }
 
 export type GjsElementTypes = keyof GjsElementTypeRegistry;

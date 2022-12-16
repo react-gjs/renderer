@@ -1,4 +1,6 @@
 import Reconciler from "react-reconciler";
+import { ActionBarElement } from "../gjs-elements/action-bar/action-bar";
+import type { ApplicationElement } from "../gjs-elements/application/application";
 import { BoxElement } from "../gjs-elements/box/box";
 import { ButtonBoxElement } from "../gjs-elements/button-box/button-box";
 import { ButtonGroupElement } from "../gjs-elements/button-group/button-group";
@@ -51,6 +53,7 @@ import { WindowElement } from "../gjs-elements/window/window";
 import { EventPhaseController } from "./event-phase";
 import { HostContext } from "./host-context";
 
+GjsElementManager.register("ACTION_BAR", ActionBarElement);
 GjsElementManager.register("BOX", BoxElement);
 GjsElementManager.register("BUTTON", ButtonElement);
 GjsElementManager.register("BUTTON_BOX", ButtonBoxElement);
@@ -98,6 +101,7 @@ GjsElementManager.register("WINDOW", WindowElement);
 
 export type GjsContext = {
   isInTextContext: boolean;
+  application: ApplicationElement;
 };
 
 export const GjsRenderer = Reconciler({
@@ -183,6 +187,7 @@ export const GjsRenderer = Reconciler({
   getRootHostContext(rootContainer) {
     return HostContext.init<GjsContext>({
       isInTextContext: false,
+      application: rootContainer,
     });
   },
   prepareForCommit(containerInfo) {

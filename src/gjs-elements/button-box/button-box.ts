@@ -11,7 +11,7 @@ import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
-import { ensureNotString } from "../utils/ensure-not-string";
+import { ensureNotText } from "../utils/ensure-not-string";
 import { parseCrossingEvent } from "../utils/gdk-events/pointer-event";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -90,7 +90,7 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
   // #region This widget direct mutations
 
   appendChild(child: TextNode | GjsElement): void {
-    ensureNotString(child);
+    ensureNotText(child);
 
     if (this.child) {
       throw new Error("Button can only have one child.");

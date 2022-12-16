@@ -10,7 +10,7 @@ import { ChildOrderController } from "../utils/element-extenders/child-order-con
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
-import { ensureNotString } from "../utils/ensure-not-string";
+import { ensureNotText } from "../utils/ensure-not-string";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../utils/property-maps-factories/create-margin-prop-mapper";
@@ -78,7 +78,7 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    ensureNotString(child);
+    ensureNotText(child);
 
     if (this.children.count() > 0) {
       throw new Error("Expander can only have one child.");

@@ -2,6 +2,8 @@ import type { GjsElementTypes } from "./gjs-elements/gjs-element-types";
 
 const IntrinsicElem = <E extends GjsElementTypes>(v: E): E => v;
 
+/** Equivalent to the Gtk.ActionBar widget. */
+export const ActionBar = IntrinsicElem("ACTION_BAR");
 /** Equivalent to the Gtk.Box widget. */
 export const Box = IntrinsicElem("BOX");
 /**

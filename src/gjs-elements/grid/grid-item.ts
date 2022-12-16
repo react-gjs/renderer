@@ -10,7 +10,7 @@ import { ElementLifecycleController } from "../utils/element-extenders/element-l
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
 import { SyntheticEmitter } from "../utils/element-extenders/synthetic-emitter";
-import { ensureNotString } from "../utils/ensure-not-string";
+import { ensureNotText } from "../utils/ensure-not-string";
 import { GridElement } from "./grid";
 
 export interface GridItemProps {
@@ -78,7 +78,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    ensureNotString(child);
+    ensureNotText(child);
 
     if (this.childElement != null) {
       throw new Error("GridItem can only have one child.");

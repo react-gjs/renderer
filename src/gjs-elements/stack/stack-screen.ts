@@ -10,7 +10,7 @@ import { ChildOrderController } from "../utils/element-extenders/child-order-con
 import { ElementLifecycleController } from "../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
-import { ensureNotString } from "../utils/ensure-not-string";
+import { ensureNotText } from "../utils/ensure-not-string";
 import { generateUID } from "../utils/generate-uid";
 import type { AlignmentProps } from "../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -102,7 +102,7 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    ensureNotString(child);
+    ensureNotText(child);
 
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
@@ -110,7 +110,7 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
-    ensureNotString(newChild);
+    ensureNotText(newChild);
 
     newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild);

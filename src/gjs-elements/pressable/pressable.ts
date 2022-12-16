@@ -13,7 +13,7 @@ import type { SyntheticEvent } from "../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../utils/element-extenders/map-properties";
-import { ensureNotString } from "../utils/ensure-not-string";
+import { ensureNotText } from "../utils/ensure-not-string";
 import type { MouseButtonPressEvent } from "../utils/gdk-events/mouse-button-press-event";
 import { parseMouseButtonPressEvent } from "../utils/gdk-events/mouse-button-press-event";
 import { parseCrossingEvent } from "../utils/gdk-events/pointer-event";
@@ -104,7 +104,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    ensureNotString(child);
+    ensureNotText(child);
 
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
@@ -112,7 +112,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
-    ensureNotString(newChild);
+    ensureNotText(newChild);
 
     newChild.notifyWillAppendTo(this);
 
