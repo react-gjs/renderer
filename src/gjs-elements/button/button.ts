@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { PositionType } from "../../g-enums";
+import { ButtonType } from "../../g-enums";
 import { EventPhase } from "../../reconciler/event-phase";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
@@ -25,11 +26,13 @@ import { createStylePropMapper } from "../utils/property-maps-factories/create-s
 type ButtonPropsMixin = AlignmentProps & MarginProps & StyleProps;
 
 export interface ButtonProps extends ButtonPropsMixin {
+  type?: ButtonType;
   label?: string;
   image?: Gtk.Widget;
   imagePosition?: PositionType;
   useUnderline?: boolean;
   margin?: ElementMargin;
+  focusOnClick?: boolean;
   onClick?: (event: SyntheticEvent) => void;
   onActivate?: (event: SyntheticEvent) => void;
   onPressed?: (event: SyntheticEvent) => void;
@@ -82,6 +85,19 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
         )
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
+        })
+        .type(DataType.Enum(ButtonType), (v = ButtonType.NORMAL) => {
+          switch (v) {
+            case ButtonType.NORMAL:
+              this.widget.relief = Gtk.ReliefStyle.NORMAL;
+              break;
+            case ButtonType.FLAT:
+              this.widget.relief = Gtk.ReliefStyle.NONE;
+              break;
+          }
+        })
+        .focusOnClick(DataType.Boolean, (v = true) => {
+          this.widget.focus_on_click = v;
         })
   );
 

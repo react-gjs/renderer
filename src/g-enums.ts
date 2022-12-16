@@ -64,3 +64,8 @@ export const ButtonBoxStyle = Gtk.ButtonBoxStyle;
 
 export type SizeGroupMode = Gtk.SizeGroupMode;
 export const SizeGroupMode = Gtk.SizeGroupMode;
+
+export enum ButtonType {
+  FLAT,
+  NORMAL,
+}
