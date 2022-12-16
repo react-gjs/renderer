@@ -37,6 +37,14 @@ export interface PressableProps extends PressablePropsMixin {
    * events.
    */
   interceptChildEvents?: boolean;
+  /**
+   * Determine if the Pressable should be drawn or not (this does not
+   * include it's children, only the Pressable itself).
+   *
+   * By default this is set to `false` and as a result any styles
+   * applied to the Pressable will not be visible.
+   */
+  draw?: boolean;
 }
 
 export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
@@ -63,14 +71,16 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
-      props.interceptChildEvents(DataType.Boolean, (v = false) => {
-        this.widget.set_above_child(v);
-      })
+      props
+        .interceptChildEvents(DataType.Boolean, (v = false) => {
+          this.widget.set_above_child(v);
+        })
+        .draw(DataType.Boolean, (v = false) => {
+          this.widget.set_visible_window(v);
+        })
   );
 
   constructor(props: DiffedProps) {
-    this.widget.set_visible_window(false);
-
     this.handlers.bind("button-press-event", "onClick", (e: Gdk.EventButton) =>
       parseMouseButtonPressEvent(e)
     );

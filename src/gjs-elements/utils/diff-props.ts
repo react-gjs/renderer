@@ -49,6 +49,48 @@ const compareFlatRecords = (
   return false;
 };
 
+const compareRecordsDeep = (
+  oldStyle: undefined | Record<string, string>,
+  newStyle: undefined | Record<string, string>
+) => {
+  if (typeof oldStyle !== typeof newStyle) {
+    return true;
+  }
+
+  if (oldStyle == undefined) return false;
+
+  const oldStyleKeys = Object.keys(oldStyle);
+  const newStyleKeys = Object.keys(newStyle!);
+
+  if (oldStyleKeys.length !== newStyleKeys.length) {
+    return true;
+  }
+
+  for (let i = 0; i < oldStyleKeys.length; i++) {
+    const key = oldStyleKeys[i];
+    const typeA = typeof oldStyle[key];
+    const typeB = typeof newStyle![key];
+
+    if (typeA !== typeB) {
+      return true;
+    }
+
+    if (typeA === "object") {
+      const a = oldStyle[key] as any as Record<string, string>;
+      const b = newStyle![key] as any as Record<string, string>;
+      if (compareRecordsDeep(a, b)) {
+        return true;
+      }
+    }
+
+    if (oldStyle[key] !== newStyle![key]) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 export const diffProps = (oldProps: any, newProps: any, gjsElem: boolean) => {
   const diffedProps: DiffedProps = [];
 
@@ -69,7 +111,7 @@ export const diffProps = (oldProps: any, newProps: any, gjsElem: boolean) => {
       }
 
       if (key === "style") {
-        if (compareFlatRecords(oldProps[key], newProps[key])) {
+        if (compareRecordsDeep(oldProps[key], newProps[key])) {
           diffedProps.push([key, newProps[key]]);
         }
         continue;
