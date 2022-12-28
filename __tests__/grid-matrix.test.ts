@@ -1,4 +1,4 @@
-import { GridMatrix } from "../src/gjs-elements/grid/helpers/grid-matrix";
+import { GridMatrix } from "../src/gjs-elements/gtk3/grid/helpers/grid-matrix";
 
 const child = (colsSpan: number, rowSpan: number) => ({
   colsSpan,
