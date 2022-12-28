@@ -107,8 +107,8 @@ export const diffProps = (
 ) => {
   const diffedProps: DiffedProps = [];
 
-  const oldPropsKeys = Object.keys(oldProps);
-  const newPropsKeys = Object.keys(newProps);
+  const oldPropsKeys = Object.keys(oldProps).filter((k) => k !== "children");
+  const newPropsKeys = Object.keys(newProps).filter((k) => k !== "children");
 
   for (let i = 0; i < newPropsKeys.length; i++) {
     const key = newPropsKeys[i];
