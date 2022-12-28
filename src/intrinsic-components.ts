@@ -84,8 +84,8 @@ export const ToolbarSeparator = IntrinsicElem("TOOLBAR_SEPARATOR");
 /** Equivalent to the Gtk.Window widget. */
 export const Window = IntrinsicElem("WINDOW");
 
-export { Popover } from "./gjs-elements/popover/component";
-export { createStack, useStack } from "./gjs-elements/stack/use-stack";
+export { Popover } from "./gjs-elements/gtk3/popover/component";
+export { createStack, useStack } from "./gjs-elements/gtk3/stack/use-stack";
 
 // #region Markup
 

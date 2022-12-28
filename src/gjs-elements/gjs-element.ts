@@ -1,6 +1,6 @@
 import type Gtk from "gi://Gtk";
 import type { GjsElementTypes } from "./gjs-element-types";
-import type { TextNode } from "./markup/text-node";
+import type { TextNode } from "./gtk3/markup/text-node";
 import type { DiffedProps } from "./utils/element-extenders/map-properties";
 import type { SyntheticEmitter } from "./utils/element-extenders/synthetic-emitter";
 

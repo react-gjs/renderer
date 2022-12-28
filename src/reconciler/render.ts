@@ -1,4 +1,4 @@
-import { ApplicationElement } from "../gjs-elements/application/application";
+import { ApplicationElement } from "../gjs-elements/gtk3/application/application";
 import { GjsRenderer } from "./gjs-renderer";
 
 export const render = (appContent: JSX.Element) => {
