@@ -2,40 +2,33 @@
 
 ## High Priority
 
-- Frame
-- Dialog
-- SizeGroup
+- FileChooser
+- Scale
+- ScaleButton
+- ModelButton
+- VolumeButton
 
 ## Medium Priority
 
-- ActionBar
-- FileChooser
-- Infobar
-- Range
-- Scale
+- LockButton
 - Menu
 - MenuButton
 - MenuItem
-- ManuBar
-- Spinner
-- Statusbar
-- TreeModel
-- HedearBar
-- TitleBar
-- ListBox
-- ModelButton
+- MenuBar
 - SeparatorMenuItem
+- ProgressBar
+- LevelBar
+- Paned
 
 ## Low Priority
 
+- ListBox
+- TreeModel
+- Statusbar
+- Infobar
 - Calendar
-- ProgressBar
-- LevelBar
 - ColorButton
-- Paned
-- LockButton
 - SearchBar
 - HandleBox
 - Notebook
 - Overlay
-- VolumeButton
