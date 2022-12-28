@@ -75,3 +75,10 @@ export enum ButtonType {
   FLAT,
   NORMAL,
 }
+
+export enum ControlButton {
+  CLOSE = "close",
+  MINIMIZE = "minimize",
+  MAXIMIZE = "maximize",
+  ICON = "icon",
+}

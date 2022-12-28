@@ -11,6 +11,7 @@ export interface GjsElementTypeRegistry {
   FRAME: "FRAME";
   GRID: "GRID";
   GRID_ITEM: "GRID_ITEM";
+  HEADER_BAR: "HEADER_BAR";
   IMAGE: "IMAGE";
   LABEL: "LABEL";
   LINK_BUTTON: "LINK_BUTTON";

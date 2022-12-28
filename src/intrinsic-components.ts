@@ -32,6 +32,8 @@ export const Frame = IntrinsicElem("FRAME");
 export const Grid = IntrinsicElem("GRID");
 /** A component that must wrap each child of a `<Grid />`. */
 export const GridItem = IntrinsicElem("GRID_ITEM");
+/** Equivalent to the Gtk.HeaderBar widget. */
+export const HeaderBar = IntrinsicElem("HEADER_BAR");
 /** Equivalent to the Gtk.Button widget. */
 export const Label = IntrinsicElem("LABEL");
 /** Equivalent to the Gtk.LinkButton widget. */

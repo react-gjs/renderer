@@ -15,6 +15,7 @@ import { FlowBoxEntryElement } from "../gjs-elements/gtk3/flow-box/flow-box-entr
 import { FrameElement } from "../gjs-elements/gtk3/frame/frame";
 import { GridElement } from "../gjs-elements/gtk3/grid/grid";
 import { GridItemElement } from "../gjs-elements/gtk3/grid/grid-item";
+import { HeaderBarElement } from "../gjs-elements/gtk3/headerbar/headerbar";
 import { ImageElement } from "../gjs-elements/gtk3/image/image";
 import { LabelElement } from "../gjs-elements/gtk3/label/label";
 import { LinkButtonElement } from "../gjs-elements/gtk3/link-button/link-button";
@@ -75,6 +76,7 @@ GjsElementManager.register("FLOW_BOX_ENTRY", FlowBoxEntryElement);
 GjsElementManager.register("FRAME", FrameElement);
 GjsElementManager.register("GRID", GridElement);
 GjsElementManager.register("GRID_ITEM", GridItemElement);
+GjsElementManager.register("HEADER_BAR", HeaderBarElement);
 GjsElementManager.register("IMAGE", ImageElement);
 GjsElementManager.register("LABEL", LabelElement);
 GjsElementManager.register("LINK_BUTTON", LinkButtonElement);

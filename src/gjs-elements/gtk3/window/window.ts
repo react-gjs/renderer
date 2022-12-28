@@ -5,6 +5,7 @@ import { WindowTypeHint } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
+import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
@@ -13,6 +14,7 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { HeaderBarElement } from "../headerbar/headerbar";
 import type { TextNode } from "../markup/text-node";
 
 export type WindowProps = {
@@ -50,7 +52,8 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   private readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
+    this.addChild.bind(this)
   );
   private readonly handlers = new EventHandlers(this.lifecycle, this.widget);
   private readonly propsMapper = new PropertyMapper<WindowProps>(
@@ -116,6 +119,17 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+  }
+
+  private addChild(widget: Gtk.Widget, element: GjsElement, index: number) {
+    if (
+      index === 0 &&
+      GjsElementManager.isGjsElementOfKind(element, HeaderBarElement)
+    ) {
+      this.widget.set_titlebar(widget);
+    } else {
+      this.widget.add(widget);
+    }
   }
 
   updateProps(props: DiffedProps): void {

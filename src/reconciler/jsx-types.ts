@@ -43,6 +43,10 @@ import type {
   GridItemProps,
 } from "../gjs-elements/gtk3/grid/grid-item";
 import type {
+  HeaderBarElement,
+  HeaderBarProps,
+} from "../gjs-elements/gtk3/headerbar/headerbar";
+import type {
   ImageElement,
   ImageProps,
 } from "../gjs-elements/gtk3/image/image";
@@ -216,6 +220,10 @@ declare global {
       GRID_ITEM: IntrinsicComponent<
         ComponentWithChild<GridItemProps, React.ReactElement>,
         GridItemElement
+      >;
+      HEADER_BAR: IntrinsicComponent<
+        ComponentWithChildren<HeaderBarProps>,
+        HeaderBarElement
       >;
       IMAGE: IntrinsicComponent<ImageProps, ImageElement>;
       LABEL: IntrinsicComponent<

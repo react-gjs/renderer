@@ -19,16 +19,12 @@
 - ManuBar
 - Spinner
 - Statusbar
-- Toolbar
-- ToolItem
-- SeparatorToolItem
 - TreeModel
 - HedearBar
 - TitleBar
 - ListBox
 - ModelButton
 - SeparatorMenuItem
-- SeparatorToolItem
 
 ## Low Priority
 

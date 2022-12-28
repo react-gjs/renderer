@@ -1,7 +1,7 @@
 import type { DiffedProps } from "./element-extenders/map-properties";
 import { UnsetProp } from "./element-extenders/map-properties";
 
-const compareFlatArrays = (oldArray?: any[], newArray?: any[]) => {
+export const compareArraysShallow = (oldArray?: any[], newArray?: any[]) => {
   if (typeof oldArray !== typeof newArray) {
     return true;
   }
@@ -21,7 +21,7 @@ const compareFlatArrays = (oldArray?: any[], newArray?: any[]) => {
   return false;
 };
 
-const compareFlatRecords = (
+export const compareRecordsShallow = (
   oldStyle: undefined | Record<string, string>,
   newStyle: undefined | Record<string, string>
 ) => {
@@ -49,7 +49,7 @@ const compareFlatRecords = (
   return false;
 };
 
-const compareRecordsDeep = (
+export const compareRecordsDeep = (
   oldStyle: undefined | Record<string, string>,
   newStyle: undefined | Record<string, string>
 ) => {
@@ -91,7 +91,20 @@ const compareRecordsDeep = (
   return false;
 };
 
-export const diffProps = (oldProps: any, newProps: any, gjsElem: boolean) => {
+const SpecialPropDiffers = new Map<
+  string,
+  (oldProp: any, newProp: any) => boolean
+>();
+
+SpecialPropDiffers.set("margin", compareArraysShallow);
+SpecialPropDiffers.set("style", compareRecordsShallow);
+
+export const diffProps = (
+  oldProps: any,
+  newProps: any,
+  gjsElem: boolean,
+  customPropDiffers?: Map<string, (oldProp: any, newProp: any) => boolean>
+) => {
   const diffedProps: DiffedProps = [];
 
   const oldPropsKeys = Object.keys(oldProps);
@@ -100,18 +113,19 @@ export const diffProps = (oldProps: any, newProps: any, gjsElem: boolean) => {
   for (let i = 0; i < newPropsKeys.length; i++) {
     const key = newPropsKeys[i];
     if (gjsElem) {
-      // we don't want to compare margins by reference, since
-      // those can be tuples of numbers, and even if margin values
-      // did not change, the tuple reference will be different
-      if (key === "margin") {
-        if (compareFlatArrays(oldProps[key], newProps[key])) {
+      const differ = SpecialPropDiffers.get(key);
+
+      if (differ) {
+        if (differ(oldProps[key], newProps[key])) {
           diffedProps.push([key, newProps[key]]);
         }
         continue;
       }
 
-      if (key === "style") {
-        if (compareRecordsDeep(oldProps[key], newProps[key])) {
+      const customDiffer = customPropDiffers?.get(key);
+
+      if (customDiffer) {
+        if (customDiffer(oldProps[key], newProps[key])) {
           diffedProps.push([key, newProps[key]]);
         }
         continue;
