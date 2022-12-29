@@ -6,11 +6,20 @@ _This is still a work in progress, bugs and missing features are expected._
 
 ## Components implemented so far:
 
+(All components have full TypeScript type definitions for each supported prop)
+
+### Gtk3 Widgets
+
+- **ActionBar** - build on top of Gtk.ActionBar
 - **Box** - build on top of Gtk.Box
-- **Button** - build on top of Gtk.Button
+- **Button** - build on top of Gtk.Button (only accepts strings as children)
+- **ButtonBox** - build on top of Gtk.Button (only accepts JSX Elements as children)
 - **CheckButton** - build on top of Gtk.CheckButton
+- **Expander** - build on top of Gtk.Expander
 - **FlowBox** - build on top of Gtk.FlowBox
+- **Frame** - build on top of Gtk.Frame
 - **Grid** - build on top of Gtk.Grid
+- **HeaderBar** - build on top of Gtk.HeaderBar
 - **Image** - build on top of Gtk.Image
 - **Label** - build on top of Gtk.Label
 - **LinkButton** - build on top of Gtk.LinkButton
@@ -22,10 +31,20 @@ _This is still a work in progress, bugs and missing features are expected._
 - **ScrollBox** - build on top of Gtk.ScrolledWindow
 - **Selector** - build on top of Gtk.ComboBox
 - **Separator** - build on top of Gtk.Separator
+- **SizeGroupBox** - build on top of Gtk.SizeGroup
+- **Slider** - build on top of Gtk.Scale
+- **SliderPopupButton** - build on top of Gtk.ScaleButton
+- **Spinner** - build on top of Gtk.Spinner
 - **Stack** - build on top of Gtk.Stack, usable only via `useStack` or `createStack` functions
 - **Switch** - build on top of Gtk.Switch
 - **TextArea** - build on top of Gtk.TextView
 - **TextEntry** - build on top of Gtk.Entry
+- **Toolbar** - build on top of Gtk.Toolbar
+- **ToolbarButton** - build on top of Gtk.ToolButton
+- **ToolbarItem** - build on top of Gtk.ToolItem
+- **ToolbarRadioButton** - build on top of Gtk.RadioToolButton
+- **ToolbarSeparator** - build on top of Gtk.SeparatorToolItem
+- **ToolbarToggleButton** - build on top of Gtk.ToggleToolButton
 - **Window** - build on top of Gtk.Window
 - **Markup** - a special component for Gtk.Label allowing to use Pango markup
   - **Big** - A markup component for the Pango `<big>` tag
