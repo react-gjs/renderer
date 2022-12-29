@@ -109,6 +109,14 @@ import type {
   SizeGroupBoxProps,
 } from "../gjs-elements/gtk3/size-group-box/size-group-box";
 import type {
+  SliderPopupButtonElement,
+  SliderPopupButtonProps,
+} from "../gjs-elements/gtk3/slider-popup-button/slider-popup-button";
+import type {
+  SliderElement,
+  SliderProps,
+} from "../gjs-elements/gtk3/slider/slider";
+import type {
   SpinnerElement,
   SpinnerProps,
 } from "../gjs-elements/gtk3/spinner/spinner";
@@ -272,6 +280,11 @@ declare global {
         ComponentWithChildren<SizeGroupBoxProps>,
         SizeGroupBoxElement
       >;
+      SLIDER_POPUP_BUTTON: IntrinsicComponent<
+        ComponentWithChildren<SliderPopupButtonProps>,
+        SliderPopupButtonElement
+      >;
+      SLIDER: IntrinsicComponent<SliderProps, SliderElement>;
       SPINNER: IntrinsicComponent<SpinnerProps, SpinnerElement>;
       STACK_SCREEN: IntrinsicComponent<
         ComponentWithChildren<StackScreenProps>,

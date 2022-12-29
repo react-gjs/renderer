@@ -4,9 +4,9 @@
     {
       "label": "Start App",
       "type": "shell",
-      "command": "yarn repo-sync",
+      "command": "./.yarn/releases/yarn-3.2.4.cjs repo-sync",
       "windows": {
-        "command": "yarn repo-sync"
+        "command": "./.yarn/releases/yarn-3.2.4.cjs repo-sync"
       },
       "group": "none",
       "presentation": {

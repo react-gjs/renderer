@@ -9,12 +9,7 @@ export class TextChildController {
   constructor(
     private element: ElementLifecycle,
     private setWidgetText: (text: string) => void
-  ) {
-    this.addChild = (child: TextNode) => {
-      this.children.push(child);
-      this.update();
-    };
-  }
+  ) {}
 
   private getText() {
     return this.children.map((c) => c.getText()).join("");
@@ -35,7 +30,10 @@ export class TextChildController {
     return this.children.length;
   }
 
-  addChild: (text: TextNode) => void;
+  addChild(child: TextNode) {
+    this.children.push(child);
+    this.update();
+  }
 
   removeChild(child: TextNode | GjsElement) {
     this.children = this.children.filter((c) => c !== child);

@@ -18,17 +18,25 @@ export const createStylePropMapper = (
         : defaults;
 
       if (finalStyles) {
-        const css = stylesToData(finalStyles, widgetClassName);
-
-        const provider = new Gtk.CssProvider();
-        provider.load_from_data(css);
-
-        styleContext.add_provider(
-          provider,
-          Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        const { buffer, stylesheet } = stylesToData(
+          finalStyles,
+          widgetClassName
         );
 
-        return () => styleContext.remove_provider(provider);
+        try {
+          const provider = new Gtk.CssProvider();
+          provider.load_from_data(buffer);
+
+          styleContext.add_provider(
+            provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+          );
+
+          return () => styleContext.remove_provider(provider);
+        } catch (e) {
+          console.error(stylesheet);
+          throw new Error("Failed to apply the above CSS styles.");
+        }
       }
     });
 };
@@ -49,17 +57,33 @@ function pascalCaseToKebabCase(name: string): string {
   return kebabCase;
 }
 
+function parseCssValue(value: CssPropertyValue) {
+  if (typeof value === "number") {
+    return `${value}pt`;
+  }
+
+  return value;
+}
+
 function parseCssRulesToString(styles: CssRules) {
   return Object.entries(styles)
-    .map(([name, value]) => `${pascalCaseToKebabCase(name)}: ${value};`)
+    .map(
+      ([name, value]) =>
+        `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`
+    )
     .join("\n");
 }
 
 function parseToCss(styles: StyleSheet, className: string) {
   const mainRule = `.${className} {
     ${Object.entries(styles)
-      .filter((entry): entry is [string, string] => !entry[0].startsWith(":"))
-      .map(([name, value]) => `${pascalCaseToKebabCase(name)}: ${value};`)
+      .filter(
+        (entry): entry is [string, string | number] => !entry[0].startsWith(":")
+      )
+      .map(
+        ([name, value]) =>
+          `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`
+      )
       .join("\n")}
 }`;
 
@@ -160,7 +184,7 @@ function stringToUint8Array(str: string): Uint8Array {
 function stylesToData(styles: StyleSheet, className: string) {
   const css = parseToCss(styles, className);
   const data = stringToUint8Array(css);
-  return data;
+  return { buffer: data, stylesheet: css };
 }
 
 export type CssPropertyValue = string | number;

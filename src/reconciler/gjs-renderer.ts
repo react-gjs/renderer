@@ -43,6 +43,8 @@ import { ScrollBoxElement } from "../gjs-elements/gtk3/scroll-box/scroll-box";
 import { SelectorElement } from "../gjs-elements/gtk3/selector/selector";
 import { SeparatorElement } from "../gjs-elements/gtk3/separator/separator";
 import { SizeGroupBoxElement } from "../gjs-elements/gtk3/size-group-box/size-group-box";
+import { SliderPopupButtonElement } from "../gjs-elements/gtk3/slider-popup-button/slider-popup-button";
+import { SliderElement } from "../gjs-elements/gtk3/slider/slider";
 import { SpinnerElement } from "../gjs-elements/gtk3/spinner/spinner";
 import { StackElement } from "../gjs-elements/gtk3/stack/stack";
 import { StackScreenElement } from "../gjs-elements/gtk3/stack/stack-screen";
@@ -59,28 +61,26 @@ import { ToolbarToggleButtonElement } from "../gjs-elements/gtk3/toolbar/toolbar
 import { WindowElement } from "../gjs-elements/gtk3/window/window";
 
 import { diffProps } from "../gjs-elements/utils/diff-props";
-import { getGLibListIterable } from "../gjs-elements/utils/get-g-list-iterator";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
 import { EventPhaseController } from "./event-phase";
 import { HostContext } from "./host-context";
 
 GjsElementManager.register("ACTION_BAR", ActionBarElement);
 GjsElementManager.register("BOX", BoxElement);
-GjsElementManager.register("BUTTON", ButtonElement);
 GjsElementManager.register("BUTTON_BOX", ButtonBoxElement);
 GjsElementManager.register("BUTTON_GROUP", ButtonGroupElement);
+GjsElementManager.register("BUTTON", ButtonElement);
 GjsElementManager.register("CHECK_BUTTON", CheckButtonElement);
 GjsElementManager.register("EXPANDER", ExpanderElement);
-GjsElementManager.register("FLOW_BOX", FlowBoxElement);
 GjsElementManager.register("FLOW_BOX_ENTRY", FlowBoxEntryElement);
+GjsElementManager.register("FLOW_BOX", FlowBoxElement);
 GjsElementManager.register("FRAME", FrameElement);
-GjsElementManager.register("GRID", GridElement);
 GjsElementManager.register("GRID_ITEM", GridItemElement);
+GjsElementManager.register("GRID", GridElement);
 GjsElementManager.register("HEADER_BAR", HeaderBarElement);
 GjsElementManager.register("IMAGE", ImageElement);
 GjsElementManager.register("LABEL", LabelElement);
 GjsElementManager.register("LINK_BUTTON", LinkButtonElement);
-GjsElementManager.register("MARKUP", MarkupElement);
 GjsElementManager.register("M_BIG", MBigElement);
 GjsElementManager.register("M_BOLD", MBoldElement);
 GjsElementManager.register("M_ITALIC", MItalicElement);
@@ -91,10 +91,11 @@ GjsElementManager.register("M_STRIKETHROUGH", MStrikethroughElement);
 GjsElementManager.register("M_SUBSCRIPT", MSubElement);
 GjsElementManager.register("M_SUPERSCRIPT", MSupElement);
 GjsElementManager.register("M_UNDERLINE", MUnderlineElement);
+GjsElementManager.register("MARKUP", MarkupElement);
 GjsElementManager.register("NUMBER_INPUT", NumberInputElement);
-GjsElementManager.register("POPOVER", PopoverElement);
 GjsElementManager.register("POPOVER_CONTENT", PopoverContentElement);
 GjsElementManager.register("POPOVER_TARGET", PopoverTargetElement);
+GjsElementManager.register("POPOVER", PopoverElement);
 GjsElementManager.register("PRESSABLE", PressableElement);
 GjsElementManager.register("RADIO_BOX", RadioBoxElement);
 GjsElementManager.register("RADIO_BUTTON", RadioButtonElement);
@@ -103,19 +104,21 @@ GjsElementManager.register("SCROLL_BOX", ScrollBoxElement);
 GjsElementManager.register("SELECTOR", SelectorElement);
 GjsElementManager.register("SEPARATOR", SeparatorElement);
 GjsElementManager.register("SIZE_GROUP_BOX", SizeGroupBoxElement);
+GjsElementManager.register("SLIDER_POPUP_BUTTON", SliderPopupButtonElement);
+GjsElementManager.register("SLIDER", SliderElement);
 GjsElementManager.register("SPINNER", SpinnerElement);
-GjsElementManager.register("STACK", StackElement);
 GjsElementManager.register("STACK_SCREEN", StackScreenElement);
 GjsElementManager.register("STACK_SWITCHER", StackSwitcherElement);
+GjsElementManager.register("STACK", StackElement);
 GjsElementManager.register("SWITCH", SwitchElement);
 GjsElementManager.register("TEXT_AREA", TextAreaElement);
 GjsElementManager.register("TEXT_ENTRY", TextEntryElement);
-GjsElementManager.register("TOOLBAR", ToolbarElement);
 GjsElementManager.register("TOOLBAR_BUTTON", ToolbarButtonElement);
 GjsElementManager.register("TOOLBAR_ITEM", ToolbarItemElement);
 GjsElementManager.register("TOOLBAR_RADIO_BUTTON", ToolbarRadioButtonElement);
 GjsElementManager.register("TOOLBAR_SEPARATOR", ToolbarSeparatorElement);
 GjsElementManager.register("TOOLBAR_TOGGLE_BUTTON", ToolbarToggleButtonElement);
+GjsElementManager.register("TOOLBAR", ToolbarElement);
 GjsElementManager.register("WINDOW", WindowElement);
 
 export type GjsContext = {
@@ -275,7 +278,7 @@ export const GjsRenderer = Reconciler({
     } else if (GjsElementManager.isGjsElement(container)) {
       if ((container.widget as Gtk.Box).get_children) {
         const children = (container.widget as Gtk.Box).get_children();
-        for (const child of getGLibListIterable<Gtk.Widget>(children)) {
+        for (const child of children) {
           child.destroy();
         }
       }

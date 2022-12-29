@@ -60,6 +60,10 @@ export const Separator = IntrinsicElem("SEPARATOR");
 export const Spinner = IntrinsicElem("SPINNER");
 /** Built on top of Gtk.Box and Gtk.SizeGroup. */
 export const SizeGroupBox = IntrinsicElem("SIZE_GROUP_BOX");
+/** Equivalent to the Gtk.ScaleButton widget. */
+export const SliderPopupButton = IntrinsicElem("SLIDER_POPUP_BUTTON");
+/** Equivalent to the Gtk.Scale widget. */
+export const Slider = IntrinsicElem("SLIDER");
 /**
  * Equivalent to the Gtk.Box widget. Specifically made to add items to
  * a Stack.

@@ -13579,7 +13579,7 @@ container and help break any circular reference count cycles.
      * @returns A newly-allocated list of the container’s
      *   non-internal children.
      */
-    get_children(): GLib.List;
+    get_children(): Array<Widget>;
     /**
      * @deprecated For overriding focus behavior, use the
      *   GtkWidgetClass::focus signal.
@@ -42708,7 +42708,7 @@ container and help break any circular reference count cycles.
      *
      * @returns The popup of the {@link ScaleButton}
      */
-    get_popup(): Widget;
+    get_popup(): Popover;
     /**
      * Gets the current value of the scale button.
      *

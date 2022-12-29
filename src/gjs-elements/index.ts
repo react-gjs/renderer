@@ -16,3 +16,4 @@ export type { SwitchElement } from "./gtk3/switch/switch";
 export type { TextAreaElement } from "./gtk3/text-area/text-area";
 export type { TextEntryElement } from "./gtk3/text-entry/text-entry";
 export type { WindowElement } from "./gtk3/window/window";
+export type { SyntheticEvent } from "./utils/element-extenders/event-handlers";
