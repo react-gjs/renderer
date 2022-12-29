@@ -3,8 +3,6 @@
 ## High Priority
 
 - FileChooser
-- Scale
-- ScaleButton
 - ModelButton
 - VolumeButton
 
