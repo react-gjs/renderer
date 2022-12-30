@@ -35,7 +35,7 @@ export class ApplicationElement {
   }
 
   start(): void {
-    return Gtk.main();
+    // return Gtk.main(); // TODO: change this once https://gitlab.gnome.org/GNOME/gjs/-/issues/468 get resolved
   }
 
   clear() {
