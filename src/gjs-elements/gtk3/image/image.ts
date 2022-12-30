@@ -114,8 +114,8 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
   }
 
   private setSrcFromString(src: string) {
-    if (src.startsWith("resource:")) {
-      this.widget.set_from_resource(src);
+    if (src.startsWith("resource://")) {
+      this.widget.set_from_resource(src.replace(/^resource:\/\//, ""));
     } else {
       this.widget.set_from_file(src);
     }
