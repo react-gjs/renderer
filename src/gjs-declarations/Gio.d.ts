@@ -8690,7 +8690,7 @@ declare module "gi://Gio" {
      *   with {@link G.list_free} and unref the infos with
      *   g_object_unref() when you're done with them.
      */
-    next_files_finish(result: AsyncResult): GLib.List;
+    next_files_finish(result: AsyncResult): Array<Gio.FileInfo>;
     /**
      * Sets the file enumerator as having pending operations.
      *
@@ -36185,6 +36185,30 @@ declare module "gi://Gio" {
       progress_callback: FileProgressCallback | null,
       progress_callback_data: any | null
     ): boolean;
+    move_async(
+        destination: File,
+        flags: FileCopyFlags,
+        io_priority: number,
+        cancellable?: Cancellable | null,
+        progress_callback?: FileProgressCallback | null
+    ): Promise<boolean>;
+    move_async(
+        destination: File,
+        flags: FileCopyFlags,
+        io_priority: number,
+        cancellable: Cancellable | null,
+        progress_callback: FileProgressCallback | null,
+        callback: AsyncReadyCallback<this> | null
+    ): void;
+    move_async(
+        destination: File,
+        flags: FileCopyFlags,
+        io_priority: number,
+        cancellable?: Cancellable | null,
+        progress_callback?: FileProgressCallback | null,
+        callback?: AsyncReadyCallback<this> | null
+    ): Promise<boolean> | void;
+    move_finish(result: AsyncResult): boolean;
     /**
      * Opens an existing file for reading and writing. The result
      * is a #GFileIOStream that can be used to read and write the
