@@ -14,6 +14,7 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import type { ApplicationElement } from "../application/application";
 import { HeaderBarElement } from "../headerbar/headerbar";
 import type { TextNode } from "../markup/text-node";
 
@@ -47,6 +48,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   readonly kind = "WINDOW";
   widget = new Gtk.Window();
 
+  private mainApp?: ApplicationElement;
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
@@ -105,7 +107,14 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
         })
   );
 
-  constructor(props: DiffedProps) {
+  isDisposed = false;
+
+  constructor(props: DiffedProps, context: HostContext<GjsContext>) {
+    this.mainApp = context.get("application");
+    if (this.mainApp) {
+      this.mainApp.addWindowToApp(this);
+    }
+
     this.handlers.bind("destroy", "onDestroy");
     this.handlers.bind("drag-begin", "onDragBegin");
     this.handlers.bind("drag-end", "onDragEnd");
@@ -115,6 +124,11 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
       width: this.widget.get_allocated_width(),
       height: this.widget.get_allocated_height(),
     }));
+
+    this.handlers.bindInternal("destroy", () => {
+      this.isDisposed = true;
+      this.handlers.notifyWidgetDestroyedOutsideLifecycle();
+    });
 
     this.updateProps(props);
 
@@ -133,12 +147,20 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   }
 
   updateProps(props: DiffedProps): void {
+    if (this.isDisposed) {
+      throw new Error("Can't update props of a disposed window");
+    }
+
     this.lifecycle.emitLifecycleEventUpdate(props);
   }
 
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
+    if (this.isDisposed) {
+      throw new Error("Can't append child to disposed window");
+    }
+
     ensureNotText(child);
 
     child.notifyWillAppendTo(this);
@@ -146,6 +168,10 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+    if (this.isDisposed) {
+      throw new Error("Can't append child to disposed window");
+    }
+
     ensureNotText(newChild);
 
     newChild.notifyWillAppendTo(this);
@@ -154,15 +180,16 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   }
 
   remove(parent: GjsElement): void {
+    this.mainApp?.removeWindowFromApp(this);
     parent.notifyWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
-    this.widget.destroy();
+    if (!this.isDisposed) this.widget.destroy();
   }
 
   render(): void {
-    this.widget.show_all();
+    if (!this.isDisposed) this.widget.show_all();
   }
 
   // #endregion
@@ -170,11 +197,14 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): void {
+    if (this.isDisposed) {
+      throw new Error("Can't append child to disposed window");
+    }
     this.parent = parent;
   }
 
   notifyWillUnmount(child: GjsElement): void {
-    this.children.removeChild(child);
+    if (!this.isDisposed) this.children.removeChild(child);
   }
 
   // #endregion
@@ -182,11 +212,11 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   // #region Utils for external use
 
   show() {
-    this.widget.visible = true;
+    if (!this.isDisposed) this.widget.visible = true;
   }
 
   hide() {
-    this.widget.visible = false;
+    if (!this.isDisposed) this.widget.visible = false;
   }
 
   diffProps(

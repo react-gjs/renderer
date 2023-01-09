@@ -7508,6 +7508,8 @@ declare module "gi://GObject" {
    */
   function pointer_type_register_static(name: string): GObject.Type;
 
+  function registerClass<C extends GObject>(cls: C): C;
+
   /**
    * A predefined #GSignalAccumulator for signals intended to be
    * used as a hook for application code to provide a particular

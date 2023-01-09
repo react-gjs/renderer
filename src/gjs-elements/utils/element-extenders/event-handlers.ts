@@ -188,6 +188,11 @@ export class EventHandlers<
       new EventBind(this.widget, signal, getArgs, eventPhase)
     );
   }
+
+  notifyWidgetDestroyedOutsideLifecycle() {
+    this.bindEvents.clear();
+    this.internalBinds = [];
+  }
 }
 
 export class EventNoop extends Error {

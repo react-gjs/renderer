@@ -10,6 +10,7 @@
 /// <reference path="./Gtk.d.ts" />;
 /// <reference path="./Pango.d.ts" />;
 /// <reference path="./Soup.d.ts" />;
+/// <reference path="./system.d.ts" />;
 
 declare module "gi://Atk" {}
 declare module "gi://cairo" {}
@@ -22,6 +23,7 @@ declare module "gi://GObject" {}
 declare module "gi://Gtk" {}
 declare module "gi://Pango" {}
 declare module "gi://Soup" {}
+declare module "system" {}
 
 declare module "gi://Gtk?version=3.0" {
   export * from "gi://Gtk";

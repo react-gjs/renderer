@@ -66,7 +66,7 @@ export class GjsElementManager {
   }
 
   /** @internal */
-  static isGjsElementOfKind<E extends new (props: any) => any>(
+  static isGjsElementOfKind<E extends GjsElementConstructor<any>>(
     element: any,
     constructor: E | Array<E>
   ): element is InstanceType<E> {

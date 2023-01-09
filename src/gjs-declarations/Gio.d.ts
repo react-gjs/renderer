@@ -723,7 +723,7 @@ declare module "gi://Gio" {
      * @param argv The argv from main(), or %NULL
      * @returns The exit status
      */
-    run(argc: number, argv: string[] | null): number;
+    run(argv: string[] | null): number;
     /**
      * Sends a notification on behalf of #application to the
      * desktop shell. There is no guarantee that the notification
@@ -1135,6 +1135,12 @@ declare module "gi://Gio" {
       signal: "notify::resource-base-path",
       callback: (owner: this, ...args: any) => void
     ): number;
+
+    vfunc_activate?(): void;
+
+    vfunc_startup(): void;
+
+    vfunc_shutdown(): void;
   }
 
   type ApplicationInitOptionsMixin = GObject.ObjectInitOptions &

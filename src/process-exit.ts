@@ -1,7 +1,5 @@
-// import Gtk from "gi://Gtk";
+import system from "system";
 
-export const exit = () => {
-  // Gtk.main_quit();
-  // @ts-expect-error
-  imports.mainloop.quit();
+export const exit = (code = 0) => {
+  system.exit(code);
 };

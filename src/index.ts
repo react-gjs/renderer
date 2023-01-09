@@ -10,6 +10,7 @@ export { KeyPressModifiers } from "./gjs-elements/utils/gdk-events/key-press-eve
 export * from "./gjs-elements/utils/icons/icon-enum";
 export * from "./gjs-elements/utils/icons/icon-types";
 export * from "./intrinsic-components";
+export * from "./mainloop";
 export * from "./process-exit";
 export * from "./reconciler/jsx-types";
 export * from "./reconciler/render";
