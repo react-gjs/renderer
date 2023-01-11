@@ -124,6 +124,8 @@ export class PropertyMapper<P = Record<string, any>> {
             )
           );
         }
+      } else {
+        this.properties[propName] = value;
       }
     }
 

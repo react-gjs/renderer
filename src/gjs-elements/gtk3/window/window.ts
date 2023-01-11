@@ -2,11 +2,13 @@ import { DataType } from "dilswer";
 import GdkPixbuf from "gi://GdkPixbuf";
 import Gtk from "gi://Gtk";
 import { WindowTypeHint } from "../../../g-enums";
+import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
+import { DoNotAppend } from "../../utils/do-not-append";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
@@ -30,6 +32,12 @@ export type WindowProps = {
   showCloseButton?: boolean;
   title?: string;
   windowTypeHint?: WindowTypeHint;
+  /**
+   * If set to `true`, when the close button on the window is pressed,
+   * the application will quit.
+   */
+  quitAppOnClose?: boolean;
+  onClose?: (event: SyntheticEvent) => void;
   onDestroy?: (event: SyntheticEvent) => void;
   onDragBegin?: (event: SyntheticEvent) => void;
   onDragEnd?: (event: SyntheticEvent) => void;
@@ -115,20 +123,31 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
       this.mainApp.addWindowToApp(this);
     }
 
-    this.handlers.bind("destroy", "onDestroy");
-    this.handlers.bind("drag-begin", "onDragBegin");
-    this.handlers.bind("drag-end", "onDragEnd");
-    this.handlers.bind("focus", "onFocus");
-    this.handlers.bind("hide", "onHide");
-    this.handlers.bind("configure-event", "onResize", () => ({
-      width: this.widget.get_allocated_width(),
-      height: this.widget.get_allocated_height(),
-    }));
-
     this.handlers.bindInternal("destroy", () => {
       this.isDisposed = true;
       this.handlers.notifyWidgetDestroyedOutsideLifecycle();
     });
+
+    this.handlers.bind("destroy", "onDestroy");
+    this.handlers.bind("delete-event", "onClose");
+    this.handlers.bind(
+      "drag-begin",
+      "onDragBegin",
+      undefined,
+      EventPhase.Action
+    );
+    this.handlers.bind("drag-end", "onDragEnd", undefined, EventPhase.Action);
+    this.handlers.bind("focus", "onFocus", undefined, EventPhase.Action);
+    this.handlers.bind("hide", "onHide", undefined, EventPhase.Action);
+    this.handlers.bind(
+      "configure-event",
+      "onResize",
+      () => ({
+        width: this.widget.get_allocated_width(),
+        height: this.widget.get_allocated_height(),
+      }),
+      EventPhase.Action
+    );
 
     this.updateProps(props);
 
@@ -146,12 +165,42 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     }
   }
 
+  private defaultOnCloseHandler(event: SyntheticEvent) {
+    event.preventDefault();
+
+    if (this.propsMapper.currentProps.quitAppOnClose) {
+      this.mainApp?.reactContext?.quit();
+    }
+  }
+
+  private wrapOnCloseProp(props: DiffedProps): DiffedProps {
+    const propName: keyof WindowProps = "onClose";
+    const onclose = props.find(([k]) => k === propName);
+
+    if (onclose) {
+      const originalCallback = onclose[1] as undefined | WindowProps["onClose"];
+      onclose[1] = (event: SyntheticEvent) => {
+        this.defaultOnCloseHandler(event);
+        return originalCallback?.(event);
+      };
+    } else {
+      props.push([
+        propName,
+        (event: SyntheticEvent) => {
+          this.defaultOnCloseHandler(event);
+        },
+      ]);
+    }
+
+    return props;
+  }
+
   updateProps(props: DiffedProps): void {
     if (this.isDisposed) {
       throw new Error("Can't update props of a disposed window");
     }
 
-    this.lifecycle.emitLifecycleEventUpdate(props);
+    this.lifecycle.emitLifecycleEventUpdate(this.wrapOnCloseProp(props));
   }
 
   // #region This widget direct mutations
@@ -185,7 +234,10 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
-    if (!this.isDisposed) this.widget.destroy();
+    if (!this.isDisposed) {
+      this.widget.close();
+      this.widget.destroy();
+    }
   }
 
   render(): void {
@@ -201,6 +253,8 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
       throw new Error("Can't append child to disposed window");
     }
     this.parent = parent;
+
+    throw new DoNotAppend();
   }
 
   notifyWillUnmount(child: GjsElement): void {

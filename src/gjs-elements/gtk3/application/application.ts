@@ -5,6 +5,7 @@ import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { WindowElement } from "../window/window";
+import type { ApplicationContext } from "./context";
 
 export type ApplicationOptions = {
   /**
@@ -34,6 +35,8 @@ export class ApplicationElement extends Gtk.Application {
 
   private _windowList: WindowElement[] = [];
 
+  reactContext?: ApplicationContext;
+
   constructor(options: ApplicationOptions) {
     super({
       application_id: options.appId,
@@ -56,8 +59,19 @@ export class ApplicationElement extends Gtk.Application {
     this._windowList = this._windowList.filter((w) => w !== window);
 
     if (this._windowList.length === 0) {
-      this.remove();
+      if (this.reactContext) {
+        // Ensure the react tree is dismantled properly.
+        // As a result of this call, ApplicationElement.remove()
+        // should be called once the tree is dismantled
+        this.reactContext.quit();
+      } else {
+        this.remove();
+      }
     }
+  }
+
+  getWindowCount() {
+    return this._windowList.length;
   }
 
   notifyWillAppendTo(parent: GjsElement): void {
@@ -80,6 +94,10 @@ export class ApplicationElement extends Gtk.Application {
 
   notifyWillUnmount() {}
 
+  /**
+   * Alias to `ApplicationElement.quit()` inherited from
+   * `Gtk.Application`.
+   */
   remove(): void {
     this.quit();
   }
@@ -102,11 +120,16 @@ export class ApplicationElement extends Gtk.Application {
     return diffProps(oldProps, newProps, true);
   }
 
-  vfunc_activate() {
+  vfunc_startup() {
+    super.vfunc_startup();
+
     this._isAppActive = true;
     for (const window of this._windowList) {
       this.add_window(window.widget);
     }
+  }
+
+  vfunc_activate() {
     this._rootGjsElement?.render();
   }
 }

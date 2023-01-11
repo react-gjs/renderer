@@ -1,17 +1,17 @@
 import "gi://Gdk?version=3.0";
 import "gi://Gtk?version=3.0";
-import type { default as GtkModules } from "./gtk-modules-declarations";
+import type { default as DeclarationTypes } from "./declarations";
 
 export * from "./g-enums";
 export { GjsElementManager } from "./gjs-elements/gjs-element-manager";
 export * from "./gjs-elements/gjs-element-types";
+export { useApp } from "./gjs-elements/gtk3/application/context";
 export * from "./gjs-elements/index";
 export { KeyPressModifiers } from "./gjs-elements/utils/gdk-events/key-press-event";
 export * from "./gjs-elements/utils/icons/icon-enum";
 export * from "./gjs-elements/utils/icons/icon-types";
 export * from "./intrinsic-components";
 export * from "./mainloop";
-export * from "./process-exit";
 export * from "./reconciler/jsx-types";
 export * from "./reconciler/render";
-export type { GtkModules };
+export type { DeclarationTypes as GtkModules };

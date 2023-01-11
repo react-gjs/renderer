@@ -61,6 +61,7 @@ import { ToolbarToggleButtonElement } from "../gjs-elements/gtk3/toolbar/toolbar
 import { WindowElement } from "../gjs-elements/gtk3/window/window";
 
 import { diffProps } from "../gjs-elements/utils/diff-props";
+import { DoNotAppend } from "../gjs-elements/utils/do-not-append";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
 import { EventPhaseController } from "./event-phase";
 import { HostContext } from "./host-context";
@@ -126,6 +127,18 @@ export type GjsContext = {
   application: ApplicationElement;
 };
 
+const performAppendAction = (action: () => void) => {
+  try {
+    action();
+  } catch (e) {
+    if (typeof e === "object" && e !== null && e instanceof DoNotAppend) {
+      // do nothing
+    } else {
+      throw e;
+    }
+  }
+};
+
 export const GjsRenderer = Reconciler({
   isPrimaryRenderer: true,
   noTimeout: -1,
@@ -134,31 +147,37 @@ export const GjsRenderer = Reconciler({
   supportsPersistence: false,
   afterActiveInstanceBlur() {},
   appendChildToContainer(container: any, child: any) {
-    if (
-      isGjsElementOrString(child) &&
-      GjsElementManager.isGjsElement(container)
-    ) {
-      container.appendChild(child);
-      container.render();
-    }
+    performAppendAction(() => {
+      if (
+        isGjsElementOrString(child) &&
+        GjsElementManager.isGjsElement(container)
+      ) {
+        container.appendChild(child);
+        container.render();
+      }
+    });
   },
   appendInitialChild(parentInstance: any, child: any) {
-    if (
-      isGjsElementOrString(child) &&
-      GjsElementManager.isGjsElement(parentInstance)
-    ) {
-      parentInstance.appendChild(child);
-      parentInstance.render();
-    }
+    performAppendAction(() => {
+      if (
+        isGjsElementOrString(child) &&
+        GjsElementManager.isGjsElement(parentInstance)
+      ) {
+        parentInstance.appendChild(child);
+        parentInstance.render();
+      }
+    });
   },
   appendChild(parentInstance: any, child: any) {
-    if (
-      isGjsElementOrString(child) &&
-      GjsElementManager.isGjsElement(parentInstance)
-    ) {
-      parentInstance.appendChild(child);
-      parentInstance.render();
-    }
+    performAppendAction(() => {
+      if (
+        isGjsElementOrString(child) &&
+        GjsElementManager.isGjsElement(parentInstance)
+      ) {
+        parentInstance.appendChild(child);
+        parentInstance.render();
+      }
+    });
   },
   beforeActiveInstanceBlur() {},
   cancelTimeout: clearTimeout,
@@ -286,24 +305,28 @@ export const GjsRenderer = Reconciler({
   },
   resetTextContent(instance) {},
   insertBefore(parentInstance, child, beforeChild) {
-    if (
-      GjsElementManager.isGjsElement(parentInstance) &&
-      GjsElementManager.isGjsElement(child) &&
-      GjsElementManager.isGjsElement(beforeChild)
-    ) {
-      parentInstance.insertBefore(child, beforeChild);
-      parentInstance.render();
-    }
+    performAppendAction(() => {
+      if (
+        GjsElementManager.isGjsElement(parentInstance) &&
+        GjsElementManager.isGjsElement(child) &&
+        GjsElementManager.isGjsElement(beforeChild)
+      ) {
+        parentInstance.insertBefore(child, beforeChild);
+        parentInstance.render();
+      }
+    });
   },
   insertInContainerBefore(container, child, beforeChild) {
-    if (
-      GjsElementManager.isGjsElement(container) &&
-      GjsElementManager.isGjsElement(child) &&
-      GjsElementManager.isGjsElement(beforeChild)
-    ) {
-      container.insertBefore(child, beforeChild);
-      container.render();
-    }
+    performAppendAction(() => {
+      if (
+        GjsElementManager.isGjsElement(container) &&
+        GjsElementManager.isGjsElement(child) &&
+        GjsElementManager.isGjsElement(beforeChild)
+      ) {
+        container.insertBefore(child, beforeChild);
+        container.render();
+      }
+    });
   },
   hideInstance(instance) {
     if (GjsElementManager.isGjsElement(instance)) {

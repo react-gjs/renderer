@@ -1,8 +1,10 @@
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
+import React from "react";
 import system from "system";
 import type { ApplicationOptions } from "../gjs-elements/gtk3/application/application";
 import { ApplicationElement } from "../gjs-elements/gtk3/application/application";
+import { ApplicationContextProvider } from "../gjs-elements/gtk3/application/context";
 import { GjsRenderer } from "./gjs-renderer";
 
 export const render = (
@@ -30,7 +32,16 @@ export const render = (
     null
   );
 
-  GjsRenderer.updateContainer(appContent, container, null, () => {});
+  GjsRenderer.updateContainer(
+    React.createElement(
+      ApplicationContextProvider,
+      { application },
+      appContent
+    ),
+    container,
+    null,
+    () => {}
+  );
 
   setTimeout(() => {
     const code = application.run(system.programArgs);

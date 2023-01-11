@@ -27,6 +27,7 @@ type SyntheticEventPropsGenerator<A extends any[] = any[]> = (
 
 export type SyntheticEvent<A extends Record<string, any> = {}> = A & {
   stopPropagation(): void;
+  preventDefault(): void;
   originalEvent: any;
   target: Gtk.Widget;
 };
@@ -36,7 +37,7 @@ const noop = () => {};
 class EventBind {
   private id?: number;
   private isConnected = false;
-  private handler: (...args: any[]) => any = noop;
+  private handler: (event: SyntheticEvent) => any = noop;
 
   constructor(
     private widget: Widget<any>,
@@ -70,6 +71,7 @@ class EventBind {
 
           const syntheticEvent: SyntheticEvent<any> = Object.assign({}, a, {
             stopPropagation,
+            preventDefault: stopPropagation,
             originalEvent: args[0],
             target,
           });
@@ -92,7 +94,7 @@ class EventBind {
     this.isConnected = true;
   }
 
-  updateHandler(handler?: (...args: any[]) => any) {
+  updateHandler(handler?: (event: SyntheticEvent) => any) {
     if (handler) {
       this.init();
       this.handler = handler;
@@ -151,7 +153,7 @@ export class EventHandlers<
   bindInternal<K extends string, A extends any[]>(
     signal: K,
     handler: W["connect"] extends EventConnect<K, A>
-      ? (...args: A) => void
+      ? (event: SyntheticEvent) => void
       : never,
     eventPhase: EventPhase = EventPhase.Default
   ) {

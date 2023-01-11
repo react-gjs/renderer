@@ -1,6 +1,7 @@
 import type GLib from "gi://GLib";
 import type GObject from "gi://GObject";
 import "./gjs-declarations/index";
+import type { ApplicationContext } from "./gjs-elements/gtk3/application/context";
 export default {};
 
 declare global {
@@ -161,4 +162,12 @@ declare global {
   };
 
   const pkg: Pkg;
+
+  /**
+   * Globally accessible equivalent of the `quit()` method that's
+   * available through `useApp` hook.
+   *
+   * If possible, please use the `useApp` hook instead.
+   */
+  const quitMainApplication: undefined | ApplicationContext["quit"];
 }
