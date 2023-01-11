@@ -36192,27 +36192,27 @@ declare module "gi://Gio" {
       progress_callback_data: any | null
     ): boolean;
     move_async(
-        destination: File,
-        flags: FileCopyFlags,
-        io_priority: number,
-        cancellable?: Cancellable | null,
-        progress_callback?: FileProgressCallback | null
+      destination: File,
+      flags: FileCopyFlags,
+      io_priority: number,
+      cancellable?: Cancellable | null,
+      progress_callback?: FileProgressCallback | null
     ): Promise<boolean>;
     move_async(
-        destination: File,
-        flags: FileCopyFlags,
-        io_priority: number,
-        cancellable: Cancellable | null,
-        progress_callback: FileProgressCallback | null,
-        callback: AsyncReadyCallback<this> | null
+      destination: File,
+      flags: FileCopyFlags,
+      io_priority: number,
+      cancellable: Cancellable | null,
+      progress_callback: FileProgressCallback | null,
+      callback: AsyncReadyCallback<this> | null
     ): void;
     move_async(
-        destination: File,
-        flags: FileCopyFlags,
-        io_priority: number,
-        cancellable?: Cancellable | null,
-        progress_callback?: FileProgressCallback | null,
-        callback?: AsyncReadyCallback<this> | null
+      destination: File,
+      flags: FileCopyFlags,
+      io_priority: number,
+      cancellable?: Cancellable | null,
+      progress_callback?: FileProgressCallback | null,
+      callback?: AsyncReadyCallback<this> | null
     ): Promise<boolean> | void;
     move_finish(result: AsyncResult): boolean;
     /**
