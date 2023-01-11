@@ -165,12 +165,29 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     }
   }
 
-  private defaultOnCloseHandler(event: SyntheticEvent) {
+  private defaultOnCloseHandler(
+    event: SyntheticEvent,
+    originalHandler?: WindowProps["onClose"]
+  ) {
     event.preventDefault();
 
-    if (this.propsMapper.currentProps.quitAppOnClose) {
+    let canQuit = true;
+
+    const preventQuit = () => {
+      canQuit = false;
+    };
+
+    const result = originalHandler?.({
+      ...event,
+      stopPropagation: preventQuit,
+      preventDefault: preventQuit,
+    });
+
+    if (canQuit && this.propsMapper.currentProps.quitAppOnClose) {
       this.mainApp?.reactContext?.quit();
     }
+
+    return result;
   }
 
   private wrapOnCloseProp(props: DiffedProps): DiffedProps {
@@ -178,10 +195,9 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     const onclose = props.find(([k]) => k === propName);
 
     if (onclose) {
-      const originalCallback = onclose[1] as undefined | WindowProps["onClose"];
+      const originalHandler = onclose[1] as undefined | WindowProps["onClose"];
       onclose[1] = (event: SyntheticEvent) => {
-        this.defaultOnCloseHandler(event);
-        return originalCallback?.(event);
+        return this.defaultOnCloseHandler(event, originalHandler);
       };
     } else {
       props.push([
