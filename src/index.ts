@@ -10,6 +10,7 @@ export * from "./gjs-elements/index";
 export { KeyPressModifiers } from "./gjs-elements/utils/gdk-events/key-press-event";
 export * from "./gjs-elements/utils/icons/icon-enum";
 export * from "./gjs-elements/utils/icons/icon-types";
+export * from "./hooks/gtk3";
 export * from "./intrinsic-components";
 export * from "./mainloop";
 export * from "./reconciler/jsx-types";

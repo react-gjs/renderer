@@ -4,7 +4,6 @@
 
 - FileChooser
 - ModelButton
-- VolumeButton
 
 ## Medium Priority
 

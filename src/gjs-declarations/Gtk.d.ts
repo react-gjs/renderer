@@ -76192,7 +76192,7 @@ container and help break any circular reference count cycles.
      *   returned list with {@link G.slist_free}, and the files
      *   with g_object_unref().
      */
-    get_files(): GLib.SList;
+    get_files(): Gio.File[];
     /**
      * Gets the current filter; see
      * {@link Gtk.FileChooser.set_filter}.
