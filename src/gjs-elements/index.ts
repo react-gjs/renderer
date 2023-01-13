@@ -151,5 +151,9 @@ export type {
   ToolbarToggleButtonElement,
   ToolbarToggleButtonProps,
 } from "./gtk3/toolbar/toolbar-toggle-button";
+export type {
+  VolumeButtonElement,
+  VolumeButtonProps,
+} from "./gtk3/volume-button/volume-button";
 export type { WindowElement, WindowProps } from "./gtk3/window/window";
 export type { SyntheticEvent } from "./utils/element-extenders/event-handlers";

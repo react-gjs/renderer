@@ -160,6 +160,10 @@ import type {
   ToolbarToggleButtonElement,
   ToolbarToggleButtonProps,
 } from "../gjs-elements/gtk3/toolbar/toolbar-toggle-button";
+import type {
+  VolumeButtonElement,
+  VolumeButtonProps,
+} from "../gjs-elements/gtk3/volume-button/volume-button";
 import type { WindowProps } from "../gjs-elements/gtk3/window/window";
 
 export type ComponentWithChildren<
@@ -316,6 +320,10 @@ declare global {
       TOOLBAR_TOGGLE_BUTTON: IntrinsicComponent<
         ComponentWithChildren<ToolbarToggleButtonProps, string>,
         ToolbarToggleButtonElement
+      >;
+      VOLUME_BUTTON: IntrinsicComponent<
+        ComponentWithChildren<VolumeButtonProps, string>,
+        VolumeButtonElement
       >;
       WINDOW: IntrinsicComponent<
         ComponentWithChildren<WindowProps>,

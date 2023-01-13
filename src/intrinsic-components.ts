@@ -87,6 +87,8 @@ export const ToolbarRadioButton = IntrinsicElem("TOOLBAR_RADIO_BUTTON");
 export const ToolbarToggleButton = IntrinsicElem("TOOLBAR_TOGGLE_BUTTON");
 /** Equivalent to the Gtk.ToolSeparator widget. */
 export const ToolbarSeparator = IntrinsicElem("TOOLBAR_SEPARATOR");
+/** Equivalent to the Gtk.VolumeButton widget. */
+export const VolumeButton = IntrinsicElem("VOLUME_BUTTON");
 /** Equivalent to the Gtk.Window widget. */
 export const Window = IntrinsicElem("WINDOW");
 

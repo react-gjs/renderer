@@ -58,6 +58,7 @@ import { ToolbarItemElement } from "../gjs-elements/gtk3/toolbar/toolbar-item";
 import { ToolbarRadioButtonElement } from "../gjs-elements/gtk3/toolbar/toolbar-radio-button";
 import { ToolbarSeparatorElement } from "../gjs-elements/gtk3/toolbar/toolbar-separator";
 import { ToolbarToggleButtonElement } from "../gjs-elements/gtk3/toolbar/toolbar-toggle-button";
+import { VolumeButtonElement } from "../gjs-elements/gtk3/volume-button/volume-button";
 import { WindowElement } from "../gjs-elements/gtk3/window/window";
 
 import { diffProps } from "../gjs-elements/utils/diff-props";
@@ -120,6 +121,7 @@ GjsElementManager.register("TOOLBAR_RADIO_BUTTON", ToolbarRadioButtonElement);
 GjsElementManager.register("TOOLBAR_SEPARATOR", ToolbarSeparatorElement);
 GjsElementManager.register("TOOLBAR_TOGGLE_BUTTON", ToolbarToggleButtonElement);
 GjsElementManager.register("TOOLBAR", ToolbarElement);
+GjsElementManager.register("VOLUME_BUTTON", VolumeButtonElement);
 GjsElementManager.register("WINDOW", WindowElement);
 
 export type GjsContext = {
