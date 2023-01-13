@@ -2,17 +2,15 @@
 
 ## High Priority
 
-- FileChooser
-- ModelButton
-
-## Medium Priority
-
-- LockButton
 - Menu
 - MenuButton
 - MenuItem
 - MenuBar
 - SeparatorMenuItem
+
+## Medium Priority
+
+- LockButton
 - ProgressBar
 - LevelBar
 - Paned
