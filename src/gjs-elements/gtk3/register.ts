@@ -30,6 +30,7 @@ import { MenuBarElement } from "./menu-bar/menu-bar";
 import { MenuBarItemElement } from "./menu-bar/menu-bar-item";
 import { MenuCheckButtonElement } from "./menu-bar/menu-check-button";
 import { MenuEntryElement } from "./menu-bar/menu-entry";
+import { MenuRadioButtonElement } from "./menu-bar/menu-radio-button";
 import { MenuSeparatorElement } from "./menu-bar/menu-separator";
 import { NumberInputElement } from "./number-input/number-input";
 import { PopoverElement } from "./popover/popover";
@@ -93,6 +94,7 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("MENU_BAR_ITEM", MenuBarItemElement);
   manager.register("MENU_CHECK_BUTTON", MenuCheckButtonElement);
   manager.register("MENU_ENTRY", MenuEntryElement);
+  manager.register("MENU_RADIO_BUTTON", MenuRadioButtonElement);
   manager.register("MENU_SEPARATOR", MenuSeparatorElement);
   manager.register("NUMBER_INPUT", NumberInputElement);
   manager.register("POPOVER_CONTENT", PopoverContentElement);

@@ -46,6 +46,8 @@ export const MenuBarItem = IntrinsicElem("MENU_BAR_ITEM");
 export const MenuCheckButton = IntrinsicElem("MENU_CHECK_BUTTON");
 /** Equivalent to the Gtk.MenuItem widget. */
 export const MenuEntry = IntrinsicElem("MENU_ENTRY");
+/** Equivalent to the Gtk.RadioMenuItem widget. */
+export const MenuRadioButton = IntrinsicElem("MENU_RADIO_BUTTON");
 /** Equivalent to the Gtk.SeparatorMenuItem widget. */
 export const MenuSeparator = IntrinsicElem("MENU_SEPARATOR");
 /** Equivalent to the Gtk.SpinButton widget. */

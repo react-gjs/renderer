@@ -2,11 +2,7 @@
 
 ## High Priority
 
-- Menu
 - MenuButton
-- MenuItem
-- MenuBar
-- SeparatorMenuItem
 
 ## Medium Priority
 

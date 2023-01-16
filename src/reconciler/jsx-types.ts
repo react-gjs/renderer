@@ -89,6 +89,10 @@ import type {
   MenuEntryProps,
 } from "../gjs-elements/gtk3/menu-bar/menu-entry";
 import type {
+  MenuRadioButtonElement,
+  MenuRadioButtonProps,
+} from "../gjs-elements/gtk3/menu-bar/menu-radio-button";
+import type {
   MenuSeparatorElement,
   MenuSeparatorProps,
 } from "../gjs-elements/gtk3/menu-bar/menu-separator";
@@ -295,6 +299,10 @@ declare global {
       MENU_ENTRY: IntrinsicComponent<
         ComponentWithChildren<MenuEntryProps>,
         MenuEntryElement
+      >;
+      MENU_RADIO_BUTTON: IntrinsicComponent<
+        MenuRadioButtonProps,
+        MenuRadioButtonElement
       >;
       MENU_SEPARATOR: IntrinsicComponent<
         MenuSeparatorProps,

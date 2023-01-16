@@ -1,6 +1,5 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { MenuCheckButtonType } from "../../../g-enums";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -23,21 +22,22 @@ import type { TextNode } from "../markup/text-node";
 import { MenuBarItemElement } from "./menu-bar-item";
 import { MenuEntryElement } from "./menu-entry";
 
-type MenuCheckButtonPropsMixin = MarginProps & ExpandProps & StyleProps;
+type MenuRadioButtonPropsMixin = MarginProps & ExpandProps & StyleProps;
 
-export interface MenuCheckButtonProps extends MenuCheckButtonPropsMixin {
+export interface MenuRadioButtonProps extends MenuRadioButtonPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
-  value?: boolean;
-  type?: MenuCheckButtonType;
+  radioGroup: string;
+  isDefault?: boolean;
   inconsistent?: boolean;
+  onClick?: (event: SyntheticEvent) => void;
   onToggle?: (event: SyntheticEvent<{ value: boolean }>) => void;
   onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
   onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
 }
 
-export class MenuCheckButtonElement
-  implements GjsElement<"MENU_CHECK_BUTTON", Gtk.CheckMenuItem>
+export class MenuRadioButtonElement
+  implements GjsElement<"MENU_RADIO_BUTTON", Gtk.RadioMenuItem>
 {
   static getContext(
     currentContext: HostContext<GjsContext>
@@ -45,67 +45,41 @@ export class MenuCheckButtonElement
     return currentContext;
   }
 
-  readonly kind = "MENU_CHECK_BUTTON";
-  widget = new Gtk.CheckMenuItem();
+  readonly kind = "MENU_RADIO_BUTTON";
+  widget = new Gtk.RadioMenuItem();
 
   private parent: MenuBarItemElement | MenuEntryElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
-    Gtk.MenuItem,
-    MenuCheckButtonProps
-  >(this.lifecycle, this.widget);
-
-  private readonly propsMapper = new PropertyMapper<MenuCheckButtonProps>(
+  private handlers = new EventHandlers<Gtk.MenuItem, MenuRadioButtonProps>(
     this.lifecycle,
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    (props) =>
-      props
-        .label(DataType.String, (v = "") => {
-          this.widget.label = v;
-        })
-        .value(DataType.Boolean, (v = false) => {
-          this.widget.active = v;
-        })
-        .type(
-          DataType.Enum(MenuCheckButtonType),
-          (v = MenuCheckButtonType.CHECK) => {
-            this.widget.draw_as_radio = v === MenuCheckButtonType.RADIO;
-          }
-        )
-        .inconsistent(DataType.Boolean, (v = false) => {
-          this.widget.inconsistent = v;
-        })
+    this.widget
   );
 
-  constructor(props: DiffedProps) {
-    this.handlers.bind("activate", "onToggle", () => {
-      return {
-        value: this.widget.active,
-      };
-    });
-    this.handlers.bind(
-      "enter-notify-event",
-      "onMouseEnter",
-      parseCrossingEvent,
-      EventPhase.Action
-    );
-    this.handlers.bind(
-      "leave-notify-event",
-      "onMouseLeave",
-      parseCrossingEvent,
-      EventPhase.Action
-    );
+  private readonly propsMapper = new PropertyMapper<MenuRadioButtonProps>(
+    this.lifecycle
+  );
 
+  private isInitialized = false;
+  private unappliedProps: DiffedProps = [];
+
+  constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
   updateProps(props: DiffedProps): void {
-    this.lifecycle.emitLifecycleEventUpdate(props);
+    if (this.isInitialized) {
+      this.lifecycle.emitLifecycleEventUpdate(props);
+    } else {
+      for (const prop of props) {
+        this.unappliedProps = this.unappliedProps.filter(
+          ([name]) => name !== prop[0]
+        );
+        this.unappliedProps.push(prop);
+      }
+    }
   }
 
   // #region This widget direct mutations
@@ -136,17 +110,73 @@ export class MenuCheckButtonElement
 
   notifyWillAppendTo(parent: GjsElement): boolean {
     if (
-      !GjsElementManager.isGjsElementOfKind(parent, [
+      GjsElementManager.isGjsElementOfKind(parent, [
         MenuBarItemElement,
         MenuEntryElement,
       ])
     ) {
-      throw new Error(
-        "MenuBarItem can only be a child of a MenuBar or MenuEntry."
+      this.parent = parent;
+
+      const radioGroup = parent.getRadioGroup(
+        this.propsMapper.currentProps.radioGroup!
       );
+
+      this.widget = Gtk.RadioToolButton.new_from_widget(
+        radioGroup
+      ) as any as Gtk.RadioMenuItem;
+
+      this.isInitialized = true;
+
+      this.propsMapper.addCases(
+        createMarginPropMapper(this.widget),
+        createExpandPropMapper(this.widget),
+        createStylePropMapper(this.widget),
+        (props) =>
+          props
+            .label(DataType.String, (v = "") => {
+              this.widget.label = v;
+            })
+            .inconsistent(DataType.Boolean, (v = false) => {
+              this.widget.inconsistent = v;
+            })
+      );
+
+      this.handlers = new EventHandlers<
+        Gtk.RadioMenuItem,
+        MenuRadioButtonProps
+      >(this.lifecycle, this.widget);
+
+      // @ts-expect-error
+      this.handlers.bind("clicked", "onClick");
+      // @ts-expect-error
+      this.handlers.bind("toggled", "onToggle", () => {
+        return {
+          value: this.widget.active,
+        };
+      });
+      this.handlers.bind(
+        "enter-notify-event",
+        "onMouseEnter",
+        parseCrossingEvent,
+        EventPhase.Action
+      );
+      this.handlers.bind(
+        "leave-notify-event",
+        "onMouseLeave",
+        parseCrossingEvent,
+        EventPhase.Action
+      );
+
+      this.lifecycle.emitLifecycleEventUpdate(this.unappliedProps);
+      this.unappliedProps = [];
+
+      if (this.propsMapper.currentProps.isDefault) {
+        this.widget.set_active(true);
+      }
+    } else {
+      throw new Error("ToolbarButton can only be a child of a toolbar.");
     }
 
-    this.parent = parent;
     return true;
   }
 

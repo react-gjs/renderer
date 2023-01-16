@@ -1,5 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
+import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -12,6 +13,7 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -20,6 +22,7 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
 import { escapeHtml } from "../markup/utils/escape-html";
+import { MenuBarItemElement } from "./menu-bar-item";
 import { MenuCheckButtonElement } from "./menu-check-button";
 
 type MenuEntryPropsMixin = MarginProps & ExpandProps & StyleProps;
@@ -34,6 +37,8 @@ export interface MenuEntryProps extends MenuEntryPropsMixin {
    */
   secondaryLabel?: string;
   onActivate?: (event: SyntheticEvent) => void;
+  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
 }
 
 export class MenuEntryElement
@@ -51,7 +56,7 @@ export class MenuEntryElement
   submenu?: Gtk.Menu;
   labelContainer = new Gtk.Box();
 
-  private parent: GjsElement | null = null;
+  private parent: MenuBarItemElement | MenuEntryElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.MenuItem, MenuEntryProps>(
@@ -92,6 +97,18 @@ export class MenuEntryElement
 
   constructor(props: DiffedProps) {
     this.handlers.bind("activate", "onActivate");
+    this.handlers.bind(
+      "enter-notify-event",
+      "onMouseEnter",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+    this.handlers.bind(
+      "leave-notify-event",
+      "onMouseLeave",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
 
     this.updateProps(props);
 
@@ -119,6 +136,10 @@ export class MenuEntryElement
     }
 
     return box;
+  }
+
+  getRadioGroup(groupName: string): Gtk.RadioToolButton {
+    return this.parent!.getRadioGroup(groupName);
   }
 
   updateProps(props: DiffedProps): void {
@@ -178,6 +199,17 @@ export class MenuEntryElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
+    if (
+      !GjsElementManager.isGjsElementOfKind(parent, [
+        MenuBarItemElement,
+        MenuEntryElement,
+      ])
+    ) {
+      throw new Error(
+        "MenuBarItem can only be a child of a MenuBar or MenuEntry."
+      );
+    }
+
     this.parent = parent;
     return true;
   }
