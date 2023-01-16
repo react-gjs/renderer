@@ -1,15 +1,15 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
+import { MenuCheckButtonType } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
-import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
-import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
-import { ensureNotText } from "../../utils/ensure-not-string";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -17,17 +17,20 @@ import { createMarginPropMapper } from "../../utils/property-maps-factories/crea
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
-import { MenuCheckButtonElement } from "./menu-check-button";
-import { MenuEntryElement } from "./menu-entry";
 
-type MenuBarItemPropsMixin = MarginProps & ExpandProps & StyleProps;
+type MenuCheckButtonPropsMixin = MarginProps & ExpandProps & StyleProps;
 
-export interface MenuBarItemProps extends MenuBarItemPropsMixin {
+export interface MenuCheckButtonProps extends MenuCheckButtonPropsMixin {
+  /** Main text of the menu entry, displayed on the left side. */
   label?: string;
+  value?: boolean;
+  type?: MenuCheckButtonType;
+  inconsistent?: boolean;
+  onToggle?: (event: SyntheticEvent<{ value: boolean }>) => void;
 }
 
-export class MenuBarItemElement
-  implements GjsElement<"MENU_BAR_ITEM", Gtk.MenuItem>
+export class MenuCheckButtonElement
+  implements GjsElement<"MENU_CHECK_BUTTON", Gtk.CheckMenuItem>
 {
   static getContext(
     currentContext: HostContext<GjsContext>
@@ -35,31 +38,47 @@ export class MenuBarItemElement
     return currentContext;
   }
 
-  readonly kind = "MENU_BAR_ITEM";
-  widget = new Gtk.MenuItem();
-  submenu = new Gtk.Menu();
+  readonly kind = "MENU_CHECK_BUTTON";
+  widget = new Gtk.CheckMenuItem();
 
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly children = new ChildOrderController<
-    MenuEntryElement | MenuCheckButtonElement
-  >(this.lifecycle, this.widget, (child) => {
-    this.submenu.append(child);
-  });
-  private readonly propsMapper = new PropertyMapper<MenuBarItemProps>(
+  private readonly handlers = new EventHandlers<
+    Gtk.MenuItem,
+    MenuCheckButtonProps
+  >(this.lifecycle, this.widget);
+
+  private readonly propsMapper = new PropertyMapper<MenuCheckButtonProps>(
     this.lifecycle,
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
-      props.label(DataType.String, (v = "") => {
-        this.widget.label = v;
-      })
+      props
+        .label(DataType.String, (v = "") => {
+          this.widget.label = v;
+        })
+        .value(DataType.Boolean, (v = false) => {
+          this.widget.active = v;
+        })
+        .type(
+          DataType.Enum(MenuCheckButtonType),
+          (v = MenuCheckButtonType.CHECK) => {
+            this.widget.draw_as_radio = v === MenuCheckButtonType.RADIO;
+          }
+        )
+        .inconsistent(DataType.Boolean, (v = false) => {
+          this.widget.inconsistent = v;
+        })
   );
 
   constructor(props: DiffedProps) {
-    this.widget.submenu = this.submenu;
+    this.handlers.bind("activate", "onToggle", () => {
+      return {
+        value: this.widget.active,
+      };
+    });
 
     this.updateProps(props);
 
@@ -73,37 +92,11 @@ export class MenuBarItemElement
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    ensureNotText(child);
-
-    if (
-      !GjsElementManager.isGjsElementOfKind(child, [
-        MenuEntryElement,
-        MenuCheckButtonElement,
-      ])
-    ) {
-      throw new Error("Only MenuEntry can be a child of MenuBarItem.");
-    }
-
-    const shouldAppend = child.notifyWillAppendTo(this);
-    this.children.addChild(child, !shouldAppend);
-    this.widget.show_all();
+    throw new Error("MenuCheckButton cannot have children.");
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
-    ensureNotText(newChild);
-
-    if (
-      !GjsElementManager.isGjsElementOfKind(newChild, [
-        MenuEntryElement,
-        MenuCheckButtonElement,
-      ])
-    ) {
-      throw new Error("Only MenuEntry can be a child of MenuBarItem.");
-    }
-
-    const shouldAppend = newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
-    this.widget.show_all();
+    throw new Error("MenuCheckButton cannot have children.");
   }
 
   remove(parent: GjsElement): void {
@@ -127,9 +120,7 @@ export class MenuBarItemElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
-    this.children.removeChild(child);
-  }
+  notifyWillUnmount(child: GjsElement): void {}
 
   // #endregion
 

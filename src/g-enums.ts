@@ -85,3 +85,8 @@ export enum ControlButton {
   MAXIMIZE = "maximize",
   ICON = "icon",
 }
+
+export enum MenuCheckButtonType {
+  CHECK = "check",
+  RADIO = "radio",
+}

@@ -33,6 +33,7 @@ import { MUnderlineElement } from "../gjs-elements/gtk3/markup/markup-elements/u
 import { TextNode } from "../gjs-elements/gtk3/markup/text-node";
 import { MenuBarElement } from "../gjs-elements/gtk3/menu-bar/menu-bar";
 import { MenuBarItemElement } from "../gjs-elements/gtk3/menu-bar/menu-bar-item";
+import { MenuCheckButtonElement } from "../gjs-elements/gtk3/menu-bar/menu-check-button";
 import { MenuEntryElement } from "../gjs-elements/gtk3/menu-bar/menu-entry";
 import { NumberInputElement } from "../gjs-elements/gtk3/number-input/number-input";
 import { PopoverElement } from "../gjs-elements/gtk3/popover/popover";
@@ -99,6 +100,7 @@ GjsElementManager.register("M_UNDERLINE", MUnderlineElement);
 GjsElementManager.register("MARKUP", MarkupElement);
 GjsElementManager.register("MENU_BAR", MenuBarElement);
 GjsElementManager.register("MENU_BAR_ITEM", MenuBarItemElement);
+GjsElementManager.register("MENU_CHECK_BUTTON", MenuCheckButtonElement);
 GjsElementManager.register("MENU_ENTRY", MenuEntryElement);
 GjsElementManager.register("NUMBER_INPUT", NumberInputElement);
 GjsElementManager.register("POPOVER_CONTENT", PopoverContentElement);

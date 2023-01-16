@@ -42,6 +42,8 @@ export const LinkButton = IntrinsicElem("LINK_BUTTON");
 export const MenuBar = IntrinsicElem("MENU_BAR");
 /** Equivalent to the Gtk.MenuItem widget. */
 export const MenuBarItem = IntrinsicElem("MENU_BAR_ITEM");
+/** Equivalent to the Gtk.CheckMenuItem widget. */
+export const MenuCheckButton = IntrinsicElem("MENU_CHECK_BUTTON");
 /** Equivalent to the Gtk.MenuItem widget. */
 export const MenuEntry = IntrinsicElem("MENU_ENTRY");
 /** Equivalent to the Gtk.SpinButton widget. */

@@ -20,6 +20,7 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
 import { escapeHtml } from "../markup/utils/escape-html";
+import { MenuCheckButtonElement } from "./menu-check-button";
 
 type MenuEntryPropsMixin = MarginProps & ExpandProps & StyleProps;
 
@@ -57,18 +58,16 @@ export class MenuEntryElement
     this.lifecycle,
     this.widget
   );
-  private readonly children = new ChildOrderController<MenuEntryElement>(
-    this.lifecycle,
-    this.widget,
-    (child) => {
-      if (!this.submenu) {
-        this.submenu = new Gtk.Menu();
-        this.widget.set_submenu(this.submenu);
-      }
-
-      this.submenu.append(child);
+  private readonly children = new ChildOrderController<
+    MenuEntryElement | MenuCheckButtonElement
+  >(this.lifecycle, this.widget, (child) => {
+    if (!this.submenu) {
+      this.submenu = new Gtk.Menu();
+      this.widget.set_submenu(this.submenu);
     }
-  );
+
+    this.submenu.append(child);
+  });
   private readonly propsMapper = new PropertyMapper<MenuEntryProps>(
     this.lifecycle,
     createMarginPropMapper(this.widget),
@@ -131,7 +130,12 @@ export class MenuEntryElement
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    if (!GjsElementManager.isGjsElementOfKind(child, MenuEntryElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(child, [
+        MenuEntryElement,
+        MenuCheckButtonElement,
+      ])
+    ) {
       throw new Error("Only MenuEntry can be a child of MenuEntry.");
     }
 
@@ -143,7 +147,12 @@ export class MenuEntryElement
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(newChild);
 
-    if (!GjsElementManager.isGjsElementOfKind(newChild, MenuEntryElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(newChild, [
+        MenuEntryElement,
+        MenuCheckButtonElement,
+      ])
+    ) {
       throw new Error("Only MenuEntry can be a child of MenuEntry.");
     }
 

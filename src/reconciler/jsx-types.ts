@@ -81,6 +81,10 @@ import type {
   MenuBarItemProps,
 } from "../gjs-elements/gtk3/menu-bar/menu-bar-item";
 import type {
+  MenuCheckButtonElement,
+  MenuCheckButtonProps,
+} from "../gjs-elements/gtk3/menu-bar/menu-check-button";
+import type {
   MenuEntryElement,
   MenuEntryProps,
 } from "../gjs-elements/gtk3/menu-bar/menu-entry";
@@ -279,6 +283,10 @@ declare global {
       MENU_BAR_ITEM: IntrinsicComponent<
         ComponentWithChildren<MenuBarItemProps>,
         MenuBarItemElement
+      >;
+      MENU_CHECK_BUTTON: IntrinsicComponent<
+        MenuCheckButtonProps,
+        MenuCheckButtonElement
       >;
       MENU_ENTRY: IntrinsicComponent<
         ComponentWithChildren<MenuEntryProps>,
