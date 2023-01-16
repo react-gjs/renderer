@@ -8,7 +8,6 @@ import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
-import { DoNotAppend } from "../../utils/do-not-append";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
@@ -228,8 +227,8 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
     ensureNotText(child);
 
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    this.children.addChild(child, !shouldAppend);
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
@@ -239,8 +238,8 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
     ensureNotText(newChild);
 
-    newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild);
+    const shouldAppend = newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -264,13 +263,13 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     if (this.isDisposed) {
       throw new Error("Can't append child to disposed window");
     }
     this.parent = parent;
 
-    throw new DoNotAppend();
+    return false;
   }
 
   notifyWillUnmount(child: GjsElement): void {

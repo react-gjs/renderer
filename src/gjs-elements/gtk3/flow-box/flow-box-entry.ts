@@ -93,16 +93,16 @@ export class FlowBoxEntryElement
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(newChild);
 
-    newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild);
+    const shouldAppend = newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -122,12 +122,15 @@ export class FlowBoxEntryElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     if (!GjsElementManager.isGjsElementOfKind(parent, FlowBoxElement)) {
       throw new Error(
         "FlowBoxEntry can only be appended to a FlowBox container."
       );
     }
+
+    this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

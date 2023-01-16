@@ -102,9 +102,11 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
       throw new Error("Button can only have one child.");
     }
 
-    child.notifyWillAppendTo(this);
-    this.widget.add(child.widget);
-    this.widget.show_all();
+    const shouldAppend = child.notifyWillAppendTo(this);
+    if (shouldAppend) {
+      this.widget.add(child.widget);
+      this.widget.show_all();
+    }
   }
 
   insertBefore(
@@ -130,8 +132,9 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: TextNode | GjsElement) {

@@ -93,8 +93,8 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
       throw new Error("Expander can only have one child.");
     }
 
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -118,8 +118,9 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

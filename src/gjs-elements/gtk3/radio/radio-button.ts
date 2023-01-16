@@ -137,7 +137,7 @@ export class RadioButtonElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     if (GjsElementManager.isGjsElementOfKind(parent, RadioBoxElement)) {
       this.parent = parent;
 
@@ -195,6 +195,7 @@ export class RadioButtonElement
     } else {
       throw new Error("RadioButton can be only child of RadioBox.");
     }
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement | TextNode) {

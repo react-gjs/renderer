@@ -168,12 +168,13 @@ export class ToolbarButtonElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     if (GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)) {
       this.parent = parent;
     } else {
       throw new Error("ToolbarButton can only be a child of a toolbar.");
     }
+    return true;
   }
 
   notifyWillUnmount(child: TextNode | GjsElement) {

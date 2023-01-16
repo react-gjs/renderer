@@ -158,8 +158,9 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount() {}

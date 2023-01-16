@@ -52,8 +52,9 @@ export class TextNode {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): true {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount() {}

@@ -142,8 +142,8 @@ export class ScrollBoxElement
       throw new Error("ScrollBox can only have one child.");
     }
 
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -167,8 +167,9 @@ export class ScrollBoxElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

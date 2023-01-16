@@ -129,8 +129,9 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount() {}

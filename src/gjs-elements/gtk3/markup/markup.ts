@@ -101,6 +101,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
       );
     }
 
+    child.notifyWillAppendTo(this);
     this.children.push(child);
   }
 
@@ -120,6 +121,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
       throw new Error("The beforeChild element was not found.");
     }
 
+    child.notifyWillAppendTo(this);
     this.children.splice(beforeChildIndex, 0, child);
   }
 
@@ -140,8 +142,9 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement) {

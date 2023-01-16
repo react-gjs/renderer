@@ -129,8 +129,8 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
 
   appendChild(child: GjsElement | TextNode): void {
     if (GjsElementManager.isGjsElementOfKind(child, TOOL_ELEMENTS)) {
-      child.notifyWillAppendTo(this);
-      this.children.addChild(child);
+      const shouldAppend = child.notifyWillAppendTo(this);
+      this.children.addChild(child, !shouldAppend);
       this.widget.show_all();
     } else {
       throw new Error("Invalid child element added to toolbar.");
@@ -139,8 +139,8 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     if (GjsElementManager.isGjsElementOfKind(newChild, TOOL_ELEMENTS)) {
-      newChild.notifyWillAppendTo(this);
-      this.children.insertBefore(newChild, beforeChild);
+      const shouldAppend = newChild.notifyWillAppendTo(this);
+      this.children.insertBefore(newChild, beforeChild, !shouldAppend);
       this.widget.show_all();
     } else {
       throw new Error("Invalid child element added to toolbar.");
@@ -163,8 +163,9 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

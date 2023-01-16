@@ -83,9 +83,11 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
     if (this.childElement != null) {
       throw new Error("GridItem can only have one child.");
     } else {
-      child.notifyWillAppendTo(this);
-      this.childElement = child;
-      this.emitter.emit("itemUpdated", this);
+      const shouldAppend = child.notifyWillAppendTo(this);
+      if (shouldAppend) {
+        this.childElement = child;
+        this.emitter.emit("itemUpdated", this);
+      }
     }
   }
 
@@ -111,11 +113,12 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     if (!GjsElementManager.isGjsElementOfKind(parent, GridElement)) {
       throw new Error("GridItem can only be appended to the Grid container.");
     }
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount() {

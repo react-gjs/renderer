@@ -55,9 +55,11 @@ export class PopoverContentElement
     if (this.childElement != null) {
       throw new Error("PopoverContent can only have one child.");
     } else {
-      child.notifyWillAppendTo(this);
-      this.childElement = child;
-      this.parent?.onContentChange();
+      const shouldAppend = child.notifyWillAppendTo(this);
+      if (shouldAppend) {
+        this.childElement = child;
+        this.parent?.onContentChange();
+      }
     }
   }
 
@@ -83,13 +85,14 @@ export class PopoverContentElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     if (!GjsElementManager.isGjsElementOfKind(parent, PopoverElement)) {
       throw new Error(
         "PopoverContentElement can only be a child of PopoverElement"
       );
     }
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

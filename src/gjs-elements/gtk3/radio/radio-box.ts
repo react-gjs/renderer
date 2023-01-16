@@ -89,16 +89,16 @@ export class RadioBoxElement implements GjsElement<"RADIO_BOX", Gtk.Box> {
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(newChild);
 
-    newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild);
+    const shouldAppend = newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -118,8 +118,9 @@ export class RadioBoxElement implements GjsElement<"RADIO_BOX", Gtk.Box> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

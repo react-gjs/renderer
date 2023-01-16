@@ -109,8 +109,8 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
       throw new Error("Stack can only have StackItem's as it's children.");
     }
 
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -121,8 +121,8 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
       throw new Error("Stack can only have StackItem's as it's children.");
     }
 
-    newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild);
+    const shouldAppend = newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -142,8 +142,9 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

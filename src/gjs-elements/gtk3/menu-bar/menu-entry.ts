@@ -135,8 +135,8 @@ export class MenuEntryElement
       throw new Error("Only MenuEntry can be a child of MenuEntry.");
     }
 
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -147,8 +147,8 @@ export class MenuEntryElement
       throw new Error("Only MenuEntry can be a child of MenuEntry.");
     }
 
-    newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild);
+    const shouldAppend = newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -168,8 +168,9 @@ export class MenuEntryElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

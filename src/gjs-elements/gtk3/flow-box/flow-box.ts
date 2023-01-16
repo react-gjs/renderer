@@ -152,6 +152,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
       throw new Error("Box can only have other elements as it's children.");
     } else {
       if (GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)) {
+        // TODO: handle should append logic
         child.notifyWillAppendTo(this);
         this.widget.add(child.widget);
         const entry = {
@@ -172,6 +173,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
 
   insertBefore(newChild: GjsElement, beforeChild: GjsElement): void {
     if (GjsElementManager.isGjsElementOfKind(newChild, FlowBoxEntryElement)) {
+      // TODO: handle should append logic
       newChild.notifyWillAppendTo(this);
 
       const beforeIndex = this.children.findIndex(
@@ -218,8 +220,9 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement) {

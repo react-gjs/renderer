@@ -19,13 +19,12 @@ export interface GjsElement<
 
   /**
    * This function is called by it's parent element before it is
-   * appended to it. It is expected for it to throw a `DoNotAppend` if
-   * the element should not be appended to it's parent. (usually means
-   * that it is a top-level widget that cannot have a parent), because
-   * of that usually this method should be called before any mutations
-   * to the parent element are made.
+   * appended to it. It should return a boolean value that indicates
+   * if the element is allowed to be appended to the parent. This
+   * should be `true` for most elements, with the exception for the
+   * Top-Level-Elements like `Window`.
    */
-  notifyWillAppendTo(parent: GjsElement | TextNode): void | never;
+  notifyWillAppendTo(parent: GjsElement | TextNode): boolean;
   /**
    * This function is called by the child element before it removes
    * itself.

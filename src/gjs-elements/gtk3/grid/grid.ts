@@ -160,6 +160,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     ensureNotText(child);
 
     if (GjsElementManager.isGjsElementOfKind(child, GridItemElement)) {
+      // TODO: handle the should append logic
       child.notifyWillAppendTo(this);
       this.children.add(child);
     }
@@ -175,6 +176,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     }
 
     if (GjsElementManager.isGjsElementOfKind(newChild, GridItemElement)) {
+      // TODO: handle the should append logic
       newChild.notifyWillAppendTo(this);
       this.children.add(newChild, position);
     }
@@ -196,8 +198,9 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount() {}

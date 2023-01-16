@@ -117,8 +117,9 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount() {}

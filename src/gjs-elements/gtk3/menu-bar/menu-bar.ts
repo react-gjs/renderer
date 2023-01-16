@@ -78,8 +78,8 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
       throw new Error("Only MenuBarItem can be a child of MenuBar.");
     }
 
-    child.notifyWillAppendTo(this);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -90,8 +90,8 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
       throw new Error("Only MenuBarItem can be a child of MenuBar.");
     }
 
-    newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild);
+    const shouldAppend = newChild.notifyWillAppendTo(this);
+    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -111,8 +111,9 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

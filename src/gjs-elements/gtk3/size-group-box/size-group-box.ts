@@ -102,18 +102,22 @@ export class SizeGroupBoxElement
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    child.notifyWillAppendTo(this);
-    this.sizeGroup.add_widget(child.widget);
-    this.children.addChild(child);
+    const shouldAppend = child.notifyWillAppendTo(this);
+    if (shouldAppend) {
+      this.sizeGroup.add_widget(child.widget);
+    }
+    this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(newChild);
 
-    newChild.notifyWillAppendTo(this);
-    this.sizeGroup.add_widget(newChild.widget);
-    this.children.insertBefore(newChild, beforeChild);
+    const shouldAppend = newChild.notifyWillAppendTo(this);
+    if (shouldAppend) {
+      this.sizeGroup.add_widget(newChild.widget);
+    }
+    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
     this.widget.show_all();
   }
 
@@ -133,8 +137,9 @@ export class SizeGroupBoxElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

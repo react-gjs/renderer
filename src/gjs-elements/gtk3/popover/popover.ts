@@ -113,20 +113,24 @@ export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
       if (this.hasContentChild) {
         throw new Error("Popover can only have one child");
       }
-      child.notifyWillAppendTo(this);
-      this.popover.add(child.widget);
-      this.hasContentChild = true;
-      this.contentElement = child;
+      const shouldAppend = child.notifyWillAppendTo(this);
+      if (shouldAppend) {
+        this.popover.add(child.widget);
+        this.hasContentChild = true;
+        this.contentElement = child;
+      }
     } else if (
       GjsElementManager.isGjsElementOfKind(child, PopoverTargetElement)
     ) {
       if (this.hasTarget) {
         throw new Error("Popover can only have one target");
       }
-      child.notifyWillAppendTo(this);
-      this.widget.add(child.widget);
-      this.hasTarget = true;
-      this.targetElement = child;
+      const shouldAppend = child.notifyWillAppendTo(this);
+      if (shouldAppend) {
+        this.widget.add(child.widget);
+        this.hasTarget = true;
+        this.targetElement = child;
+      }
     } else {
       throw new Error(
         "Popover can only have one PopoverTarget and one PopoverContent as it's children."
@@ -135,6 +139,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
   }
 
   insertBefore(newChild: GjsElement | TextNode): void {
+    // TODO: proper handling of insertBefore
     this.appendChild(newChild);
   }
 
@@ -155,8 +160,9 @@ export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     this.parent = parent;
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement): void {

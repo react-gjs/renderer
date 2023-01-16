@@ -101,7 +101,7 @@ export class MSpanElement {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): void {
+  notifyWillAppendTo(parent: GjsElement): boolean {
     if (
       GjsElementManager.isGjsElementOfKind(parent, MarkupElement) ||
       isMarkupElement(parent)
@@ -110,6 +110,7 @@ export class MSpanElement {
     } else {
       throw new Error("Markdown elements can only be appended to a Markdown.");
     }
+    return true;
   }
 
   notifyWillUnmount(child: GjsElement) {
