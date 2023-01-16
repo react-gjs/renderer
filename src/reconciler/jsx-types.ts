@@ -89,6 +89,10 @@ import type {
   MenuEntryProps,
 } from "../gjs-elements/gtk3/menu-bar/menu-entry";
 import type {
+  MenuSeparatorElement,
+  MenuSeparatorProps,
+} from "../gjs-elements/gtk3/menu-bar/menu-separator";
+import type {
   NumberInputElement,
   NumberInputProps,
 } from "../gjs-elements/gtk3/number-input/number-input";
@@ -291,6 +295,10 @@ declare global {
       MENU_ENTRY: IntrinsicComponent<
         ComponentWithChildren<MenuEntryProps>,
         MenuEntryElement
+      >;
+      MENU_SEPARATOR: IntrinsicComponent<
+        MenuSeparatorProps,
+        MenuSeparatorElement
       >;
       NUMBER_INPUT: IntrinsicComponent<NumberInputProps, NumberInputElement>;
       PRESSABLE: IntrinsicComponent<
