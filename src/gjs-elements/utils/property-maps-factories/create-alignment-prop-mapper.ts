@@ -3,7 +3,16 @@ import { Align } from "../../../g-enums";
 import type { PropCaseCollector } from "../element-extenders/map-properties";
 
 export type AlignmentProps = {
+  /**
+   * The vertical alignment of the widget within its allocated space.
+   * This property does not affect how much space the widget gets.
+   */
   verticalAlign?: Align;
+  /**
+   * The horizontal alignment of the widget within its allocated
+   * space. This property does not affect how much space the widget
+   * gets.
+   */
   horizontalAlign?: Align;
 };
 

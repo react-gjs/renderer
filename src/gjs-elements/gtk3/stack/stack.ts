@@ -13,12 +13,14 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
+import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { TextNode } from "../markup/text-node";
 import { StackScreenElement } from "./stack-screen";
 
-type StackPropsMixin = AlignmentProps & MarginProps;
+type StackPropsMixin = AlignmentProps & MarginProps & ExpandProps;
 
 export interface StackProps extends StackPropsMixin {
   transitionDuration?: number;
@@ -69,6 +71,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
     this.propsMapper.addCases(
       createAlignmentPropMapper(this.widget),
       createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
       (props) =>
         props
           .interpolateSize(DataType.Boolean, (v = false) => {

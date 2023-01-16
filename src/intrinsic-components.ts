@@ -38,6 +38,12 @@ export const HeaderBar = IntrinsicElem("HEADER_BAR");
 export const Label = IntrinsicElem("LABEL");
 /** Equivalent to the Gtk.LinkButton widget. */
 export const LinkButton = IntrinsicElem("LINK_BUTTON");
+/** Equivalent to the Gtk.MenuBar widget. */
+export const MenuBar = IntrinsicElem("MENU_BAR");
+/** Equivalent to the Gtk.MenuItem widget. */
+export const MenuBarItem = IntrinsicElem("MENU_BAR_ITEM");
+/** Equivalent to the Gtk.MenuItem widget. */
+export const MenuEntry = IntrinsicElem("MENU_ENTRY");
 /** Equivalent to the Gtk.SpinButton widget. */
 export const NumberInput = IntrinsicElem("NUMBER_INPUT");
 /** Equivalent to the Gtk.Image widget. */

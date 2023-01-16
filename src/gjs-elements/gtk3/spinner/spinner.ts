@@ -9,12 +9,17 @@ import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
+import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 
-type SpinnerPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type SpinnerPropsMixin = AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export interface SpinnerProps extends SpinnerPropsMixin {
   visible?: boolean;
@@ -37,6 +42,7 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props.visible(DataType.Boolean, (v = true) => {

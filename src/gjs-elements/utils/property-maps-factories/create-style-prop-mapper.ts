@@ -203,6 +203,7 @@ export type StyleSheet = CssRules & {
 };
 export type StyleProps = { style?: StyleSheet };
 
+// TODO: remove properties that are not supported by GTK
 export type CssRules = {
   accentColor?: CssPropertyValue;
   alignContent?: CssPropertyValue;

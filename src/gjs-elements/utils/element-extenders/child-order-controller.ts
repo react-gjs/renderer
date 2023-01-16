@@ -32,7 +32,7 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
     this.children.push(child);
   }
 
-  removeChild(child: C) {
+  removeChild(child: GjsElement) {
     this.children = this.children.filter((c) => c !== child);
   }
 

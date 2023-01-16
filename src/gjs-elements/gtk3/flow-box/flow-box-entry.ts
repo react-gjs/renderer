@@ -14,6 +14,8 @@ import { SyntheticEmitter } from "../../utils/element-extenders/synthetic-emitte
 import { ensureNotText } from "../../utils/ensure-not-string";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
+import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
@@ -21,7 +23,10 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import { FlowBoxElement } from "../flow-box/flow-box";
 import type { TextNode } from "../markup/text-node";
 
-type FlowBoxEntryPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type FlowBoxEntryPropsMixin = AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
   isDefault?: boolean;
@@ -52,6 +57,7 @@ export class FlowBoxEntryElement
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props

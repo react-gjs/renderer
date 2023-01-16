@@ -12,6 +12,8 @@ import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
+import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
@@ -20,7 +22,10 @@ import type { TextNode } from "../markup/text-node";
 import { PopoverContentElement } from "./popover-content";
 import { PopoverTargetElement } from "./popover-target";
 
-type PopoverPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type PopoverPropsMixin = AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export interface PopoverProps extends PopoverPropsMixin {
   isModal?: boolean;
@@ -53,6 +58,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props

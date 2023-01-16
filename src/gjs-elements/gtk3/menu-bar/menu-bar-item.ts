@@ -3,14 +3,13 @@ import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
+import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
-import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -18,57 +17,51 @@ import { createMarginPropMapper } from "../../utils/property-maps-factories/crea
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
+import { MenuEntryElement } from "./menu-entry";
 
-type RevealerPropsMixin = AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
-export interface RevealerProps extends RevealerPropsMixin {
-  visible?: boolean;
-  transitionDuration?: number;
-  transitionType?: Gtk.RevealerTransitionType;
+type MenuBarItemPropsMixin = MarginProps & ExpandProps & StyleProps;
+
+export interface MenuBarItemProps extends MenuBarItemPropsMixin {
+  label?: string;
 }
 
-export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
+export class MenuBarItemElement
+  implements GjsElement<"MENU_BAR_ITEM", Gtk.MenuItem>
+{
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "REVEALER";
-  widget = new Gtk.Revealer();
+  readonly kind = "MENU_BAR_ITEM";
+  widget = new Gtk.MenuItem();
+  submenu = new Gtk.Menu();
 
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly children = new ChildOrderController(
+  private readonly children = new ChildOrderController<MenuEntryElement>(
     this.lifecycle,
-    this.widget
+    this.widget,
+    (child) => {
+      this.submenu.append(child);
+    }
   );
-  private readonly propsMapper = new PropertyMapper<RevealerProps>(
+  private readonly propsMapper = new PropertyMapper<MenuBarItemProps>(
     this.lifecycle,
-    createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
-      props
-        .visible(DataType.Boolean, (v = false) => {
-          this.widget.reveal_child = v;
-        })
-        .transitionDuration(DataType.Number, (v = 500) => {
-          this.widget.transition_duration = v;
-        })
-        .transitionType(
-          DataType.Enum(Gtk.RevealerTransitionType),
-          (v = Gtk.RevealerTransitionType.NONE) => {
-            this.widget.transition_type = v;
-          }
-        )
+      props.label(DataType.String, (v = "") => {
+        this.widget.label = v;
+      })
   );
 
   constructor(props: DiffedProps) {
+    this.widget.submenu = this.submenu;
+
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -83,6 +76,10 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
+    if (!GjsElementManager.isGjsElementOfKind(child, MenuEntryElement)) {
+      throw new Error("Only MenuEntry can be a child of MenuBarItem.");
+    }
+
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
     this.widget.show_all();
@@ -90,6 +87,10 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(newChild);
+
+    if (!GjsElementManager.isGjsElementOfKind(newChild, MenuEntryElement)) {
+      throw new Error("Only MenuEntry can be a child of MenuBarItem.");
+    }
 
     newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild);

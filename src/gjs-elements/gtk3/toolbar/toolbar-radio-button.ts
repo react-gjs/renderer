@@ -17,6 +17,8 @@ import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
 import type { IconName } from "../../utils/icons/icon-types";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
+import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
@@ -24,7 +26,10 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TextNode } from "../markup/text-node";
 import { ToolbarElement } from "./toolbar";
 
-type ToolbarRadioButtonPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type ToolbarRadioButtonPropsMixin = AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export interface ToolbarRadioButtonProps extends ToolbarRadioButtonPropsMixin {
   radioGroup: string;
@@ -156,6 +161,7 @@ export class ToolbarRadioButtonElement
       this.propsMapper.addCases(
         createAlignmentPropMapper(this.widget),
         createMarginPropMapper(this.widget),
+        createExpandPropMapper(this.widget),
         createStylePropMapper(this.widget),
         (props) =>
           props

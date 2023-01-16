@@ -11,6 +11,8 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
+import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
@@ -20,7 +22,7 @@ import { GridItemElement } from "./grid-item";
 import { GridItemsList } from "./helpers/grid-items-list";
 import { GridMatrix } from "./helpers/grid-matrix";
 
-type GridPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type GridPropsMixin = AlignmentProps & MarginProps & ExpandProps & StyleProps;
 
 export interface GridProps extends GridPropsMixin {
   columns: number;
@@ -66,6 +68,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props

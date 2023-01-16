@@ -73,6 +73,18 @@ import type { MSupProps } from "../gjs-elements/gtk3/markup/markup-elements/sup"
 import type { MMonospaceProps } from "../gjs-elements/gtk3/markup/markup-elements/tt";
 import type { MUnderlineProps } from "../gjs-elements/gtk3/markup/markup-elements/u";
 import type {
+  MenuBarElement,
+  MenuBarProps,
+} from "../gjs-elements/gtk3/menu-bar/menu-bar";
+import type {
+  MenuBarItemElement,
+  MenuBarItemProps,
+} from "../gjs-elements/gtk3/menu-bar/menu-bar-item";
+import type {
+  MenuEntryElement,
+  MenuEntryProps,
+} from "../gjs-elements/gtk3/menu-bar/menu-entry";
+import type {
   NumberInputElement,
   NumberInputProps,
 } from "../gjs-elements/gtk3/number-input/number-input";
@@ -260,6 +272,18 @@ declare global {
       M_SUBSCRIPT: ComponentWithChildren<MSubProps, string>;
       M_SUPERSCRIPT: ComponentWithChildren<MSupProps, string>;
       M_UNDERLINE: ComponentWithChildren<MUnderlineProps, string>;
+      MENU_BAR: IntrinsicComponent<
+        ComponentWithChildren<MenuBarProps>,
+        MenuBarElement
+      >;
+      MENU_BAR_ITEM: IntrinsicComponent<
+        ComponentWithChildren<MenuBarItemProps>,
+        MenuBarItemElement
+      >;
+      MENU_ENTRY: IntrinsicComponent<
+        ComponentWithChildren<MenuEntryProps>,
+        MenuEntryElement
+      >;
       NUMBER_INPUT: IntrinsicComponent<NumberInputProps, NumberInputElement>;
       PRESSABLE: IntrinsicComponent<
         ComponentWithChild<PressableProps, React.ReactElement>,

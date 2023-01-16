@@ -3,14 +3,15 @@ import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
+import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
-import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -18,60 +19,107 @@ import { createMarginPropMapper } from "../../utils/property-maps-factories/crea
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
+import { escapeHtml } from "../markup/utils/escape-html";
 
-type RevealerPropsMixin = AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
-export interface RevealerProps extends RevealerPropsMixin {
-  visible?: boolean;
-  transitionDuration?: number;
-  transitionType?: Gtk.RevealerTransitionType;
+type MenuEntryPropsMixin = MarginProps & ExpandProps & StyleProps;
+
+export interface MenuEntryProps extends MenuEntryPropsMixin {
+  /** Main text of the menu entry, displayed on the left side. */
+  label?: string;
+
+  /**
+   * Secondary text of the menu entry, displayed on the right side. It
+   * is displayed in a dimmed color.
+   */
+  secondaryLabel?: string;
+  onActivate?: (event: SyntheticEvent) => void;
 }
 
-export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
+export class MenuEntryElement
+  implements GjsElement<"MENU_ENTRY", Gtk.MenuItem>
+{
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "REVEALER";
-  widget = new Gtk.Revealer();
+  readonly kind = "MENU_ENTRY";
+  widget = new Gtk.MenuItem();
+
+  submenu?: Gtk.Menu;
+  labelContainer = new Gtk.Box();
 
   private parent: GjsElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
-  private readonly children = new ChildOrderController(
+  private readonly handlers = new EventHandlers<Gtk.MenuItem, MenuEntryProps>(
     this.lifecycle,
     this.widget
   );
-  private readonly propsMapper = new PropertyMapper<RevealerProps>(
+  private readonly children = new ChildOrderController<MenuEntryElement>(
     this.lifecycle,
-    createAlignmentPropMapper(this.widget),
+    this.widget,
+    (child) => {
+      if (!this.submenu) {
+        this.submenu = new Gtk.Menu();
+        this.widget.set_submenu(this.submenu);
+      }
+
+      this.submenu.append(child);
+    }
+  );
+  private readonly propsMapper = new PropertyMapper<MenuEntryProps>(
+    this.lifecycle,
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props
-        .visible(DataType.Boolean, (v = false) => {
-          this.widget.reveal_child = v;
+        .label(DataType.String, (v = "", allProps) => {
+          this.labelContainer.destroy();
+          this.labelContainer = this.createLabel(
+            v,
+            allProps.secondaryLabel ?? ""
+          );
+          this.widget.add(this.labelContainer);
         })
-        .transitionDuration(DataType.Number, (v = 500) => {
-          this.widget.transition_duration = v;
+        .secondaryLabel(DataType.String, (v = "", allProps) => {
+          this.labelContainer.destroy();
+          this.labelContainer = this.createLabel(allProps.label ?? "", v);
+          this.widget.add(this.labelContainer);
         })
-        .transitionType(
-          DataType.Enum(Gtk.RevealerTransitionType),
-          (v = Gtk.RevealerTransitionType.NONE) => {
-            this.widget.transition_type = v;
-          }
-        )
   );
 
   constructor(props: DiffedProps) {
+    this.handlers.bind("activate", "onActivate");
+
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+  }
+
+  private createLabel(leftText: string, rightText: string) {
+    const box = new Gtk.Box();
+    box.orientation = Gtk.Orientation.HORIZONTAL;
+
+    const leftLabel = new Gtk.Label({ label: leftText });
+    leftLabel.expand = true;
+    leftLabel.halign = Gtk.Align.START;
+    box.add(leftLabel);
+
+    if (rightText !== "") {
+      const rightLabel = new Gtk.Label({
+        label: `<span alpha="50%">${escapeHtml(rightText)}</span>`,
+        use_markup: true,
+      });
+      rightLabel.halign = Gtk.Align.END;
+      rightLabel.margin_start = 10;
+      rightLabel.margin_end = 10;
+      box.add(rightLabel);
+    }
+
+    return box;
   }
 
   updateProps(props: DiffedProps): void {
@@ -83,6 +131,10 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
+    if (!GjsElementManager.isGjsElementOfKind(child, MenuEntryElement)) {
+      throw new Error("Only MenuEntry can be a child of MenuEntry.");
+    }
+
     child.notifyWillAppendTo(this);
     this.children.addChild(child);
     this.widget.show_all();
@@ -90,6 +142,10 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(newChild);
+
+    if (!GjsElementManager.isGjsElementOfKind(newChild, MenuEntryElement)) {
+      throw new Error("Only MenuEntry can be a child of MenuEntry.");
+    }
 
     newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild);
@@ -118,6 +174,12 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
 
   notifyWillUnmount(child: GjsElement): void {
     this.children.removeChild(child);
+
+    if (this.children.count() === 0) {
+      this.widget.set_submenu(null);
+      this.submenu?.destroy();
+      this.submenu = undefined;
+    }
   }
 
   // #endregion

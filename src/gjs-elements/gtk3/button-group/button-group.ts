@@ -13,13 +13,18 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
+import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
 
-type ButtonGroupPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type ButtonGroupPropsMixin = AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export interface ButtonGroupProps extends ButtonGroupPropsMixin {
   spacing?: number;
@@ -51,6 +56,7 @@ export class ButtonGroupElement
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
       props

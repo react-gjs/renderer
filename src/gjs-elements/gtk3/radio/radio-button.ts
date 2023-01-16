@@ -15,6 +15,8 @@ import { TextChildController } from "../../utils/element-extenders/text-child-co
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
+import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
@@ -22,7 +24,10 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TextNode } from "../markup/text-node";
 import { RadioBoxElement } from "./radio-box";
 
-type RadioButtonPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type RadioButtonPropsMixin = AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export interface RadioButtonProps extends RadioButtonPropsMixin {
   label?: string;
@@ -145,6 +150,7 @@ export class RadioButtonElement
       this.propsMapper.addCases(
         createAlignmentPropMapper(widget),
         createMarginPropMapper(widget),
+        createExpandPropMapper(widget),
         createStylePropMapper(widget),
         (props) =>
           props
