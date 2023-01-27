@@ -13503,7 +13503,7 @@ container and help break any circular reference count cycles.
     child_set_property(
       child: Widget,
       property_name: string,
-      value: GObject.Value
+      value: any
     ): void;
     /**
      * Sets one or more child properties for #child and
@@ -33889,7 +33889,7 @@ container and help break any circular reference count cycles.
      * activated. If this is set, the button should not have an
      * action associated with it.
      */
-    menu_name: string;
+    menu_name: string | null;
     /**
      * Specifies whether the button is a plain, check or radio
      * button. When {@link Actionable.action_name} is set, the

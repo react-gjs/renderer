@@ -101,6 +101,10 @@ import type {
   NumberInputProps,
 } from "../gjs-elements/gtk3/number-input/number-input";
 import type {
+  PopoverMenuEntryElement,
+  PopoverMenuEntryProps,
+} from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-entry";
+import type {
   PressableElement,
   PressableProps,
 } from "../gjs-elements/gtk3/pressable/pressable";
@@ -312,6 +316,10 @@ declare global {
       PRESSABLE: IntrinsicComponent<
         ComponentWithChild<PressableProps, React.ReactElement>,
         PressableElement
+      >;
+      POPOVER_MENU_ENTRY: IntrinsicComponent<
+        ComponentWithChildren<PopoverMenuEntryProps>,
+        PopoverMenuEntryElement
       >;
       RADIO_BOX: IntrinsicComponent<
         ComponentWithChildren<RadioBoxProps>,

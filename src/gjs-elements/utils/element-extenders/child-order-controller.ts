@@ -27,6 +27,10 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
     }
   ) {}
 
+  forEach(callback: (child: C) => void) {
+    this.children.forEach((c) => callback(c.element));
+  }
+
   /**
    * Returns the number of children in the container, including top
    * level elements that are not directly added to the container.

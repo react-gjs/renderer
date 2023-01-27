@@ -93,3 +93,9 @@ export enum MenuCheckButtonType {
   CHECK = "check",
   RADIO = "radio",
 }
+
+export enum EntryPosition {
+  LEFT = "left",
+  CENTER = "center",
+  RIGHT = "right",
+}
