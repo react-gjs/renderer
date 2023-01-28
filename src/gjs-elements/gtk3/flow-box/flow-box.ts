@@ -55,11 +55,8 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
-  private handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(
-    this.lifecycle,
-    this.widget
-  );
+  readonly lifecycle = new ElementLifecycleController();
+  private handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(this);
   private readonly propMapper = new PropertyMapper<FlowBoxProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

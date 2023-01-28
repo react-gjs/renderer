@@ -27,6 +27,11 @@ import type { TextNode } from "../markup/text-node";
 
 type ButtonPropsMixin = AlignmentProps & MarginProps & ExpandProps & StyleProps;
 
+export type ButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  ButtonElement
+>;
+
 export interface ButtonProps extends ButtonPropsMixin {
   type?: ButtonType;
   label?: string;
@@ -36,12 +41,12 @@ export interface ButtonProps extends ButtonPropsMixin {
   margin?: ElementMargin;
   focusOnClick?: boolean;
   alwaysShowImage?: boolean;
-  onClick?: (event: SyntheticEvent) => void;
-  onActivate?: (event: SyntheticEvent) => void;
-  onPressed?: (event: SyntheticEvent) => void;
-  onReleased?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onClick?: (event: ButtonEvent) => void;
+  onActivate?: (event: ButtonEvent) => void;
+  onPressed?: (event: ButtonEvent) => void;
+  onReleased?: (event: ButtonEvent) => void;
+  onMouseEnter?: (event: ButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: ButtonEvent<PointerEvent>) => void;
 }
 
 const WidgetDataType = DataType.Custom(
@@ -62,11 +67,8 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(
-    this.lifecycle,
-    this.widget
-  );
+  readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(this);
   private readonly propsMapper = new PropertyMapper<ButtonProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

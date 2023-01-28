@@ -29,6 +29,9 @@ type VolumeButtonPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type VolumeButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, VolumeButtonElement>;
+
 export interface VolumeButtonProps extends VolumeButtonPropsMixin {
   type?: ButtonType;
   useUnderline?: boolean;
@@ -43,15 +46,15 @@ export interface VolumeButtonProps extends VolumeButtonPropsMixin {
   fixedSize?: boolean;
   marks?: { [key: number]: string };
   marksPosition?: PositionType;
-  onClick?: (event: SyntheticEvent) => void;
-  onActivate?: (event: SyntheticEvent) => void;
-  onPressed?: (event: SyntheticEvent) => void;
-  onReleased?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
-  onPopupOpen?: (event: SyntheticEvent) => void;
-  onPopupClose?: (event: SyntheticEvent) => void;
-  onValueChange?: (event: SyntheticEvent<{ value: number }>) => void;
+  onClick?: (event: VolumeButtonEvent) => void;
+  onActivate?: (event: VolumeButtonEvent) => void;
+  onPressed?: (event: VolumeButtonEvent) => void;
+  onReleased?: (event: VolumeButtonEvent) => void;
+  onMouseEnter?: (event: VolumeButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: VolumeButtonEvent<PointerEvent>) => void;
+  onPopupOpen?: (event: VolumeButtonEvent) => void;
+  onPopupClose?: (event: VolumeButtonEvent) => void;
+  onValueChange?: (event: VolumeButtonEvent<{ value: number }>) => void;
 }
 
 export class VolumeButtonElement
@@ -71,11 +74,11 @@ export class VolumeButtonElement
   private parent: GjsElement | null = null;
   private adjustment = this.widget.get_adjustment();
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.VolumeButton,
     VolumeButtonProps
-  >(this.lifecycle, this.widget);
+  >(this);
   private readonly propsMapper = new PropertyMapper<VolumeButtonProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

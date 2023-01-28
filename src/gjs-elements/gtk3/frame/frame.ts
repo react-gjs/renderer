@@ -41,7 +41,7 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget

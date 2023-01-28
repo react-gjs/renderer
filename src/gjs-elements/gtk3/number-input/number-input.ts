@@ -31,6 +31,9 @@ type NumberInputPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type NumberInputEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, NumberInputElement>;
+
 export interface NumberInputProps extends NumberInputPropsMixin {
   defaultValue?: number;
   increments?: number;
@@ -44,9 +47,9 @@ export interface NumberInputProps extends NumberInputPropsMixin {
   updatePolicy?: SpinButtonUpdatePolicy;
   value?: number;
   wrapOnBounds?: boolean;
-  onChange?: (event: SyntheticEvent<{ value: number }>) => void;
-  onKeyPress?: (event: SyntheticEvent<KeyPressEvent>) => void;
-  onKeyRelease?: (event: SyntheticEvent<KeyPressEvent>) => void;
+  onChange?: (event: NumberInputEvent<{ value: number }>) => void;
+  onKeyPress?: (event: NumberInputEvent<KeyPressEvent>) => void;
+  onKeyRelease?: (event: NumberInputEvent<KeyPressEvent>) => void;
 }
 
 export class NumberInputElement
@@ -62,11 +65,11 @@ export class NumberInputElement
   widget = new Gtk.SpinButton();
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.SpinButton,
     NumberInputProps
-  >(this.lifecycle, this.widget);
+  >(this);
 
   private isFirstRender = true;
   private readonly propsMapper = new PropertyMapper<NumberInputProps>(

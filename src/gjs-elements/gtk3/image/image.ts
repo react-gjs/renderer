@@ -61,7 +61,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<ImageProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

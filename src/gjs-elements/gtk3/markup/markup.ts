@@ -47,7 +47,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   private parent: GjsElement | null = null;
   private children: Array<BaseMarkupElement> = [];
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<MarkupProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

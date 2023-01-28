@@ -24,16 +24,19 @@ import { MenuEntryElement } from "./menu-entry";
 
 type MenuRadioButtonPropsMixin = MarginProps & ExpandProps & StyleProps;
 
+export type MenuRadioButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, MenuRadioButtonElement>;
+
 export interface MenuRadioButtonProps extends MenuRadioButtonPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
   radioGroup: string;
   isDefault?: boolean;
   inconsistent?: boolean;
-  onClick?: (event: SyntheticEvent) => void;
-  onToggle?: (event: SyntheticEvent<{ value: boolean }>) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onClick?: (event: MenuRadioButtonEvent) => void;
+  onToggle?: (event: MenuRadioButtonEvent<{ value: boolean }>) => void;
+  onMouseEnter?: (event: MenuRadioButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: MenuRadioButtonEvent<PointerEvent>) => void;
 }
 
 export class MenuRadioButtonElement
@@ -50,10 +53,9 @@ export class MenuRadioButtonElement
 
   private parent: MenuBarItemElement | MenuEntryElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private handlers = new EventHandlers<Gtk.MenuItem, MenuRadioButtonProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
 
   private readonly propsMapper = new PropertyMapper<MenuRadioButtonProps>(
@@ -144,7 +146,7 @@ export class MenuRadioButtonElement
       this.handlers = new EventHandlers<
         Gtk.RadioMenuItem,
         MenuRadioButtonProps
-      >(this.lifecycle, this.widget);
+      >(this);
 
       // @ts-expect-error
       this.handlers.bind("clicked", "onClick");

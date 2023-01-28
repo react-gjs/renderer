@@ -31,11 +31,16 @@ type PressablePropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type PressableEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  PressableElement
+>;
+
 export interface PressableProps extends PressablePropsMixin {
-  onClick?: (event: SyntheticEvent<MouseButtonPressEvent>) => void;
-  onRelease?: (event: SyntheticEvent<MouseButtonPressEvent>) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onClick?: (event: PressableEvent<MouseButtonPressEvent>) => void;
+  onRelease?: (event: PressableEvent<MouseButtonPressEvent>) => void;
+  onMouseEnter?: (event: PressableEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: PressableEvent<PointerEvent>) => void;
   /**
    * If set to true, the pressable element will intercept mouse events
    * on it's children. Meaning children will not receive any mouse
@@ -64,12 +69,9 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private children = new ChildOrderController(this.lifecycle, this.widget);
-  private handlers = new EventHandlers<Gtk.EventBox, PressableProps>(
-    this.lifecycle,
-    this.widget
-  );
+  private handlers = new EventHandlers<Gtk.EventBox, PressableProps>(this);
   private readonly propsMapper = new PropertyMapper<PressableProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

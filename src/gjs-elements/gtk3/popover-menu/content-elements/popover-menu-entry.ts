@@ -26,12 +26,15 @@ import { PopoverMenuContentElement } from "../popover-menu-content";
 
 type PopoverMenuEntryPropsMixin = MarginProps & StyleProps;
 
+export type PopoverMenuEntryEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, PopoverMenuEntryElement>;
+
 export interface PopoverMenuEntryProps extends PopoverMenuEntryPropsMixin {
   label?: string;
   icon?: IconName;
   position?: EntryPosition;
   submenuBackButtonLabel?: string;
-  onClick?: (e: SyntheticEvent) => void;
+  onClick?: (e: PopoverMenuEntryEvent) => void;
 }
 
 export class PopoverMenuEntryElement
@@ -75,7 +78,7 @@ export class PopoverMenuEntryElement
   private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
     null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController<PopoverMenuEntryElement>(
     this.lifecycle,
     this.submenu.widget
@@ -83,7 +86,7 @@ export class PopoverMenuEntryElement
   private readonly handlers = new EventHandlers<
     Gtk.ModelButton,
     PopoverMenuEntryProps
-  >(this.lifecycle, this.widget);
+  >(this);
   private readonly propsMapper = new PropertyMapper<PopoverMenuEntryProps>(
     this.lifecycle,
     createMarginPropMapper(this.widget),

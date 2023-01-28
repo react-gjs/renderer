@@ -28,9 +28,14 @@ type FlowBoxEntryPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type FlowBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  FlowBoxEntryElement
+>;
+
 export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
   isDefault?: boolean;
-  onSelect?: (event: SyntheticEvent<{ isSelected: boolean }>) => void;
+  onSelect?: (event: FlowBoxEvent<{ isSelected: boolean }>) => void;
 }
 
 export class FlowBoxEntryElement
@@ -47,7 +52,7 @@ export class FlowBoxEntryElement
 
   private parent: FlowBoxElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private children = new ChildOrderController(this.lifecycle, this.widget);
 
   emitter = new SyntheticEmitter<{ selected: [boolean] }>(this.lifecycle);

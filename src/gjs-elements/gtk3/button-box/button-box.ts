@@ -27,14 +27,19 @@ type ButtonBoxPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type ButtonBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  ButtonBoxElement
+>;
+
 export interface ButtonBoxProps extends ButtonBoxPropsMixin {
   margin?: ElementMargin;
-  onClick?: (event: SyntheticEvent) => void;
-  onActivate?: (event: SyntheticEvent) => void;
-  onPressed?: (event: SyntheticEvent) => void;
-  onReleased?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onClick?: (event: ButtonBoxEvent) => void;
+  onActivate?: (event: ButtonBoxEvent) => void;
+  onPressed?: (event: ButtonBoxEvent) => void;
+  onReleased?: (event: ButtonBoxEvent) => void;
+  onMouseEnter?: (event: ButtonBoxEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: ButtonBoxEvent<PointerEvent>) => void;
 }
 
 export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
@@ -53,10 +58,9 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.Button, ButtonBoxProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
   private readonly propsMapper = new PropertyMapper<ButtonBoxProps>(
     this.lifecycle,

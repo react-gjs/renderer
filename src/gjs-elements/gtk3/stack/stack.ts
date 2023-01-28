@@ -42,7 +42,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly children: ChildOrderController<StackScreenElement>;
   private readonly propsMapper = new PropertyMapper<StackProps>(this.lifecycle);
 

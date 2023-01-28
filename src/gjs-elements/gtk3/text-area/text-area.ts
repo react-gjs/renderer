@@ -28,12 +28,17 @@ type TextAreaPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type TextAreaEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  TextAreaElement
+>;
+
 export interface TextAreaProps extends TextAreaPropsMixin {
   value?: string;
   margin?: ElementMargin;
-  onChange?: (event: SyntheticEvent<{ text: string }>) => void;
-  onKeyPress?: (event: SyntheticEvent<KeyPressEvent>) => void;
-  onKeyRelease?: (event: SyntheticEvent<KeyPressEvent>) => void;
+  onChange?: (event: TextAreaEvent<{ text: string }>) => void;
+  onKeyPress?: (event: TextAreaEvent<KeyPressEvent>) => void;
+  onKeyRelease?: (event: TextAreaEvent<KeyPressEvent>) => void;
 }
 
 export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
@@ -52,10 +57,9 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.TextView, TextAreaProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
 
   private readonly propsMapper = new PropertyMapper<TextAreaProps>(

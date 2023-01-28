@@ -30,6 +30,9 @@ type ToolbarButtonPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type ToolbarButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, ToolbarButtonElement>;
+
 export interface ToolbarButtonProps extends ToolbarButtonPropsMixin {
   label?: string;
   icon?: IconName;
@@ -37,9 +40,9 @@ export interface ToolbarButtonProps extends ToolbarButtonPropsMixin {
   focusOnClick?: boolean;
   sameSize?: boolean;
   expand?: boolean;
-  onClick?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onClick?: (event: ToolbarButtonEvent) => void;
+  onMouseEnter?: (event: ToolbarButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: ToolbarButtonEvent<PointerEvent>) => void;
 }
 
 export class ToolbarButtonElement
@@ -58,11 +61,11 @@ export class ToolbarButtonElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.ToolButton,
     ToolbarButtonProps
-  >(this.lifecycle, this.widget);
+  >(this);
   private readonly propsMapper = new PropertyMapper<ToolbarButtonProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

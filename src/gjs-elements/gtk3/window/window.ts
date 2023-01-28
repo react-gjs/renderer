@@ -19,6 +19,11 @@ import type { ApplicationElement } from "../application/application";
 import { HeaderBarElement } from "../headerbar/headerbar";
 import type { TextNode } from "../markup/text-node";
 
+export type WindowEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  WindowElement
+>;
+
 export type WindowProps = {
   decorate?: boolean;
   defaultHeight?: number;
@@ -36,13 +41,13 @@ export type WindowProps = {
    * the application will quit.
    */
   quitAppOnClose?: boolean;
-  onClose?: (event: SyntheticEvent) => void;
-  onDestroy?: (event: SyntheticEvent) => void;
-  onDragBegin?: (event: SyntheticEvent) => void;
-  onDragEnd?: (event: SyntheticEvent) => void;
-  onFocus?: (event: SyntheticEvent) => void;
-  onHide?: (event: SyntheticEvent) => void;
-  onResize?: (event: SyntheticEvent<{ width: number; height: number }>) => void;
+  onClose?: (event: WindowEvent) => void;
+  onDestroy?: (event: WindowEvent) => void;
+  onDragBegin?: (event: WindowEvent) => void;
+  onDragEnd?: (event: WindowEvent) => void;
+  onFocus?: (event: WindowEvent) => void;
+  onHide?: (event: WindowEvent) => void;
+  onResize?: (event: WindowEvent<{ width: number; height: number }>) => void;
 };
 
 export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
@@ -58,13 +63,13 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   private mainApp?: ApplicationElement;
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget,
     this.addChild.bind(this)
   );
-  private readonly handlers = new EventHandlers(this.lifecycle, this.widget);
+  private readonly handlers = new EventHandlers(this);
   private readonly propsMapper = new PropertyMapper<WindowProps>(
     this.lifecycle,
     (props) =>
@@ -165,7 +170,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   }
 
   private defaultOnCloseHandler(
-    event: SyntheticEvent,
+    event: WindowEvent,
     originalHandler?: WindowProps["onClose"]
   ) {
     event.preventDefault();
@@ -195,13 +200,13 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
     if (onclose) {
       const originalHandler = onclose[1] as undefined | WindowProps["onClose"];
-      onclose[1] = (event: SyntheticEvent) => {
+      onclose[1] = (event: WindowEvent) => {
         return this.defaultOnCloseHandler(event, originalHandler);
       };
     } else {
       props.push([
         propName,
-        (event: SyntheticEvent) => {
+        (event: WindowEvent) => {
           this.defaultOnCloseHandler(event);
         },
       ]);

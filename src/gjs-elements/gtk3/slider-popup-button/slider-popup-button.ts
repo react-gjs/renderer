@@ -29,6 +29,9 @@ type SliderPopupButtonPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type SliderPopupButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, SliderPopupButtonElement>;
+
 export interface SliderPopupButtonProps extends SliderPopupButtonPropsMixin {
   type?: ButtonType;
   label?: string;
@@ -51,15 +54,15 @@ export interface SliderPopupButtonProps extends SliderPopupButtonPropsMixin {
   fixedSize?: boolean;
   marks?: { [key: number]: string };
   marksPosition?: PositionType;
-  onClick?: (event: SyntheticEvent) => void;
-  onActivate?: (event: SyntheticEvent) => void;
-  onPressed?: (event: SyntheticEvent) => void;
-  onReleased?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
-  onPopupOpen?: (event: SyntheticEvent) => void;
-  onPopupClose?: (event: SyntheticEvent) => void;
-  onValueChange?: (event: SyntheticEvent<{ value: number }>) => void;
+  onClick?: (event: SliderPopupButtonEvent) => void;
+  onActivate?: (event: SliderPopupButtonEvent) => void;
+  onPressed?: (event: SliderPopupButtonEvent) => void;
+  onReleased?: (event: SliderPopupButtonEvent) => void;
+  onMouseEnter?: (event: SliderPopupButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: SliderPopupButtonEvent<PointerEvent>) => void;
+  onPopupOpen?: (event: SliderPopupButtonEvent) => void;
+  onPopupClose?: (event: SliderPopupButtonEvent) => void;
+  onValueChange?: (event: SliderPopupButtonEvent<{ value: number }>) => void;
 }
 
 const WidgetDataType = DataType.Custom(
@@ -83,11 +86,11 @@ export class SliderPopupButtonElement
   private parent: GjsElement | null = null;
   private adjustment = new Gtk.Adjustment();
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.ScaleButton,
     SliderPopupButtonProps
-  >(this.lifecycle, this.widget);
+  >(this);
   private readonly propsMapper = new PropertyMapper<SliderPopupButtonProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

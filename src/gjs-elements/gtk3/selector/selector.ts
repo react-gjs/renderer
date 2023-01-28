@@ -62,12 +62,11 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly optionsList = new OptionsList(this.lifecycle);
   widget = this.optionsList.getComboBox();
   private readonly handlers = new EventHandlers<Gtk.ComboBox, SelectorProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
 
   private readonly propsMapper = new PropertyMapper<SelectorProps>(

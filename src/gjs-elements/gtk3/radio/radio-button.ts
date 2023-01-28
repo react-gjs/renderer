@@ -29,16 +29,19 @@ type RadioButtonPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type RadioButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, RadioButtonElement>;
+
 export interface RadioButtonProps extends RadioButtonPropsMixin {
   label?: string;
   useUnderline?: boolean;
-  onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
-  onClick?: (event: SyntheticEvent) => void;
-  onActivate?: (event: SyntheticEvent) => void;
-  onPressed?: (event: SyntheticEvent) => void;
-  onReleased?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onChange?: (event: RadioButtonEvent<{ isActive: boolean }>) => void;
+  onClick?: (event: RadioButtonEvent) => void;
+  onActivate?: (event: RadioButtonEvent) => void;
+  onPressed?: (event: RadioButtonEvent) => void;
+  onReleased?: (event: RadioButtonEvent) => void;
+  onMouseEnter?: (event: RadioButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: RadioButtonEvent<PointerEvent>) => void;
 }
 
 export class RadioButtonElement
@@ -58,7 +61,7 @@ export class RadioButtonElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private handlers!: EventHandlers<Gtk.RadioButton, RadioButtonProps>;
   private readonly propsMapper = new PropertyMapper<RadioButtonProps>(
     this.lifecycle
@@ -163,8 +166,7 @@ export class RadioButtonElement
       );
 
       this.handlers = new EventHandlers<Gtk.RadioButton, RadioButtonProps>(
-        this.lifecycle,
-        this.widget
+        this
       );
 
       this.handlers.bind("clicked", "onClick");

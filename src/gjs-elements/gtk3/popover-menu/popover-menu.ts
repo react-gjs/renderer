@@ -7,7 +7,6 @@ import type { GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
-import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -55,8 +54,7 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers: EventHandlers<Gtk.Popover, PopoverMenuProps>;
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<
     PopoverMenuProps & PopoverInternalProps
   >(
@@ -93,8 +91,6 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
   constructor(props: DiffedProps) {
     this.propsMapper.skipDefaults();
     this.updateProps(props);
-
-    this.handlers = new EventHandlers(this.lifecycle, this.popover);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
   }

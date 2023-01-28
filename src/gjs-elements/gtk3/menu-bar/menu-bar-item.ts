@@ -27,10 +27,13 @@ import { MENU_ELEMENTS } from "./menu-elements";
 
 type MenuBarItemPropsMixin = MarginProps & ExpandProps & StyleProps;
 
+export type MenuBarItemEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, MenuBarItemElement>;
+
 export interface MenuBarItemProps extends MenuBarItemPropsMixin {
   label?: string;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: MenuBarItemEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: MenuBarItemEvent<PointerEvent>) => void;
 }
 
 export class MenuBarItemElement
@@ -48,10 +51,9 @@ export class MenuBarItemElement
 
   private parent: MenuBarElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.MenuItem, MenuBarItemProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
   private readonly children = new ChildOrderController<MenuItemElementType>(
     this.lifecycle,

@@ -44,7 +44,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   private parent: GridElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   emitter = new SyntheticEmitter<GridItemEvents>(this.lifecycle);
   private readonly propsMapper = new PropertyMapper<GridItemProps>(
     this.lifecycle,

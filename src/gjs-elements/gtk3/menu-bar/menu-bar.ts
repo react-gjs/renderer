@@ -43,7 +43,7 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController<MenuBarItemElement>(
     this.lifecycle,
     this.widget,

@@ -47,7 +47,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<LabelProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
