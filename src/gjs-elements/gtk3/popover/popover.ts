@@ -127,6 +127,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
         this.widget.add(child.widget);
         this.hasTarget = true;
         this.targetElement = child;
+        this.popover.relative_to = child.widget;
       }
     } else {
       throw new Error(
