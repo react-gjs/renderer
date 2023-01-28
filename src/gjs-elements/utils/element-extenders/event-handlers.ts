@@ -1,9 +1,9 @@
-import type Gtk from "gi://Gtk";
 import {
   EventPhase,
   EventPhaseController,
 } from "../../../reconciler/event-phase";
 import type { ElementLifecycle } from "../../element-extender";
+import type { GjsElement } from "../../gjs-element";
 import type { DiffedProps } from "./map-properties";
 import { UnsetProp } from "./map-properties";
 
@@ -25,11 +25,15 @@ type SyntheticEventPropsGenerator<A extends any[] = any[]> = (
   ...args: A
 ) => Record<string, any>;
 
-export type SyntheticEvent<A extends Record<string, any> = {}> = A & {
+export type SyntheticEvent<
+  A extends Record<string, any> = {},
+  T extends GjsElement = GjsElement
+> = A & {
   stopPropagation(): void;
   preventDefault(): void;
   originalEvent: any;
-  target: Gtk.Widget;
+  target: T;
+  targetWidget: T["widget"];
 };
 
 const noop = () => {};

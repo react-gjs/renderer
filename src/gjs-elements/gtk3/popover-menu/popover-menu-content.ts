@@ -1,6 +1,5 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { BaselinePosition, Orientation } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -11,31 +10,16 @@ import { ElementLifecycleController } from "../../utils/element-extenders/elemen
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
-import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
-import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
-import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
-import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
-import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
-import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
-import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
 import { PopoverMenuEntryElement } from "./content-elements/popover-menu-entry";
 import { PopoverMenuElement } from "./popover-menu";
 
-type PopoverMenuContentPropsMixin = AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
-
-export interface PopoverMenuContentProps extends PopoverMenuContentPropsMixin {
-  spacing?: number;
-  baselinePosition?: BaselinePosition;
-  orientation?: Orientation;
+export interface PopoverMenuContentProps {
+  minWidth?: number;
 }
 
 export class PopoverMenuContentElement
-  implements GjsElement<"POPOVER_MENU_CONTENT", Gtk.Widget>
+  implements GjsElement<"POPOVER_MENU_CONTENT", Gtk.ScrolledWindow>
 {
   static getContext(
     currentContext: HostContext<GjsContext>
@@ -43,41 +27,37 @@ export class PopoverMenuContentElement
     return currentContext;
   }
 
+  static createWidget(scrollBox: Gtk.ScrolledWindow, box: Gtk.Box) {
+    scrollBox.margin = 10;
+    scrollBox.propagate_natural_width = true;
+    scrollBox.propagate_natural_height = true;
+    box.orientation = Gtk.Orientation.VERTICAL;
+    scrollBox.add(box);
+    return scrollBox;
+  }
+
+  scrollBox = new Gtk.ScrolledWindow();
+  box = new Gtk.Box();
+
   readonly kind = "POPOVER_MENU_CONTENT";
-  widget = new Gtk.Box();
+  widget = PopoverMenuContentElement.createWidget(this.scrollBox, this.box);
 
   parentMenu: string | null = null;
+  rootMenu: PopoverMenuElement | null = null;
 
   private parent: PopoverMenuElement | null = null;
 
   private readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController<PopoverMenuEntryElement>(
     this.lifecycle,
-    this.widget
+    this.box
   );
   private readonly propsMapper = new PropertyMapper<PopoverMenuContentProps>(
     this.lifecycle,
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
     (props) =>
-      props
-        .spacing(DataType.Number, (v = 0) => {
-          this.widget.spacing = v;
-        })
-        .baselinePosition(
-          DataType.Enum(Gtk.BaselinePosition),
-          (v = Gtk.BaselinePosition.TOP) => {
-            this.widget.baseline_position = v;
-          }
-        )
-        .orientation(
-          DataType.Enum(Gtk.Orientation),
-          (v = Gtk.Orientation.VERTICAL) => {
-            this.widget.orientation = v;
-          }
-        )
+      props.minWidth(DataType.Number, (v = -1) => {
+        this.scrollBox.min_content_width = v;
+      })
   );
 
   constructor(props: DiffedProps) {
@@ -86,13 +66,17 @@ export class PopoverMenuContentElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  getMenu() {
-    return this.parent;
-  }
-
   setParentMenu(name: string) {
+    this.parentMenu = name;
     this.children.forEach((child) => {
       child.setParentMenu(name);
+    });
+  }
+
+  setRootMenu(root: PopoverMenuElement) {
+    this.rootMenu = root;
+    this.children.forEach((child) => {
+      child.setRootMenu(root);
     });
   }
 
@@ -109,11 +93,16 @@ export class PopoverMenuContentElement
       throw new Error("Popover can only have PopoverEntry as children");
     }
 
+    const shouldAppend = child.notifyWillAppendTo(this);
+
     if (this.parentMenu) {
       child.setParentMenu(this.parentMenu);
     }
 
-    const shouldAppend = child.notifyWillAppendTo(this);
+    if (this.rootMenu) {
+      child.setRootMenu(this.rootMenu);
+    }
+
     this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
   }
@@ -131,6 +120,10 @@ export class PopoverMenuContentElement
 
     if (this.parentMenu) {
       newChild.setParentMenu(this.parentMenu);
+    }
+
+    if (this.rootMenu) {
+      newChild.setRootMenu(this.rootMenu);
     }
 
     this.children.insertBefore(newChild, beforeChild, !shouldAppend);

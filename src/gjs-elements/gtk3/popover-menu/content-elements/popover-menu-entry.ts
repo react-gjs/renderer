@@ -9,13 +9,13 @@ import { GjsElementManager } from "../../../gjs-element-manager";
 import { diffProps } from "../../../utils/diff-props";
 import { ChildOrderController } from "../../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../../utils/ensure-not-string";
+import { generateUID } from "../../../utils/generate-uid";
 import type { IconName } from "../../../utils/icons/icon-types";
-import type { AlignmentProps } from "../../../utils/property-maps-factories/create-alignment-prop-mapper";
-import { createAlignmentPropMapper } from "../../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../../utils/property-maps-factories/create-style-prop-mapper";
@@ -24,14 +24,14 @@ import type { TextNode } from "../../markup/text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 
-type PopoverMenuEntryPropsMixin = AlignmentProps & MarginProps & StyleProps;
+type PopoverMenuEntryPropsMixin = MarginProps & StyleProps;
 
 export interface PopoverMenuEntryProps extends PopoverMenuEntryPropsMixin {
   label?: string;
   icon?: IconName;
   position?: EntryPosition;
-  submenuName?: string;
   submenuBackButtonLabel?: string;
+  onClick?: (e: SyntheticEvent) => void;
 }
 
 export class PopoverMenuEntryElement
@@ -66,8 +66,10 @@ export class PopoverMenuEntryElement
   readonly kind = "POPOVER_MENU_ENTRY";
   widget = new Gtk.ModelButton();
 
-  parentMenuName = "main";
-  ownMenuName = "";
+  parentMenu = "main";
+  rootMenu: PopoverMenuElement | null = null;
+
+  ownMenuName: string;
   submenu = PopoverMenuEntryElement.createSubmenu();
 
   private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
@@ -84,7 +86,6 @@ export class PopoverMenuEntryElement
   >(this.lifecycle, this.widget);
   private readonly propsMapper = new PropertyMapper<PopoverMenuEntryProps>(
     this.lifecycle,
-    createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
@@ -96,6 +97,7 @@ export class PopoverMenuEntryElement
           this.widget.icon = Gio.Icon.new_for_string(v);
         })
         .position(DataType.Enum(EntryPosition), (v = EntryPosition.LEFT) => {
+          // eslint-disable-next-line
           switch (v) {
             case EntryPosition.LEFT:
               this.widget.centered = false;
@@ -111,58 +113,52 @@ export class PopoverMenuEntryElement
               break;
           }
         })
-        .submenuName(DataType.String, (v) => {
-          if (v) {
-            this.ownMenuName = v;
-            this.widget.menu_name = v;
-            this.submenu.goBackButton.menu_name = v;
-            this.children.forEach((child) => {
-              child.setParentMenu(v);
-            });
-            this.registerSubmenu();
-          } else {
-            this.widget.menu_name = null;
-            this.children.forEach((child) => {
-              child.setParentMenu(this.parentMenuName);
-            });
-          }
-        })
         .submenuBackButtonLabel(DataType.String, (v = "") => {
           this.submenu.goBackButton.text = v;
         })
   );
 
   constructor(props: DiffedProps) {
+    this.ownMenuName = "submenu_" + generateUID(8);
+
+    this.handlers.bind("clicked", "onClick");
+
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
   setParentMenu(name: string) {
+    this.parentMenu = name;
     this.submenu.goBackButton.menu_name = name;
-
-    if (!this.ownMenuName) {
-      this.children.forEach((child) => {
-        child.setParentMenu(name);
-      });
-    }
   }
 
-  getMenu(): PopoverMenuElement | null {
-    return this.getMenu();
+  setRootMenu(root: PopoverMenuElement) {
+    this.rootMenu = root;
+
+    if (this.children.count() > 0) {
+      this.registerSubmenu();
+    }
+
+    this.children.forEach((child) => {
+      child.setRootMenu(root);
+    });
   }
 
   registerSubmenu() {
     if (
       !this.submenu.isRegistered &&
-      this.parent &&
-      this.propsMapper.currentProps.submenuName
+      this.rootMenu &&
+      this.children.count() > 0
     ) {
-      this.parent!.getMenu()!.addSubMenu(
-        this.submenu.widget,
-        this.propsMapper.currentProps.submenuName
-      );
+      this.widget.menu_name = this.ownMenuName;
+      this.rootMenu.addSubMenu(this.submenu.widget, this.ownMenuName);
     }
+  }
+
+  unregisterSubmenu() {
+    this.widget.menu_name = null;
+    this.submenu.isRegistered = false;
   }
 
   updateProps(props: DiffedProps): void {
@@ -179,9 +175,14 @@ export class PopoverMenuEntryElement
     }
 
     const shouldAppend = child.notifyWillAppendTo(this);
-    child.setParentMenu(this.ownMenuName || this.parentMenuName);
-    this.children.addChild(child, shouldAppend);
-    this.widget.show_all();
+
+    child.setParentMenu(this.ownMenuName);
+    if (this.rootMenu) {
+      child.setRootMenu(this.rootMenu!);
+    }
+
+    this.children.addChild(child, !shouldAppend);
+    this.registerSubmenu();
   }
 
   insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
@@ -194,9 +195,14 @@ export class PopoverMenuEntryElement
     }
 
     const shouldAppend = child.notifyWillAppendTo(this);
-    child.setParentMenu(this.ownMenuName || this.parentMenuName);
-    this.children.insertBefore(child, beforeChild, shouldAppend);
-    this.widget.show_all();
+
+    child.setParentMenu(this.ownMenuName);
+    if (this.rootMenu) {
+      child.setRootMenu(this.rootMenu!);
+    }
+
+    this.children.insertBefore(child, beforeChild, !shouldAppend);
+    this.registerSubmenu();
   }
 
   remove(parent: GjsElement): void {
@@ -206,6 +212,7 @@ export class PopoverMenuEntryElement
 
     this.widget.destroy();
     this.submenu.widget.destroy();
+    this.rootMenu?.removeSubMenu(this.ownMenuName);
   }
 
   render() {
@@ -228,14 +235,14 @@ export class PopoverMenuEntryElement
       );
     }
     this.parent = parent;
-
-    this.registerSubmenu();
-
     return true;
   }
 
   notifyWillUnmount(child: GjsElement) {
     this.children.removeChild(child);
+    if (this.children.count() === 0) {
+      this.unregisterSubmenu();
+    }
   }
 
   // #endregion

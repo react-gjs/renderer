@@ -1,5 +1,5 @@
 import { DataType } from "dilswer";
-import Gtk from "gi://Gtk";
+import type Gtk from "gi://Gtk";
 import { PopoverConstraint, PositionType } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -18,6 +18,7 @@ import type { MarginProps } from "../../utils/property-maps-factories/create-mar
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import { Bin } from "../../utils/widgets/bin";
 import type { TextNode } from "../markup/text-node";
 import { PopoverMenuContentElement } from "./popover-menu-content";
 import { PopoverMenuTargetElement } from "./popover-menu-target";
@@ -37,7 +38,7 @@ export type PopoverInternalProps = {
   popoverWidget: Gtk.PopoverMenu;
 };
 
-export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Gtk.Box> {
+export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
@@ -45,10 +46,12 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Gtk.Box> {
   }
 
   readonly kind = "POPOVER_MENU";
-  widget = new Gtk.Box();
+  widget = new Bin();
   popover!: Gtk.PopoverMenu;
 
   ownMenuName = "main";
+
+  submenus = new Set<string>();
 
   private parent: GjsElement | null = null;
 
@@ -77,7 +80,7 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Gtk.Box> {
             this.popover.set_constrain_to(v);
           }
         )
-        .position(DataType.Enum(PositionType), (v = PositionType.BOTTOM) => {
+        .position(DataType.Enum(PositionType), (v = PositionType.TOP) => {
           this.popover.set_position(v);
         })
   );
@@ -97,8 +100,15 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Gtk.Box> {
   }
 
   addSubMenu(subMenu: Gtk.Box, name: string) {
+    if (this.submenus.has(name)) return;
+
     this.popover.add(subMenu);
     this.popover.child_set_property(subMenu, "submenu", name);
+    this.submenus.add(name);
+  }
+
+  removeSubMenu(name: string) {
+    this.submenus.delete(name);
   }
 
   onContentChange() {
@@ -127,6 +137,8 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Gtk.Box> {
         this.popover.add(child.widget);
         this.hasContentChild = true;
         this.contentElement = child;
+        child.setParentMenu(this.ownMenuName);
+        child.setRootMenu(this);
       }
     } else if (
       GjsElementManager.isGjsElementOfKind(child, PopoverMenuTargetElement)
@@ -139,6 +151,7 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Gtk.Box> {
         this.widget.add(child.widget);
         this.hasTarget = true;
         this.targetElement = child;
+        this.popover.relative_to = child.widget;
       }
     } else {
       throw new Error(

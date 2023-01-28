@@ -1,8 +1,6 @@
 import Gtk from "gi://Gtk";
 import React from "react";
-import { Orientation } from "../../../g-enums";
 import type { GjsElementTypes } from "../../gjs-element-types";
-import { ScrollBoxProps } from "../scroll-box/scroll-box";
 import type { PopoverMenuProps as BaseProps } from "./popover-menu";
 
 const PopoverElem: GjsElementTypes = "POPOVER_MENU";
@@ -22,6 +20,7 @@ const getPopoverMenuWidget = () => {
   const popover = new Gtk.PopoverMenu();
 
   const showPopover = () => {
+    popover.show_all();
     popover.popup();
   };
 
@@ -45,18 +44,9 @@ export const PopoverMenu = (props: PopoverMenuProps) => {
     PopoverElem,
     { ...rest, popoverWidget: popover.widget },
     React.createElement(
-      "ScrollBox",
-      {
-        margin: 10,
-        useChildHeight: true,
-        useChildWidth: true,
-        minWidth,
-      } satisfies ScrollBoxProps,
-      React.createElement(
-        "Box",
-        { orientation: Orientation.VERTICAL },
-        React.createElement(ContentElem, {}, props.content(popover.hidePopover))
-      )
+      ContentElem,
+      { minWidth },
+      props.content(popover.hidePopover)
     ),
     React.createElement(
       TargetElem,
