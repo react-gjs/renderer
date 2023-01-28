@@ -1,5 +1,5 @@
 import { DataType } from "dilswer";
-import Gtk from "gi://Gtk";
+import type Gtk from "gi://Gtk";
 import { PopoverConstraint, PositionType } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -17,6 +17,7 @@ import type { MarginProps } from "../../utils/property-maps-factories/create-mar
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import { Bin } from "../../utils/widgets/bin";
 import type { TextNode } from "../markup/text-node";
 import { PopoverContentElement } from "./popover-content";
 import { PopoverTargetElement } from "./popover-target";
@@ -36,7 +37,7 @@ export type PopoverInternalProps = {
   popoverWidget: Gtk.Popover;
 };
 
-export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
+export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
@@ -44,7 +45,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Gtk.Box> {
   }
 
   readonly kind = "POPOVER";
-  widget = new Gtk.Box();
+  widget = new Bin();
   popover!: Gtk.Popover;
 
   private parent: GjsElement | null = null;

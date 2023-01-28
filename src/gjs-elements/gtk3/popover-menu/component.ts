@@ -8,9 +8,26 @@ const TargetElem: GjsElementTypes = "POPOVER_MENU_TARGET";
 const ContentElem: GjsElementTypes = "POPOVER_MENU_CONTENT";
 
 export type PopoverMenuProps = BaseProps & {
+  /** The minimum width of the Popover Menu. */
   minWidth?: number;
-  content: (hidePopover: () => void) => React.ReactElement;
-  children: (
+  /**
+   * A function that should return the contents of the Popover Menu.
+   * Popover Menu contents should be limited to Popover Menu Items.
+   *
+   * @param hidePopover - A function that can be called to hide the
+   *   popover.
+   */
+  renderPopover: (hidePopover: () => void) => React.ReactElement;
+  /**
+   * A function that should return the element that the Popover Menu
+   * will be attached to.
+   *
+   * @param showPopover - A function that can be called to show the
+   *   popover.
+   * @param hidePopover - A function that can be called to hide the
+   *   popover.
+   */
+  renderAnchor: (
     showPopover: () => void,
     hidePopover: () => void
   ) => React.ReactElement;
@@ -36,7 +53,12 @@ const getPopoverMenuWidget = () => {
 };
 
 export const PopoverMenu = (props: PopoverMenuProps) => {
-  const { children, content, minWidth, ...rest } = props;
+  const {
+    renderAnchor: children,
+    renderPopover: content,
+    minWidth,
+    ...rest
+  } = props;
 
   const [popover] = React.useState(getPopoverMenuWidget);
 
@@ -46,12 +68,12 @@ export const PopoverMenu = (props: PopoverMenuProps) => {
     React.createElement(
       ContentElem,
       { minWidth },
-      props.content(popover.hidePopover)
+      props.renderPopover(popover.hidePopover)
     ),
     React.createElement(
       TargetElem,
       {},
-      props.children(popover.showPopover, popover.hidePopover)
+      props.renderAnchor(popover.showPopover, popover.hidePopover)
     )
   );
 };
