@@ -101,6 +101,10 @@ import type {
   NumberInputProps,
 } from "../gjs-elements/gtk3/number-input/number-input";
 import type {
+  PopoverMenuCheckButtonElement,
+  PopoverMenuCheckButtonProps,
+} from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-check-button";
+import type {
   PopoverMenuEntryElement,
   PopoverMenuEntryProps,
 } from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-entry";
@@ -320,6 +324,10 @@ declare global {
       POPOVER_MENU_ENTRY: IntrinsicComponent<
         ComponentWithChildren<PopoverMenuEntryProps>,
         PopoverMenuEntryElement
+      >;
+      POPOVER_MENU_CHECK_BUTTON: IntrinsicComponent<
+        PopoverMenuCheckButtonProps,
+        PopoverMenuCheckButtonElement
       >;
       RADIO_BOX: IntrinsicComponent<
         ComponentWithChildren<RadioBoxProps>,

@@ -1,7 +1,6 @@
 import { DataType } from "dilswer";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
-import { EntryPosition } from "../../../../g-enums";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import type { GjsElement } from "../../../gjs-element";
@@ -23,6 +22,7 @@ import { createStylePropMapper } from "../../../utils/property-maps-factories/cr
 import type { TextNode } from "../../markup/text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
+import { PopoverMenuCheckButtonElement } from "./popover-menu-check-button";
 
 type PopoverMenuEntryPropsMixin = MarginProps & StyleProps;
 
@@ -32,7 +32,8 @@ export type PopoverMenuEntryEvent<P extends Record<string, any> = {}> =
 export interface PopoverMenuEntryProps extends PopoverMenuEntryPropsMixin {
   label?: string;
   icon?: IconName;
-  position?: EntryPosition;
+  centered?: boolean;
+  inverted?: boolean;
   submenuBackButtonLabel?: string;
   onClick?: (e: PopoverMenuEntryEvent) => void;
 }
@@ -79,10 +80,9 @@ export class PopoverMenuEntryElement
     null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly children = new ChildOrderController<PopoverMenuEntryElement>(
-    this.lifecycle,
-    this.submenu.widget
-  );
+  private readonly children = new ChildOrderController<
+    PopoverMenuEntryElement | PopoverMenuCheckButtonElement
+  >(this.lifecycle, this.submenu.widget);
   private readonly handlers = new EventHandlers<
     Gtk.ModelButton,
     PopoverMenuEntryProps
@@ -99,22 +99,11 @@ export class PopoverMenuEntryElement
         .icon(DataType.String, (v = "") => {
           this.widget.icon = Gio.Icon.new_for_string(v);
         })
-        .position(DataType.Enum(EntryPosition), (v = EntryPosition.LEFT) => {
-          // eslint-disable-next-line
-          switch (v) {
-            case EntryPosition.LEFT:
-              this.widget.centered = false;
-              this.widget.inverted = false;
-              break;
-            case EntryPosition.CENTER:
-              this.widget.centered = true;
-              this.widget.inverted = false;
-              break;
-            case EntryPosition.RIGHT:
-              this.widget.centered = false;
-              this.widget.inverted = true;
-              break;
-          }
+        .centered(DataType.Boolean, (v = false) => {
+          this.widget.centered = v;
+        })
+        .inverted(DataType.Boolean, (v = false) => {
+          this.widget.inverted = v;
         })
         .submenuBackButtonLabel(DataType.String, (v = "") => {
           this.submenu.goBackButton.text = v;
@@ -171,7 +160,12 @@ export class PopoverMenuEntryElement
   // #region This widget direct mutations
 
   appendChild(child: TextNode | GjsElement): void {
-    if (!GjsElementManager.isGjsElementOfKind(child, PopoverMenuEntryElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(child, [
+        PopoverMenuEntryElement,
+        PopoverMenuCheckButtonElement,
+      ])
+    ) {
       throw new Error(
         "PopoverMenuEntry can only have PopoverMenuEntry as its children."
       );
@@ -191,7 +185,12 @@ export class PopoverMenuEntryElement
   insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
     ensureNotText(beforeChild);
 
-    if (!GjsElementManager.isGjsElementOfKind(child, PopoverMenuEntryElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(child, [
+        PopoverMenuEntryElement,
+        PopoverMenuCheckButtonElement,
+      ])
+    ) {
       throw new Error(
         "PopoverMenuEntry can only have PopoverMenuEntry as its children."
       );

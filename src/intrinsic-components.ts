@@ -58,6 +58,10 @@ export const Image = IntrinsicElem("IMAGE");
 export const Pressable = IntrinsicElem("PRESSABLE");
 /** Equivalent to the Gtk.ModelButton widget. */
 export const PopoverMenuEntry = IntrinsicElem("POPOVER_MENU_ENTRY");
+/** Equivalent to the Gtk.ModelButton widget. */
+export const PopoverMenuCheckButton = IntrinsicElem(
+  "POPOVER_MENU_CHECK_BUTTON"
+);
 /** Equivalent to the Gtk.Box widget. */
 export const RadioBox = IntrinsicElem("RADIO_BOX");
 /** Equivalent to the Gtk.RadioButton widget. */
