@@ -13,6 +13,7 @@ import { ensureNotText } from "../../utils/ensure-not-string";
 import type { TextNode } from "../markup/text-node";
 import { PopoverMenuCheckButtonElement } from "./content-elements/popover-menu-check-button";
 import { PopoverMenuEntryElement } from "./content-elements/popover-menu-entry";
+import { PopoverMenuRadioButtonElement } from "./content-elements/popover-menu-radio-button";
 import { PopoverMenuElement } from "./popover-menu";
 
 export interface PopoverMenuContentProps {
@@ -50,7 +51,9 @@ export class PopoverMenuContentElement
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController<
-    PopoverMenuEntryElement | PopoverMenuCheckButtonElement
+    | PopoverMenuEntryElement
+    | PopoverMenuCheckButtonElement
+    | PopoverMenuRadioButtonElement
   >(this.lifecycle, this.box);
   private readonly propsMapper = new PropertyMapper<PopoverMenuContentProps>(
     this.lifecycle,
@@ -93,6 +96,7 @@ export class PopoverMenuContentElement
       !GjsElementManager.isGjsElementOfKind(child, [
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
+        PopoverMenuRadioButtonElement,
       ])
     ) {
       throw new Error("Popover can only have PopoverEntry as children");
@@ -119,6 +123,7 @@ export class PopoverMenuContentElement
       !GjsElementManager.isGjsElementOfKind(newChild, [
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
+        PopoverMenuRadioButtonElement,
       ])
     ) {
       throw new Error("Popover can only have PopoverEntry as children");

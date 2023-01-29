@@ -109,6 +109,10 @@ import type {
   PopoverMenuEntryProps,
 } from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-entry";
 import type {
+  PopoverMenuRadioButtonElement,
+  PopoverMenuRadioButtonProps,
+} from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-radio-button";
+import type {
   PressableElement,
   PressableProps,
 } from "../gjs-elements/gtk3/pressable/pressable";
@@ -328,6 +332,10 @@ declare global {
       POPOVER_MENU_CHECK_BUTTON: IntrinsicComponent<
         PopoverMenuCheckButtonProps,
         PopoverMenuCheckButtonElement
+      >;
+      POPOVER_MENU_RADIO_BUTTON: IntrinsicComponent<
+        PopoverMenuRadioButtonProps,
+        PopoverMenuRadioButtonElement
       >;
       RADIO_BOX: IntrinsicComponent<
         ComponentWithChildren<RadioBoxProps>,

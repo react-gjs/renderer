@@ -21,6 +21,7 @@ import { Bin } from "../../utils/widgets/bin";
 import type { TextNode } from "../markup/text-node";
 import { PopoverMenuContentElement } from "./popover-menu-content";
 import { PopoverMenuTargetElement } from "./popover-menu-target";
+import { PopoverMenuRadioController } from "./utils/popover-radio-controller";
 
 type PopoverMenuPropsMixin = AlignmentProps &
   MarginProps &
@@ -87,12 +88,17 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
   private contentElement?: PopoverMenuContentElement;
   private hasTarget = false;
   private targetElement?: PopoverMenuTargetElement;
+  private menuRadioGroups = new PopoverMenuRadioController();
 
   constructor(props: DiffedProps) {
     this.propsMapper.skipDefaults();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+  }
+
+  getRadioController() {
+    return this.menuRadioGroups;
   }
 
   addSubMenu(subMenu: Gtk.Box, name: string) {

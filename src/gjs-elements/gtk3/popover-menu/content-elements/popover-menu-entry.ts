@@ -23,6 +23,7 @@ import type { TextNode } from "../../markup/text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import { PopoverMenuCheckButtonElement } from "./popover-menu-check-button";
+import { PopoverMenuRadioButtonElement } from "./popover-menu-radio-button";
 
 type PopoverMenuEntryPropsMixin = MarginProps & StyleProps;
 
@@ -81,7 +82,9 @@ export class PopoverMenuEntryElement
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController<
-    PopoverMenuEntryElement | PopoverMenuCheckButtonElement
+    | PopoverMenuEntryElement
+    | PopoverMenuCheckButtonElement
+    | PopoverMenuRadioButtonElement
   >(this.lifecycle, this.submenu.widget);
   private readonly handlers = new EventHandlers<
     Gtk.ModelButton,
@@ -164,6 +167,7 @@ export class PopoverMenuEntryElement
       !GjsElementManager.isGjsElementOfKind(child, [
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
+        PopoverMenuRadioButtonElement,
       ])
     ) {
       throw new Error(
@@ -189,6 +193,7 @@ export class PopoverMenuEntryElement
       !GjsElementManager.isGjsElementOfKind(child, [
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
+        PopoverMenuRadioButtonElement,
       ])
     ) {
       throw new Error(

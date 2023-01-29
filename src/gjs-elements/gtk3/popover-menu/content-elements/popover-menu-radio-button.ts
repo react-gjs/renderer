@@ -19,25 +19,27 @@ import { createStylePropMapper } from "../../../utils/property-maps-factories/cr
 import type { TextNode } from "../../markup/text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
+import type { RadioGroup } from "../utils/popover-radio-controller";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuCheckButtonPropsMixin = MarginProps & StyleProps;
+type PopoverMenuRadioButtonPropsMixin = MarginProps & StyleProps;
 
-export type PopoverMenuCheckButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, PopoverMenuCheckButtonElement>;
+export type PopoverMenuRadioButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, PopoverMenuRadioButtonElement>;
 
-export interface PopoverMenuCheckButtonProps
-  extends PopoverMenuCheckButtonPropsMixin {
+export interface PopoverMenuRadioButtonProps
+  extends PopoverMenuRadioButtonPropsMixin {
   label?: string;
   icon?: IconName;
   centered?: boolean;
   inverted?: boolean;
   active?: boolean;
-  onChange?: (e: PopoverMenuCheckButtonEvent<{ isActive: boolean }>) => void;
+  radioGroup: string;
+  onChange?: (e: PopoverMenuRadioButtonEvent<{ isActive: boolean }>) => void;
 }
 
-export class PopoverMenuCheckButtonElement
-  implements GjsElement<"POPOVER_MENU_CHECK_BUTTON", Gtk.ModelButton>
+export class PopoverMenuRadioButtonElement
+  implements GjsElement<"POPOVER_MENU_RADIO_BUTTON", Gtk.ModelButton>
 {
   static getContext(
     currentContext: HostContext<GjsContext>
@@ -45,8 +47,13 @@ export class PopoverMenuCheckButtonElement
     return currentContext;
   }
 
-  readonly kind = "POPOVER_MENU_CHECK_BUTTON";
+  id = Symbol();
+
+  readonly kind = "POPOVER_MENU_RADIO_BUTTON";
   widget = new Gtk.ModelButton();
+
+  rootMenu: PopoverMenuElement | null = null;
+  radioGroup: RadioGroup | null = null;
 
   private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
     null;
@@ -54,10 +61,10 @@ export class PopoverMenuCheckButtonElement
   readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.ModelButton,
-    PopoverMenuCheckButtonProps
+    PopoverMenuRadioButtonProps
   >(this);
   private readonly propsMapper =
-    new PropertyMapper<PopoverMenuCheckButtonProps>(
+    new PropertyMapper<PopoverMenuRadioButtonProps>(
       this.lifecycle,
       createMarginPropMapper(this.widget),
       createStylePropMapper(this.widget),
@@ -78,10 +85,22 @@ export class PopoverMenuCheckButtonElement
           .active(DataType.Boolean, (v = false) => {
             this.widget.active = v;
           })
+          .radioGroup(DataType.String, (v = "main") => {
+            if (this.rootMenu) {
+              const controller = this.rootMenu.getRadioController();
+
+              if (this.radioGroup) {
+                controller.removeFromGroup(this.radioGroup.name, this);
+              }
+
+              this.radioGroup = controller.addToGroup(v, this);
+              this.widget.active = this.radioGroup.isSelected(this);
+            }
+          })
     );
 
   constructor(props: DiffedProps) {
-    this.widget.role = Gtk.ButtonRole.CHECK;
+    this.widget.role = Gtk.ButtonRole.RADIO;
 
     this.handlers.bind("clicked", "onChange", () => ({
       isActive: !this.widget.active,
@@ -92,9 +111,24 @@ export class PopoverMenuCheckButtonElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
+  setActiveState(active: boolean) {
+    this.widget.active = active;
+  }
+
   setParentMenu(name: string) {}
 
-  setRootMenu(root: PopoverMenuElement) {}
+  setRootMenu(root: PopoverMenuElement) {
+    this.rootMenu = root;
+
+    if (this.propsMapper.currentProps.radioGroup) {
+      const controller = this.rootMenu.getRadioController();
+      this.radioGroup = controller.addToGroup(
+        this.propsMapper.currentProps.radioGroup,
+        this
+      );
+      this.widget.active = this.radioGroup.isSelected(this);
+    }
+  }
 
   updateProps(props: DiffedProps): void {
     this.lifecycle.emitLifecycleEventUpdate(props);
