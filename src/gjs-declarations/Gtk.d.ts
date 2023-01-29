@@ -13500,11 +13500,7 @@ container and help break any circular reference count cycles.
      * @param property_name The name of the property to set
      * @param value The value to set the property to
      */
-    child_set_property(
-      child: Widget,
-      property_name: string,
-      value: any
-    ): void;
+    child_set_property(child: Widget, property_name: string, value: any): void;
     /**
      * Sets one or more child properties for #child and
      * #container.
