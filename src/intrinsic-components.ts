@@ -66,6 +66,8 @@ export const PopoverMenuCheckButton = IntrinsicElem(
 export const PopoverMenuRadioButton = IntrinsicElem(
   "POPOVER_MENU_RADIO_BUTTON"
 );
+/** Equivalent to the Gtk.Separator widget. */
+export const PopoverMenuSeparator = IntrinsicElem("POPOVER_MENU_SEPARATOR");
 /** Equivalent to the Gtk.Box widget. */
 export const RadioBox = IntrinsicElem("RADIO_BOX");
 /** Equivalent to the Gtk.RadioButton widget. */

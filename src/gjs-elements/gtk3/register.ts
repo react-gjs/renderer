@@ -36,6 +36,7 @@ import { NumberInputElement } from "./number-input/number-input";
 import { PopoverMenuCheckButtonElement } from "./popover-menu/content-elements/popover-menu-check-button";
 import { PopoverMenuEntryElement } from "./popover-menu/content-elements/popover-menu-entry";
 import { PopoverMenuRadioButtonElement } from "./popover-menu/content-elements/popover-menu-radio-button";
+import { PopoverMenuSeparatorElement } from "./popover-menu/content-elements/popover-menu-separator";
 import { PopoverMenuElement } from "./popover-menu/popover-menu";
 import { PopoverMenuContentElement } from "./popover-menu/popover-menu-content";
 import { PopoverMenuTargetElement } from "./popover-menu/popover-menu-target";
@@ -112,6 +113,7 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("POPOVER_MENU_TARGET", PopoverMenuTargetElement);
   manager.register("POPOVER_MENU_CHECK_BUTTON", PopoverMenuCheckButtonElement);
   manager.register("POPOVER_MENU_RADIO_BUTTON", PopoverMenuRadioButtonElement);
+  manager.register("POPOVER_MENU_SEPARATOR", PopoverMenuSeparatorElement);
   manager.register("PRESSABLE", PressableElement);
   manager.register("RADIO_BOX", RadioBoxElement);
   manager.register("RADIO_BUTTON", RadioButtonElement);

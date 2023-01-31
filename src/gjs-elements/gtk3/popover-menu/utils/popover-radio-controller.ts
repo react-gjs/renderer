@@ -10,8 +10,12 @@ class RadioGroup {
     return this.selected === button.id;
   }
 
-  add(button: PopoverMenuRadioButtonElement) {
+  add(button: PopoverMenuRadioButtonElement, defaultOption: boolean) {
     this.buttons.set(button.id, button);
+
+    if (defaultOption && !this.selected) {
+      this.selected = button.id;
+    }
   }
 
   remove(button: PopoverMenuRadioButtonElement) {
@@ -23,16 +27,26 @@ class RadioGroup {
 
     this.selected = button.id;
 
+    let newSelectedBtn: PopoverMenuRadioButtonElement | undefined;
     for (const [id, btn] of this.buttons) {
-      btn.setActiveState(id === this.selected);
+      if (id !== this.selected) {
+        btn.setActiveState(false);
+      } else {
+        newSelectedBtn = btn;
+      }
     }
+    newSelectedBtn?.setActiveState(true);
   }
 }
 
 export class PopoverMenuRadioController {
   private groups = new Map<string, RadioGroup>();
 
-  addToGroup(groupName: string, button: PopoverMenuRadioButtonElement) {
+  addToGroup(
+    groupName: string,
+    button: PopoverMenuRadioButtonElement,
+    defaultOption = false
+  ) {
     let group = this.groups.get(groupName);
 
     if (!group) {
@@ -40,7 +54,7 @@ export class PopoverMenuRadioController {
       this.groups.set(groupName, group);
     }
 
-    group.add(button);
+    group.add(button, defaultOption);
 
     return group;
   }

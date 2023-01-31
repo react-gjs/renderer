@@ -1,4 +1,4 @@
-import Gtk from "gi://Gtk";
+import type Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -9,6 +9,7 @@ import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
+import { Bin } from "../../utils/widgets/bin";
 import type { TextNode } from "../markup/text-node";
 import { PopoverMenuElement } from "./popover-menu";
 
@@ -30,7 +31,7 @@ export class PopoverMenuTargetElement
   }
 
   readonly kind = "POPOVER_MENU_TARGET";
-  private emptyReplacement = new Gtk.Box();
+  private emptyReplacement = new Bin();
   private childElement: GjsElement | null = null;
   get widget(): Gtk.Widget {
     if (!this.childElement) {

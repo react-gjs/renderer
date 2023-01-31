@@ -19,6 +19,7 @@ import { createStylePropMapper } from "../../../utils/property-maps-factories/cr
 import type { TextNode } from "../../markup/text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
+import { popoverMenuModelButton } from "../utils/popover-menu-model-button";
 import type { RadioGroup } from "../utils/popover-radio-controller";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
@@ -33,8 +34,8 @@ export interface PopoverMenuRadioButtonProps
   icon?: IconName;
   centered?: boolean;
   inverted?: boolean;
-  active?: boolean;
   radioGroup: string;
+  isDefault?: boolean;
   onChange?: (e: PopoverMenuRadioButtonEvent<{ isActive: boolean }>) => void;
 }
 
@@ -50,7 +51,7 @@ export class PopoverMenuRadioButtonElement
   id = Symbol();
 
   readonly kind = "POPOVER_MENU_RADIO_BUTTON";
-  widget = new Gtk.ModelButton();
+  widget = popoverMenuModelButton();
 
   rootMenu: PopoverMenuElement | null = null;
   radioGroup: RadioGroup | null = null;
@@ -82,10 +83,7 @@ export class PopoverMenuRadioButtonElement
           .inverted(DataType.Boolean, (v = false) => {
             this.widget.inverted = v;
           })
-          .active(DataType.Boolean, (v = false) => {
-            this.widget.active = v;
-          })
-          .radioGroup(DataType.String, (v = "main") => {
+          .radioGroup(DataType.String, (v = "main", allProps) => {
             if (this.rootMenu) {
               const controller = this.rootMenu.getRadioController();
 
@@ -93,7 +91,11 @@ export class PopoverMenuRadioButtonElement
                 controller.removeFromGroup(this.radioGroup.name, this);
               }
 
-              this.radioGroup = controller.addToGroup(v, this);
+              this.radioGroup = controller.addToGroup(
+                v,
+                this,
+                allProps.isDefault
+              );
               this.widget.active = this.radioGroup.isSelected(this);
             }
           })
@@ -102,9 +104,17 @@ export class PopoverMenuRadioButtonElement
   constructor(props: DiffedProps) {
     this.widget.role = Gtk.ButtonRole.RADIO;
 
-    this.handlers.bind("clicked", "onChange", () => ({
-      isActive: !this.widget.active,
+    this.handlers.bind("notify::active", "onChange", () => ({
+      isActive: this.widget.active,
     }));
+
+    this.handlers.bindInternal("clicked", (e) => {
+      if (!this.widget.active) {
+        this.radioGroup?.select(this);
+      }
+    });
+
+    this.widget.get_child;
 
     this.updateProps(props);
 
@@ -112,7 +122,9 @@ export class PopoverMenuRadioButtonElement
   }
 
   setActiveState(active: boolean) {
-    this.widget.active = active;
+    if (this.widget.active !== active) {
+      this.widget.active = active;
+    }
   }
 
   setParentMenu(name: string) {}
@@ -124,7 +136,8 @@ export class PopoverMenuRadioButtonElement
       const controller = this.rootMenu.getRadioController();
       this.radioGroup = controller.addToGroup(
         this.propsMapper.currentProps.radioGroup,
-        this
+        this,
+        this.propsMapper.currentProps.isDefault
       );
       this.widget.active = this.radioGroup.isSelected(this);
     }

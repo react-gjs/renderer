@@ -22,8 +22,13 @@ import { createStylePropMapper } from "../../../utils/property-maps-factories/cr
 import type { TextNode } from "../../markup/text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
+import {
+  popoverMenuModelButton,
+  POPOVER_MENU_MARGIN,
+} from "../utils/popover-menu-model-button";
 import { PopoverMenuCheckButtonElement } from "./popover-menu-check-button";
 import { PopoverMenuRadioButtonElement } from "./popover-menu-radio-button";
+import { PopoverMenuSeparatorElement } from "./popover-menu-separator";
 
 type PopoverMenuEntryPropsMixin = MarginProps & StyleProps;
 
@@ -51,10 +56,10 @@ export class PopoverMenuEntryElement
   static createSubmenu() {
     const submenu = new Gtk.Box({
       orientation: Gtk.Orientation.VERTICAL,
-      margin: 10,
+      margin: POPOVER_MENU_MARGIN,
     });
 
-    const goBackButton = new Gtk.ModelButton();
+    const goBackButton = popoverMenuModelButton();
     goBackButton.text = "";
     goBackButton.inverted = true;
     goBackButton.centered = true;
@@ -69,7 +74,7 @@ export class PopoverMenuEntryElement
   }
 
   readonly kind = "POPOVER_MENU_ENTRY";
-  widget = new Gtk.ModelButton();
+  widget = popoverMenuModelButton();
 
   parentMenu = "main";
   rootMenu: PopoverMenuElement | null = null;
@@ -85,6 +90,7 @@ export class PopoverMenuEntryElement
     | PopoverMenuEntryElement
     | PopoverMenuCheckButtonElement
     | PopoverMenuRadioButtonElement
+    | PopoverMenuSeparatorElement
   >(this.lifecycle, this.submenu.widget);
   private readonly handlers = new EventHandlers<
     Gtk.ModelButton,
@@ -168,6 +174,7 @@ export class PopoverMenuEntryElement
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
         PopoverMenuRadioButtonElement,
+        PopoverMenuSeparatorElement,
       ])
     ) {
       throw new Error(
@@ -194,6 +201,7 @@ export class PopoverMenuEntryElement
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
         PopoverMenuRadioButtonElement,
+        PopoverMenuSeparatorElement,
       ])
     ) {
       throw new Error(

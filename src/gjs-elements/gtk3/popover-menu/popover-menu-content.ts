@@ -14,7 +14,9 @@ import type { TextNode } from "../markup/text-node";
 import { PopoverMenuCheckButtonElement } from "./content-elements/popover-menu-check-button";
 import { PopoverMenuEntryElement } from "./content-elements/popover-menu-entry";
 import { PopoverMenuRadioButtonElement } from "./content-elements/popover-menu-radio-button";
+import { PopoverMenuSeparatorElement } from "./content-elements/popover-menu-separator";
 import { PopoverMenuElement } from "./popover-menu";
+import { POPOVER_MENU_MARGIN } from "./utils/popover-menu-model-button";
 
 export interface PopoverMenuContentProps {
   minWidth?: number;
@@ -30,7 +32,7 @@ export class PopoverMenuContentElement
   }
 
   static createWidget(scrollBox: Gtk.ScrolledWindow, box: Gtk.Box) {
-    scrollBox.margin = 10;
+    scrollBox.margin = POPOVER_MENU_MARGIN;
     scrollBox.propagate_natural_width = true;
     scrollBox.propagate_natural_height = true;
     box.orientation = Gtk.Orientation.VERTICAL;
@@ -54,6 +56,7 @@ export class PopoverMenuContentElement
     | PopoverMenuEntryElement
     | PopoverMenuCheckButtonElement
     | PopoverMenuRadioButtonElement
+    | PopoverMenuSeparatorElement
   >(this.lifecycle, this.box);
   private readonly propsMapper = new PropertyMapper<PopoverMenuContentProps>(
     this.lifecycle,
@@ -97,6 +100,7 @@ export class PopoverMenuContentElement
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
         PopoverMenuRadioButtonElement,
+        PopoverMenuSeparatorElement,
       ])
     ) {
       throw new Error("Popover can only have PopoverEntry as children");
@@ -124,6 +128,7 @@ export class PopoverMenuContentElement
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
         PopoverMenuRadioButtonElement,
+        PopoverMenuSeparatorElement,
       ])
     ) {
       throw new Error("Popover can only have PopoverEntry as children");
