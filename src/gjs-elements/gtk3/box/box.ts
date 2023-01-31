@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { BaselinePosition, Orientation } from "../../../g-enums";
+import { PackType } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -26,6 +27,7 @@ export interface BoxProps extends BoxPropsMixin {
   spacing?: number;
   baselinePosition?: BaselinePosition;
   orientation?: Orientation;
+  childPackType?: PackType;
 }
 
 export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
@@ -68,12 +70,24 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
             this.widget.orientation = v;
           }
         )
+        .childPackType(DataType.Enum(Gtk.PackType), () => {
+          this.children.forEach((child) => {
+            this.applyPackType(child);
+          });
+        })
   );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+  }
+
+  private applyPackType(child: GjsElement) {
+    const packType =
+      this.propsMapper.currentProps.childPackType ?? PackType.START;
+
+    this.widget.child_set_property(child.widget, "pack-type", packType);
   }
 
   updateProps(props: DiffedProps): void {
@@ -87,6 +101,7 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
 
     const shouldAppend = child.notifyWillAppendTo(this);
     this.children.addChild(child, !shouldAppend);
+    this.applyPackType(child);
     this.widget.show_all();
   }
 
@@ -95,6 +110,7 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild, !shouldAppend);
+    this.applyPackType(newChild);
     this.widget.show_all();
   }
 

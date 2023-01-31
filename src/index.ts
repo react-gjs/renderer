@@ -2,6 +2,7 @@ import "gi://Gdk?version=3.0";
 import "gi://Gtk?version=3.0";
 import type { default as DeclarationTypes } from "./declarations";
 
+export * from "./components";
 export * from "./g-enums";
 export { GjsElementManager } from "./gjs-elements/gjs-element-manager";
 export * from "./gjs-elements/gjs-element-types";

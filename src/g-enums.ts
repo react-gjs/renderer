@@ -74,6 +74,9 @@ export const IconSize = Gtk.IconSize;
 export type Sensitivity = Gtk.SensitivityType;
 export const Sensitivity = Gtk.SensitivityType;
 
+export type PackType = Gtk.PackType;
+export const PackType = Gtk.PackType;
+
 export enum ButtonType {
   FLAT,
   NORMAL,

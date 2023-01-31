@@ -22,8 +22,8 @@ export const compareArraysShallow = (oldArray?: any[], newArray?: any[]) => {
 };
 
 export const compareRecordsShallow = (
-  oldStyle: undefined | Record<string, string>,
-  newStyle: undefined | Record<string, string>
+  oldStyle: undefined | Record<string, any>,
+  newStyle: undefined | Record<string, any>
 ) => {
   if (typeof oldStyle !== typeof newStyle) {
     return true;
@@ -50,8 +50,8 @@ export const compareRecordsShallow = (
 };
 
 export const compareRecordsDeep = (
-  oldStyle: undefined | Record<string, string>,
-  newStyle: undefined | Record<string, string>
+  oldStyle: undefined | Record<string, any>,
+  newStyle: undefined | Record<string, any>
 ) => {
   if (typeof oldStyle !== typeof newStyle) {
     return true;
