@@ -28,16 +28,19 @@ type LinkButtonPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type LinkButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, LinkButtonElement>;
+
 export interface LinkButtonProps extends LinkButtonPropsMixin {
   label?: string;
   useUnderline?: boolean;
   margin?: ElementMargin;
-  onClick?: (event: SyntheticEvent) => void;
-  onActivate?: (event: SyntheticEvent) => void;
-  onPressed?: (event: SyntheticEvent) => void;
-  onReleased?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onClick?: (event: LinkButtonEvent) => void;
+  onActivate?: (event: LinkButtonEvent) => void;
+  onPressed?: (event: LinkButtonEvent) => void;
+  onReleased?: (event: LinkButtonEvent) => void;
+  onMouseEnter?: (event: LinkButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: LinkButtonEvent<PointerEvent>) => void;
 }
 
 export class LinkButtonElement
@@ -56,10 +59,9 @@ export class LinkButtonElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.Button, LinkButtonProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
 
   private readonly propsMapper = new PropertyMapper<LinkButtonProps>(

@@ -31,6 +31,9 @@ type ToolbarRadioButtonPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type ToolbarRadioButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, ToolbarRadioButtonElement>;
+
 export interface ToolbarRadioButtonProps extends ToolbarRadioButtonPropsMixin {
   radioGroup: string;
   label?: string;
@@ -40,10 +43,10 @@ export interface ToolbarRadioButtonProps extends ToolbarRadioButtonPropsMixin {
   isDefault?: boolean;
   sameSize?: boolean;
   expand?: boolean;
-  onClick?: (event: SyntheticEvent) => void;
-  onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onClick?: (event: ToolbarRadioButtonEvent) => void;
+  onChange?: (event: ToolbarRadioButtonEvent<{ isActive: boolean }>) => void;
+  onMouseEnter?: (event: ToolbarRadioButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: ToolbarRadioButtonEvent<PointerEvent>) => void;
 }
 
 export class ToolbarRadioButtonElement
@@ -62,7 +65,7 @@ export class ToolbarRadioButtonElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private handlers!: EventHandlers<
     Gtk.ToggleToolButton,
     ToolbarRadioButtonProps
@@ -190,7 +193,7 @@ export class ToolbarRadioButtonElement
       this.handlers = new EventHandlers<
         Gtk.ToggleToolButton,
         ToolbarRadioButtonProps
-      >(this.lifecycle, this.widget);
+      >(this);
 
       this.handlers.bind("clicked", "onClick");
       this.handlers.bind("toggled", "onChange", () => {

@@ -27,17 +27,20 @@ type CheckButtonPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type CheckButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, CheckButtonElement>;
+
 export interface CheckButtonProps extends CheckButtonPropsMixin {
   label?: string;
   useUnderline?: boolean;
   active?: boolean;
-  onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
-  onClick?: (event: SyntheticEvent) => void;
-  onActivate?: (event: SyntheticEvent) => void;
-  onPressed?: (event: SyntheticEvent) => void;
-  onReleased?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onChange?: (event: CheckButtonEvent<{ isActive: boolean }>) => void;
+  onClick?: (event: CheckButtonEvent) => void;
+  onActivate?: (event: CheckButtonEvent) => void;
+  onPressed?: (event: CheckButtonEvent) => void;
+  onReleased?: (event: CheckButtonEvent) => void;
+  onMouseEnter?: (event: CheckButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: CheckButtonEvent<PointerEvent>) => void;
 }
 
 export class CheckButtonElement
@@ -56,11 +59,11 @@ export class CheckButtonElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.CheckButton,
     CheckButtonProps
-  >(this.lifecycle, this.widget);
+  >(this);
   private readonly propsMapper = new PropertyMapper<CheckButtonProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

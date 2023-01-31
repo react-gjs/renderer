@@ -27,12 +27,15 @@ type TextEntryPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type TextEntryElementEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, TextEntryElement>;
+
 export interface TextEntryProps extends TextEntryPropsMixin {
   value?: string;
   margin?: ElementMargin;
-  onChange?: (event: SyntheticEvent<{ text: string }>) => void;
-  onKeyPress?: (event: SyntheticEvent<KeyPressEvent>) => void;
-  onKeyRelease?: (event: SyntheticEvent<KeyPressEvent>) => void;
+  onChange?: (event: TextEntryElementEvent<{ text: string }>) => void;
+  onKeyPress?: (event: TextEntryElementEvent<KeyPressEvent>) => void;
+  onKeyRelease?: (event: TextEntryElementEvent<KeyPressEvent>) => void;
 }
 
 export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
@@ -51,10 +54,9 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.Entry, TextEntryProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
 
   private readonly propsMapper = new PropertyMapper<TextEntryProps>(

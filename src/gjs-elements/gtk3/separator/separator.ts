@@ -40,7 +40,7 @@ export class SeparatorElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<SeparatorProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

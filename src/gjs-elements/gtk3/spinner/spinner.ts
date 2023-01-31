@@ -37,7 +37,7 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<SpinnerProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

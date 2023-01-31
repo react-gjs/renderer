@@ -13500,11 +13500,7 @@ container and help break any circular reference count cycles.
      * @param property_name The name of the property to set
      * @param value The value to set the property to
      */
-    child_set_property(
-      child: Widget,
-      property_name: string,
-      value: GObject.Value
-    ): void;
+    child_set_property(child: Widget, property_name: string, value: any): void;
     /**
      * Sets one or more child properties for #child and
      * #container.
@@ -33889,7 +33885,7 @@ container and help break any circular reference count cycles.
      * activated. If this is set, the button should not have an
      * action associated with it.
      */
-    menu_name: string;
+    menu_name: string | null;
     /**
      * Specifies whether the button is a plain, check or radio
      * button. When {@link Actionable.action_name} is set, the

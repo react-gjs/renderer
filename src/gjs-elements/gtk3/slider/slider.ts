@@ -26,6 +26,11 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 
 type SliderPropsMixin = AlignmentProps & MarginProps & ExpandProps & StyleProps;
 
+export type SliderEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  SliderElement
+>;
+
 export interface SliderProps extends SliderPropsMixin {
   orientation?: Orientation;
   value?: number;
@@ -48,7 +53,7 @@ export interface SliderProps extends SliderPropsMixin {
   fixedSize?: boolean;
   marks?: { [key: number]: string };
   marksPosition?: PositionType;
-  onValueChange?: (event: SyntheticEvent<{ value: number }>) => void;
+  onValueChange?: (event: SliderEvent<{ value: number }>) => void;
 }
 
 export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
@@ -66,11 +71,8 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
   private parent: GjsElement | null = null;
   private adjustment = new Gtk.Adjustment();
 
-  private readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Scale, SliderProps>(
-    this.lifecycle,
-    this.widget
-  );
+  readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Gtk.Scale, SliderProps>(this);
   private readonly propsMapper = new PropertyMapper<SliderProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget, { h: Align.FILL, v: Align.FILL }),

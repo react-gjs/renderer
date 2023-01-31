@@ -101,6 +101,22 @@ import type {
   NumberInputProps,
 } from "../gjs-elements/gtk3/number-input/number-input";
 import type {
+  PopoverMenuCheckButtonElement,
+  PopoverMenuCheckButtonProps,
+} from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-check-button";
+import type {
+  PopoverMenuEntryElement,
+  PopoverMenuEntryProps,
+} from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-entry";
+import type {
+  PopoverMenuRadioButtonElement,
+  PopoverMenuRadioButtonProps,
+} from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-radio-button";
+import type {
+  PopoverMenuSeparatorElement,
+  PopoverMenuSeparatorProps,
+} from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-separator";
+import type {
   PressableElement,
   PressableProps,
 } from "../gjs-elements/gtk3/pressable/pressable";
@@ -312,6 +328,22 @@ declare global {
       PRESSABLE: IntrinsicComponent<
         ComponentWithChild<PressableProps, React.ReactElement>,
         PressableElement
+      >;
+      POPOVER_MENU_ENTRY: IntrinsicComponent<
+        ComponentWithChildren<PopoverMenuEntryProps>,
+        PopoverMenuEntryElement
+      >;
+      POPOVER_MENU_CHECK_BUTTON: IntrinsicComponent<
+        PopoverMenuCheckButtonProps,
+        PopoverMenuCheckButtonElement
+      >;
+      POPOVER_MENU_RADIO_BUTTON: IntrinsicComponent<
+        PopoverMenuRadioButtonProps,
+        PopoverMenuRadioButtonElement
+      >;
+      POPOVER_MENU_SEPARATOR: IntrinsicComponent<
+        PopoverMenuSeparatorProps,
+        PopoverMenuSeparatorElement
       >;
       RADIO_BOX: IntrinsicComponent<
         ComponentWithChildren<RadioBoxProps>,

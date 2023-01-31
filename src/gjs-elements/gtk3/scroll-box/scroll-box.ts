@@ -29,6 +29,11 @@ type ScrollBoxPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type ScrollBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  ScrollBoxElement
+>;
+
 export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   maxWidth?: number;
   maxHeight?: number;
@@ -41,7 +46,7 @@ export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   verticalScrollbar?: PolicyType;
   shadow?: ShadowType;
   overlayScrolling?: boolean;
-  onEdgeReached?: (event: SyntheticEvent<{ position: PositionType }>) => void;
+  onEdgeReached?: (event: ScrollBoxEvent<{ position: PositionType }>) => void;
 }
 
 export class ScrollBoxElement
@@ -58,11 +63,10 @@ export class ScrollBoxElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private children = new ChildOrderController(this.lifecycle, this.widget);
   private handlers = new EventHandlers<Gtk.ScrolledWindow, ScrollBoxProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
 
   private readonly propsMapper = new PropertyMapper<ScrollBoxProps>(

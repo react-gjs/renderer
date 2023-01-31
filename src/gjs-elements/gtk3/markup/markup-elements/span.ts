@@ -37,7 +37,7 @@ export class MSpanElement {
   protected children: Array<TextNode | BaseMarkupElement> = [];
   protected attributes = new MAttributes();
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<MSpanProps>(
     this.lifecycle,
     createMarkupPropMapper(this.attributes)

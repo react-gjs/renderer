@@ -62,7 +62,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
    */
   private previousColumnCount = 0;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly children = new GridItemsList(this.lifecycle, this);
   private readonly propsMapper = new PropertyMapper<GridProps>(
     this.lifecycle,

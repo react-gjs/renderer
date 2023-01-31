@@ -30,6 +30,9 @@ type ToolbarToggleButtonPropsMixin = AlignmentProps &
   ExpandProps &
   StyleProps;
 
+export type ToolbarToggleButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, ToolbarToggleButtonElement>;
+
 export interface ToolbarToggleButtonProps
   extends ToolbarToggleButtonPropsMixin {
   label?: string;
@@ -38,10 +41,10 @@ export interface ToolbarToggleButtonProps
   focusOnClick?: boolean;
   sameSize?: boolean;
   expand?: boolean;
-  onClick?: (event: SyntheticEvent) => void;
-  onChange?: (event: SyntheticEvent<{ isActive: boolean }>) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onClick?: (event: ToolbarToggleButtonEvent) => void;
+  onChange?: (event: ToolbarToggleButtonEvent<{ isActive: boolean }>) => void;
+  onMouseEnter?: (event: ToolbarToggleButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: ToolbarToggleButtonEvent<PointerEvent>) => void;
 }
 
 export class ToolbarToggleButtonElement
@@ -60,11 +63,11 @@ export class ToolbarToggleButtonElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.ToggleToolButton,
     ToolbarToggleButtonProps
-  >(this.lifecycle, this.widget);
+  >(this);
   private readonly propsMapper = new PropertyMapper<ToolbarToggleButtonProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

@@ -56,6 +56,18 @@ export const NumberInput = IntrinsicElem("NUMBER_INPUT");
 export const Image = IntrinsicElem("IMAGE");
 /** Equivalent to the Gtk.EventBox widget. */
 export const Pressable = IntrinsicElem("PRESSABLE");
+/** Equivalent to the Gtk.ModelButton widget. */
+export const PopoverMenuEntry = IntrinsicElem("POPOVER_MENU_ENTRY");
+/** Equivalent to the Gtk.ModelButton widget. */
+export const PopoverMenuCheckButton = IntrinsicElem(
+  "POPOVER_MENU_CHECK_BUTTON"
+);
+/** Equivalent to the Gtk.ModelButton widget. */
+export const PopoverMenuRadioButton = IntrinsicElem(
+  "POPOVER_MENU_RADIO_BUTTON"
+);
+/** Equivalent to the Gtk.Separator widget. */
+export const PopoverMenuSeparator = IntrinsicElem("POPOVER_MENU_SEPARATOR");
 /** Equivalent to the Gtk.Box widget. */
 export const RadioBox = IntrinsicElem("RADIO_BOX");
 /** Equivalent to the Gtk.RadioButton widget. */
@@ -104,6 +116,7 @@ export const VolumeButton = IntrinsicElem("VOLUME_BUTTON");
 /** Equivalent to the Gtk.Window widget. */
 export const Window = IntrinsicElem("WINDOW");
 
+export { PopoverMenu } from "./gjs-elements/gtk3/popover-menu/component";
 export { Popover } from "./gjs-elements/gtk3/popover/component";
 export { createStack, useStack } from "./gjs-elements/gtk3/stack/use-stack";
 

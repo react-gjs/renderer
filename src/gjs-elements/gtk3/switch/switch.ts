@@ -21,10 +21,15 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 
 type SwitchPropsMixin = AlignmentProps & MarginProps & ExpandProps & StyleProps;
 
+export type SwitchEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  SwitchElement
+>;
+
 export interface SwitchProps extends SwitchPropsMixin {
   margin?: ElementMargin;
   value?: boolean;
-  onToggle?: (event: SyntheticEvent<{ state: boolean }>) => void;
+  onToggle?: (event: SwitchEvent<{ state: boolean }>) => void;
 }
 
 export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
@@ -39,11 +44,8 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Switch, SwitchProps>(
-    this.lifecycle,
-    this.widget
-  );
+  readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Gtk.Switch, SwitchProps>(this);
 
   private readonly propsMapper = new PropertyMapper<SwitchProps>(
     this.lifecycle,

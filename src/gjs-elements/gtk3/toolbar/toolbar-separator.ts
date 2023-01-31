@@ -43,7 +43,7 @@ export class ToolbarSeparatorElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<ToolbarSeparatorProps>(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),

@@ -25,15 +25,18 @@ import { MenuEntryElement } from "./menu-entry";
 
 type MenuCheckButtonPropsMixin = MarginProps & ExpandProps & StyleProps;
 
+export type MenuCheckButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, MenuCheckButtonElement>;
+
 export interface MenuCheckButtonProps extends MenuCheckButtonPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
   value?: boolean;
   type?: MenuCheckButtonType;
   inconsistent?: boolean;
-  onToggle?: (event: SyntheticEvent<{ value: boolean }>) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onToggle?: (event: MenuCheckButtonEvent<{ value: boolean }>) => void;
+  onMouseEnter?: (event: MenuCheckButtonEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: MenuCheckButtonEvent<PointerEvent>) => void;
 }
 
 export class MenuCheckButtonElement
@@ -50,11 +53,11 @@ export class MenuCheckButtonElement
 
   private parent: MenuBarItemElement | MenuEntryElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.MenuItem,
     MenuCheckButtonProps
-  >(this.lifecycle, this.widget);
+  >(this);
 
   private readonly propsMapper = new PropertyMapper<MenuCheckButtonProps>(
     this.lifecycle,

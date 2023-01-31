@@ -65,7 +65,7 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController<GjsToolbarElement>(
     this.lifecycle,
     this.widget,

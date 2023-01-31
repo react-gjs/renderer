@@ -1,9 +1,9 @@
-import type Gtk from "gi://Gtk";
 import {
   EventPhase,
   EventPhaseController,
 } from "../../../reconciler/event-phase";
 import type { ElementLifecycle } from "../../element-extender";
+import type { GjsElement } from "../../gjs-element";
 import type { DiffedProps } from "./map-properties";
 import { UnsetProp } from "./map-properties";
 
@@ -25,11 +25,15 @@ type SyntheticEventPropsGenerator<A extends any[] = any[]> = (
   ...args: A
 ) => Record<string, any>;
 
-export type SyntheticEvent<A extends Record<string, any> = {}> = A & {
+export type SyntheticEvent<
+  A extends Record<string, any> = {},
+  T extends GjsElement = GjsElement
+> = A & {
   stopPropagation(): void;
   preventDefault(): void;
   originalEvent: any;
-  target: Gtk.Widget;
+  target: T;
+  targetWidget: T["widget"];
 };
 
 const noop = () => {};
@@ -40,7 +44,7 @@ class EventBind {
   private handler: (event: SyntheticEvent) => any = noop;
 
   constructor(
-    private widget: Widget<any>,
+    private element: { widget: Widget<any> },
     private signal: string,
     private argGetter: SyntheticEventPropsGenerator<any> = () => ({}),
     private eventPhase: EventPhase = EventPhase.Input
@@ -58,37 +62,40 @@ class EventBind {
   init() {
     if (this.isConnected) return;
 
-    this.id = this.widget.connect(this.signal, (target: any, ...args: any[]) =>
-      EventPhaseController.startPhase(this.eventPhase, () => {
-        try {
-          let propagate = true;
+    this.id = this.element.widget.connect(
+      this.signal,
+      (targetWidget: any, ...args: any[]) =>
+        EventPhaseController.startPhase(this.eventPhase, () => {
+          try {
+            let propagate = true;
 
-          const stopPropagation = () => {
-            propagate = false;
-          };
+            const stopPropagation = () => {
+              propagate = false;
+            };
 
-          const a = this.argGetter(...args);
+            const a = this.argGetter(...args);
 
-          const syntheticEvent: SyntheticEvent<any> = Object.assign({}, a, {
-            stopPropagation,
-            preventDefault: stopPropagation,
-            originalEvent: args[0],
-            target,
-          });
+            const syntheticEvent: SyntheticEvent<any> = Object.assign({}, a, {
+              stopPropagation,
+              preventDefault: stopPropagation,
+              originalEvent: args[0],
+              targetWidget,
+              target: this.element,
+            });
 
-          const handlerReturn = this.handler(syntheticEvent);
+            const handlerReturn = this.handler(syntheticEvent);
 
-          if (handlerReturn instanceof Promise) {
-            this.showAsyncWarning();
+            if (handlerReturn instanceof Promise) {
+              this.showAsyncWarning();
+            }
+
+            return !propagate;
+          } catch (e) {
+            // if argGetter throws it's a no-op
+            // TODO: only silence no-op errors
+            return true;
           }
-
-          return !propagate;
-        } catch (e) {
-          // if argGetter throws it's a no-op
-          // TODO: only silence no-op errors
-          return true;
-        }
-      })
+        })
     );
 
     this.isConnected = true;
@@ -106,7 +113,7 @@ class EventBind {
 
   remove() {
     if (this.id) {
-      this.widget.disconnect(this.id);
+      this.element.widget.disconnect(this.id);
       this.isConnected = false;
     }
   }
@@ -120,9 +127,9 @@ export class EventHandlers<
   private bindEvents = new Map<string, EventBind>();
   private internalBinds: Array<EventBind> = [];
 
-  constructor(private element: ElementLifecycle, private widget: W) {
-    this.element.onUpdate((props) => this.update(props));
-    this.element.beforeDestroy(() => {
+  constructor(private element: { widget: W; lifecycle: ElementLifecycle }) {
+    this.element.lifecycle.onUpdate((props) => this.update(props));
+    this.element.lifecycle.beforeDestroy(() => {
       this.unbindAll();
     });
   }
@@ -158,7 +165,7 @@ export class EventHandlers<
     eventPhase: EventPhase = EventPhase.Default
   ) {
     const bind = new EventBind(
-      this.widget,
+      this.element,
       signal,
       (...args) => args,
       eventPhase
@@ -187,7 +194,7 @@ export class EventHandlers<
   ) {
     this.bindEvents.set(
       propName as string,
-      new EventBind(this.widget, signal, getArgs, eventPhase)
+      new EventBind(this.element, signal, getArgs, eventPhase)
     );
   }
 

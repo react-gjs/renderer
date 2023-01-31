@@ -27,6 +27,11 @@ import { MenuCheckButtonElement } from "./menu-check-button";
 
 type MenuEntryPropsMixin = MarginProps & ExpandProps & StyleProps;
 
+export type MenuEntryEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  MenuEntryElement
+>;
+
 export interface MenuEntryProps extends MenuEntryPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
@@ -36,9 +41,9 @@ export interface MenuEntryProps extends MenuEntryPropsMixin {
    * is displayed in a dimmed color.
    */
   secondaryLabel?: string;
-  onActivate?: (event: SyntheticEvent) => void;
-  onMouseEnter?: (event: SyntheticEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SyntheticEvent<PointerEvent>) => void;
+  onActivate?: (event: MenuEntryEvent) => void;
+  onMouseEnter?: (event: MenuEntryEvent<PointerEvent>) => void;
+  onMouseLeave?: (event: MenuEntryEvent<PointerEvent>) => void;
 }
 
 export class MenuEntryElement
@@ -58,10 +63,9 @@ export class MenuEntryElement
 
   private parent: MenuBarItemElement | MenuEntryElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.MenuItem, MenuEntryProps>(
-    this.lifecycle,
-    this.widget
+    this
   );
   private readonly children = new ChildOrderController<
     MenuEntryElement | MenuCheckButtonElement

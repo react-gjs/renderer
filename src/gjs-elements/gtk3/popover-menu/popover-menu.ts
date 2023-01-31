@@ -19,40 +19,45 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { Bin } from "../../utils/widgets/bin";
 import type { TextNode } from "../markup/text-node";
-import { PopoverContentElement } from "./popover-content";
-import { PopoverTargetElement } from "./popover-target";
+import { PopoverMenuContentElement } from "./popover-menu-content";
+import { PopoverMenuTargetElement } from "./popover-menu-target";
+import { PopoverMenuRadioController } from "./utils/popover-radio-controller";
 
-type PopoverPropsMixin = AlignmentProps &
+type PopoverMenuPropsMixin = AlignmentProps &
   MarginProps &
   ExpandProps &
   StyleProps;
 
-export interface PopoverProps extends PopoverPropsMixin {
+export interface PopoverMenuProps extends PopoverMenuPropsMixin {
   isModal?: boolean;
   constraint?: PopoverConstraint;
   position?: PositionType;
 }
 
 export type PopoverInternalProps = {
-  popoverWidget: Gtk.Popover;
+  popoverWidget: Gtk.PopoverMenu;
 };
 
-export class PopoverElement implements GjsElement<"POPOVER", Bin> {
+export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "POPOVER";
+  readonly kind = "POPOVER_MENU";
   widget = new Bin();
-  popover!: Gtk.Popover;
+  popover!: Gtk.PopoverMenu;
+
+  ownMenuName = "main";
+
+  submenus = new Set<string>();
 
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<
-    PopoverProps & PopoverInternalProps
+    PopoverMenuProps & PopoverInternalProps
   >(
     this.lifecycle,
     createAlignmentPropMapper(this.widget),
@@ -62,7 +67,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
     (props) =>
       props
         .popoverWidget(DataType.Unknown, (popoverWidget) => {
-          this.popover = popoverWidget as Gtk.Popover;
+          this.popover = popoverWidget as Gtk.PopoverMenu;
           this.popover.set_relative_to(this.widget);
         })
         .isModal(DataType.Boolean, (v = false) => {
@@ -74,21 +79,38 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
             this.popover.set_constrain_to(v);
           }
         )
-        .position(DataType.Enum(PositionType), (v = PositionType.BOTTOM) => {
+        .position(DataType.Enum(PositionType), (v = PositionType.TOP) => {
           this.popover.set_position(v);
         })
   );
 
   private hasContentChild = false;
-  private contentElement?: PopoverContentElement;
+  private contentElement?: PopoverMenuContentElement;
   private hasTarget = false;
-  private targetElement?: PopoverTargetElement;
+  private targetElement?: PopoverMenuTargetElement;
+  private menuRadioGroups = new PopoverMenuRadioController();
 
   constructor(props: DiffedProps) {
     this.propsMapper.skipDefaults();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+  }
+
+  getRadioController() {
+    return this.menuRadioGroups;
+  }
+
+  addSubMenu(subMenu: Gtk.Box, name: string) {
+    if (this.submenus.has(name)) return;
+
+    this.popover.add(subMenu);
+    this.popover.child_set_property(subMenu, "submenu", name);
+    this.submenus.add(name);
+  }
+
+  removeSubMenu(name: string) {
+    this.submenus.delete(name);
   }
 
   onContentChange() {
@@ -106,7 +128,9 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    if (GjsElementManager.isGjsElementOfKind(child, PopoverContentElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(child, PopoverMenuContentElement)
+    ) {
       if (this.hasContentChild) {
         throw new Error("Popover can only have one child");
       }
@@ -115,9 +139,11 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
         this.popover.add(child.widget);
         this.hasContentChild = true;
         this.contentElement = child;
+        child.setParentMenu(this.ownMenuName);
+        child.setRootMenu(this);
       }
     } else if (
-      GjsElementManager.isGjsElementOfKind(child, PopoverTargetElement)
+      GjsElementManager.isGjsElementOfKind(child, PopoverMenuTargetElement)
     ) {
       if (this.hasTarget) {
         throw new Error("Popover can only have one target");
@@ -164,11 +190,13 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   notifyWillUnmount(child: GjsElement): void {
-    if (GjsElementManager.isGjsElementOfKind(child, PopoverContentElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(child, PopoverMenuContentElement)
+    ) {
       this.hasContentChild = false;
       this.contentElement = undefined;
     } else if (
-      GjsElementManager.isGjsElementOfKind(child, PopoverTargetElement)
+      GjsElementManager.isGjsElementOfKind(child, PopoverMenuTargetElement)
     ) {
       this.hasTarget = false;
       this.targetElement = undefined;

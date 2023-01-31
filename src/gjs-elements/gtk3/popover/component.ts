@@ -7,8 +7,23 @@ const PopoverTargetElem = "POPOVER_TARGET";
 const PopoverContentElem = "POPOVER_CONTENT";
 
 export type PopoverProps = BaseProps & {
-  content: (hidePopover: () => void) => React.ReactElement;
-  children: (
+  /**
+   * A function that should return the contents of the Popover.
+   *
+   * @param hidePopover - A function that can be called to hide the
+   *   popover.
+   */
+  renderPopover: (hidePopover: () => void) => React.ReactElement;
+  /**
+   * A function that should return the element that the Popover will
+   * be attached to.
+   *
+   * @param showPopover - A function that can be called to show the
+   *   popover.
+   * @param hidePopover - A function that can be called to hide the
+   *   popover.
+   */
+  renderAnchor: (
     showPopover: () => void,
     hidePopover: () => void
   ) => React.ReactElement;
@@ -33,7 +48,7 @@ const getPopoverWidget = () => {
 };
 
 export const Popover = (props: PopoverProps) => {
-  const { children, content, ...rest } = props;
+  const { renderAnchor: children, renderPopover: content, ...rest } = props;
 
   const [popover] = React.useState(getPopoverWidget);
 
@@ -43,12 +58,12 @@ export const Popover = (props: PopoverProps) => {
     React.createElement(
       PopoverContentElem,
       {},
-      props.content(popover.hidePopover)
+      props.renderPopover(popover.hidePopover)
     ),
     React.createElement(
       PopoverTargetElem,
       {},
-      props.children(popover.showPopover, popover.hidePopover)
+      props.renderAnchor(popover.showPopover, popover.hidePopover)
     )
   );
 };

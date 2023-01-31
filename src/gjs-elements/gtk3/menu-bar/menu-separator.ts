@@ -32,7 +32,7 @@ export class MenuSeparatorElement
 
   private parent: GjsElement | null = null;
 
-  private readonly lifecycle = new ElementLifecycleController();
+  readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<MenuSeparatorProps>(
     this.lifecycle,
     createMarginPropMapper(this.widget),
