@@ -9,7 +9,6 @@ import { ElementLifecycleController } from "../../utils/element-extenders/elemen
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import type { IconName } from "../../utils/icons/icon-types";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -28,7 +27,7 @@ type MenuBarPropsMixin = AlignmentProps &
 
 export interface MenuBarProps extends MenuBarPropsMixin {
   label?: string;
-  icon?: IconName;
+  icon?: Rg.IconName;
 }
 
 export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {

@@ -15,7 +15,6 @@ import {
 } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
-import type { KeyPressEvent } from "../../utils/gdk-events/key-press-event";
 import { parseEventKey } from "../../utils/gdk-events/key-press-event";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -48,8 +47,8 @@ export interface NumberInputProps extends NumberInputPropsMixin {
   value?: number;
   wrapOnBounds?: boolean;
   onChange?: (event: NumberInputEvent<{ value: number }>) => void;
-  onKeyPress?: (event: NumberInputEvent<KeyPressEvent>) => void;
-  onKeyRelease?: (event: NumberInputEvent<KeyPressEvent>) => void;
+  onKeyPress?: (event: NumberInputEvent<Rg.KeyPressEventData>) => void;
+  onKeyRelease?: (event: NumberInputEvent<Rg.KeyPressEventData>) => void;
 }
 
 export class NumberInputElement

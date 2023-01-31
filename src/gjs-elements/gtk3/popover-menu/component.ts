@@ -1,11 +1,10 @@
 import Gtk from "gi://Gtk";
 import React from "react";
-import type { GjsElementTypes } from "../../gjs-element-types";
 import type { PopoverMenuProps as BaseProps } from "./popover-menu";
 
-const PopoverElem: GjsElementTypes = "POPOVER_MENU";
-const TargetElem: GjsElementTypes = "POPOVER_MENU_TARGET";
-const ContentElem: GjsElementTypes = "POPOVER_MENU_CONTENT";
+const PopoverElem: Rg.GjsElementTypes = "POPOVER_MENU";
+const TargetElem: Rg.GjsElementTypes = "POPOVER_MENU_TARGET";
+const ContentElem: Rg.GjsElementTypes = "POPOVER_MENU_CONTENT";
 
 export type PopoverMenuProps = BaseProps & {
   /** The minimum width of the Popover Menu. */

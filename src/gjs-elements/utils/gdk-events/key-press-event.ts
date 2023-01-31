@@ -11,12 +11,16 @@ export enum KeyPressModifiers {
   CTR_ALT_SHIFT = "CTRL_ALT_SHIFT",
 }
 
-export type KeyPressEvent = {
-  /** A modifier key(s) that was pressed at the same time. */
-  modifier: KeyPressModifiers;
-  /** ASCII character code of the pressed button. */
-  keyCode: number;
-};
+declare global {
+  namespace Rg {
+    type KeyPressEventData = {
+      /** A modifier key(s) that was pressed at the same time. */
+      modifier: KeyPressModifiers;
+      /** ASCII character code of the pressed button. */
+      keyCode: number;
+    };
+  }
+}
 
 const mapState = (event: Gdk.EventKey) => {
   switch (event.get_state()[1]) {
@@ -105,7 +109,7 @@ export const mapKeyCode = (event: Gdk.EventKey) => {
 export const parseEventKey = (
   event: Gdk.EventKey,
   mustBeOfType?: Gdk.EventType
-): KeyPressEvent => {
+): Rg.KeyPressEventData => {
   if (mustBeOfType && event.get_event_type() !== mustBeOfType) {
     throw Error("no-op");
   }

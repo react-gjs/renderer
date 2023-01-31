@@ -6,7 +6,6 @@ import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import type { GjsElementTypeRegistry } from "../../gjs-element-types";
 import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
@@ -29,8 +28,8 @@ import { ToolbarToggleButtonElement } from "./toolbar-toggle-button";
 
 export type GjsToolbarElement<
   K extends
-    | keyof GjsElementTypeRegistry
-    | "APPLICATION" = keyof GjsElementTypeRegistry
+    | keyof Rg.GjsElementTypeRegistry
+    | "APPLICATION" = keyof Rg.GjsElementTypeRegistry
 > = GjsElement<K, Gtk.ToolItem>;
 
 type ToolbarPropsMixin = AlignmentProps &

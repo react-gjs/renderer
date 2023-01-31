@@ -1,9 +1,5 @@
 import Gtk from "gi://Gtk";
 import React from "react";
-import type {
-  ComponentWithChildren,
-  IntrinsicComponent,
-} from "../../../reconciler/jsx-types";
 import type { StackElement, StackProps } from "./stack";
 import type { StackScreenElement, StackScreenProps } from "./stack-screen";
 import type { StackSwitcherProps } from "./stack-switcher";
@@ -14,7 +10,7 @@ const StackSwitcherComponent = "STACK_SWITCHER";
 export const createStack = <R extends string = string>() => {
   const stackWidget = new Gtk.Stack();
 
-  type NewType = IntrinsicComponent<StackProps, StackElement>;
+  type NewType = Rg.IntrinsicComponent<StackProps, StackElement>;
 
   const Stack = (props: NewType) => {
     return React.createElement(StackComponent, {
@@ -24,7 +20,7 @@ export const createStack = <R extends string = string>() => {
   };
 
   const Switcher = (
-    props: IntrinsicComponent<StackSwitcherProps, StackScreenElement>
+    props: Rg.IntrinsicComponent<StackSwitcherProps, StackScreenElement>
   ) => {
     return React.createElement(StackSwitcherComponent, {
       ...props,
@@ -33,8 +29,8 @@ export const createStack = <R extends string = string>() => {
   };
 
   const Screen = (
-    props: IntrinsicComponent<
-      ComponentWithChildren<StackScreenProps<R>>,
+    props: Rg.IntrinsicComponent<
+      Rg.ComponentWithChildren<StackScreenProps<R>>,
       StackScreenElement
     >
   ) => {

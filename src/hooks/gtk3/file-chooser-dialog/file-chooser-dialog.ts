@@ -3,72 +3,78 @@ import Gtk from "gi://Gtk";
 import React from "react";
 import { useIsMounted } from "../../is-mounted";
 
-export type FileChooserDialogParams = {
-  /** The label of the accept button. */
-  acceptLabel?: string;
-  /**
-   * Whether the user should be able to create a new directory from
-   * the dialog.
-   */
-  allowCreateDir?: boolean;
-  /**
-   * Whether the interactions with the parent window should be
-   * prevented while the `FileChooserDialog` is open.
-   */
-  blockParentWindow?: boolean;
-  /** The label of the cancel button. */
-  cancelLabel?: string;
-  /** The default file name to use when saving. */
-  defaultFileName?: string;
-  /**
-   * The label of the filters dropdown. If not provided, no label will
-   * be shown.
-   */
-  filtersLabel?: string;
-  /**
-   * The filters to use in the dialog. Only files that match the glob
-   * patterns in the selected filter will be shown in the dialog.
-   */
-  filters?: Array<{
-    /** Whether this filter should be selected by default. */
-    isDefault?: boolean;
-    /** The label of the filter. */
-    label: string;
-    /**
-     * A list of glob patterns, if a file matches any of these
-     * patterns, it will be shown in the dialog.
-     */
-    patterns: string[];
-  }>;
-  /**
-   * Whether the dialog should only allow the user to select files
-   * that are local to the machine.
-   */
-  localOnly?: boolean;
-  /**
-   * The path to the directory that the dialog should open to. If not
-   * provided, the dialog will open to the user's home directory.
-   */
-  openDirPath?: string;
-  /**
-   * Whether the dialog should prompt the user to confirm overwriting
-   * an existing file.
-   */
-  requireOverwriteConfirmation?: boolean;
-  /**
-   * Whether the dialog should show hidden files and directories.
-   *
-   * @default false
-   */
-  showHiddenFiles?: boolean;
-  /** The title of the dialog. */
-  title?: string;
-  /**
-   * A list of directory paths that should be displayed along user
-   * default shortcuts in the dialog.
-   */
-  shortcuts?: Array<string>;
-};
+declare global {
+  namespace Rg {
+    type FileChooserDialogParams = {
+      /** The label of the accept button. */
+      acceptLabel?: string;
+      /**
+       * Whether the user should be able to create a new directory
+       * from the dialog.
+       */
+      allowCreateDir?: boolean;
+      /**
+       * Whether the interactions with the parent window should be
+       * prevented while the `FileChooserDialog` is open.
+       */
+      blockParentWindow?: boolean;
+      /** The label of the cancel button. */
+      cancelLabel?: string;
+      /** The default file name to use when saving. */
+      defaultFileName?: string;
+      /**
+       * The label of the filters dropdown. If not provided, no label
+       * will be shown.
+       */
+      filtersLabel?: string;
+      /**
+       * The filters to use in the dialog. Only files that match the
+       * glob patterns in the selected filter will be shown in the
+       * dialog.
+       */
+      filters?: Array<{
+        /** Whether this filter should be selected by default. */
+        isDefault?: boolean;
+        /** The label of the filter. */
+        label: string;
+        /**
+         * A list of glob patterns, if a file matches any of these
+         * patterns, it will be shown in the dialog.
+         */
+        patterns: string[];
+      }>;
+      /**
+       * Whether the dialog should only allow the user to select files
+       * that are local to the machine.
+       */
+      localOnly?: boolean;
+      /**
+       * The path to the directory that the dialog should open to. If
+       * not provided, the dialog will open to the user's home
+       * directory.
+       */
+      openDirPath?: string;
+      /**
+       * Whether the dialog should prompt the user to confirm
+       * overwriting an existing file.
+       */
+      requireOverwriteConfirmation?: boolean;
+      /**
+       * Whether the dialog should show hidden files and directories.
+       *
+       * @default false
+       */
+      showHiddenFiles?: boolean;
+      /** The title of the dialog. */
+      title?: string;
+      /**
+       * A list of directory paths that should be displayed along user
+       * default shortcuts in the dialog.
+       */
+      shortcuts?: Array<string>;
+    };
+  }
+}
 
 type FileChooserApi<F> = {
   /**
@@ -88,7 +94,7 @@ type FileChooserApi<F> = {
    * Opens the FileChooserDialog and returns a promise that resolves
    * once the user selects a file or cancels the dialog.
    */
-  openDialog: (params: FileChooserDialogParams) => Promise<F | undefined>;
+  openDialog: (params: Rg.FileChooserDialogParams) => Promise<F | undefined>;
   /**
    * Clears the selected file(s) and filter. This will not close the
    * dialog if it is open.
@@ -106,7 +112,7 @@ class FileChooserFilterController {
 
   constructor(
     private dialog: Gtk.FileChooserNative,
-    private filters: Required<FileChooserDialogParams>["filters"],
+    private filters: Required<Rg.FileChooserDialogParams>["filters"],
     label: string
   ) {
     const extraWidget = new Gtk.Box();
@@ -199,11 +205,11 @@ export function useFileChooser(
   const isMounted = useIsMounted();
   const [file, setFile] = React.useState<Gio.File | Gio.File[]>();
   const [filter, setFilter] =
-    React.useState<Required<FileChooserDialogParams>["filters"][number]>();
+    React.useState<Required<Rg.FileChooserDialogParams>["filters"][number]>();
   const dialogWidget = React.useRef<Gtk.FileChooserNative>();
 
   const openDialog = React.useCallback(
-    (params: FileChooserDialogParams) => {
+    (params: Rg.FileChooserDialogParams) => {
       return new Promise<Gio.File | Gio.File[] | undefined>(
         (resolve, reject) => {
           if (dialogWidget.current) {

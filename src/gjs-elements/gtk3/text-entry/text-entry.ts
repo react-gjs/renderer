@@ -11,7 +11,6 @@ import type { SyntheticEvent } from "../../utils/element-extenders/event-handler
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
-import type { KeyPressEvent } from "../../utils/gdk-events/key-press-event";
 import { parseEventKey } from "../../utils/gdk-events/key-press-event";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -34,8 +33,8 @@ export interface TextEntryProps extends TextEntryPropsMixin {
   value?: string;
   margin?: ElementMargin;
   onChange?: (event: TextEntryElementEvent<{ text: string }>) => void;
-  onKeyPress?: (event: TextEntryElementEvent<KeyPressEvent>) => void;
-  onKeyRelease?: (event: TextEntryElementEvent<KeyPressEvent>) => void;
+  onKeyPress?: (event: TextEntryElementEvent<Rg.KeyPressEventData>) => void;
+  onKeyRelease?: (event: TextEntryElementEvent<Rg.KeyPressEventData>) => void;
 }
 
 export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {

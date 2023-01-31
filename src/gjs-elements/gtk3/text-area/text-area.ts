@@ -11,7 +11,6 @@ import type { SyntheticEvent } from "../../utils/element-extenders/event-handler
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
-import type { KeyPressEvent } from "../../utils/gdk-events/key-press-event";
 import { parseEventKey } from "../../utils/gdk-events/key-press-event";
 import { getStrByteSize } from "../../utils/get-str-byte-size";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -37,8 +36,8 @@ export interface TextAreaProps extends TextAreaPropsMixin {
   value?: string;
   margin?: ElementMargin;
   onChange?: (event: TextAreaEvent<{ text: string }>) => void;
-  onKeyPress?: (event: TextAreaEvent<KeyPressEvent>) => void;
-  onKeyRelease?: (event: TextAreaEvent<KeyPressEvent>) => void;
+  onKeyPress?: (event: TextAreaEvent<Rg.KeyPressEventData>) => void;
+  onKeyRelease?: (event: TextAreaEvent<Rg.KeyPressEventData>) => void;
 }
 
 export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {

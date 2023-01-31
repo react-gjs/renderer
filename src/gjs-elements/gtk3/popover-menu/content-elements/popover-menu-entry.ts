@@ -14,7 +14,6 @@ import type { DiffedProps } from "../../../utils/element-extenders/map-propertie
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../../utils/ensure-not-string";
 import { generateUID } from "../../../utils/generate-uid";
-import type { IconName } from "../../../utils/icons/icon-types";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { StyleProps } from "../../../utils/property-maps-factories/create-style-prop-mapper";
@@ -37,7 +36,7 @@ export type PopoverMenuEntryEvent<P extends Record<string, any> = {}> =
 
 export interface PopoverMenuEntryProps extends PopoverMenuEntryPropsMixin {
   label?: string;
-  icon?: IconName;
+  icon?: Rg.IconName;
   centered?: boolean;
   inverted?: boolean;
   submenuBackButtonLabel?: string;

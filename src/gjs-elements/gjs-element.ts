@@ -1,11 +1,10 @@
 import type Gtk from "gi://Gtk";
-import type { GjsElementTypes } from "./gjs-element-types";
 import type { TextNode } from "./gtk3/markup/text-node";
 import type { DiffedProps } from "./utils/element-extenders/map-properties";
 import type { SyntheticEmitter } from "./utils/element-extenders/synthetic-emitter";
 
 export interface GjsElement<
-  K extends GjsElementTypes | "APPLICATION" = GjsElementTypes,
+  K extends Rg.GjsElementTypes | "APPLICATION" = Rg.GjsElementTypes,
   W extends Gtk.Widget = Gtk.Widget
 > {
   /**
@@ -77,4 +76,12 @@ export interface GjsElement<
     oldProps: Record<string, any>,
     newProps: Record<string, any>
   ): DiffedProps;
+}
+
+type GjsElementAlias = GjsElement;
+
+declare global {
+  namespace Rg {
+    type GjsElement = GjsElementAlias;
+  }
 }

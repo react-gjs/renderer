@@ -13,7 +13,6 @@ import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
-import type { IconName } from "../../utils/icons/icon-types";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -35,7 +34,7 @@ export type ToolbarButtonEvent<P extends Record<string, any> = {}> =
 
 export interface ToolbarButtonProps extends ToolbarButtonPropsMixin {
   label?: string;
-  icon?: IconName;
+  icon?: Rg.IconName;
   useUnderline?: boolean;
   focusOnClick?: boolean;
   sameSize?: boolean;

@@ -1,11 +1,10 @@
 import type { GjsContext } from "../reconciler/gjs-renderer";
 import type { HostContext } from "../reconciler/host-context";
 import type { GjsElement } from "./gjs-element";
-import type { GjsElementTypes } from "./gjs-element-types";
 import type { DiffedProps } from "./utils/element-extenders/map-properties";
 
 export interface GjsElementConstructor<
-  K extends GjsElementTypes | "APPLICATION"
+  K extends Rg.GjsElementTypes | "APPLICATION"
 > {
   new (props: DiffedProps, context: HostContext<GjsContext>): GjsElement<K>;
 
@@ -17,7 +16,7 @@ export class GjsElementManager {
   private static elements = new Map<string, GjsElementConstructor<any>>();
   private static elementsReverseMap = new Map<object, string>();
 
-  static register<K extends GjsElementTypes | "APPLICATION">(
+  static register<K extends Rg.GjsElementTypes | "APPLICATION">(
     kind: K,
     element: GjsElementConstructor<K>
   ) {

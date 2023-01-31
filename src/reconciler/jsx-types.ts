@@ -1,5 +1,4 @@
 import type React from "react";
-import type { WindowElement } from "../gjs-elements";
 import type {
   ActionBarElement,
   ActionBarProps,
@@ -205,208 +204,214 @@ import type {
   VolumeButtonProps,
 } from "../gjs-elements/gtk3/volume-button/volume-button";
 import type { WindowProps } from "../gjs-elements/gtk3/window/window";
-
-export type ComponentWithChildren<
-  P,
-  C extends React.ReactNode = React.ReactNode
-> = {
-  children?: C | C[];
-} & P;
-
-export type ComponentWithChild<
-  P,
-  C extends React.ReactNode = React.ReactNode
-> = {
-  children?: C;
-} & P;
-
-export type IntrinsicComponent<P, W> = {
-  ref?:
-    | {
-        current?: W | null;
-      }
-    | ((ref: W) => void);
-} & P;
+import type { WindowElement } from "../gjs-elements/rg-types";
 
 declare global {
+  namespace Rg {
+    type ComponentWithChildren<
+      P,
+      C extends React.ReactNode = React.ReactNode
+    > = {
+      children?: C | C[];
+    } & P;
+
+    type ComponentWithChild<P, C extends React.ReactNode = React.ReactNode> = {
+      children?: C;
+    } & P;
+
+    type IntrinsicComponent<P, W> = {
+      ref?:
+        | {
+            current?: W | null;
+          }
+        | ((ref: W) => void);
+    } & P;
+  }
+
   namespace JSX {
     interface IntrinsicElements {
-      ACTION_BAR: IntrinsicComponent<
-        ComponentWithChildren<ActionBarProps>,
+      ACTION_BAR: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ActionBarProps>,
         ActionBarElement
       >;
-      BOX: IntrinsicComponent<ComponentWithChildren<BoxProps>, BoxElement>;
-      BUTTON: IntrinsicComponent<
-        ComponentWithChildren<ButtonProps, string>,
+      BOX: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<BoxProps>,
+        BoxElement
+      >;
+      BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ButtonProps, string>,
         ButtonElement
       >;
-      BUTTON_BOX: IntrinsicComponent<
-        ComponentWithChildren<ButtonBoxProps>,
+      BUTTON_BOX: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ButtonBoxProps>,
         ButtonBoxElement
       >;
-      BUTTON_GROUP: IntrinsicComponent<
-        ComponentWithChildren<ButtonGroupProps>,
+      BUTTON_GROUP: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ButtonGroupProps>,
         ButtonGroupElement
       >;
-      CHECK_BUTTON: IntrinsicComponent<
-        ComponentWithChild<CheckButtonProps, string>,
+      CHECK_BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChild<CheckButtonProps, string>,
         CheckButtonElement
       >;
-      EXPANDER: IntrinsicComponent<
-        ComponentWithChildren<ExpanderProps>,
+      EXPANDER: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ExpanderProps>,
         ExpanderElement
       >;
-      FLOW_BOX: IntrinsicComponent<
-        ComponentWithChildren<FlowBoxProps>,
+      FLOW_BOX: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<FlowBoxProps>,
         FlowBoxElement
       >;
-      FLOW_BOX_ENTRY: IntrinsicComponent<
-        ComponentWithChildren<FlowBoxEntryProps>,
+      FLOW_BOX_ENTRY: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<FlowBoxEntryProps>,
         FlowBoxEntryElement
       >;
-      FRAME: IntrinsicComponent<
-        ComponentWithChildren<FrameProps>,
+      FRAME: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<FrameProps>,
         FrameElement
       >;
-      GRID: IntrinsicComponent<ComponentWithChildren<GridProps>, GridElement>;
-      GRID_ITEM: IntrinsicComponent<
-        ComponentWithChild<GridItemProps, React.ReactElement>,
+      GRID: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<GridProps>,
+        GridElement
+      >;
+      GRID_ITEM: Rg.IntrinsicComponent<
+        Rg.ComponentWithChild<GridItemProps, React.ReactElement>,
         GridItemElement
       >;
-      HEADER_BAR: IntrinsicComponent<
-        ComponentWithChildren<HeaderBarProps>,
+      HEADER_BAR: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<HeaderBarProps>,
         HeaderBarElement
       >;
-      IMAGE: IntrinsicComponent<ImageProps, ImageElement>;
-      LABEL: IntrinsicComponent<
-        ComponentWithChildren<LabelProps, string>,
+      IMAGE: Rg.IntrinsicComponent<ImageProps, ImageElement>;
+      LABEL: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<LabelProps, string>,
         LabelElement
       >;
-      LINK_BUTTON: IntrinsicComponent<
-        ComponentWithChildren<LinkButtonProps, string>,
+      LINK_BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<LinkButtonProps, string>,
         LinkButtonElement
       >;
-      MARKUP: IntrinsicComponent<
-        ComponentWithChildren<MarkupProps, string | React.ReactElement>,
+      MARKUP: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<MarkupProps, string | React.ReactElement>,
         MarkupElement
       >;
-      M_BIG: ComponentWithChildren<MBigProps, string>;
-      M_BOLD: ComponentWithChildren<MBoldProps, string>;
-      M_ITALIC: ComponentWithChildren<MItalicProps, string>;
-      M_MONOSPACE: ComponentWithChildren<MMonospaceProps, string>;
-      M_SMALL: ComponentWithChildren<MSmallProps, string>;
-      M_SPAN: ComponentWithChildren<MSpanProps, string>;
-      M_STRIKETHROUGH: ComponentWithChildren<MStrikethroughProps, string>;
-      M_SUBSCRIPT: ComponentWithChildren<MSubProps, string>;
-      M_SUPERSCRIPT: ComponentWithChildren<MSupProps, string>;
-      M_UNDERLINE: ComponentWithChildren<MUnderlineProps, string>;
-      MENU_BAR: IntrinsicComponent<
-        ComponentWithChildren<MenuBarProps>,
+      M_BIG: Rg.ComponentWithChildren<MBigProps, string>;
+      M_BOLD: Rg.ComponentWithChildren<MBoldProps, string>;
+      M_ITALIC: Rg.ComponentWithChildren<MItalicProps, string>;
+      M_MONOSPACE: Rg.ComponentWithChildren<MMonospaceProps, string>;
+      M_SMALL: Rg.ComponentWithChildren<MSmallProps, string>;
+      M_SPAN: Rg.ComponentWithChildren<MSpanProps, string>;
+      M_STRIKETHROUGH: Rg.ComponentWithChildren<MStrikethroughProps, string>;
+      M_SUBSCRIPT: Rg.ComponentWithChildren<MSubProps, string>;
+      M_SUPERSCRIPT: Rg.ComponentWithChildren<MSupProps, string>;
+      M_UNDERLINE: Rg.ComponentWithChildren<MUnderlineProps, string>;
+      MENU_BAR: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<MenuBarProps>,
         MenuBarElement
       >;
-      MENU_BAR_ITEM: IntrinsicComponent<
-        ComponentWithChildren<MenuBarItemProps>,
+      MENU_BAR_ITEM: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<MenuBarItemProps>,
         MenuBarItemElement
       >;
-      MENU_CHECK_BUTTON: IntrinsicComponent<
+      MENU_CHECK_BUTTON: Rg.IntrinsicComponent<
         MenuCheckButtonProps,
         MenuCheckButtonElement
       >;
-      MENU_ENTRY: IntrinsicComponent<
-        ComponentWithChildren<MenuEntryProps>,
+      MENU_ENTRY: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<MenuEntryProps>,
         MenuEntryElement
       >;
-      MENU_RADIO_BUTTON: IntrinsicComponent<
+      MENU_RADIO_BUTTON: Rg.IntrinsicComponent<
         MenuRadioButtonProps,
         MenuRadioButtonElement
       >;
-      MENU_SEPARATOR: IntrinsicComponent<
+      MENU_SEPARATOR: Rg.IntrinsicComponent<
         MenuSeparatorProps,
         MenuSeparatorElement
       >;
-      NUMBER_INPUT: IntrinsicComponent<NumberInputProps, NumberInputElement>;
-      PRESSABLE: IntrinsicComponent<
-        ComponentWithChild<PressableProps, React.ReactElement>,
+      NUMBER_INPUT: Rg.IntrinsicComponent<NumberInputProps, NumberInputElement>;
+      PRESSABLE: Rg.IntrinsicComponent<
+        Rg.ComponentWithChild<PressableProps, React.ReactElement>,
         PressableElement
       >;
-      POPOVER_MENU_ENTRY: IntrinsicComponent<
-        ComponentWithChildren<PopoverMenuEntryProps>,
+      POPOVER_MENU_ENTRY: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<PopoverMenuEntryProps>,
         PopoverMenuEntryElement
       >;
-      POPOVER_MENU_CHECK_BUTTON: IntrinsicComponent<
+      POPOVER_MENU_CHECK_BUTTON: Rg.IntrinsicComponent<
         PopoverMenuCheckButtonProps,
         PopoverMenuCheckButtonElement
       >;
-      POPOVER_MENU_RADIO_BUTTON: IntrinsicComponent<
+      POPOVER_MENU_RADIO_BUTTON: Rg.IntrinsicComponent<
         PopoverMenuRadioButtonProps,
         PopoverMenuRadioButtonElement
       >;
-      POPOVER_MENU_SEPARATOR: IntrinsicComponent<
+      POPOVER_MENU_SEPARATOR: Rg.IntrinsicComponent<
         PopoverMenuSeparatorProps,
         PopoverMenuSeparatorElement
       >;
-      RADIO_BOX: IntrinsicComponent<
-        ComponentWithChildren<RadioBoxProps>,
+      RADIO_BOX: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<RadioBoxProps>,
         RadioBoxElement
       >;
-      RADIO_BUTTON: IntrinsicComponent<RadioButtonProps, RadioButtonElement>;
-      REVEALER: IntrinsicComponent<
-        ComponentWithChildren<RevealerProps>,
+      RADIO_BUTTON: Rg.IntrinsicComponent<RadioButtonProps, RadioButtonElement>;
+      REVEALER: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<RevealerProps>,
         RevealerElement
       >;
-      SCROLL_BOX: IntrinsicComponent<
-        ComponentWithChild<ScrollBoxProps, React.ReactElement>,
+      SCROLL_BOX: Rg.IntrinsicComponent<
+        Rg.ComponentWithChild<ScrollBoxProps, React.ReactElement>,
         ScrollBoxElement
       >;
-      SELECTOR: IntrinsicComponent<SelectorProps, SelectorElement>;
-      SEPARATOR: IntrinsicComponent<SeparatorProps, SeparatorElement>;
-      SIZE_GROUP_BOX: IntrinsicComponent<
-        ComponentWithChildren<SizeGroupBoxProps>,
+      SELECTOR: Rg.IntrinsicComponent<SelectorProps, SelectorElement>;
+      SEPARATOR: Rg.IntrinsicComponent<SeparatorProps, SeparatorElement>;
+      SIZE_GROUP_BOX: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<SizeGroupBoxProps>,
         SizeGroupBoxElement
       >;
-      SLIDER_POPUP_BUTTON: IntrinsicComponent<
-        ComponentWithChildren<SliderPopupButtonProps>,
+      SLIDER_POPUP_BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<SliderPopupButtonProps>,
         SliderPopupButtonElement
       >;
-      SLIDER: IntrinsicComponent<SliderProps, SliderElement>;
-      SPINNER: IntrinsicComponent<SpinnerProps, SpinnerElement>;
-      STACK_SCREEN: IntrinsicComponent<
-        ComponentWithChildren<StackScreenProps>,
+      SLIDER: Rg.IntrinsicComponent<SliderProps, SliderElement>;
+      SPINNER: Rg.IntrinsicComponent<SpinnerProps, SpinnerElement>;
+      STACK_SCREEN: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<StackScreenProps>,
         StackScreenElement
       >;
-      SWITCH: IntrinsicComponent<SwitchProps, SwitchElement>;
-      TEXT_AREA: IntrinsicComponent<TextAreaProps, TextAreaElement>;
-      TEXT_ENTRY: IntrinsicComponent<TextEntryProps, TextEntryElement>;
-      TOOLBAR: IntrinsicComponent<
-        ComponentWithChildren<ToolbarProps>,
+      SWITCH: Rg.IntrinsicComponent<SwitchProps, SwitchElement>;
+      TEXT_AREA: Rg.IntrinsicComponent<TextAreaProps, TextAreaElement>;
+      TEXT_ENTRY: Rg.IntrinsicComponent<TextEntryProps, TextEntryElement>;
+      TOOLBAR: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ToolbarProps>,
         ToolbarElement
       >;
-      TOOLBAR_BUTTON: IntrinsicComponent<
-        ComponentWithChildren<ToolbarButtonProps>,
+      TOOLBAR_BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ToolbarButtonProps>,
         ToolbarButtonElement
       >;
-      TOOLBAR_ITEM: IntrinsicComponent<
-        ComponentWithChildren<ToolbarItemProps>,
+      TOOLBAR_ITEM: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ToolbarItemProps>,
         ToolbarItemElement
       >;
-      TOOLBAR_RADIO_BUTTON: IntrinsicComponent<
-        ComponentWithChildren<ToolbarRadioButtonProps, string>,
+      TOOLBAR_RADIO_BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ToolbarRadioButtonProps, string>,
         ToolbarRadioButtonElement
       >;
-      TOOLBAR_SEPARATOR: IntrinsicComponent<
+      TOOLBAR_SEPARATOR: Rg.IntrinsicComponent<
         ToolbarSeparatorProps,
         ToolbarSeparatorElement
       >;
-      TOOLBAR_TOGGLE_BUTTON: IntrinsicComponent<
-        ComponentWithChildren<ToolbarToggleButtonProps, string>,
+      TOOLBAR_TOGGLE_BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ToolbarToggleButtonProps, string>,
         ToolbarToggleButtonElement
       >;
-      VOLUME_BUTTON: IntrinsicComponent<
-        ComponentWithChildren<VolumeButtonProps, string>,
+      VOLUME_BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<VolumeButtonProps, string>,
         VolumeButtonElement
       >;
-      WINDOW: IntrinsicComponent<
-        ComponentWithChildren<WindowProps>,
+      WINDOW: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<WindowProps>,
         WindowElement
       >;
     }

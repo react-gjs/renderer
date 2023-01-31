@@ -3,7 +3,6 @@ import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import type { GjsElement } from "../../../gjs-element";
 import { GjsElementManager } from "../../../gjs-element-manager";
-import type { GjsElementTypes } from "../../../gjs-element-types";
 import { diffProps } from "../../../utils/diff-props";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
@@ -27,7 +26,7 @@ export class MSpanElement {
     });
   }
 
-  readonly kind: GjsElementTypes = "M_SPAN";
+  readonly kind: Rg.GjsElementTypes = "M_SPAN";
 
   get widget(): Gtk.Widget {
     throw new Error("Markdown elements do not have widgets.");

@@ -1,7 +1,6 @@
 import type Gtk from "gi://Gtk";
 import Reconciler from "react-reconciler";
 import { GjsElementManager } from "../gjs-elements/gjs-element-manager";
-import type { GjsElementTypes } from "../gjs-elements/gjs-element-types";
 import { ApplicationElement } from "../gjs-elements/gtk3/application/application";
 import { TextNode } from "../gjs-elements/gtk3/markup/text-node";
 import { registerGtk3Elements } from "../gjs-elements/gtk3/register";
@@ -74,7 +73,7 @@ export const GjsRenderer = Reconciler({
   beforeActiveInstanceBlur() {},
   cancelTimeout: clearTimeout,
   createInstance(
-    type: GjsElementTypes,
+    type: Rg.GjsElementTypes,
     props: any,
     rootContainer,
     hostContext: HostContext<GjsContext>,
