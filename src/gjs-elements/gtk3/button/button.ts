@@ -35,6 +35,7 @@ export interface ButtonProps extends ButtonPropsMixin {
   useUnderline?: boolean;
   margin?: ElementMargin;
   focusOnClick?: boolean;
+  alwaysShowImage?: boolean;
   onClick?: (event: SyntheticEvent) => void;
   onActivate?: (event: SyntheticEvent) => void;
   onPressed?: (event: SyntheticEvent) => void;
@@ -74,8 +75,11 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     createStylePropMapper(this.widget),
     (props) =>
       props
-        .label(DataType.String, (v = "") => {
-          this.widget.label = v;
+        .label(DataType.String, (v) => {
+          this.widget.label = v ?? null;
+        })
+        .alwaysShowImage(DataType.Boolean, (v = false) => {
+          this.widget.always_show_image = v;
         })
         .image(WidgetDataType, (v) => {
           this.widget.set_image(v ?? null);

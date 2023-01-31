@@ -6298,7 +6298,7 @@ declare module "gi://Gtk" {
      * button.
      */
     image_position: PositionType;
-    label: string;
+    label: string | null;
     relief: ReliefStyle;
     use_stock: boolean;
     use_underline: boolean;
