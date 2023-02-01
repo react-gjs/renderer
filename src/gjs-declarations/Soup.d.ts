@@ -2126,8 +2126,7 @@ declare module "gi://Soup" {
     set_request(
       content_type: string | null,
       req_use: MemoryUse,
-      req_body: number[] | null,
-      req_length: number
+      req_body: number[] | null
     ): void;
     /**
      * Convenience function to set the response body of a
@@ -4880,8 +4879,7 @@ declare module "gi://Soup" {
     public constructor(options?: Partial<SessionAsyncInitOptions>);
     /**
      * @deprecated {@link SessionAsync} is deprecated; use a plain
-     *   #SoupSession, created with {@link Soup.Session.new}. See the
-     *   <link linkend="libsoup-session-porting">porting
+     *   #SoupSession, created with {@link Soup.Session.new}. See the  <link linkend="libsoup-session-porting">porting
      *   guide</link>.
      *
      *   Creates an asynchronous {@link Session} with the default
@@ -4892,7 +4890,8 @@ declare module "gi://Soup" {
     /**
      * @deprecated {@link SessionAsync} is deprecated; use a plain
      *   #SoupSession, created with
-     *   {@link Soup.Session.new_with_options}. See the<link linkend="libsoup-session-porting">porting guide</link>.
+     *   {@link Soup.Session.new_with_options}. See the<link
+     *   linkend="libsoup-session-porting">porting guide</link>.
      *
      *   Creates an asynchronous {@link Session} with the specified
      *   options.
@@ -4923,8 +4922,7 @@ declare module "gi://Soup" {
     public constructor(options?: Partial<SessionSyncInitOptions>);
     /**
      * @deprecated {@link SessionSync} is deprecated; use a plain
-     *   #SoupSession, created with {@link Soup.Session.new}. See the
-     *   <link linkend="libsoup-session-porting">porting
+     *   #SoupSession, created with {@link Soup.Session.new}. See the  <link linkend="libsoup-session-porting">porting
      *   guide</link>.
      *
      *   Creates an synchronous {@link Session} with the default options.
@@ -4934,7 +4932,8 @@ declare module "gi://Soup" {
     /**
      * @deprecated {@link SessionSync} is deprecated; use a plain
      *   #SoupSession, created with
-     *   {@link Soup.Session.new_with_options}. See the<link linkend="libsoup-session-porting">porting guide</link>.
+     *   {@link Soup.Session.new_with_options}. See the<link
+     *   linkend="libsoup-session-porting">porting guide</link>.
      *
      *   Creates an synchronous {@link Session} with the specified
      *   options.
