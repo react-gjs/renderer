@@ -17,13 +17,18 @@ import type { ExpandProps } from "../../utils/property-maps-factories/create-exp
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
 import { MenuBarItemElement } from "./menu-bar-item";
 import { MenuEntryElement } from "./menu-entry";
 
-type MenuCheckButtonPropsMixin = MarginProps & ExpandProps & StyleProps;
+type MenuCheckButtonPropsMixin = SizeRequestProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export type MenuCheckButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, MenuCheckButtonElement>;
@@ -61,6 +66,7 @@ export class MenuCheckButtonElement
 
   private readonly propsMapper = new PropertyMapper<MenuCheckButtonProps>(
     this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),

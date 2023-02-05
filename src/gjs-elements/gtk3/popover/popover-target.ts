@@ -1,5 +1,4 @@
 import Gtk from "gi://Gtk";
-import type { BaselinePosition, Orientation } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -7,18 +6,8 @@ import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
-import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { TextNode } from "../markup/text-node";
 import { PopoverElement } from "./popover";
-
-type PopoverTargetPropsMixin = AlignmentProps & MarginProps;
-
-export interface PopoverTargetProps extends PopoverTargetPropsMixin {
-  spacing?: number;
-  baselinePosition?: BaselinePosition;
-  orientation?: Orientation;
-}
 
 export class PopoverTargetElement
   implements GjsElement<"POPOVER_TARGET", Gtk.Widget>

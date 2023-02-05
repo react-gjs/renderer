@@ -10,6 +10,8 @@ import type { DiffedProps } from "../../../utils/element-extenders/map-propertie
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../../markup/text-node";
@@ -17,7 +19,9 @@ import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuSeparatorPropsMixin = MarginProps & StyleProps;
+type PopoverMenuSeparatorPropsMixin = SizeRequestProps &
+  MarginProps &
+  StyleProps;
 
 export type PopoverMenuSeparatorEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, PopoverMenuSeparatorElement>;
@@ -42,6 +46,7 @@ export class PopoverMenuSeparatorElement
   readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<PopoverMenuSeparatorProps>(
     this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget)
   );

@@ -13,6 +13,8 @@ import type { DiffedProps } from "../../../utils/element-extenders/map-propertie
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../../markup/text-node";
@@ -21,7 +23,9 @@ import { PopoverMenuContentElement } from "../popover-menu-content";
 import { popoverMenuModelButton } from "../utils/popover-menu-model-button";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuCheckButtonPropsMixin = MarginProps & StyleProps;
+type PopoverMenuCheckButtonPropsMixin = SizeRequestProps &
+  MarginProps &
+  StyleProps;
 
 export type PopoverMenuCheckButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, PopoverMenuCheckButtonElement>;
@@ -59,6 +63,7 @@ export class PopoverMenuCheckButtonElement
   private readonly propsMapper =
     new PropertyMapper<PopoverMenuCheckButtonProps>(
       this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
       createMarginPropMapper(this.widget),
       createStylePropMapper(this.widget),
       (props) =>

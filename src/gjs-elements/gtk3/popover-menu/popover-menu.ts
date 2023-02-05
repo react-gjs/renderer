@@ -15,6 +15,8 @@ import type { ExpandProps } from "../../utils/property-maps-factories/create-exp
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { Bin } from "../../utils/widgets/bin";
@@ -23,7 +25,8 @@ import { PopoverMenuContentElement } from "./popover-menu-content";
 import { PopoverMenuTargetElement } from "./popover-menu-target";
 import { PopoverMenuRadioController } from "./utils/popover-radio-controller";
 
-type PopoverMenuPropsMixin = AlignmentProps &
+type PopoverMenuPropsMixin = SizeRequestProps &
+  AlignmentProps &
   MarginProps &
   ExpandProps &
   StyleProps;
@@ -60,6 +63,7 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
     PopoverMenuProps & PopoverInternalProps
   >(
     this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),

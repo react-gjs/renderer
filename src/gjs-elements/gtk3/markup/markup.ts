@@ -16,13 +16,19 @@ import type { ExpandProps } from "../../utils/property-maps-factories/create-exp
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { BaseMarkupElement } from "./markup-elem";
 import type { TextNode } from "./text-node";
 import { isMarkupElement } from "./utils/is-markup-elements";
 
-type MarkupPropsMixin = AlignmentProps & MarginProps & ExpandProps & StyleProps;
+type MarkupPropsMixin = SizeRequestProps &
+  AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export interface MarkupProps extends MarkupPropsMixin {
   wrap?: boolean;
@@ -50,6 +56,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<MarkupProps>(
     this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),

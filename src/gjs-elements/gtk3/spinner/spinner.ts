@@ -13,10 +13,13 @@ import type { ExpandProps } from "../../utils/property-maps-factories/create-exp
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 
-type SpinnerPropsMixin = AlignmentProps &
+type SpinnerPropsMixin = SizeRequestProps &
+  AlignmentProps &
   MarginProps &
   ExpandProps &
   StyleProps;
@@ -40,6 +43,7 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
   readonly lifecycle = new ElementLifecycleController();
   private readonly propsMapper = new PropertyMapper<SpinnerProps>(
     this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
