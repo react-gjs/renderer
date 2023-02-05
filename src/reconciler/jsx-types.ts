@@ -292,19 +292,37 @@ declare global {
         LinkButtonElement
       >;
       MARKUP: Rg.IntrinsicComponent<
-        Rg.ComponentWithChildren<MarkupProps, string | React.ReactElement>,
+        Rg.ComponentWithChildren<MarkupProps, string | React.ReactNode>,
         MarkupElement
       >;
-      M_BIG: Rg.ComponentWithChildren<MBigProps, string>;
-      M_BOLD: Rg.ComponentWithChildren<MBoldProps, string>;
-      M_ITALIC: Rg.ComponentWithChildren<MItalicProps, string>;
-      M_MONOSPACE: Rg.ComponentWithChildren<MMonospaceProps, string>;
-      M_SMALL: Rg.ComponentWithChildren<MSmallProps, string>;
-      M_SPAN: Rg.ComponentWithChildren<MSpanProps, string>;
-      M_STRIKETHROUGH: Rg.ComponentWithChildren<MStrikethroughProps, string>;
-      M_SUBSCRIPT: Rg.ComponentWithChildren<MSubProps, string>;
-      M_SUPERSCRIPT: Rg.ComponentWithChildren<MSupProps, string>;
-      M_UNDERLINE: Rg.ComponentWithChildren<MUnderlineProps, string>;
+      M_BIG: Rg.ComponentWithChildren<MBigProps, string | React.ReactNode>;
+      M_BOLD: Rg.ComponentWithChildren<MBoldProps, string | React.ReactNode>;
+      M_ITALIC: Rg.ComponentWithChildren<
+        MItalicProps,
+        string | React.ReactNode
+      >;
+      M_MONOSPACE: Rg.ComponentWithChildren<
+        MMonospaceProps,
+        string | React.ReactNode
+      >;
+      M_SMALL: Rg.ComponentWithChildren<MSmallProps, string | React.ReactNode>;
+      M_SPAN: Rg.ComponentWithChildren<MSpanProps, string | React.ReactNode>;
+      M_STRIKETHROUGH: Rg.ComponentWithChildren<
+        MStrikethroughProps,
+        string | React.ReactNode
+      >;
+      M_SUBSCRIPT: Rg.ComponentWithChildren<
+        MSubProps,
+        string | React.ReactNode
+      >;
+      M_SUPERSCRIPT: Rg.ComponentWithChildren<
+        MSupProps,
+        string | React.ReactNode
+      >;
+      M_UNDERLINE: Rg.ComponentWithChildren<
+        MUnderlineProps,
+        string | React.ReactNode
+      >;
       MENU_BAR: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<MenuBarProps>,
         MenuBarElement

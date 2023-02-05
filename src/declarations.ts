@@ -1,5 +1,4 @@
 import type GLib from "gi://GLib";
-import type GObject from "gi://GObject";
 import "./gjs-declarations/index";
 import type { ApplicationContext } from "./gjs-elements/gtk3/application/context";
 export default {};
@@ -131,26 +130,26 @@ declare global {
   type MainLoop = {
     quit(name: string): void;
     run(name: string): void;
-    idle_source(handler: GObject.Closure, priority: number): GLib.Source;
-    idle_add(handler: GObject.Closure, priority: number): number;
+    idle_source(handler: () => any, priority: number): GLib.Source;
+    idle_add(handler: () => any, priority: number): number;
     timeout_source(
       timeout: number,
-      handler: GObject.Closure,
+      handler: () => any,
       priority: number
     ): GLib.Source;
     timeout_seconds_source(
       timeout: number,
-      handler: GObject.Closure,
+      handler: () => any,
       priority: number
     ): GLib.Source;
     timeout_add(
       timeout: number,
-      handler: GObject.Closure,
+      handler: () => any,
       priority: number
     ): GLib.Source;
     timeout_add_seconds(
       timeout: number,
-      handler: GObject.Closure,
+      handler: () => any,
       priority: number
     ): GLib.Source;
     source_remove(id: number): boolean;

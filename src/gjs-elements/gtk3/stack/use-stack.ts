@@ -4,8 +4,9 @@ import type { StackElement, StackProps } from "./stack";
 import type { StackScreenElement, StackScreenProps } from "./stack-screen";
 import type { StackSwitcherProps } from "./stack-switcher";
 
-const StackComponent = "STACK";
-const StackSwitcherComponent = "STACK_SWITCHER";
+const StackComponent: Rg.GjsElementTypes = "STACK";
+const StackSwitcherComponent: Rg.GjsElementTypes = "STACK_SWITCHER";
+const StackScreen: Rg.GjsElementTypes = "STACK_SCREEN";
 
 export const createStack = <R extends string = string>() => {
   const stackWidget = new Gtk.Stack();
@@ -34,9 +35,8 @@ export const createStack = <R extends string = string>() => {
       StackScreenElement
     >
   ) => {
-    return React.createElement(StackComponent, {
+    return React.createElement(StackScreen, {
       ...props,
-      _widget: stackWidget,
     });
   };
 

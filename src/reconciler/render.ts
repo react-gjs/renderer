@@ -1,5 +1,4 @@
 import Gio from "gi://Gio";
-import Gtk from "gi://Gtk";
 import React from "react";
 import system from "system";
 import type { ApplicationOptions } from "../gjs-elements/gtk3/application/application";
@@ -11,8 +10,6 @@ export const render = (
   appContent: JSX.Element,
   options: ApplicationOptions
 ) => {
-  Gtk.init(null);
-
   Object.assign(globalThis, {
     getApp: function () {
       return Gio.Application.get_default();
