@@ -6,6 +6,7 @@ import type { GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
@@ -56,7 +57,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   readonly kind = "GRID";
-  widget = new Gtk.Grid();
+  private widget = new Gtk.Grid();
 
   private parent: GjsElement | null = null;
 
@@ -69,6 +70,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   private previousColumnCount = 0;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Gtk.Grid, GridProps>(this);
   private readonly children = new GridItemsList(this.lifecycle, this);
   private readonly propsMapper = new PropertyMapper<GridProps>(
     this.lifecycle,
@@ -114,7 +116,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
       const { x, y } = gridMatrix.nextElement(child.columnSpan, child.rowSpan);
 
       this.widget.attach(
-        child.element.widget,
+        child.element.getWidget(),
         x,
         y,
         child.columnSpan,
@@ -198,7 +200,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -222,6 +224,36 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

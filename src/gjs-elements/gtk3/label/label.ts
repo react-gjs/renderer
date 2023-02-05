@@ -8,6 +8,7 @@ import type { GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
@@ -49,11 +50,12 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   }
 
   readonly kind = "LABEL";
-  widget = new Gtk.Label();
+  private widget = new Gtk.Label();
 
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Gtk.Label, LabelProps>(this);
   private readonly propsMapper = new PropertyMapper<LabelProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -143,7 +145,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   render() {
     this.children.update();
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -169,6 +171,36 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

@@ -7,6 +7,7 @@ import type { GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -48,12 +49,13 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   readonly kind = "POPOVER";
-  widget = new Bin();
-  popover!: Gtk.Popover;
+  private widget = new Bin();
+  private popover!: Gtk.Popover;
 
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Bin, PopoverProps>(this);
   private readonly propsMapper = new PropertyMapper<
     PopoverProps & PopoverInternalProps
   >(
@@ -96,11 +98,11 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   onContentChange() {
-    if (this.targetElement) this.popover.add(this.targetElement.widget);
+    if (this.targetElement) this.popover.add(this.targetElement.getWidget());
   }
 
   onTargetChange() {
-    if (this.contentElement) this.widget.add(this.contentElement.widget);
+    if (this.contentElement) this.widget.add(this.contentElement.getWidget());
   }
 
   updateProps(props: DiffedProps): void {
@@ -116,7 +118,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
       }
       const shouldAppend = child.notifyWillAppendTo(this);
       if (shouldAppend) {
-        this.popover.add(child.widget);
+        this.popover.add(child.getWidget());
         this.hasContentChild = true;
         this.contentElement = child;
       }
@@ -128,10 +130,10 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
       }
       const shouldAppend = child.notifyWillAppendTo(this);
       if (shouldAppend) {
-        this.widget.add(child.widget);
+        this.widget.add(child.getWidget());
         this.hasTarget = true;
         this.targetElement = child;
-        this.popover.relative_to = child.widget;
+        this.popover.relative_to = child.getWidget();
       }
     } else {
       throw new Error(
@@ -155,7 +157,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -189,6 +191,36 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

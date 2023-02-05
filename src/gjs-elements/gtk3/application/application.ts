@@ -47,13 +47,13 @@ export class ApplicationElement extends Gtk.Application {
   addWindowToApp(window: WindowElement) {
     this._windowList.push(window);
     if (this._isAppActive) {
-      this.add_window(window.widget);
+      this.add_window(window.getWidget());
     }
   }
 
   removeWindowFromApp(window: WindowElement) {
     if (this._isAppActive && !window.isDisposed) {
-      this.remove_window(window.widget);
+      this.remove_window(window.getWidget());
     }
 
     this._windowList = this._windowList.filter((w) => w !== window);
@@ -125,7 +125,7 @@ export class ApplicationElement extends Gtk.Application {
 
     this._isAppActive = true;
     for (const window of this._windowList) {
-      this.add_window(window.widget);
+      this.add_window(window.getWidget());
     }
   }
 

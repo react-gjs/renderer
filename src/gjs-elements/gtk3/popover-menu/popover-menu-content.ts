@@ -7,6 +7,7 @@ import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
@@ -40,11 +41,14 @@ export class PopoverMenuContentElement
     return scrollBox;
   }
 
-  scrollBox = new Gtk.ScrolledWindow();
-  box = new Gtk.Box();
+  private scrollBox = new Gtk.ScrolledWindow();
+  private box = new Gtk.Box();
 
   readonly kind = "POPOVER_MENU_CONTENT";
-  widget = PopoverMenuContentElement.createWidget(this.scrollBox, this.box);
+  private widget = PopoverMenuContentElement.createWidget(
+    this.scrollBox,
+    this.box
+  );
 
   parentMenu: string | null = null;
   rootMenu: PopoverMenuElement | null = null;
@@ -52,6 +56,10 @@ export class PopoverMenuContentElement
   private parent: PopoverMenuElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<
+    Gtk.ScrolledWindow,
+    PopoverMenuContentProps
+  >(this);
   private readonly children = new ChildOrderController<
     | PopoverMenuEntryElement
     | PopoverMenuCheckButtonElement
@@ -157,7 +165,7 @@ export class PopoverMenuContentElement
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -188,6 +196,36 @@ export class PopoverMenuContentElement
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

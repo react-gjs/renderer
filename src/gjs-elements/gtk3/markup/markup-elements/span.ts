@@ -28,7 +28,7 @@ export class MSpanElement {
 
   readonly kind: Rg.GjsElementTypes = "M_SPAN";
 
-  get widget(): Gtk.Widget {
+  protected get widget(): Gtk.Widget {
     throw new Error("Markdown elements do not have widgets.");
   }
 
@@ -132,6 +132,32 @@ export class MSpanElement {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {}
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {}
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

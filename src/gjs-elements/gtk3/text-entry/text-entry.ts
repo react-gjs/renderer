@@ -49,7 +49,7 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
 
   readonly kind = "TEXT_ENTRY";
   private textBuffer = new Gtk.EntryBuffer();
-  widget = new Gtk.Entry({
+  private widget = new Gtk.Entry({
     buffer: this.textBuffer,
     visible: true,
   });
@@ -115,7 +115,7 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -139,6 +139,36 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

@@ -67,7 +67,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly optionsList = new OptionsList(this.lifecycle);
-  widget = this.optionsList.getComboBox();
+  private widget = this.optionsList.getComboBox();
   private readonly handlers = new EventHandlers<Gtk.ComboBox, SelectorProps>(
     this
   );
@@ -152,7 +152,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -176,6 +176,36 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

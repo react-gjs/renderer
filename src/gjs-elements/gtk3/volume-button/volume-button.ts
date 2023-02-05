@@ -72,7 +72,7 @@ export class VolumeButtonElement
   }
 
   readonly kind = "VOLUME_BUTTON";
-  widget = new Gtk.VolumeButton();
+  private widget = new Gtk.VolumeButton();
 
   private parent: GjsElement | null = null;
   private adjustment = this.widget.get_adjustment();
@@ -229,7 +229,7 @@ export class VolumeButtonElement
 
   render() {
     this.children.update();
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -255,6 +255,36 @@ export class VolumeButtonElement
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   static SliderDiffers = new Map<

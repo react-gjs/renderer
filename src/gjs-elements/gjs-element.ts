@@ -12,10 +12,8 @@ export interface GjsElement<
    * different GjsElement classes.
    */
   readonly kind: K;
-
   /** The Gtk Widget that is used to render the element. */
-  widget: W;
-
+  getWidget(): W;
   /**
    * This function is called by it's parent element before it is
    * appended to it. It should return a boolean value that indicates
@@ -45,19 +43,43 @@ export interface GjsElement<
     newChild: GjsElement | TextNode,
     beforeChild: GjsElement | TextNode
   ): void;
+  /**
+   * This function is called by the React Reconciler when the React
+   * provided props are updated.
+   */
   updateProps(props: DiffedProps): void;
+  /**
+   * Sets the value of element's property whose name is `key` to the
+   * given value.
+   */
+  setProperty(key: string, value: any): void;
+  /** Returns the value of element's property whose name is `key`. */
+  getProperty(key: string): any;
+  /**
+   * Returns the element's parent element or `null` if the element has
+   * no parent.
+   */
+  getParentElement(): GjsElement | null;
+  /** Attaches a listener to the element Widget for a given signal. */
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void;
+  /** Detaches a listener from the element Widget for a given signal. */
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void;
   /**
    * This function is called by the React Reconciler when the element
    * is to be removed from it's parent.
    */
   remove(parent: GjsElement): void;
-
   /**
    * This function is called by the React Reconciler after mutating
    * the element via `appendChild`, 'updateProps`or`remove`.
    */
   render(): void;
-
   /**
    * Some GjsElement implementation might have a Event Emitter that is
    * used by the Elements internally.
@@ -67,11 +89,21 @@ export interface GjsElement<
    * is selected.
    */
   emitter?: SyntheticEmitter<any>;
-
+  /**
+   * This function is called by the React Reconciler when the element
+   * is to be made visible again after being hidden.
+   */
   show(): void;
-
+  /**
+   * This function is called by the React Reconciler when the element
+   * is to be hidden.
+   */
   hide(): void;
-
+  /**
+   * This function is called by the React Reconciler to diff the old
+   * props against the current ones. The result of this function will
+   * be later passed to `updateProps` method.
+   */
   diffProps(
     oldProps: Record<string, any>,
     newProps: Record<string, any>
@@ -83,5 +115,9 @@ type GjsElementAlias = GjsElement;
 declare global {
   namespace Rg {
     type GjsElement = GjsElementAlias;
+    type GjsElementEvenTListenerCallback<W extends Gtk.Widget = Gtk.Widget> = (
+      widget: W,
+      event?: unknown
+    ) => boolean | void;
   }
 }

@@ -58,7 +58,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   }
 
   readonly kind = "WINDOW";
-  widget = new Gtk.Window();
+  private widget = new Gtk.Window();
 
   private mainApp?: ApplicationElement;
   private parent: GjsElement | null = null;
@@ -291,6 +291,42 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
   hide() {
     if (!this.isDisposed) this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    if (this.isDisposed) {
+      throw new Error("Can't append child to disposed window");
+    }
+
+    this.lifecycle.emitLifecycleEventUpdate(
+      this.wrapOnCloseProp([[key, value]])
+    );
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

@@ -5,6 +5,7 @@ import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -36,11 +37,14 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
   }
 
   readonly kind = "SPINNER";
-  widget = new Gtk.Spinner();
+  private widget = new Gtk.Spinner();
 
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Gtk.Spinner, SpinnerProps>(
+    this
+  );
   private readonly propsMapper = new PropertyMapper<SpinnerProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -83,7 +87,7 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -107,6 +111,36 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

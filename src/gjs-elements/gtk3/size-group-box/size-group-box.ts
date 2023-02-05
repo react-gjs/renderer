@@ -11,6 +11,7 @@ import type { GjsElement } from "../../gjs-element";
 import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
@@ -49,12 +50,15 @@ export class SizeGroupBoxElement
   }
 
   readonly kind = "SIZE_GROUP_BOX";
-  widget = new Gtk.Box();
+  private widget = new Gtk.Box();
   sizeGroup = new Gtk.SizeGroup();
 
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Gtk.Box, SizeGroupBoxProps>(
+    this
+  );
   private readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget
@@ -108,7 +112,7 @@ export class SizeGroupBoxElement
 
     const shouldAppend = child.notifyWillAppendTo(this);
     if (shouldAppend) {
-      this.sizeGroup.add_widget(child.widget);
+      this.sizeGroup.add_widget(child.getWidget());
     }
     this.children.addChild(child, !shouldAppend);
     this.widget.show_all();
@@ -119,7 +123,7 @@ export class SizeGroupBoxElement
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
     if (shouldAppend) {
-      this.sizeGroup.add_widget(newChild.widget);
+      this.sizeGroup.add_widget(newChild.getWidget());
     }
     this.children.insertBefore(newChild, beforeChild, !shouldAppend);
     this.widget.show_all();
@@ -134,7 +138,7 @@ export class SizeGroupBoxElement
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -147,7 +151,7 @@ export class SizeGroupBoxElement
   }
 
   notifyWillUnmount(child: GjsElement): void {
-    this.sizeGroup.remove_widget(child.widget);
+    this.sizeGroup.remove_widget(child.getWidget());
     this.children.removeChild(child);
   }
 
@@ -161,6 +165,36 @@ export class SizeGroupBoxElement
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

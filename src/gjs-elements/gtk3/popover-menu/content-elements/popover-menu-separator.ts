@@ -6,6 +6,7 @@ import { GjsElementManager } from "../../../gjs-element-manager";
 import { diffProps } from "../../../utils/diff-props";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../../utils/element-extenders/event-handlers";
+import { EventHandlers } from "../../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -38,12 +39,16 @@ export class PopoverMenuSeparatorElement
   }
 
   readonly kind = "POPOVER_MENU_SEPARATOR";
-  widget = new Gtk.Separator();
+  private widget = new Gtk.Separator();
 
   private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
     null;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<
+    Gtk.Separator,
+    PopoverMenuSeparatorProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<PopoverMenuSeparatorProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -84,7 +89,7 @@ export class PopoverMenuSeparatorElement
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -118,6 +123,36 @@ export class PopoverMenuSeparatorElement
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(
