@@ -68,7 +68,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   }
 
   readonly kind = "PRESSABLE";
-  widget = new Gtk.EventBox();
+  private widget = new Gtk.EventBox();
 
   private parent: GjsElement | null = null;
 
@@ -152,7 +152,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -178,6 +178,36 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

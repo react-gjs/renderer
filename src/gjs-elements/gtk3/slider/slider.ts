@@ -72,7 +72,7 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
   }
 
   readonly kind = "SLIDER";
-  widget = new Gtk.Scale();
+  private widget = new Gtk.Scale();
 
   private parent: GjsElement | null = null;
   private adjustment = new Gtk.Adjustment();
@@ -201,7 +201,7 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -225,6 +225,36 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   static SliderDiffers = new Map<

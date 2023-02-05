@@ -196,4 +196,8 @@ export class PropertyMapper<P = Record<string, any>> {
   skipDefaults() {
     this.isFirstUpdate = false;
   }
+
+  get(key: string) {
+    return this.properties[key];
+  }
 }

@@ -7,6 +7,7 @@ import type { GjsElement } from "../../gjs-element";
 import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
@@ -46,7 +47,7 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
   }
 
   readonly kind = "STACK_SCREEN";
-  widget = new Gtk.Box();
+  private widget = new Gtk.Box();
 
   label = "";
 
@@ -55,6 +56,9 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<Gtk.Box, StackScreenProps>(
+    this
+  );
   private readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget
@@ -136,7 +140,7 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -162,6 +166,36 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

@@ -8,6 +8,7 @@ import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
+import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { SyntheticEmitter } from "../../utils/element-extenders/synthetic-emitter";
@@ -51,17 +52,21 @@ export class FlowBoxEntryElement
   }
 
   readonly kind = "FLOW_BOX_ENTRY";
-  widget = new Gtk.FlowBoxChild();
+  private widget = new Gtk.FlowBoxChild();
 
   private parent: FlowBoxElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
+  private readonly handlers = new EventHandlers<
+    Gtk.FlowBoxChild,
+    FlowBoxEntryProps
+  >(this);
   private children = new ChildOrderController(this.lifecycle, this.widget);
 
   emitter = new SyntheticEmitter<{ selected: [boolean] }>(this.lifecycle);
   isDefault = false;
 
-  private readonly propMapper = new PropertyMapper<FlowBoxEntryProps>(
+  private readonly propsMapper = new PropertyMapper<FlowBoxEntryProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
@@ -124,7 +129,7 @@ export class FlowBoxEntryElement
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -156,6 +161,36 @@ export class FlowBoxEntryElement
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

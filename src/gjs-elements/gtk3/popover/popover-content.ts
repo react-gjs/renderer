@@ -21,11 +21,11 @@ export class PopoverContentElement
   readonly kind = "POPOVER_CONTENT";
   private emptyReplacement = new Gtk.Box();
   private childElement: GjsElement | null = null;
-  get widget(): Gtk.Widget {
+  private get widget(): Gtk.Widget {
     if (!this.childElement) {
       throw this.emptyReplacement;
     }
-    return this.childElement.widget;
+    return this.childElement.getWidget();
   }
 
   private parent: PopoverElement | null = null;
@@ -67,7 +67,7 @@ export class PopoverContentElement
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -100,6 +100,28 @@ export class PopoverContentElement
   hide() {
     this.widget.visible = false;
   }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {}
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {}
+
+  setProperty(key: string, value: any) {}
+
+  getProperty(key: string) {}
 
   diffProps(
     oldProps: Record<string, any>,

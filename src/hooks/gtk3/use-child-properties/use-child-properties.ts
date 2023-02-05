@@ -19,7 +19,7 @@ export const useChildProperties = <E extends keyof JSX.IntrinsicElements>(
 
     if ("child_set_property" in parent) {
       for (const [key, value] of Object.entries(childProps.current)) {
-        parent.child_set_property(ref.current.widget, key, value);
+        parent.child_set_property(ref.current.getWidget(), key, value);
       }
     }
   });

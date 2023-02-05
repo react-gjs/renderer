@@ -55,7 +55,7 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
   }
 
   readonly kind = "BUTTON_BOX";
-  widget = new Gtk.Button();
+  private widget = new Gtk.Button();
 
   child: GjsElement | null = null;
 
@@ -112,7 +112,7 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
 
     const shouldAppend = child.notifyWillAppendTo(this);
     if (shouldAppend) {
-      this.widget.add(child.widget);
+      this.widget.add(child.getWidget());
       this.widget.show_all();
     }
   }
@@ -133,7 +133,7 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -161,6 +161,36 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

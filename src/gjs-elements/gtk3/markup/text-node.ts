@@ -23,7 +23,7 @@ export class TextNode {
 
   readonly kind = "TEXT_NODE";
 
-  get widget(): Gtk.Widget {
+  private get widget(): Gtk.Widget {
     throw new Error("TextNode elements do not have widgets.");
   }
 

@@ -59,7 +59,7 @@ export class ToolbarButtonElement
   }
 
   readonly kind = "TOOLBAR_BUTTON";
-  widget = new Gtk.ToolButton();
+  private widget = new Gtk.ToolButton();
 
   private parent: GjsElement | null = null;
 
@@ -167,7 +167,7 @@ export class ToolbarButtonElement
 
   render() {
     this.children.update();
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -197,6 +197,36 @@ export class ToolbarButtonElement
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

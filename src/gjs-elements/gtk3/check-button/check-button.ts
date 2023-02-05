@@ -58,7 +58,7 @@ export class CheckButtonElement
   }
 
   readonly kind = "CHECK_BUTTON";
-  widget = new Gtk.CheckButton();
+  private widget = new Gtk.CheckButton();
 
   private parent: GjsElement | null = null;
 
@@ -161,7 +161,7 @@ export class CheckButtonElement
 
   render() {
     this.children.update();
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -187,6 +187,36 @@ export class CheckButtonElement
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

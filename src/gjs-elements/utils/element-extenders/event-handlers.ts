@@ -33,7 +33,7 @@ export type SyntheticEvent<
   preventDefault(): void;
   originalEvent: any;
   target: T;
-  targetWidget: T["widget"];
+  targetWidget: ReturnType<T["getWidget"]>;
 };
 
 const noop = () => {};
@@ -44,7 +44,7 @@ class EventBind {
   private handler: (event: SyntheticEvent) => any = noop;
 
   constructor(
-    private element: { widget: Widget<any> },
+    private element: { getWidget(): Widget<any> },
     private signal: string,
     private argGetter: SyntheticEventPropsGenerator<any> = () => ({}),
     private eventPhase: EventPhase = EventPhase.Input
@@ -62,9 +62,9 @@ class EventBind {
   init() {
     if (this.isConnected) return;
 
-    this.id = this.element.widget.connect(
-      this.signal,
-      (targetWidget: any, ...args: any[]) =>
+    this.id = this.element
+      .getWidget()
+      .connect(this.signal, (targetWidget: any, ...args: any[]) =>
         EventPhaseController.startPhase(this.eventPhase, () => {
           try {
             let propagate = true;
@@ -79,7 +79,7 @@ class EventBind {
               stopPropagation,
               preventDefault: stopPropagation,
               originalEvent: args[0],
-              targetWidget,
+              targetWidget: this.element.getWidget(),
               target: this.element,
             });
 
@@ -96,7 +96,7 @@ class EventBind {
             return true;
           }
         })
-    );
+      );
 
     this.isConnected = true;
   }
@@ -113,7 +113,7 @@ class EventBind {
 
   remove() {
     if (this.id) {
-      this.element.widget.disconnect(this.id);
+      this.element.getWidget().disconnect(this.id);
       this.isConnected = false;
     }
   }
@@ -126,8 +126,11 @@ export class EventHandlers<
 > {
   private bindEvents = new Map<string, EventBind>();
   private internalBinds: Array<EventBind> = [];
+  private listeners = new Map<string, Map<Function, EventBind>>();
 
-  constructor(private element: { widget: W; lifecycle: ElementLifecycle }) {
+  constructor(
+    private element: { getWidget: () => W; lifecycle: ElementLifecycle }
+  ) {
     this.element.lifecycle.onUpdate((props) => this.update(props));
     this.element.lifecycle.beforeDestroy(() => {
       this.unbindAll();
@@ -196,6 +199,43 @@ export class EventHandlers<
       propName as string,
       new EventBind(this.element, signal, getArgs, eventPhase)
     );
+  }
+
+  addListener(
+    signal: string,
+    callback: (widget: W, event?: unknown) => boolean | void
+  ) {
+    const bind = new EventBind(this.element, signal, (e) => e);
+    bind.updateHandler((event) => {
+      const preventDefault = callback(
+        this.element.getWidget(),
+        event.originalEvent
+      );
+      if (preventDefault) {
+        event.stopPropagation();
+      }
+    });
+
+    let signalListeners = this.listeners.get(signal);
+    if (!signalListeners) {
+      signalListeners = new Map();
+      this.listeners.set(signal, signalListeners);
+    }
+    signalListeners.set(callback, bind);
+  }
+
+  removeListener(
+    signal: string,
+    callback: (widget: W, event?: unknown) => boolean | void
+  ) {
+    const signalListeners = this.listeners.get(signal);
+    if (!signalListeners) return;
+
+    const bind = signalListeners.get(callback);
+    if (!bind) return;
+
+    bind.remove();
+    signalListeners.delete(callback);
   }
 
   notifyWidgetDestroyedOutsideLifecycle() {

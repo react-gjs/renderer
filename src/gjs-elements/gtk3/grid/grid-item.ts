@@ -35,11 +35,11 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   readonly kind = "GRID_ITEM";
   private emptyReplacement = new Gtk.Box();
   private childElement: GjsElement | null = null;
-  get widget(): Gtk.Widget {
+  private get widget(): Gtk.Widget {
     if (!this.childElement) {
       throw this.emptyReplacement;
     }
-    return this.childElement.widget;
+    return this.childElement.getWidget();
   }
 
   private parent: GridElement | null = null;
@@ -106,7 +106,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -136,6 +136,32 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {}
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {}
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

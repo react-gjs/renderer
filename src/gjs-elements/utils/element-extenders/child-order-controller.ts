@@ -13,16 +13,16 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
     private element: ElementLifecycle,
     private container: Gtk.Container,
     private addChildToContainer: (
-      child: C["widget"],
+      child: ReturnType<C["getWidget"]>,
       element: C,
       index: number
-    ) => void = (child: C["widget"]) => {
+    ) => void = (child: ReturnType<C["getWidget"]>) => {
       this.container.add(child);
     },
     private removeChildFromContainer: (
-      child: C["widget"],
+      child: ReturnType<C["getWidget"]>,
       element: C
-    ) => void = (child: C["widget"]) => {
+    ) => void = (child: ReturnType<C["getWidget"]>) => {
       this.container.remove(child);
     }
   ) {}
@@ -47,7 +47,11 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
    */
   addChild(child: C, isTopLevel = false) {
     if (!isTopLevel) {
-      this.addChildToContainer(child.widget, child, this.children.length);
+      this.addChildToContainer(
+        child.getWidget() as ReturnType<C["getWidget"]>,
+        child,
+        this.children.length
+      );
     }
     this.children.push(new ChildEntry(child, isTopLevel));
   }
@@ -83,18 +87,22 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
       for (let i = 0; i < childrenAfter.length; i++) {
         if (!childrenAfter[i].isTopLevel) {
           this.removeChildFromContainer(
-            childrenAfter[i].element.widget,
+            childrenAfter[i].element.getWidget() as ReturnType<C["getWidget"]>,
             childrenAfter[i].element
           );
         }
       }
 
-      this.addChildToContainer(newChild.widget, newChild, beforeIndex);
+      this.addChildToContainer(
+        newChild.getWidget() as ReturnType<C["getWidget"]>,
+        newChild,
+        beforeIndex
+      );
 
       for (let i = 0; i < childrenAfter.length; i++) {
         if (!childrenAfter[i].isTopLevel) {
           this.addChildToContainer(
-            childrenAfter[i].element.widget,
+            childrenAfter[i].element.getWidget() as ReturnType<C["getWidget"]>,
             childrenAfter[i].element,
             beforeIndex + i + 1
           );

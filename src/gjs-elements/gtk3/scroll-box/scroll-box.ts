@@ -75,7 +75,7 @@ export class ScrollBoxElement
   }
 
   readonly kind = "SCROLL_BOX";
-  widget = new Gtk.ScrolledWindow();
+  private widget = new Gtk.ScrolledWindow();
   private vAdjustment = this.widget.get_vadjustment();
   private hAdjustment = this.widget.get_hadjustment();
 
@@ -90,14 +90,14 @@ export class ScrollBoxElement
     Gtk.Adjustment,
     ScrollBoxProps
   >({
-    widget: this.widget.get_vadjustment(),
+    getWidget: () => this.widget.get_vadjustment(),
     lifecycle: this.lifecycle,
   });
   private hAdjustmentHandlers = new EventHandlers<
     Gtk.Adjustment,
     ScrollBoxProps
   >({
-    widget: this.widget.get_vadjustment(),
+    getWidget: () => this.widget.get_vadjustment(),
     lifecycle: this.lifecycle,
   });
 
@@ -308,7 +308,7 @@ export class ScrollBoxElement
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -334,6 +334,36 @@ export class ScrollBoxElement
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(

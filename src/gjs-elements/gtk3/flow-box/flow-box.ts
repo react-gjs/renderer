@@ -49,7 +49,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
   }
 
   readonly kind = "FLOW_BOX";
-  widget = new Gtk.FlowBox();
+  private widget = new Gtk.FlowBox();
 
   private children: Array<{
     element: FlowBoxEntryElement;
@@ -60,7 +60,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
 
   readonly lifecycle = new ElementLifecycleController();
   private handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(this);
-  private readonly propMapper = new PropertyMapper<FlowBoxProps>(
+  private readonly propsMapper = new PropertyMapper<FlowBoxProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
@@ -115,7 +115,9 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
         const newSelected: FlowBoxEntryElement[] = [];
 
         for (const childEntry of this.children) {
-          const currentlySelected = childEntry.element.widget.is_selected();
+          const currentlySelected = childEntry.element
+            .getWidget()
+            .is_selected();
           if (currentlySelected !== childEntry.isSelected) {
             if (currentlySelected) {
               newSelected.push(childEntry.element);
@@ -155,14 +157,14 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
       if (GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)) {
         // TODO: handle should append logic
         child.notifyWillAppendTo(this);
-        this.widget.add(child.widget);
+        this.widget.add(child.getWidget());
         const entry = {
           element: child,
           isSelected: false,
         };
         this.children.push(entry);
         if (child.isDefault && !this.isAnyChildSelected) {
-          this.widget.select_child(child.widget);
+          this.widget.select_child(child.getWidget());
           entry.isSelected = true;
         }
         this.widget.show_all();
@@ -185,15 +187,15 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
       const tmpContainer = new Gtk.FlowBox();
 
       for (let i = 0; i < childrenAfter.length; i++) {
-        tmpContainer.add(childrenAfter[i].element.widget);
-        this.widget.remove(childrenAfter[i].element.widget);
+        tmpContainer.add(childrenAfter[i].element.getWidget());
+        this.widget.remove(childrenAfter[i].element.getWidget());
       }
 
-      this.widget.add(newChild.widget);
+      this.widget.add(newChild.getWidget());
 
       for (let i = 0; i < childrenAfter.length; i++) {
-        this.widget.add(childrenAfter[i].element.widget);
-        tmpContainer.remove(childrenAfter[i].element.widget);
+        this.widget.add(childrenAfter[i].element.getWidget());
+        tmpContainer.remove(childrenAfter[i].element.getWidget());
       }
 
       tmpContainer.destroy();
@@ -214,7 +216,7 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
   }
 
   render() {
-    this.parent?.widget.show_all();
+    this.parent?.getWidget().show_all();
   }
 
   // #endregion
@@ -240,6 +242,36 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
 
   hide() {
     this.widget.visible = false;
+  }
+
+  getWidget() {
+    return this.widget;
+  }
+
+  getParentElement() {
+    return this.parent;
+  }
+
+  addEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.addListener(signal, callback);
+  }
+
+  removeEventListener(
+    signal: string,
+    callback: Rg.GjsElementEvenTListenerCallback
+  ): void {
+    return this.handlers.removeListener(signal, callback);
+  }
+
+  setProperty(key: string, value: any) {
+    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
+  }
+
+  getProperty(key: string) {
+    return this.propsMapper.get(key);
   }
 
   diffProps(
