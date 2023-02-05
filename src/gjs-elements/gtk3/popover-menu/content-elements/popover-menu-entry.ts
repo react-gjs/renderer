@@ -16,6 +16,8 @@ import { ensureNotText } from "../../../utils/ensure-not-string";
 import { generateUID } from "../../../utils/generate-uid";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../../markup/text-node";
@@ -29,7 +31,7 @@ import { PopoverMenuCheckButtonElement } from "./popover-menu-check-button";
 import { PopoverMenuRadioButtonElement } from "./popover-menu-radio-button";
 import { PopoverMenuSeparatorElement } from "./popover-menu-separator";
 
-type PopoverMenuEntryPropsMixin = MarginProps & StyleProps;
+type PopoverMenuEntryPropsMixin = SizeRequestProps & MarginProps & StyleProps;
 
 export type PopoverMenuEntryEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, PopoverMenuEntryElement>;
@@ -97,6 +99,7 @@ export class PopoverMenuEntryElement
   >(this);
   private readonly propsMapper = new PropertyMapper<PopoverMenuEntryProps>(
     this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>

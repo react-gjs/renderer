@@ -21,10 +21,16 @@ import type { ExpandProps } from "../../utils/property-maps-factories/create-exp
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 
-type SliderPropsMixin = AlignmentProps & MarginProps & ExpandProps & StyleProps;
+type SliderPropsMixin = SizeRequestProps &
+  AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export type SliderEvent<P extends Record<string, any> = {}> = SyntheticEvent<
   P,
@@ -75,6 +81,7 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
   private readonly handlers = new EventHandlers<Gtk.Scale, SliderProps>(this);
   private readonly propsMapper = new PropertyMapper<SliderProps>(
     this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget, { h: Align.FILL, v: Align.FILL }),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),

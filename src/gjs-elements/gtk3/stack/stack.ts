@@ -17,10 +17,15 @@ import type { ExpandProps } from "../../utils/property-maps-factories/create-exp
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { TextNode } from "../markup/text-node";
 import { StackScreenElement } from "./stack-screen";
 
-type StackPropsMixin = AlignmentProps & MarginProps & ExpandProps;
+type StackPropsMixin = SizeRequestProps &
+  AlignmentProps &
+  MarginProps &
+  ExpandProps;
 
 export interface StackProps extends StackPropsMixin {
   transitionDuration?: number;
@@ -69,6 +74,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
     );
 
     this.propsMapper.addCases(
+      createSizeRequestPropMapper(this.widget),
       createAlignmentPropMapper(this.widget),
       createMarginPropMapper(this.widget),
       createExpandPropMapper(this.widget),

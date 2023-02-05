@@ -15,6 +15,8 @@ import type { ExpandProps } from "../../utils/property-maps-factories/create-exp
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
+import type { SizeRequestProps } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
+import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../markup/text-node";
@@ -22,7 +24,11 @@ import { GridItemElement } from "./grid-item";
 import { GridItemsList } from "./helpers/grid-items-list";
 import { GridMatrix } from "./helpers/grid-matrix";
 
-type GridPropsMixin = AlignmentProps & MarginProps & ExpandProps & StyleProps;
+type GridPropsMixin = SizeRequestProps &
+  AlignmentProps &
+  MarginProps &
+  ExpandProps &
+  StyleProps;
 
 export interface GridProps extends GridPropsMixin {
   columns: number;
@@ -66,6 +72,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   private readonly children = new GridItemsList(this.lifecycle, this);
   private readonly propsMapper = new PropertyMapper<GridProps>(
     this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
