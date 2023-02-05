@@ -2,8 +2,8 @@ import { DataType } from "dilswer";
 import type { PropCaseCollector } from "../element-extenders/map-properties";
 
 export type WidgetWithSizeRequest = {
-  height_request?: number;
-  width_request?: number;
+  height_request: number | null;
+  width_request: number | null;
 };
 
 export type SizeRequestProps = {
@@ -32,15 +32,12 @@ export const createSizeRequestPropMapper = (
     heightRequest?: number;
   }
 ) => {
-  const defaultWidth = defaults?.widthRequest ?? 0;
-  const defaultHeight = defaults?.heightRequest ?? 0;
-
   return (mapper: PropCaseCollector<keyof SizeRequestProps, any>) =>
     mapper
-      .heightRequest(DataType.Number, (v = defaultHeight) => {
-        widget.height_request = v;
+      .heightRequest(DataType.Number, (v) => {
+        widget.height_request = v ?? defaults?.heightRequest ?? null;
       })
-      .widthRequest(DataType.Number, (v = defaultWidth) => {
-        widget.width_request = v;
+      .widthRequest(DataType.Number, (v) => {
+        widget.width_request = v ?? defaults?.widthRequest ?? null;
       });
 };
