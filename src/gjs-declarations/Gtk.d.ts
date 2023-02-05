@@ -61332,7 +61332,7 @@ container and help break any circular reference count cycles.
      * set to %FALSE again.
      */
     has_tooltip: boolean;
-    height_request: number;
+    height_request: number | null;
     /**
      * Whether to expand horizontally. See
      * {@link Gtk.Widget.set_hexpand}.
@@ -61477,7 +61477,7 @@ container and help break any circular reference count cycles.
      */
     vexpand_set: boolean;
     visible: boolean;
-    width_request: number;
+    width_request: number | null;
     /** The widget's window if it is realized, %NULL otherwise. */
     readonly window: Gdk.Window;
     /**
