@@ -8,6 +8,7 @@ import { registerGtk3Elements } from "../gjs-elements/gtk3/register";
 import { diffProps } from "../gjs-elements/utils/diff-props";
 import { DoNotAppend } from "../gjs-elements/utils/do-not-append";
 import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
+import { microtask } from "../gjs-elements/utils/micortask";
 import { EventPhaseController } from "./event-phase";
 import { HostContext } from "./host-context";
 
@@ -240,5 +241,8 @@ export const GjsRenderer = Reconciler({
       instance.updateText(text);
       instance.show();
     }
+  },
+  scheduleMicrotask(callback) {
+    microtask(callback);
   },
 });
