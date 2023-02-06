@@ -1,6 +1,7 @@
 {
   "packageManager": "yarn",
   "parallel": true,
+  "parallelPoolSize": 4,
   "hooks": {
     "pre-push": [
       {
@@ -16,7 +17,6 @@
         "script": "test:prettier"
       },
       {
-        "mustRunAlone": true,
         "name": "Jest",
         "script": "test:jest"
       }

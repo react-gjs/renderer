@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+env:
+  NPM_TOKEN: ""
+
+jobs:
+  run-tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: ./.yarn/yarn.cjs install --immutable
+      - name: Run tests
+        # Includes the following tests:
+        # - Jest tests
+        # - Prettier format check
+        # - ESLint lint
+        # - TypeScript type check
+        run: ./.yarn/yarn.cjs git-hook-tasks pre-push
