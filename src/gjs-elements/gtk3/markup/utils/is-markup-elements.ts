@@ -22,6 +22,7 @@ export const isMarkupElement = (
     v.kind === "M_UNDERLINE" ||
     v.kind === "M_STRIKETHROUGH" ||
     v.kind === "M_SUPERSCRIPT" ||
-    v.kind === "M_SUBSCRIPT"
+    v.kind === "M_SUBSCRIPT" ||
+    v.kind === "M_ANCHOR"
   );
 };

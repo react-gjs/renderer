@@ -1,5 +1,6 @@
 import Gtk from "gi://Gtk";
 import React from "react";
+import { EventLoop } from "../../utils/event-loop";
 import type { PopoverProps as BaseProps } from "./popover";
 
 const PopoverElem = "POPOVER";
@@ -31,13 +32,22 @@ export type PopoverProps = BaseProps & {
 
 const getPopoverWidget = () => {
   const popover = new Gtk.Popover();
+  const eventLoop = new EventLoop();
+
+  const transitionTimeout = 125;
 
   const showPopover = () => {
-    popover.popup();
+    eventLoop.addEvent((done) => {
+      popover.popup();
+      setTimeout(done, transitionTimeout);
+    });
   };
 
   const hidePopover = () => {
-    popover.popdown();
+    eventLoop.addEvent((done) => {
+      popover.popdown();
+      setTimeout(done, transitionTimeout);
+    });
   };
 
   return {

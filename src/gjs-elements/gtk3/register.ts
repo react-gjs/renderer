@@ -16,6 +16,7 @@ import { ImageElement } from "./image/image";
 import { LabelElement } from "./label/label";
 import { LinkButtonElement } from "./link-button/link-button";
 import { MarkupElement } from "./markup/markup";
+import { MAnchorElement } from "./markup/markup-elements/a";
 import { MBoldElement } from "./markup/markup-elements/b";
 import { MBigElement } from "./markup/markup-elements/big";
 import { MItalicElement } from "./markup/markup-elements/i";
@@ -86,6 +87,7 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("IMAGE", ImageElement);
   manager.register("LABEL", LabelElement);
   manager.register("LINK_BUTTON", LinkButtonElement);
+  manager.register("M_ANCHOR", MAnchorElement);
   manager.register("M_BIG", MBigElement);
   manager.register("M_BOLD", MBoldElement);
   manager.register("M_ITALIC", MItalicElement);

@@ -61,6 +61,10 @@ import type {
   MarkupElement,
   MarkupProps,
 } from "../gjs-elements/gtk3/markup/markup";
+import type {
+  MAnchorElement,
+  MAnchorProps,
+} from "../gjs-elements/gtk3/markup/markup-elements/a";
 import type { MBoldProps } from "../gjs-elements/gtk3/markup/markup-elements/b";
 import type { MBigProps } from "../gjs-elements/gtk3/markup/markup-elements/big";
 import type { MItalicProps } from "../gjs-elements/gtk3/markup/markup-elements/i";
@@ -294,6 +298,10 @@ declare global {
       MARKUP: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<MarkupProps, string | React.ReactNode>,
         MarkupElement
+      >;
+      M_ANCHOR: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<MAnchorProps, string | React.ReactNode>,
+        MAnchorElement
       >;
       M_BIG: Rg.ComponentWithChildren<MBigProps, string | React.ReactNode>;
       M_BOLD: Rg.ComponentWithChildren<MBoldProps, string | React.ReactNode>;

@@ -30,6 +30,9 @@ type ImageSrc =
         | GdkPixbuf.Pixbuf
         | GdkPixbuf.PixbufAnimation
         | cairo.Surface;
+      resizeToWidth?: number;
+      resizeToHeight?: number;
+      preserveAspectRatio?: boolean;
     }
   | {
       icon: string | Gio.Icon;
@@ -76,6 +79,15 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
     createStylePropMapper(this.widget),
     (props) =>
       props
+        .resizeToHeight(DataType.Number, () => {
+          this.resizeImage();
+        })
+        .resizeToWidth(DataType.Number, (_, __, { instead }) =>
+          instead("resizeToHeight")
+        )
+        .preserveAspectRatio(DataType.Boolean, (_, __, { instead }) =>
+          instead("resizeToHeight")
+        )
         .src(SrcDataType, (src, allProps) => {
           if (src && allProps?.icon) {
             throw new Error(
@@ -91,6 +103,10 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
             this.widget.set_from_animation(src);
           } else if (src instanceof cairo.Surface) {
             this.widget.set_from_surface(src);
+          }
+
+          if (allProps.resizeToWidth || allProps.resizeToHeight) {
+            this.resizeImage();
           }
         })
         .icon(IconDataType, (icon, allProps) => {
@@ -118,12 +134,62 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
         .useIconFallback(DataType.Boolean, (v = false) => {
           this.widget.use_fallback = v;
         })
+        .pixelSize(DataType.Number, (v) => {
+          const prev = this.widget.pixel_size;
+          if (v) this.widget.set_pixel_size(v);
+          return () => this.widget.set_pixel_size(prev);
+        })
   );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+  }
+
+  private resizeImage() {
+    const width: number | undefined = this.propsMapper.get("resizeToWidth");
+    const height: number | undefined = this.propsMapper.get("resizeToHeight");
+    const preserveAspectRatio: boolean =
+      this.propsMapper.get("preserveAspectRatio") ?? true;
+
+    const pixbuff = this.widget.get_pixbuf()!;
+
+    if (!pixbuff) return;
+
+    const currentWidth = pixbuff.get_width();
+    const currentHeight = pixbuff.get_height();
+
+    let targetWidth = width ?? currentWidth;
+    let targetHeight = height ?? currentHeight;
+
+    if (preserveAspectRatio) {
+      const aspectRatio = currentWidth / currentHeight;
+
+      if (width && height) {
+        if (width / height > aspectRatio) {
+          targetWidth = height * aspectRatio;
+        } else {
+          targetHeight = width / aspectRatio;
+        }
+      } else if (width && !height) {
+        targetHeight = width / aspectRatio;
+      } else if (height && !width) {
+        targetWidth = height * aspectRatio;
+      }
+    }
+
+    if (targetWidth === currentWidth && targetHeight === currentHeight) {
+      return;
+    }
+
+    const newPixbuff = pixbuff.scale_simple(
+      targetWidth,
+      targetHeight,
+      GdkPixbuf.InterpType.BILINEAR
+    );
+
+    this.widget.set_from_pixbuf(newPixbuff);
   }
 
   private setSrcFromString(src: string) {

@@ -36,6 +36,9 @@ export type SyntheticEvent<
   targetWidget: ReturnType<T["getWidget"]>;
 };
 
+const isObject = (value: any): value is object =>
+  typeof value === "object" && value != null;
+
 const noop = () => {};
 
 class EventBind {
@@ -85,14 +88,18 @@ class EventBind {
 
             const handlerReturn = this.handler(syntheticEvent);
 
-            if (handlerReturn instanceof Promise) {
+            if (isObject(handlerReturn) && handlerReturn instanceof Promise) {
               this.showAsyncWarning();
             }
 
             return !propagate;
           } catch (e) {
             // if argGetter throws it's a no-op
-            // TODO: only silence no-op errors
+            if (isObject(e) && e instanceof EventNoop) {
+              return true;
+            }
+
+            console.error(e);
             return true;
           }
         })

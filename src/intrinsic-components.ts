@@ -126,6 +126,8 @@ export { createStack, useStack } from "./gjs-elements/gtk3/stack/use-stack";
  */
 export const Markup = IntrinsicElem("MARKUP");
 /** A Markup element. Must be used inside a `<Markup />`. */
+export const Anchor = IntrinsicElem("M_ANCHOR");
+/** A Markup element. Must be used inside a `<Markup />`. */
 export const Span = IntrinsicElem("M_SPAN");
 /** A Markup element. Must be used inside a `<Markup />`. */
 export const Big = IntrinsicElem("M_BIG");

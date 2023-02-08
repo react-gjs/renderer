@@ -29,7 +29,7 @@ export class MSpanElement {
   readonly kind: Rg.GjsElementTypes = "M_SPAN";
 
   protected get widget(): Gtk.Widget {
-    throw new Error("Markdown elements do not have widgets.");
+    throw new Error("Markup elements do not have widgets.");
   }
 
   protected parent: BaseMarkupElement | MarkupElement | null = null;
@@ -37,12 +37,20 @@ export class MSpanElement {
   protected attributes = new MAttributes();
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly propsMapper = new PropertyMapper<MSpanProps>(
+  protected readonly propsMapper = new PropertyMapper<MSpanProps>(
     this.lifecycle,
     createMarkupPropMapper(this.attributes)
   );
 
-  constructor(props: DiffedProps) {
+  constructor(
+    props: DiffedProps,
+    context: HostContext<GjsContext>,
+    beforeFirstUpdate?: (self: any) => void
+  ) {
+    if (beforeFirstUpdate) {
+      beforeFirstUpdate(this);
+    }
+
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -58,7 +66,7 @@ export class MSpanElement {
   appendChild(child: GjsElement | TextNode): void {
     if (!isMarkupElement(child)) {
       throw new Error(
-        "Markdown elements can only have other markdown elements or strings as children."
+        "Markup elements can only have other Markup elements or strings as children."
       );
     }
 
@@ -71,7 +79,7 @@ export class MSpanElement {
   ): void {
     if (!isMarkupElement(child)) {
       throw new Error(
-        "Markdown elements can only have other markdown elements or strings as children."
+        "Markup elements can only have other Markup elements or strings as children."
       );
     }
 
@@ -107,7 +115,7 @@ export class MSpanElement {
     ) {
       this.parent = parent;
     } else {
-      throw new Error("Markdown elements can only be appended to a Markdown.");
+      throw new Error("Markup elements can only be appended to a Markup.");
     }
     return true;
   }

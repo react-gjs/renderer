@@ -8,6 +8,7 @@ import type { GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
+import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
@@ -31,6 +32,11 @@ type MarkupPropsMixin = SizeRequestProps &
   ExpandProps &
   StyleProps;
 
+export type MarkupEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  MarkupElement
+>;
+
 export interface MarkupProps extends MarkupPropsMixin {
   wrap?: boolean;
   wrapMode?: WrapMode;
@@ -39,6 +45,7 @@ export interface MarkupProps extends MarkupPropsMixin {
   lines?: number;
   selectable?: boolean;
   margin?: ElementMargin;
+  onAnchorClick?: (event: MarkupEvent<{ href: string }>) => void;
 }
 
 export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
@@ -55,7 +62,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   private children: Array<BaseMarkupElement> = [];
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Label, MarginProps>(this);
+  private readonly handlers = new EventHandlers<Gtk.Label, MarkupProps>(this);
   private readonly propsMapper = new PropertyMapper<MarkupProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -92,6 +99,10 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   );
 
   constructor(props: DiffedProps) {
+    this.handlers.bind("activate-link", "onAnchorClick", (e) => {
+      return { href: e };
+    });
+
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -106,7 +117,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   appendChild(child: GjsElement | TextNode): void {
     if (child.kind === "TEXT_NODE" || !isMarkupElement(child)) {
       throw new Error(
-        "Markdown root element can only have other markdown elements, like <span />, <i />, etc."
+        "Markup root element can only have other Markup elements, like <span />, <i />, etc."
       );
     }
 
@@ -120,7 +131,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   ): void {
     if (child.kind === "TEXT_NODE" || !isMarkupElement(child)) {
       throw new Error(
-        "Markdown root element can only have other markdown elements, like <span />, <i />, etc."
+        "Markup root element can only have other Markup elements, like <span />, <i />, etc."
       );
     }
 
