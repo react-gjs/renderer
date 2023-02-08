@@ -1,4 +1,6 @@
 import { DataType } from "dilswer";
+import GdkPixbuf from "gi://GdkPixbuf";
+import type Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import type { PositionType } from "../../../g-enums";
 import { ButtonType } from "../../../g-enums";
@@ -25,6 +27,7 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import { resizePixbuff } from "../../utils/resize-pixbuff";
 import type { TextNode } from "../markup/text-node";
 
 type ButtonPropsMixin = SizeRequestProps &
@@ -41,7 +44,12 @@ export type ButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<
 export interface ButtonProps extends ButtonPropsMixin {
   type?: ButtonType;
   label?: string;
-  image?: Gtk.Widget;
+  image?: string | GdkPixbuf.Pixbuf;
+  imageWidth?: number;
+  imageHeight?: number;
+  imagePreserveAspectRatio?: boolean;
+  icon?: Rg.IconName;
+  iconPixelSize?: number;
   imagePosition?: PositionType;
   useUnderline?: boolean;
   margin?: ElementMargin;
@@ -55,8 +63,9 @@ export interface ButtonProps extends ButtonPropsMixin {
   onMouseLeave?: (event: ButtonEvent<PointerEvent>) => void;
 }
 
-const WidgetDataType = DataType.Custom(
-  (v: any): v is Gtk.Widget => typeof v === "object"
+const ImageDataType = DataType.OneOf(
+  DataType.String,
+  DataType.Custom((v): v is GdkPixbuf.Pixbuf => typeof v === "object")
 );
 
 export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
@@ -90,15 +99,89 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
         .alwaysShowImage(DataType.Boolean, (v = false) => {
           this.widget.always_show_image = v;
         })
-        .image(WidgetDataType, (v) => {
-          this.widget.set_image(v ?? null);
+        .image(ImageDataType, (v, allProps) => {
+          if (v) {
+            if (allProps.icon) {
+              throw new Error("Cannot set both image and icon");
+            }
+
+            this.setImage(
+              v,
+              allProps.imageWidth,
+              allProps.imageHeight,
+              allProps.imagePreserveAspectRatio
+            );
+
+            return () => this.widget.set_image(null);
+          }
         })
+        .imageWidth(DataType.Number, (v, allProps, mapperApi) => {
+          if (allProps.image && !allProps.icon) {
+            if (!mapperApi.isUpdatedInThisCycle("image")) {
+              this.resizeCurrentImage(
+                v,
+                allProps.imageHeight,
+                allProps.imagePreserveAspectRatio
+              );
+            }
+          }
+        })
+        .imageHeight(DataType.Number, (v, allProps, mapperApi) => {
+          if (allProps.image && !allProps.icon) {
+            if (
+              !mapperApi.isUpdatedInThisCycle("image") &&
+              !mapperApi.isUpdatedInThisCycle("imageWidth")
+            ) {
+              this.resizeCurrentImage(
+                allProps.imageWidth,
+                v,
+                allProps.imagePreserveAspectRatio
+              );
+            }
+          }
+        })
+        .imagePreserveAspectRatio(
+          DataType.Boolean,
+          (v, allProps, mapperApi) => {
+            if (allProps.image && !allProps.icon) {
+              if (
+                !mapperApi.isUpdatedInThisCycle("image") &&
+                !mapperApi.isUpdatedInThisCycle("imageWidth") &&
+                !mapperApi.isUpdatedInThisCycle("imageHeight")
+              ) {
+                this.resizeCurrentImage(
+                  allProps.imageWidth,
+                  allProps.imageHeight,
+                  v
+                );
+              }
+            }
+          }
+        )
         .imagePosition(
           DataType.Enum(Gtk.PositionType),
           (v = Gtk.PositionType.LEFT) => {
             this.widget.image_position = v;
           }
         )
+        .icon(DataType.String, (v, allProps) => {
+          if (allProps.image) {
+            throw new Error("Cannot set both image and icon");
+          }
+
+          if (v) {
+            this.setImageIcon(v, allProps.iconPixelSize);
+            return () => this.widget.set_image(null);
+          }
+        })
+        .iconPixelSize(DataType.Number, (v = 16, allProps, mapperApi) => {
+          if (
+            allProps.icon != null &&
+            !mapperApi.isUpdatedInThisCycle("icon")
+          ) {
+            this.setImageIcon(allProps.icon, v);
+          }
+        })
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
@@ -145,6 +228,65 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+  }
+
+  private resizeCurrentImage(
+    width?: number,
+    height?: number,
+    preserveAspectRatio = true
+  ) {
+    const image = this.widget.image;
+    if (image) {
+      const pixbuff = image.get_pixbuf();
+      if (pixbuff) {
+        image.set_from_pixbuf(
+          resizePixbuff(pixbuff, width, height, preserveAspectRatio)
+        );
+        this.widget.set_image(image);
+      }
+    }
+  }
+
+  private setImage(
+    src: string | GdkPixbuf.Pixbuf,
+    width?: number,
+    height?: number,
+    preserveAspectRatio = true
+  ) {
+    let pixbuff: GdkPixbuf.Pixbuf;
+
+    if (typeof src === "string") {
+      if (src.startsWith("resource://")) {
+        pixbuff = GdkPixbuf.Pixbuf.new_from_resource(
+          src.replace(/^resource:\/\//, "")
+        )!;
+      } else {
+        pixbuff = GdkPixbuf.Pixbuf.new_from_file(src)!;
+      }
+    } else {
+      pixbuff = src;
+    }
+
+    if (width != null && height != null) {
+      pixbuff = resizePixbuff(pixbuff, width, height, preserveAspectRatio);
+    }
+
+    const image = Gtk.Image.new_from_pixbuf(pixbuff);
+
+    this.widget.set_image(image);
+  }
+
+  private setImageIcon(icon: string | Gio.Icon, pixelSize?: number) {
+    const iconWidget =
+      typeof icon === "string"
+        ? Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
+        : Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON);
+
+    if (pixelSize != null) {
+      iconWidget.set_pixel_size(pixelSize);
+    }
+
+    this.widget.set_image(iconWidget);
   }
 
   updateProps(props: DiffedProps): void {

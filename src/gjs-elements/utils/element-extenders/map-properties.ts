@@ -11,8 +11,9 @@ export type _PropsReader<P> = {
 
 export type PropsReader<P> = _PropsReader<Required<P>>;
 
-export type UpdateRedirect<P> = {
+export type MapperUpdateApi<P> = {
   instead(propertyName: KeysOf<P>): void;
+  isUpdatedInThisCycle(propertyName: KeysOf<P>): boolean;
 };
 
 export type PropCaseCollector<
@@ -25,7 +26,7 @@ export type PropCaseCollector<
     mapper: (
       v: GetDataType<T> | undefined,
       allProps: PropsReader<P>,
-      redirect: UpdateRedirect<P>
+      mapperUpdateApi: MapperUpdateApi<P>
     ) => void | (() => void)
   ) => PropCaseCollector<K, P>
 >;
@@ -38,7 +39,7 @@ type MapEntry<P> = {
   callback: (
     v: any,
     props: PropsReader<P>,
-    redirect: UpdateRedirect<P>
+    mapperUpdateApi: MapperUpdateApi<P>
   ) => void | (() => void);
   nextCleanup?: () => void;
 };
@@ -129,30 +130,34 @@ export class PropertyMapper<P = Record<string, any>> {
       }
     }
 
+    try {
+      for (const [entry] of updated.values()) {
+        entry.nextCleanup?.();
+      }
+    } catch (e) {
+      console.error("Property cleanup callback failed.", e);
+    }
+
     const updateEntry = (entry: MapEntry<P>, value: any) => {
       try {
-        // run the cleanup callback from the previous update
-        if (entry.nextCleanup) {
-          entry.nextCleanup();
-        }
-
         entry.nextCleanup =
-          entry.callback(value, this.currentProps, redirect) ?? undefined;
+          entry.callback(value, this.currentProps, mapperUpdateApi) ??
+          undefined;
       } catch (e) {
         console.error("Failed to apply a property update.", e);
       }
     };
 
-    const redirect: UpdateRedirect<P> = {
+    const mapperUpdateApi: MapperUpdateApi<P> = {
       instead: (propName) => {
         if (updated.has(propName as string)) {
           return; // no-op, mapping function was already called this cycle
         }
-        updateEntry(
-          this.map.get(propName as string)!,
-          this.properties[propName as string]
-        );
+        const entry = this.map.get(propName as string)!;
+        entry.nextCleanup?.();
+        updateEntry(entry, this.properties[propName as string]);
       },
+      isUpdatedInThisCycle: (propName) => updated.has(propName as string),
     };
 
     if (this.isFirstUpdate) {
@@ -169,6 +174,7 @@ export class PropertyMapper<P = Record<string, any>> {
             entry.nextCleanup =
               entry.callback(undefined, this.currentProps, {
                 instead: () => {},
+                isUpdatedInThisCycle: () => true,
               }) ?? undefined;
           } catch (e) {
             console.error("Failed to apply a property update.", e);

@@ -21,6 +21,7 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import { resizePixbuff } from "../../utils/resize-pixbuff";
 import type { TextNode } from "../markup/text-node";
 
 type ImageSrc =
@@ -54,7 +55,7 @@ export type ImageProps = ImagePropsMixin & {
 const SrcDataType = DataType.OneOf(DataType.String, DataType.RecordOf({}));
 const IconDataType = DataType.OneOf(DataType.String, DataType.RecordOf({}));
 
-const DEFAULT_ICON_SIZE = 32;
+const DEFAULT_ICON_SIZE = Gtk.IconSize.BUTTON;
 
 export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
   static getContext(
@@ -157,36 +158,11 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
     if (!pixbuff) return;
 
-    const currentWidth = pixbuff.get_width();
-    const currentHeight = pixbuff.get_height();
-
-    let targetWidth = width ?? currentWidth;
-    let targetHeight = height ?? currentHeight;
-
-    if (preserveAspectRatio) {
-      const aspectRatio = currentWidth / currentHeight;
-
-      if (width && height) {
-        if (width / height > aspectRatio) {
-          targetWidth = height * aspectRatio;
-        } else {
-          targetHeight = width / aspectRatio;
-        }
-      } else if (width && !height) {
-        targetHeight = width / aspectRatio;
-      } else if (height && !width) {
-        targetWidth = height * aspectRatio;
-      }
-    }
-
-    if (targetWidth === currentWidth && targetHeight === currentHeight) {
-      return;
-    }
-
-    const newPixbuff = pixbuff.scale_simple(
-      targetWidth,
-      targetHeight,
-      GdkPixbuf.InterpType.BILINEAR
+    const newPixbuff = resizePixbuff(
+      pixbuff,
+      width,
+      height,
+      preserveAspectRatio
     );
 
     this.widget.set_from_pixbuf(newPixbuff);

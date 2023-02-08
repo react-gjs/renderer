@@ -6292,7 +6292,7 @@ declare module "gi://Gtk" {
      */
     always_show_image: boolean;
     /** The child widget to appear next to the button text. */
-    image: Widget;
+    image: Image | null;
     /**
      * The position of the image relative to the text inside the
      * button.
@@ -27338,7 +27338,7 @@ container and help break any circular reference count cycles.
      *
      * @returns A newly created {@link Image} widget.
      */
-    public static new(): Widget;
+    public static new(): Image;
     /**
      * Creates a {@link Image} displaying the given animation. The
      * #GtkImage does not assume a reference to the animation;
@@ -27357,7 +27357,7 @@ container and help break any circular reference count cycles.
      */
     public static new_from_animation(
       animation: GdkPixbuf.PixbufAnimation
-    ): Widget;
+    ): Image;
     /**
      * Creates a new {@link Image} displaying the file #filename.
      * If the file isn’t found or can’t be loaded, the resulting
@@ -27380,7 +27380,7 @@ container and help break any circular reference count cycles.
      * @param filename A filename
      * @returns A new {@link Image}
      */
-    public static new_from_file(filename: string): Widget;
+    public static new_from_file(filename: string): Image;
     /**
      * Creates a {@link Image} displaying an icon from the current
      * icon theme. If the icon name isn’t known, a “broken image”
@@ -27391,7 +27391,7 @@ container and help break any circular reference count cycles.
      * @param size A stock icon size ({@link IconSize})
      * @returns A new {@link Image} displaying the themed icon
      */
-    public static new_from_gicon(icon: Gio.Icon, size: number): Widget;
+    public static new_from_gicon(icon: Gio.Icon, size: number): Image;
     /**
      * Creates a {@link Image} displaying an icon from the current
      * icon theme. If the icon name isn’t known, a “broken image”
@@ -27405,7 +27405,7 @@ container and help break any circular reference count cycles.
     public static new_from_icon_name(
       icon_name: string | null,
       size: number
-    ): Widget;
+    ): Image;
     /**
      * @deprecated Use {@link Gtk.Image.new_from_icon_name}
      *   instead.
@@ -27428,7 +27428,7 @@ container and help break any circular reference count cycles.
      * @param size A stock icon size ({@link IconSize})
      * @returns A new {@link Image}
      */
-    public static new_from_icon_set(icon_set: IconSet, size: number): Widget;
+    public static new_from_icon_set(icon_set: IconSet, size: number): Image;
     /**
      * Creates a new {@link Image} displaying #pixbuf. The
      * #GtkImage does not assume a reference to the pixbuf; you
@@ -27443,7 +27443,7 @@ container and help break any circular reference count cycles.
      * @param pixbuf A #GdkPixbuf, or %NULL
      * @returns A new {@link Image}
      */
-    public static new_from_pixbuf(pixbuf: GdkPixbuf.Pixbuf | null): Widget;
+    public static new_from_pixbuf(pixbuf: GdkPixbuf.Pixbuf | null): Image;
     /**
      * Creates a new {@link Image} displaying the resource file
      * #resource_path. If the file isn’t found or can’t be
@@ -27466,7 +27466,7 @@ container and help break any circular reference count cycles.
      * @param resource_path A resource path
      * @returns A new {@link Image}
      */
-    public static new_from_resource(resource_path: string): Widget;
+    public static new_from_resource(resource_path: string): Image;
     /**
      * @deprecated Use {@link Gtk.Image.new_from_icon_name}
      *   instead.
@@ -27483,7 +27483,7 @@ container and help break any circular reference count cycles.
      * @param size A stock icon size ({@link IconSize})
      * @returns A new {@link Image} displaying the stock icon
      */
-    public static new_from_stock(stock_id: string, size: number): Widget;
+    public static new_from_stock(stock_id: string, size: number): Image;
     /**
      * Creates a new {@link Image} displaying #surface. The
      * #GtkImage does not assume a reference to the surface; you
@@ -27493,7 +27493,7 @@ container and help break any circular reference count cycles.
      * @param surface A #cairo_surface_t, or %NULL
      * @returns A new {@link Image}
      */
-    public static new_from_surface(surface: cairo.Surface | null): Widget;
+    public static new_from_surface(surface: cairo.Surface | null): Image;
   }
 
   /**
