@@ -45,6 +45,7 @@ import type {
   HeaderBarElement,
   HeaderBarProps,
 } from "../gjs-elements/gtk3/headerbar/headerbar";
+import type { IconElement, IconProps } from "../gjs-elements/gtk3/icon/icon";
 import type {
   ImageElement,
   ImageProps,
@@ -285,6 +286,10 @@ declare global {
       HEADER_BAR: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<HeaderBarProps>,
         HeaderBarElement
+      >;
+      ICON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<IconProps, string>,
+        IconElement
       >;
       IMAGE: Rg.IntrinsicComponent<ImageProps, ImageElement>;
       LABEL: Rg.IntrinsicComponent<

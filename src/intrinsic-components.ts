@@ -51,6 +51,8 @@ export const MenuSeparator = IntrinsicElem("MENU_SEPARATOR");
 /** Equivalent to the Gtk.SpinButton widget. */
 export const NumberInput = IntrinsicElem("NUMBER_INPUT");
 /** Equivalent to the Gtk.Image widget. */
+export const Icon = IntrinsicElem("ICON");
+/** Equivalent to the Gtk.Image widget. */
 export const Image = IntrinsicElem("IMAGE");
 /** Equivalent to the Gtk.EventBox widget. */
 export const Pressable = IntrinsicElem("PRESSABLE");

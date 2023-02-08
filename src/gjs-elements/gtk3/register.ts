@@ -12,6 +12,7 @@ import { FrameElement } from "./frame/frame";
 import { GridElement } from "./grid/grid";
 import { GridItemElement } from "./grid/grid-item";
 import { HeaderBarElement } from "./headerbar/headerbar";
+import { IconElement } from "./icon/icon";
 import { ImageElement } from "./image/image";
 import { LabelElement } from "./label/label";
 import { LinkButtonElement } from "./link-button/link-button";
@@ -84,6 +85,7 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("GRID_ITEM", GridItemElement);
   manager.register("GRID", GridElement);
   manager.register("HEADER_BAR", HeaderBarElement);
+  manager.register("ICON", IconElement);
   manager.register("IMAGE", ImageElement);
   manager.register("LABEL", LabelElement);
   manager.register("LINK_BUTTON", LinkButtonElement);

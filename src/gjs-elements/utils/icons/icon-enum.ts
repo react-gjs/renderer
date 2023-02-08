@@ -1,4 +1,4 @@
-export enum Icon {
+export enum IconName {
   AccessoriesCalculator = "accessories-calculator",
   AccessoriesCalculatorSymbolic = "accessories-calculator-symbolic",
   AccessoriesCharacterMap = "accessories-character-map",

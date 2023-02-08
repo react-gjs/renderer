@@ -14,6 +14,7 @@ declare global {
       GRID_ITEM: "GRID_ITEM";
       GRID: "GRID";
       HEADER_BAR: "HEADER_BAR";
+      ICON: "ICON";
       IMAGE: "IMAGE";
       LABEL: "LABEL";
       LINK_BUTTON: "LINK_BUTTON";
