@@ -26,9 +26,11 @@ declare module "gi://Soup" {}
 declare module "system" {}
 
 declare module "gi://Gtk?version=3.0" {
-  export * from "gi://Gtk";
+  import Gtk from "gi://Gtk";
+  export default Gtk;
 }
 
 declare module "gi://Gdk?version=3.0" {
-  export * from "gi://Gdk";
+  import Gdk from "gi://Gdk";
+  export default Gdk;
 }

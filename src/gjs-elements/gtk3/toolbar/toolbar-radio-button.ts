@@ -1,6 +1,5 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { RadioToolButton } from "gi://Gtk?version=3.0";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -159,7 +158,7 @@ export class ToolbarRadioButtonElement
 
       this.widget = Gtk.RadioToolButton.new_from_widget(
         radioGroup
-      ) as RadioToolButton;
+      ) as Gtk.RadioToolButton;
 
       this.isInitialized = true;
 
