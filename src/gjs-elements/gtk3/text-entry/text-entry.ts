@@ -1,10 +1,10 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk?version=3.0";
 import Gtk from "gi://Gtk";
+import { InputType } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
-import type { ElementMargin } from "../../utils/apply-margin";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
@@ -34,8 +34,19 @@ export type TextEntryElementEvent<P extends Record<string, any> = {}> =
 
 export interface TextEntryProps extends TextEntryPropsMixin {
   value?: string;
-  margin?: ElementMargin;
+  capsLockWarning?: boolean;
+  disabled?: boolean;
+  type?: InputType;
+  maxLength?: number;
+  placeholder?: string;
+  icon?: Rg.IconName;
+  iconTooltip?: string;
+  secondaryIcon?: Rg.IconName;
+  secondaryIconTooltip?: string;
+  progress?: number;
+  truncateMultilinePaste?: boolean;
   onChange?: (event: TextEntryElementEvent<{ text: string }>) => void;
+  onEnter?: (event: TextEntryElementEvent) => void;
   onKeyPress?: (event: TextEntryElementEvent<Rg.KeyPressEventData>) => void;
   onKeyRelease?: (event: TextEntryElementEvent<Rg.KeyPressEventData>) => void;
 }
@@ -51,7 +62,6 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
   private textBuffer = new Gtk.EntryBuffer();
   private widget = new Gtk.Entry({
     buffer: this.textBuffer,
-    visible: true,
   });
 
   private parent: GjsElement | null = null;
@@ -69,15 +79,60 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     (props) =>
-      props.value(DataType.String, (v = "") => {
-        this.widget.set_text(v);
-      })
+      props
+        .value(DataType.String, (v = "") => {
+          if (this.widget.text !== v) {
+            this.widget.set_text(v);
+          }
+        })
+        .capsLockWarning(DataType.Boolean, (v = false) => {
+          this.widget.caps_lock_warning = v;
+        })
+        .disabled(DataType.Boolean, (v = false) => {
+          this.widget.editable = !v;
+        })
+        .icon(DataType.String, (v) => {
+          this.widget.primary_icon_name = v ?? null;
+        })
+        .iconTooltip(DataType.String, (v) => {
+          this.widget.primary_icon_tooltip_text = v ?? null;
+        })
+        .maxLength(DataType.Number, (v) => {
+          this.widget.max_length = v ?? 0;
+        })
+        .placeholder(DataType.String, (v) => {
+          this.widget.placeholder_text = v ?? null;
+        })
+        .progress(DataType.Number, (v) => {
+          if (v) {
+            this.widget.progress_fraction = Math.min(0, Math.max(v, 1));
+          }
+        })
+        .secondaryIcon(DataType.String, (v) => {
+          this.widget.secondary_icon_name = v ?? null;
+        })
+        .secondaryIconTooltip(DataType.String, (v) => {
+          this.widget.secondary_icon_tooltip_text = v ?? null;
+        })
+        .truncateMultilinePaste(DataType.Boolean, (v = false) => {
+          this.widget.truncate_multiline = v;
+        })
+        .type(DataType.Enum(InputType), (v = InputType.FREE_FORM) => {
+          this.widget.input_purpose = v;
+
+          if (v === InputType.PASSWORD || v === InputType.PIN) {
+            this.widget.visibility = false;
+          } else {
+            this.widget.visibility = true;
+          }
+        })
   );
 
   constructor(props: DiffedProps) {
     this.handlers.bind("changed", "onChange", () => ({
       text: this.widget.text,
     }));
+    this.handlers.bind("activate", "onEnter");
     this.handlers.bind("key-press-event", "onKeyPress", (event: Gdk.EventKey) =>
       parseEventKey(event, Gdk.EventType.KEY_PRESS)
     );
