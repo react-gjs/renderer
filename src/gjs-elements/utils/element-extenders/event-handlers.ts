@@ -96,11 +96,11 @@ class EventBind {
           } catch (e) {
             // if argGetter throws it's a no-op
             if (isObject(e) && e instanceof EventNoop) {
-              return true;
+              return false;
             }
 
             console.error(e);
-            return true;
+            return false;
           }
         })
       );

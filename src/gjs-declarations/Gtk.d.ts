@@ -14991,7 +14991,7 @@ container and help break any circular reference count cycles.
      * {@link Entry}.
      */
     invisible_char_set: boolean;
-    max_length: number;
+    max_length: number | null;
     /**
      * The desired maximum width of the entry, in characters. If
      * this property is set to -1, the width will be calculated
@@ -15004,7 +15004,7 @@ container and help break any circular reference count cycles.
      * The text that will be displayed in the {@link Entry} when
      * it is empty and unfocused.
      */
-    placeholder_text: string;
+    placeholder_text: string | null;
     /**
      * If :populate-all is %TRUE, the {@link Entry.populate_popup}
      * signal is also emitted for touch popups.
@@ -15024,7 +15024,7 @@ container and help break any circular reference count cycles.
     /** The #GIcon to use for the primary icon for the entry. */
     primary_icon_gicon: Gio.Icon;
     /** The icon name to use for the primary icon for the entry. */
-    primary_icon_name: string;
+    primary_icon_name: string | null;
     /** A pixbuf to use as the primary icon for the entry. */
     primary_icon_pixbuf: GdkPixbuf.Pixbuf;
     /**
@@ -15062,9 +15062,9 @@ container and help break any circular reference count cycles.
      *
      * Also see {@link Gtk.Entry.set_icon_tooltip_text}.
      */
-    primary_icon_tooltip_text: string;
+    primary_icon_tooltip_text: string | null;
     /** The current fraction of the task that's been completed. */
-    progress_fraction: number;
+    progress_fraction: number | null;
     /**
      * The fraction of total entry width to move the progress
      * bouncing block for each call to
@@ -15086,7 +15086,7 @@ container and help break any circular reference count cycles.
     /** The #GIcon to use for the secondary icon for the entry. */
     secondary_icon_gicon: Gio.Icon;
     /** The icon name to use for the secondary icon for the entry. */
-    secondary_icon_name: string;
+    secondary_icon_name: string | null;
     /** An pixbuf to use as the secondary icon for the entry. */
     secondary_icon_pixbuf: GdkPixbuf.Pixbuf;
     /**
@@ -15124,7 +15124,7 @@ container and help break any circular reference count cycles.
      *
      * Also see {@link Gtk.Entry.set_icon_tooltip_text}.
      */
-    secondary_icon_tooltip_text: string;
+    secondary_icon_tooltip_text: string | null;
     readonly selection_bound: number;
     /**
      * @deprecated Use CSS to determine the style of the border;

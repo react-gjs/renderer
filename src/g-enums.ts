@@ -77,6 +77,9 @@ export const Sensitivity = Gtk.SensitivityType;
 export type PackType = Gtk.PackType;
 export const PackType = Gtk.PackType;
 
+export type InputType = Gtk.InputPurpose;
+export const InputType = Gtk.InputPurpose;
+
 export enum ButtonType {
   FLAT,
   NORMAL,
