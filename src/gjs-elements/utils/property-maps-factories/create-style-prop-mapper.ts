@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { PropCaseCollector } from "../element-extenders/map-properties";
 import { generateName } from "../generate-uid";
+import { mergeObjects } from "../merge-objects";
 
 export const createStylePropMapper = (
   widget: Gtk.Widget,
@@ -14,7 +15,9 @@ export const createStylePropMapper = (
   return (props: PropCaseCollector<keyof StyleProps, any>) =>
     props.style(DataType.RecordOf({}), (v) => {
       const finalStyles = v
-        ? (Object.assign(defaults ?? {}, v) as any as StyleSheet)
+        ? defaults
+          ? mergeObjects(defaults, v)
+          : v
         : defaults;
 
       if (finalStyles) {
@@ -170,6 +173,18 @@ function parseToCss(styles: StyleSheet, className: string) {
     );
   }
 
+  const childRules = Object.entries(styles).filter(([entry]) =>
+    entry.startsWith(":child(")
+  );
+
+  for (const [name, cRules] of childRules) {
+    const selector = name.slice(7, -1);
+    rules.push(
+      `.${className} ${selector} {
+        ${parseCssRulesToString(cRules as CssRules)}\n}`
+    );
+  }
+
   return rules.join("\n");
 }
 
@@ -189,6 +204,8 @@ function stylesToData(styles: StyleSheet, className: string) {
 
 export type CssPropertyValue = string | number;
 
+type ChildSelector = `:child(${string})`;
+
 export type StyleSheet = CssRules & {
   ":hover"?: CssRules;
   ":active"?: CssRules;
@@ -200,7 +217,10 @@ export type StyleSheet = CssRules & {
   ":backdrop"?: CssRules;
   ":link"?: CssRules;
   ":visited"?: CssRules;
+} & {
+  [key in ChildSelector]?: CssRules;
 };
+
 export type StyleProps = { style?: StyleSheet };
 
 // TODO: remove properties that are not supported by GTK
