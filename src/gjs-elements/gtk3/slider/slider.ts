@@ -66,9 +66,7 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
-    return currentContext.set({
-      isInTextContext: true,
-    });
+    return currentContext;
   }
 
   readonly kind = "SLIDER";
@@ -201,7 +199,7 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

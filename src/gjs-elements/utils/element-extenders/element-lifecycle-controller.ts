@@ -2,13 +2,13 @@ import type { ElementLifecycle } from "../../element-extender";
 import type { DiffedProps } from "./map-properties";
 
 /**
- * Lifecycle controller is providing an interface that allows
- * Element extenders to hook into the lifecycle of the element.
+ * Lifecycle controller is providing an interface that allows Element
+ * extenders to hook into the lifecycle of the element.
  *
  * Whenever a major lifecycle change happens on the element, that
- * element should emit an appropriate event. Then extenders
- * hooked into those lifecycle events can execute appropriate for
- * them actions.
+ * element should emit an appropriate event. Then extenders hooked
+ * into those lifecycle events can execute appropriate for them
+ * actions.
  */
 export class ElementLifecycleController implements ElementLifecycle {
   private afterCreateCallback: (() => void) | null = null;
@@ -21,7 +21,11 @@ export class ElementLifecycleController implements ElementLifecycle {
     this.afterCreateCallback = currentHook
       ? () => {
           currentHook();
-          hook();
+          try {
+            hook();
+          } catch {
+            // no-op
+          }
         }
       : hook;
   }
@@ -32,7 +36,11 @@ export class ElementLifecycleController implements ElementLifecycle {
     this.beforeDestroyCallback = currentHook
       ? () => {
           currentHook();
-          hook();
+          try {
+            hook();
+          } catch {
+            // no-op
+          }
         }
       : hook;
   }
@@ -43,7 +51,11 @@ export class ElementLifecycleController implements ElementLifecycle {
     this.updateCallback = currentHook
       ? (props) => {
           currentHook(props);
-          hook(props);
+          try {
+            hook(props);
+          } catch {
+            // no-op
+          }
         }
       : hook;
   }

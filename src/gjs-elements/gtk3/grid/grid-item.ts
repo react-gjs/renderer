@@ -10,7 +10,7 @@ import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { SyntheticEmitter } from "../../utils/element-extenders/synthetic-emitter";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 import { GridElement } from "./grid";
 
 export interface GridItemProps {
@@ -106,7 +106,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

@@ -1,7 +1,11 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
-import type { EllipsizeMode, Justification, WrapMode } from "../../../g-enums";
+import type {
+  EllipsizeMode,
+  Justification,
+  MarkupWrapMode,
+} from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -12,6 +16,7 @@ import type { SyntheticEvent } from "../../utils/element-extenders/event-handler
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
+import { microThrottle } from "../../utils/micro-throttle";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -22,8 +27,8 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import type { TextNode } from "../text-node";
 import type { BaseMarkupElement } from "./markup-elem";
-import type { TextNode } from "./text-node";
 import { isMarkupElement } from "./utils/is-markup-elements";
 
 type MarkupPropsMixin = SizeRequestProps &
@@ -39,7 +44,7 @@ export type MarkupEvent<P extends Record<string, any> = {}> = SyntheticEvent<
 
 export interface MarkupProps extends MarkupPropsMixin {
   wrap?: boolean;
-  wrapMode?: WrapMode;
+  wrapMode?: MarkupWrapMode;
   ellipsize?: EllipsizeMode;
   justify?: Justification;
   lines?: number;
@@ -87,9 +92,12 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
             this.widget.ellipsize = v;
           }
         )
-        .wrapMode(DataType.Enum(Pango.WrapMode), (v = Pango.WrapMode.CHAR) => {
-          this.widget.wrap_mode = v;
-        })
+        .wrapMode(
+          DataType.Enum(Pango.WrapMode),
+          (v = Pango.WrapMode.WORD_CHAR) => {
+            this.widget.wrap_mode = v;
+          }
+        )
         .justify(
           DataType.Enum(Gtk.Justification),
           (v = Gtk.Justification.CENTER) => {
@@ -153,9 +161,13 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
     this.widget.destroy();
   }
 
-  render() {
+  private triggerRepaint = microThrottle(() => {
     this.paint();
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
+  });
+
+  render() {
+    this.triggerRepaint();
   }
 
   // #endregion

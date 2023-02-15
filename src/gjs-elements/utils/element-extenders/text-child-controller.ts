@@ -1,6 +1,6 @@
 import type { ElementLifecycle } from "../../element-extender";
 import type { GjsElement } from "../../gjs-element";
-import type { TextNode } from "../../gtk3/markup/text-node";
+import type { TextNode } from "../../gtk3/text-node";
 
 export class TextChildController {
   private previousText = "";

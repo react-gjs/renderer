@@ -170,7 +170,7 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

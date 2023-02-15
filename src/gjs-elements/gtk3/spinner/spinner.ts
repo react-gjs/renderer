@@ -87,7 +87,7 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

@@ -1,23 +1,35 @@
-import type Gtk from "gi://Gtk";
+import { DataType } from "dilswer";
+import type Gtk from "gi://Gtk?version=3.0";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import type { GjsElement } from "../../../gjs-element";
-import { GjsElementManager } from "../../../gjs-element-manager";
 import { diffProps } from "../../../utils/diff-props";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import { MarkupAttributes } from "../../../utils/markup-attributes";
+import type { MarkupElementProps } from "../../markup/markup-elem";
+import { createMarkupPropMapper } from "../../markup/utils/create-markup-prop-mapper";
+import { escapeHtml } from "../../markup/utils/escape-html";
 import type { TextNode } from "../../text-node";
-import { MarkupElement } from "../markup";
-import type { BaseMarkupElement, MarkupElementProps } from "../markup-elem";
-import { createMarkupPropMapper } from "../utils/create-markup-prop-mapper";
-import { escapeHtml } from "../utils/escape-html";
-import { isMarkupElement } from "../utils/is-markup-elements";
+import {
+  isTextViewElement,
+  isTextViewElementContainer,
+} from "../is-text-view-element";
+import type { TextViewElement } from "../text-view";
+import type {
+  ITextViewElement,
+  TextViewElementContainer,
+  TextViewNode,
+} from "../text-view-elem-interface";
 
-export type MSpanProps = MarkupElementProps;
+export interface TextViewLinkProps extends MarkupElementProps {
+  href?: string;
+}
 
-export class MSpanElement {
+type TextViewLinkElementMixin = GjsElement<"TEXT_VIEW_LINK"> & ITextViewElement;
+
+export class TextViewLinkElement implements TextViewLinkElementMixin {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
@@ -26,21 +38,27 @@ export class MSpanElement {
     });
   }
 
-  readonly kind: Rg.GjsElementTypes = "M_SPAN";
+  readonly kind = "TEXT_VIEW_LINK";
 
-  protected get widget(): Gtk.Widget {
-    throw new Error("Markup elements do not have widgets.");
-  }
-
-  protected parent: BaseMarkupElement | MarkupElement | null = null;
-  protected children: Array<TextNode | BaseMarkupElement> = [];
+  protected parent: TextViewElementContainer | null = null;
+  protected children: Array<ITextViewElement | TextNode> = [];
   protected attributes = new MarkupAttributes();
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly propsMapper = new PropertyMapper<MSpanProps>(
+  protected readonly propsMapper = new PropertyMapper<TextViewLinkProps>(
     this.lifecycle,
-    createMarkupPropMapper(this.attributes)
+    createMarkupPropMapper(this.attributes, {
+      color: "#297ad2",
+      underline: "single",
+    }),
+    (props) =>
+      props.href(DataType.String, (href = "") => {
+        this.linkHref = href;
+      })
   );
+
+  private linkHref = "";
+  private isVisible = true;
 
   constructor(
     props: DiffedProps,
@@ -64,13 +82,11 @@ export class MSpanElement {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    if (!isMarkupElement(child)) {
+    if (!isTextViewElement(child)) {
       throw new Error(
-        "Markup elements can only have other Markup elements or strings as children."
+        "TextViewLink elements can only have other TextView elements or strings as children."
       );
     }
-
-    child.notifyWillAppendTo(this);
 
     this.children.push(child);
 
@@ -81,13 +97,11 @@ export class MSpanElement {
     child: GjsElement | TextNode,
     beforeChild: GjsElement | TextNode
   ): void {
-    if (!isMarkupElement(child)) {
+    if (!isTextViewElement(child)) {
       throw new Error(
-        "Markup elements can only have other Markup elements or strings as children."
+        "TextViewLink elements can only have other TextView elements or strings as children."
       );
     }
-
-    child.notifyWillAppendTo(this);
 
     const beforeChildIndex = this.children.indexOf(beforeChild as any);
 
@@ -104,12 +118,10 @@ export class MSpanElement {
     parent.notifyWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
-
-    this.widget.destroy();
   }
 
   render() {
-    this.parent?.getMarkupRoot()?.render();
+    this.getTextView()?.render();
   }
 
   // #endregion
@@ -117,13 +129,12 @@ export class MSpanElement {
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (
-      GjsElementManager.isGjsElementOfKind(parent, MarkupElement) ||
-      isMarkupElement(parent)
-    ) {
+    if (isTextViewElementContainer(parent)) {
       this.parent = parent;
     } else {
-      throw new Error("Markup elements can only be appended to a Markup.");
+      throw new Error(
+        "TextViewLink elements can only be appended to a TextView elements."
+      );
     }
     return true;
   }
@@ -136,6 +147,7 @@ export class MSpanElement {
     }
 
     this.children.splice(childIndex, 1);
+    this.render();
   }
 
   // #endregion
@@ -143,15 +155,17 @@ export class MSpanElement {
   // #region Utils for external use
 
   show() {
-    this.widget.visible = true;
+    this.isVisible = true;
+    this.render();
   }
 
   hide() {
-    this.widget.visible = false;
+    this.isVisible = false;
+    this.render();
   }
 
-  getWidget() {
-    return this.widget;
+  getWidget(): Gtk.Widget {
+    throw new Error("TextViewSpan does not have a corresponding widget.");
   }
 
   getParentElement() {
@@ -185,21 +199,33 @@ export class MSpanElement {
 
   // #endregion
 
-  protected mapChild = (child: TextNode | BaseMarkupElement) => {
-    if (child.kind === "TEXT_NODE") {
-      return escapeHtml(child.getText());
-    } else {
-      return child.stringify();
-    }
-  };
-
-  stringify(): string {
-    const content = this.children.flatMap(this.mapChild).join("");
-
-    return `<span${this.attributes.stringify()}>${content}</span>`;
+  getTextView(): TextViewElement | undefined {
+    return this.parent?.getTextView();
   }
 
-  getMarkupRoot(): MarkupElement | undefined {
-    return this.parent?.getMarkupRoot();
+  toNode(): TextViewNode {
+    if (!this.isVisible) {
+      return {
+        type: "SPAN",
+        attributes: new MarkupAttributes(),
+        children: [],
+      };
+    }
+
+    return {
+      type: "LINK",
+      href: this.linkHref,
+      attributes: this.attributes.copy(),
+      children: this.children.map((child): TextViewNode => {
+        if (child.kind === "TEXT_NODE") {
+          return {
+            type: "TEXT",
+            children: [escapeHtml(child.getText())],
+          };
+        } else {
+          return child.toNode();
+        }
+      }),
+    };
   }
 }

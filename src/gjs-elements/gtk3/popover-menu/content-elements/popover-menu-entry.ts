@@ -20,7 +20,7 @@ import type { SizeRequestProps } from "../../../utils/property-maps-factories/cr
 import { createSizeRequestPropMapper } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../../utils/property-maps-factories/create-style-prop-mapper";
-import type { TextNode } from "../../markup/text-node";
+import type { TextNode } from "../../text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import {
@@ -233,7 +233,7 @@ export class PopoverMenuEntryElement
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

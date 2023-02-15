@@ -22,7 +22,7 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 import { ToolbarButtonElement } from "./toolbar-button";
 import { ToolbarItemElement } from "./toolbar-item";
 import { ToolbarRadioButtonElement } from "./toolbar-radio-button";
@@ -163,7 +163,7 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

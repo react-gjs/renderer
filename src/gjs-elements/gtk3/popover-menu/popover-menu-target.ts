@@ -7,7 +7,7 @@ import { diffProps } from "../../utils/diff-props";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
 import { Bin } from "../../utils/widgets/bin";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 import { PopoverMenuElement } from "./popover-menu";
 
 export class PopoverMenuTargetElement

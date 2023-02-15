@@ -1,4 +1,4 @@
-import type { TextNode } from "../gtk3/markup/text-node";
+import type { TextNode } from "../gtk3/text-node";
 
 export function ensureNotText<T>(
   value: T | TextNode | string

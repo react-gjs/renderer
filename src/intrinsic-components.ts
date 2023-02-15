@@ -120,6 +120,21 @@ export { PopoverMenu } from "./gjs-elements/gtk3/popover-menu/component";
 export { Popover } from "./gjs-elements/gtk3/popover/component";
 export { createStack, useStack } from "./gjs-elements/gtk3/stack/use-stack";
 
+// region TextView
+
+/** Equivalent to the Gtk.TextView widget. */
+export const TextView = IntrinsicElem("TEXT_VIEW");
+/** A TextView Element, must be used inside a `<TextView />`. */
+export const TextViewImage = IntrinsicElem("TEXT_VIEW_IMAGE");
+/** A TextView Element, must be used inside a `<TextView />`. */
+export const TextViewLink = IntrinsicElem("TEXT_VIEW_LINK");
+/** A TextView Element, must be used inside a `<TextView />`. */
+export const TextViewSpan = IntrinsicElem("TEXT_VIEW_SPAN");
+/** A TextView Element, must be used inside a `<TextView />`. */
+export const TextViewWidget = IntrinsicElem("TEXT_VIEW_WIDGET");
+
+// endregion
+
 // #region Markup
 
 /**

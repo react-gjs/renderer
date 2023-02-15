@@ -101,7 +101,7 @@ export class ToolbarSeparatorElement
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

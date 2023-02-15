@@ -11,7 +11,7 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 import { PopoverMenuCheckButtonElement } from "./content-elements/popover-menu-check-button";
 import { PopoverMenuEntryElement } from "./content-elements/popover-menu-entry";
 import { PopoverMenuRadioButtonElement } from "./content-elements/popover-menu-radio-button";

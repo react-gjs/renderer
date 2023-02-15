@@ -20,7 +20,7 @@ import type { MarginProps } from "../../utils/property-maps-factories/create-mar
 import { createMarginPropMapper } from "../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { SizeRequestProps } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 import { StackScreenElement } from "./stack-screen";
 
 type StackPropsMixin = SizeRequestProps &
@@ -143,7 +143,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion
