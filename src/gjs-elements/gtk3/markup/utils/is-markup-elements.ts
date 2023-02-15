@@ -1,6 +1,6 @@
 import type { GjsElement } from "../../../gjs-element";
+import type { TextNode } from "../../text-node";
 import type { BaseMarkupElement } from "../markup-elem";
-import type { TextNode } from "../text-node";
 
 export const isMarkupElement = (
   v: string | string[] | TextNode | GjsElement

@@ -2,12 +2,12 @@ import type Gtk from "gi://Gtk";
 import Reconciler from "react-reconciler";
 import { GjsElementManager } from "../gjs-elements/gjs-element-manager";
 import { ApplicationElement } from "../gjs-elements/gtk3/application/application";
-import { TextNode } from "../gjs-elements/gtk3/markup/text-node";
 import { registerGtk3Elements } from "../gjs-elements/gtk3/register";
+import { TextNode } from "../gjs-elements/gtk3/text-node";
 
 import { diffProps } from "../gjs-elements/utils/diff-props";
 import { DoNotAppend } from "../gjs-elements/utils/do-not-append";
-import { isGjsElementOrString } from "../gjs-elements/utils/is-gjs-element";
+import { isGjsElementOrText } from "../gjs-elements/utils/is-gjs-element";
 import { microtask } from "../gjs-elements/utils/micortask";
 import { EventPhaseController } from "./event-phase";
 import { HostContext } from "./host-context";
@@ -41,33 +41,30 @@ export const GjsRenderer = Reconciler({
   appendChildToContainer(container: any, child: any) {
     performAppendAction(() => {
       if (
-        isGjsElementOrString(child) &&
+        isGjsElementOrText(child) &&
         GjsElementManager.isGjsElement(container)
       ) {
         container.appendChild(child);
-        container.render();
       }
     });
   },
   appendInitialChild(parentInstance: any, child: any) {
     performAppendAction(() => {
       if (
-        isGjsElementOrString(child) &&
+        isGjsElementOrText(child) &&
         GjsElementManager.isGjsElement(parentInstance)
       ) {
         parentInstance.appendChild(child);
-        parentInstance.render();
       }
     });
   },
   appendChild(parentInstance: any, child: any) {
     performAppendAction(() => {
       if (
-        isGjsElementOrString(child) &&
+        isGjsElementOrText(child) &&
         GjsElementManager.isGjsElement(parentInstance)
       ) {
         parentInstance.appendChild(child);
-        parentInstance.render();
       }
     });
   },
@@ -153,33 +150,33 @@ export const GjsRenderer = Reconciler({
     nextProps,
     internalHandle
   ) {
-    if (updatePayload && GjsElementManager.isGjsElement(instance)) {
+    if (
+      updatePayload &&
+      updatePayload.length > 0 &&
+      GjsElementManager.isGjsElement(instance)
+    ) {
       instance.updateProps(updatePayload);
-      instance.render();
     }
   },
   commitTextUpdate(textInstance: any, oldText, newText) {
     if (TextNode.isTextNode(textInstance)) {
       if (oldText !== newText) {
         textInstance.updateText(newText);
-        textInstance.render();
       }
     }
   },
   removeChild(parentInstance: any, child: any) {
-    if (GjsElementManager.isGjsElement(child)) {
+    if (isGjsElementOrText(child)) {
       child.remove(parentInstance);
-      parentInstance.render();
     }
   },
   removeChildFromContainer(container: any, child: any) {
-    if (GjsElementManager.isGjsElement(child)) {
+    if (isGjsElementOrText(child)) {
       child.remove(container);
-      container.render();
     }
   },
   commitMount(instance, type, props, internalInstanceHandle) {
-    if (GjsElementManager.isGjsElement(instance)) {
+    if (isGjsElementOrText(instance)) {
       instance.render();
     }
   },
@@ -200,11 +197,10 @@ export const GjsRenderer = Reconciler({
     performAppendAction(() => {
       if (
         GjsElementManager.isGjsElement(parentInstance) &&
-        GjsElementManager.isGjsElement(child) &&
-        GjsElementManager.isGjsElement(beforeChild)
+        isGjsElementOrText(child) &&
+        isGjsElementOrText(beforeChild)
       ) {
         parentInstance.insertBefore(child, beforeChild);
-        parentInstance.render();
       }
     });
   },
@@ -212,11 +208,11 @@ export const GjsRenderer = Reconciler({
     performAppendAction(() => {
       if (
         GjsElementManager.isGjsElement(container) &&
-        GjsElementManager.isGjsElement(child) &&
-        GjsElementManager.isGjsElement(beforeChild)
+        isGjsElementOrText(child) &&
+        isGjsElementOrText(beforeChild)
       ) {
         container.insertBefore(child, beforeChild);
-        container.render();
+        // container.render();
       }
     });
   },
@@ -238,8 +234,8 @@ export const GjsRenderer = Reconciler({
   },
   unhideTextInstance(instance, text) {
     if (TextNode.isTextNode(instance)) {
-      instance.updateText(text);
       instance.show();
+      instance.updateText(text);
     }
   },
   scheduleMicrotask(callback) {

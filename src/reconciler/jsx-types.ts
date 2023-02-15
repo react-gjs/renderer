@@ -181,6 +181,26 @@ import type {
   TextEntryProps,
 } from "../gjs-elements/gtk3/text-entry/text-entry";
 import type {
+  TextViewElement,
+  TextViewProps,
+} from "../gjs-elements/gtk3/text-view/text-view";
+import type {
+  TextViewImageElement,
+  TextViewImageProps,
+} from "../gjs-elements/gtk3/text-view/text-view-elements/text-view-image";
+import type {
+  TextViewLinkElement,
+  TextViewLinkProps,
+} from "../gjs-elements/gtk3/text-view/text-view-elements/text-view-link";
+import type {
+  TextViewSpanElement,
+  TextViewSpanProps,
+} from "../gjs-elements/gtk3/text-view/text-view-elements/text-view-span";
+import type {
+  TextViewWidgetElement,
+  TextViewWidgetProps,
+} from "../gjs-elements/gtk3/text-view/text-view-elements/text-view-widget";
+import type {
   ToolbarElement,
   ToolbarProps,
 } from "../gjs-elements/gtk3/toolbar/toolbar";
@@ -413,6 +433,26 @@ declare global {
       SWITCH: Rg.IntrinsicComponent<SwitchProps, SwitchElement>;
       TEXT_AREA: Rg.IntrinsicComponent<TextAreaProps, TextAreaElement>;
       TEXT_ENTRY: Rg.IntrinsicComponent<TextEntryProps, TextEntryElement>;
+      TEXT_VIEW: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<TextViewProps>,
+        TextViewElement
+      >;
+      TEXT_VIEW_IMAGE: Rg.IntrinsicComponent<
+        TextViewImageProps,
+        TextViewImageElement
+      >;
+      TEXT_VIEW_LINK: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<TextViewLinkProps>,
+        TextViewLinkElement
+      >;
+      TEXT_VIEW_SPAN: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<TextViewSpanProps>,
+        TextViewSpanElement
+      >;
+      TEXT_VIEW_WIDGET: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<TextViewWidgetProps>,
+        TextViewWidgetElement
+      >;
       TOOLBAR: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<ToolbarProps>,
         ToolbarElement

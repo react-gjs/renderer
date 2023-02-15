@@ -1,8 +1,8 @@
 import type Gtk from "gi://Gtk";
-import type { GjsContext } from "../../../reconciler/gjs-renderer";
-import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
-import type { DiffedProps } from "../../utils/element-extenders/map-properties";
+import type { GjsContext } from "../../reconciler/gjs-renderer";
+import type { HostContext } from "../../reconciler/host-context";
+import type { GjsElement } from "../gjs-element";
+import type { DiffedProps } from "../utils/element-extenders/map-properties";
 
 export class TextNode {
   /** @internal */
@@ -86,5 +86,6 @@ export class TextNode {
 
   updateText(text: string): void {
     this.text = text;
+    this.render();
   }
 }

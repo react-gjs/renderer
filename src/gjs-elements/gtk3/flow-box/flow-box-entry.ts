@@ -24,7 +24,7 @@ import { createSizeRequestPropMapper } from "../../utils/property-maps-factories
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { FlowBoxElement } from "../flow-box/flow-box";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 
 type FlowBoxEntryPropsMixin = SizeRequestProps &
   AlignmentProps &
@@ -129,7 +129,7 @@ export class FlowBoxEntryElement
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

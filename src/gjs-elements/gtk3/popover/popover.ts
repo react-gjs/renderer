@@ -21,7 +21,7 @@ import { createSizeRequestPropMapper } from "../../utils/property-maps-factories
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { Bin } from "../../utils/widgets/bin";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 import { PopoverContentElement } from "./popover-content";
 import { PopoverTargetElement } from "./popover-target";
 
@@ -157,7 +157,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

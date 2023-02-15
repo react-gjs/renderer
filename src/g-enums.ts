@@ -23,8 +23,11 @@ export const PositionType = Gtk.PositionType;
 export type EllipsizeMode = Pango.EllipsizeMode;
 export const EllipsizeMode = Pango.EllipsizeMode;
 
-export type WrapMode = Pango.WrapMode;
-export const WrapMode = Pango.WrapMode;
+export type MarkupWrapMode = Pango.WrapMode;
+export const MarkupWrapMode = Pango.WrapMode;
+
+export type TextViewWrapMode = Gtk.WrapMode;
+export const TextViewWrapMode = Gtk.WrapMode;
 
 export type SelectionMode = Gtk.SelectionMode;
 export const SelectionMode = Gtk.SelectionMode;

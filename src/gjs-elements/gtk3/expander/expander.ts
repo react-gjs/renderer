@@ -20,7 +20,7 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 
 type ExpanderPropsMixin = SizeRequestProps &
   AlignmentProps &
@@ -119,7 +119,7 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

@@ -6,7 +6,7 @@ import { GjsElementManager } from "../../gjs-element-manager";
 import { diffProps } from "../../utils/diff-props";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 import { PopoverElement } from "./popover";
 
 export class PopoverTargetElement

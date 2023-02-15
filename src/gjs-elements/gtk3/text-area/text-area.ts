@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-import { InputType, Justification, WrapMode } from "../../../g-enums";
+import { InputType, Justification, TextViewWrapMode } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -53,7 +53,7 @@ export interface TextAreaProps extends TextAreaPropsMixin {
   type?: InputType;
   justification?: Justification;
   monospace?: boolean;
-  wrapMode?: WrapMode;
+  wrapMode?: TextViewWrapMode;
   onSelectChange?: (
     event: TextAreaEvent<{
       selectedText: string;
@@ -138,9 +138,12 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
         .type(DataType.Enum(InputType), (v = InputType.FREE_FORM) => {
           this.widget.set_input_purpose(v);
         })
-        .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.WORD) => {
-          this.widget.set_wrap_mode(v);
-        })
+        .wrapMode(
+          DataType.Enum(TextViewWrapMode),
+          (v = TextViewWrapMode.WORD_CHAR) => {
+            this.widget.set_wrap_mode(v);
+          }
+        )
         .padding(
           DataType.OneOf(DataType.Number, DataType.ArrayOf(DataType.Number)),
           (v = 0) => {
@@ -284,7 +287,7 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
   }
 
   render() {
-    this.parent?.getWidget().show_all();
+    this.widget.show_all();
   }
 
   // #endregion

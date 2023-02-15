@@ -17,7 +17,7 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
 import type { ApplicationElement } from "../application/application";
 import { HeaderBarElement } from "../headerbar/headerbar";
-import type { TextNode } from "../markup/text-node";
+import type { TextNode } from "../text-node";
 
 export type WindowEvent<P extends Record<string, any> = {}> = SyntheticEvent<
   P,
