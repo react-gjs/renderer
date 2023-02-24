@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-import { InputType, Justification, TextViewWrapMode } from "../../../g-enums";
+import { InputType, Justification, WrapMode } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -25,6 +25,7 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import { TO_GTK_WRAP_MODE } from "../../utils/wrap-mode";
 
 type TextAreaPadding =
   | number
@@ -53,7 +54,7 @@ export interface TextAreaProps extends TextAreaPropsMixin {
   type?: InputType;
   justification?: Justification;
   monospace?: boolean;
-  wrapMode?: TextViewWrapMode;
+  wrapMode?: WrapMode;
   onSelectChange?: (
     event: TextAreaEvent<{
       selectedText: string;
@@ -138,12 +139,9 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
         .type(DataType.Enum(InputType), (v = InputType.FREE_FORM) => {
           this.widget.set_input_purpose(v);
         })
-        .wrapMode(
-          DataType.Enum(TextViewWrapMode),
-          (v = TextViewWrapMode.WORD_CHAR) => {
-            this.widget.set_wrap_mode(v);
-          }
-        )
+        .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.WORD_CHAR) => {
+          this.widget.set_wrap_mode(TO_GTK_WRAP_MODE.get(v)!);
+        })
         .padding(
           DataType.OneOf(DataType.Number, DataType.ArrayOf(DataType.Number)),
           (v = 0) => {

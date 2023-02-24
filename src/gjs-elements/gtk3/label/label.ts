@@ -1,11 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
-import type {
-  EllipsizeMode,
-  Justification,
-  MarkupWrapMode,
-} from "../../../g-enums";
+import type { EllipsizeMode, Justification } from "../../../g-enums";
+import { WrapMode } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -26,6 +23,7 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import { TO_PANGO_WRAP_MODE } from "../../utils/wrap-mode";
 import type { TextNode } from "../text-node";
 
 type LabelPropsMixin = SizeRequestProps &
@@ -35,8 +33,7 @@ type LabelPropsMixin = SizeRequestProps &
   StyleProps;
 
 export interface LabelProps extends LabelPropsMixin {
-  wrap?: boolean;
-  wrapMode?: MarkupWrapMode;
+  wrapMode?: WrapMode;
   ellipsize?: EllipsizeMode;
   justify?: Justification;
   lines?: number;
@@ -69,9 +66,6 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
     createStylePropMapper(this.widget),
     (props) =>
       props
-        .wrap(DataType.Boolean, (v = true) => {
-          this.widget.wrap = v;
-        })
         .selectable(DataType.Boolean, (v = false) => {
           this.widget.selectable = v;
         })
@@ -84,8 +78,9 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
             this.widget.ellipsize = v;
           }
         )
-        .wrapMode(DataType.Enum(Pango.WrapMode), (v = Pango.WrapMode.CHAR) => {
-          this.widget.wrap_mode = v;
+        .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.CHAR) => {
+          this.widget.wrap = v !== WrapMode.NONE;
+          this.widget.wrap_mode = TO_PANGO_WRAP_MODE.get(v)!;
         })
         .justify(
           DataType.Enum(Gtk.Justification),
