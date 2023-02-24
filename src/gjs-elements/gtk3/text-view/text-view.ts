@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk?version=3.0";
 import Gtk from "gi://Gtk";
-import { Align, Justification, TextViewWrapMode } from "../../../g-enums";
+import { Align, Justification, WrapMode } from "../../../g-enums";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -27,6 +27,7 @@ import { createSizeRequestPropMapper } from "../../utils/property-maps-factories
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { ThemeVariable } from "../../utils/theme-vars";
+import { TO_GTK_WRAP_MODE } from "../../utils/wrap-mode";
 import type { TextNode } from "../text-node";
 import { isTextViewElement } from "./is-text-view-element";
 import type {
@@ -46,7 +47,7 @@ export type TextViewEvent<P extends Record<string, any> = {}> = SyntheticEvent<
 >;
 
 export interface TextViewProps extends TextViewPropsMixin {
-  wrapMode?: TextViewWrapMode;
+  wrapMode?: WrapMode;
   lineTopMargin?: number;
   lineBottomMargin?: number;
   monospace?: boolean;
@@ -89,12 +90,9 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
     }),
     (props) =>
       props
-        .wrapMode(
-          DataType.Enum(TextViewWrapMode),
-          (v = TextViewWrapMode.WORD_CHAR) => {
-            this.widget.wrap_mode = v;
-          }
-        )
+        .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.WORD_CHAR) => {
+          this.widget.wrap_mode = TO_GTK_WRAP_MODE.get(v)!;
+        })
         .indent(DataType.Number, (v = 0) => {
           this.widget.indent = v;
         })

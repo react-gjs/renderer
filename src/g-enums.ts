@@ -23,12 +23,6 @@ export const PositionType = Gtk.PositionType;
 export type EllipsizeMode = Pango.EllipsizeMode;
 export const EllipsizeMode = Pango.EllipsizeMode;
 
-export type MarkupWrapMode = Pango.WrapMode;
-export const MarkupWrapMode = Pango.WrapMode;
-
-export type TextViewWrapMode = Gtk.WrapMode;
-export const TextViewWrapMode = Gtk.WrapMode;
-
 export type SelectionMode = Gtk.SelectionMode;
 export const SelectionMode = Gtk.SelectionMode;
 
@@ -89,19 +83,26 @@ export enum ButtonType {
 }
 
 export enum ControlButton {
-  CLOSE = "close",
-  MINIMIZE = "minimize",
-  MAXIMIZE = "maximize",
-  ICON = "icon",
+  CLOSE = "CLOSE",
+  MINIMIZE = "MINIMIZE",
+  MAXIMIZE = "MAXIMIZE",
+  ICON = "ICON",
 }
 
 export enum MenuCheckButtonType {
-  CHECK = "check",
-  RADIO = "radio",
+  CHECK = "CHECK",
+  RADIO = "RADIO",
 }
 
 export enum EntryPosition {
-  LEFT = "left",
-  CENTER = "center",
-  RIGHT = "right",
+  LEFT = "LEFT",
+  CENTER = "CENTER",
+  RIGHT = "RIGHT",
+}
+
+export enum WrapMode {
+  NONE = "NONE",
+  WORD = "WORD",
+  CHAR = "CHAR",
+  WORD_CHAR = "WORD_CHAR",
 }
