@@ -100,6 +100,11 @@ export type {
   MenuSeparatorProps,
 } from "./gtk3/menu-bar/menu-separator";
 export type {
+  ModelButtonElement,
+  ModelButtonEvent,
+  ModelButtonProps,
+} from "./gtk3/model-button/model-button";
+export type {
   NumberInputElement,
   NumberInputProps,
 } from "./gtk3/number-input/number-input";

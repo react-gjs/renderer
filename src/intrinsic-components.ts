@@ -48,6 +48,8 @@ export const MenuEntry = IntrinsicElem("MENU_ENTRY");
 export const MenuRadioButton = IntrinsicElem("MENU_RADIO_BUTTON");
 /** Equivalent to the Gtk.SeparatorMenuItem widget. */
 export const MenuSeparator = IntrinsicElem("MENU_SEPARATOR");
+/** Equivalent to the Gtk.ModelButton widget. */
+export const ModelButton = IntrinsicElem("MODEL_BUTTON");
 /** Equivalent to the Gtk.SpinButton widget. */
 export const NumberInput = IntrinsicElem("NUMBER_INPUT");
 /** Equivalent to the Gtk.Image widget. */
