@@ -23,6 +23,8 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
+import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 import { ToolbarElement } from "./toolbar";
 
@@ -30,7 +32,8 @@ type ToolbarToggleButtonPropsMixin = SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
-  StyleProps;
+  StyleProps &
+  TooltipProps;
 
 export type ToolbarToggleButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, ToolbarToggleButtonElement>;
@@ -77,6 +80,7 @@ export class ToolbarToggleButtonElement
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
     (props) =>
       props
         .label(DataType.String, (v = "") => {

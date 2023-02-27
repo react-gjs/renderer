@@ -241,5 +241,5 @@ export const GjsRenderer = Reconciler({
   scheduleMicrotask(callback) {
     microtask(callback);
   },
-  supportsMicrotask: true,
+  supportsMicrotasks: true,
 });

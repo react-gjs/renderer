@@ -21,6 +21,8 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
+import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { resizePixbuff } from "../../utils/resize-pixbuff";
 import type { TextNode } from "../text-node";
 
@@ -46,7 +48,8 @@ type ImagePropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  ImageSrc;
+  ImageSrc &
+  TooltipProps;
 
 export type ImageProps = ImagePropsMixin & {
   pixelSize?: number;
@@ -78,6 +81,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
     (props) =>
       props
         .resizeToHeight(DataType.Number, () => {

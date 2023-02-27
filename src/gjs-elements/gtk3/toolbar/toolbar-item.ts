@@ -30,7 +30,6 @@ type ToolbarItemPropsMixin = SizeRequestProps &
 
 export interface ToolbarItemProps extends ToolbarItemPropsMixin {
   sameSize?: boolean;
-  expand?: boolean;
 }
 
 export class ToolbarItemElement
