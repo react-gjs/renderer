@@ -23,13 +23,16 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
+import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { OptionsList } from "./options-list";
 
 type SelectorPropsMixin = SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
-  StyleProps;
+  StyleProps &
+  TooltipProps;
 
 export interface SelectorProps<V extends string | number | undefined = any>
   extends SelectorPropsMixin {
@@ -79,6 +82,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
     (props) =>
       props
         .options(SelectorOptionDataType, (v = []) => {

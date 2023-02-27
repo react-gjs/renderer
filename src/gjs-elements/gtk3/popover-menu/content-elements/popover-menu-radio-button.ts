@@ -17,6 +17,8 @@ import type { SizeRequestProps } from "../../../utils/property-maps-factories/cr
 import { createSizeRequestPropMapper } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../../utils/property-maps-factories/create-style-prop-mapper";
+import type { TooltipProps } from "../../../utils/property-maps-factories/create-tooltip-prop-mapper";
+import { createTooltipPropMapper } from "../../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../../text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
@@ -26,7 +28,8 @@ import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
 type PopoverMenuRadioButtonPropsMixin = SizeRequestProps &
   MarginProps &
-  StyleProps;
+  StyleProps &
+  TooltipProps;
 
 export type PopoverMenuRadioButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, PopoverMenuRadioButtonElement>;
@@ -73,6 +76,7 @@ export class PopoverMenuRadioButtonElement
       createSizeRequestPropMapper(this.widget),
       createMarginPropMapper(this.widget),
       createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
       (props) =>
         props
           .label(DataType.String, (v = "") => {

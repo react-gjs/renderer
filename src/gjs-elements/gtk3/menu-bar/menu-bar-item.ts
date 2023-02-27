@@ -22,6 +22,8 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
+import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 import { MenuBarElement } from "./menu-bar";
 import type { MenuItemElementType } from "./menu-elements";
@@ -30,7 +32,8 @@ import { MENU_ELEMENTS } from "./menu-elements";
 type MenuBarItemPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
-  StyleProps;
+  StyleProps &
+  TooltipProps;
 
 export type MenuBarItemEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, MenuBarItemElement>;
@@ -73,6 +76,7 @@ export class MenuBarItemElement
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
     (props) =>
       props.label(DataType.String, (v = "") => {
         this.widget.label = v;

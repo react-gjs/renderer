@@ -25,12 +25,15 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
+import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
+import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 
 type SliderPropsMixin = SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
-  StyleProps;
+  StyleProps &
+  TooltipProps;
 
 export type SliderEvent<P extends Record<string, any> = {}> = SyntheticEvent<
   P,
@@ -84,6 +87,7 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
     (props) =>
       props
         .max(DataType.Number, (v = 100, allProps) => {
