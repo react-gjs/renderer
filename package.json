@@ -37,7 +37,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
-    "husky": "^8.0.2",
+    "husky": "^8.0.3",
     "jest": "^29.3.1",
     "prettier": "^2.8.4",
     "prettier-plugin-jsdoc": "^0.4.2",
