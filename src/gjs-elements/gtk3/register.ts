@@ -34,6 +34,7 @@ import { MenuCheckButtonElement } from "./menu-bar/menu-check-button";
 import { MenuEntryElement } from "./menu-bar/menu-entry";
 import { MenuRadioButtonElement } from "./menu-bar/menu-radio-button";
 import { MenuSeparatorElement } from "./menu-bar/menu-separator";
+import { ModelButtonElement } from "./model-button/model-button";
 import { NumberInputElement } from "./number-input/number-input";
 import { PopoverMenuCheckButtonElement } from "./popover-menu/content-elements/popover-menu-check-button";
 import { PopoverMenuEntryElement } from "./popover-menu/content-elements/popover-menu-entry";
@@ -112,6 +113,7 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("MENU_ENTRY", MenuEntryElement);
   manager.register("MENU_RADIO_BUTTON", MenuRadioButtonElement);
   manager.register("MENU_SEPARATOR", MenuSeparatorElement);
+  manager.register("MODEL_BUTTON", ModelButtonElement);
   manager.register("NUMBER_INPUT", NumberInputElement);
   manager.register("POPOVER_CONTENT", PopoverContentElement);
   manager.register("POPOVER_TARGET", PopoverTargetElement);

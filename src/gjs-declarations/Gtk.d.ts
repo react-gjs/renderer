@@ -34002,7 +34002,7 @@ declare module "gi://Gtk" {
        */
       role: ButtonRole;
       /** The label for the button. */
-      text: string;
+      text: string | null;
       /**
        * If %TRUE, XML tags in the text of the button are
        * interpreted as by {@link Pango.parse.markup} to format the
@@ -61661,7 +61661,7 @@ declare module "gi://Gtk" {
        * Note that if both #GtkWidget:tooltip-text and
        * #GtkWidget:tooltip-markup are set, the last one wins.
        */
-      tooltip_text: string;
+      tooltip_text: string | null;
       /**
        * How to distribute vertical space if widget gets extra
        * space, see {@link Align}

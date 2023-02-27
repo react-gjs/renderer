@@ -77,6 +77,9 @@ export const PackType = Gtk.PackType;
 export type InputType = Gtk.InputPurpose;
 export const InputType = Gtk.InputPurpose;
 
+export type ButtonRole = Gtk.ButtonRole;
+export const ButtonRole = Gtk.ButtonRole;
+
 export enum ButtonType {
   FLAT,
   NORMAL,
