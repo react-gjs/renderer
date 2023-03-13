@@ -137,13 +137,17 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
       text: this.widget.text,
     }));
     this.handlers.bind("activate", "onEnter");
-    this.handlers.bind("key-press-event", "onKeyPress", (event: Gdk.EventKey) =>
-      parseEventKey(event, Gdk.EventType.KEY_PRESS)
+    this.handlers.bind(
+      "key-press-event",
+      "onKeyPress",
+      (event: Gdk.Event & Gdk.EventKey) =>
+        parseEventKey(event, Gdk.EventType.KEY_PRESS)
     );
     this.handlers.bind(
       "key-release-event",
       "onKeyRelease",
-      (event: Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_RELEASE)
+      (event: Gdk.Event & Gdk.EventKey) =>
+        parseEventKey(event, Gdk.EventType.KEY_RELEASE)
     );
 
     this.updateProps(props);

@@ -24,19 +24,19 @@ export type MouseButtonPressEvent = {
 };
 
 export const parseMouseButtonPressEvent = (
-  e: Gdk.EventButton
+  e: Gdk.Event & Gdk.EventButton
 ): MouseButtonPressEvent => {
   const coords = e.get_coords();
   const rootCoords = e.get_root_coords();
 
   return {
-    button: e.get_button()[1],
-    count: e.get_click_count()[1],
+    button: e.get_button()[1]!,
+    count: e.get_click_count()[1]!,
     coords: {
-      x: coords[1],
-      y: coords[2],
-      rootX: rootCoords[1],
-      rootY: rootCoords[2],
+      x: coords[1]!,
+      y: coords[2]!,
+      rootX: rootCoords[1]!,
+      rootY: rootCoords[2]!,
     },
   };
 };

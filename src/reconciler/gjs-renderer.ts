@@ -185,7 +185,7 @@ export const GjsRenderer = Reconciler({
       container.clear();
     } else if (GjsElementManager.isGjsElement(container)) {
       if ((container.getWidget() as Gtk.Box).get_children) {
-        const children = (container.getWidget() as Gtk.Box).get_children();
+        const children = (container.getWidget() as Gtk.Box).get_children()!;
         for (const child of children) {
           child.destroy();
         }

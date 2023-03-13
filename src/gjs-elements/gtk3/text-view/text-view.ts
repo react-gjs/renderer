@@ -135,7 +135,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
         for (const link of this.embeddedLinks) {
           const startIter = this.textBuffer.get_iter_at_offset(link.start);
           const endIter = this.textBuffer.get_iter_at_offset(link.end);
-          if (iter.in_range(startIter, endIter)) {
+          if (iter!.in_range(startIter, endIter)) {
             return {
               href: link.href,
             };
@@ -146,7 +146,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
     });
 
     this.handlers.bindInternal("motion-notify-event", (e) => {
-      const motionEvent = e.originalEvent as Gdk.EventCrossing;
+      const motionEvent = e.originalEvent as Gdk.Event;
       const [, x, y] = motionEvent.get_coords();
 
       if (x != null && y != null) {
@@ -154,7 +154,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
         for (const link of this.embeddedLinks) {
           const startIter = this.textBuffer.get_iter_at_offset(link.start);
           const endIter = this.textBuffer.get_iter_at_offset(link.end);
-          if (iter.in_range(startIter, endIter)) {
+          if (iter!.in_range(startIter, endIter)) {
             this.setCursor(Gdk.CursorType.HAND2);
             return;
           }
@@ -162,7 +162,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
         for (const widget of this.embeddedWidgets) {
           const startIter = this.textBuffer.get_iter_at_offset(widget.start);
           const endIter = this.textBuffer.get_iter_at_offset(widget.end);
-          if (iter.in_range(startIter, endIter)) {
+          if (iter!.in_range(startIter, endIter)) {
             this.setCursor(Gdk.CursorType.ARROW);
             return;
           }
@@ -352,14 +352,14 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
           break;
         }
         case "LINK": {
-          const start = this.textBuffer.get_end_iter().get_offset();
+          const start = this.textBuffer.get_end_iter()!.get_offset();
           this.insertNodesToBuffer(node.children, {
             tag: "span",
             attributes: parent
               ? parent.attributes.merge(node.attributes)
               : node.attributes,
           });
-          const end = this.textBuffer.get_end_iter().get_offset() + 1;
+          const end = this.textBuffer.get_end_iter()!.get_offset() + 1;
 
           this.embeddedLinks.push({ start, end, href: node.href });
           break;
@@ -374,7 +374,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
           break;
         }
         case "WIDGET": {
-          const start = this.textBuffer.get_end_iter().get_offset();
+          const start = this.textBuffer.get_end_iter()!.get_offset();
           for (const widget of node.children) {
             const anchor = new Gtk.TextChildAnchor();
             this.textBuffer.insert_child_anchor(
@@ -383,7 +383,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
             );
             this.widget.add_child_at_anchor(widget, anchor);
           }
-          const end = this.textBuffer.get_end_iter().get_offset() + 1;
+          const end = this.textBuffer.get_end_iter()!.get_offset() + 1;
           this.embeddedWidgets.push({ start, end });
           break;
         }

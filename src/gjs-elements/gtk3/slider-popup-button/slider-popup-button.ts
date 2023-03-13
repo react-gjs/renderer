@@ -230,10 +230,10 @@ export class SliderPopupButtonElement
   }
 
   private get scale(): Gtk.Scale {
-    const popover = this.widget.get_popup();
+    const popover = this.widget.get_popup() as Gtk.Bin;
     const box = popover.get_child() as Gtk.Box;
 
-    const scale = box.get_children()[1];
+    const scale = box.get_children()![1];
 
     return scale as Gtk.Scale;
   }

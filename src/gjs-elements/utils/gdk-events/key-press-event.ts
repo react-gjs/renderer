@@ -22,7 +22,7 @@ declare global {
   }
 }
 
-const mapState = (event: Gdk.EventKey) => {
+const mapState = (event: Gdk.Event & Gdk.EventKey) => {
   switch (event.get_state()[1]) {
     case 17:
       return KeyPressModifiers.SHIFT;
@@ -43,8 +43,8 @@ const mapState = (event: Gdk.EventKey) => {
   }
 };
 
-export const mapKeyCode = (event: Gdk.EventKey) => {
-  const keyval = event.get_keyval()[1];
+export const mapKeyCode = (event: Gdk.Event & Gdk.EventKey) => {
+  const keyval = event.get_keyval()[1]!;
 
   switch (keyval) {
     case 65293: // Enter
@@ -107,7 +107,7 @@ export const mapKeyCode = (event: Gdk.EventKey) => {
 };
 
 export const parseEventKey = (
-  event: Gdk.EventKey,
+  event: Gdk.Event & Gdk.EventKey,
   mustBeOfType?: Gdk.EventType
 ): Rg.KeyPressEventData => {
   if (mustBeOfType && event.get_event_type() !== mustBeOfType) {

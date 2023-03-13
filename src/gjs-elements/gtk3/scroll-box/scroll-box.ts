@@ -90,14 +90,14 @@ export class ScrollBoxElement
     Gtk.Adjustment,
     ScrollBoxProps
   >({
-    getWidget: () => this.widget.get_vadjustment(),
+    getWidget: () => this.widget.get_vadjustment()!,
     lifecycle: this.lifecycle,
   });
   private hAdjustmentHandlers = new EventHandlers<
     Gtk.Adjustment,
     ScrollBoxProps
   >({
-    getWidget: () => this.widget.get_vadjustment(),
+    getWidget: () => this.widget.get_vadjustment()!,
     lifecycle: this.lifecycle,
   });
 
@@ -214,27 +214,27 @@ export class ScrollBoxElement
     switch (from) {
       case "top": {
         microtask(() => {
-          this.vAdjustment.set_value(position);
+          this.vAdjustment!.set_value(position);
         });
         break;
       }
       case "bottom": {
-        const currentUpper = this.vAdjustment.get_upper();
+        const currentUpper = this.vAdjustment!.get_upper();
         microtask(() => {
-          this.vAdjustment.set_value(currentUpper - position);
+          this.vAdjustment!.set_value(currentUpper - position);
         });
         break;
       }
       case "left": {
         microtask(() => {
-          this.hAdjustment.set_value(position);
+          this.hAdjustment!.set_value(position);
         });
         break;
       }
       case "right": {
-        const currentUpper = this.hAdjustment.get_upper();
+        const currentUpper = this.hAdjustment!.get_upper();
         microtask(() => {
-          this.hAdjustment.set_value(currentUpper - position);
+          this.hAdjustment!.set_value(currentUpper - position);
         });
         break;
       }
@@ -248,16 +248,16 @@ export class ScrollBoxElement
     // change of the adjustment value
     switch (orientation) {
       case "vertically": {
-        const currentUpper = this.vAdjustment.get_upper();
+        const currentUpper = this.vAdjustment!.get_upper();
         microtask(() => {
-          this.vAdjustment.set_value(currentUpper);
+          this.vAdjustment!.set_value(currentUpper);
         });
         break;
       }
       case "horizontally": {
-        const currentUpper = this.hAdjustment.get_upper();
+        const currentUpper = this.hAdjustment!.get_upper();
         microtask(() => {
-          this.hAdjustment.set_value(currentUpper);
+          this.hAdjustment!.set_value(currentUpper);
         });
         break;
       }
@@ -267,13 +267,13 @@ export class ScrollBoxElement
   currentPosition(from: "top" | "bottom" | "left" | "right" = "top") {
     switch (from) {
       case "top":
-        return this.vAdjustment.get_value();
+        return this.vAdjustment!.get_value();
       case "bottom":
-        return this.vAdjustment.get_upper() - this.vAdjustment.get_value();
+        return this.vAdjustment!.get_upper() - this.vAdjustment!.get_value();
       case "left":
-        return this.hAdjustment.get_value();
+        return this.hAdjustment!.get_value();
       case "right":
-        return this.hAdjustment.get_upper() - this.hAdjustment.get_value();
+        return this.hAdjustment!.get_upper() - this.hAdjustment!.get_value();
     }
   }
 

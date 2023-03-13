@@ -160,7 +160,7 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
     let lastText = "";
 
     this.bufferHandlers.bind("changed", "onChange", () => {
-      const currentText = this.widget.get_buffer().text;
+      const currentText = this.widget.get_buffer()!.text!;
       if (currentText !== lastText) {
         lastText = currentText;
         return {
@@ -174,13 +174,15 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
     this.viewHandlers.bind(
       "key-press-event",
       "onKeyPress",
-      (event: Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_PRESS)
+      (event: Gdk.Event & Gdk.EventKey) =>
+        parseEventKey(event, Gdk.EventType.KEY_PRESS)
     );
 
     this.viewHandlers.bind(
       "key-release-event",
       "onKeyRelease",
-      (event: Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_RELEASE)
+      (event: Gdk.Event & Gdk.EventKey) =>
+        parseEventKey(event, Gdk.EventType.KEY_RELEASE)
     );
 
     this.viewHandlers.bind("button-release-event", "onSelectChange", () =>
@@ -202,9 +204,9 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
 
   private getSelectionEventData() {
     const [_, start, end] = this.textBuffer.get_selection_bounds();
-    const selectedText = this.textBuffer.get_text(start, end, false);
-    const selectionStartIndex = start.get_offset();
-    const selectionEndIndex = end.get_offset();
+    const selectedText = this.textBuffer.get_text(start, end, false)!;
+    const selectionStartIndex = start!.get_offset();
+    const selectionEndIndex = end!.get_offset();
 
     if (
       this.previousSelection.start === selectionStartIndex &&
