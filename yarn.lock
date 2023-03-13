@@ -2017,12 +2017,12 @@ clify.js@ncpa0cpl/clify.js:
   languageName: node
   linkType: hard
 
-"dilswer@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "dilswer@npm:1.5.0"
+"dilswer@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "dilswer@npm:2.0.2"
   dependencies:
     "@types/json-schema": ^7.0.11
-  checksum: c31cc0f6a6d537e2641ebb303c6a1eea776cda2ca63780b5ce0256b1444449defa3e6ded5486a7c1be2e2b4a01f1b0b367dfd1e17fb6152845f2ce6bc013b3b3
+  checksum: 53c0b1e348dc4e86a9d9869e22b5f6ded65c104a0af033d6d1bd70d58c61af123da1887de68fb2be9563e6909f565af25e6dae1ef8f0547306457c866cfd402e
   languageName: node
   linkType: hard
 
@@ -4483,7 +4483,7 @@ clify.js@ncpa0cpl/clify.js:
     "@types/react-reconciler": ^0.28.2
     "@typescript-eslint/eslint-plugin": ^5.54.0
     "@typescript-eslint/parser": ^5.54.0
-    dilswer: ^1.5.0
+    dilswer: ^2.0.2
     eslint: ^8.35.0
     eslint-config-prettier: ^8.7.0
     eslint-plugin-prettier: ^4.2.1
