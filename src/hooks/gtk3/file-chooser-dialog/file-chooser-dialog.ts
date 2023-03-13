@@ -288,11 +288,11 @@ export function useFileChooser(
                 if (response === Gtk.ResponseType.ACCEPT) {
                   setFilter(filters?.getActiveFilter());
                   if (selectMultiple) {
-                    const files = dialog.get_files();
+                    const files = dialog.get_files()!;
                     setFile(files);
                     return resolve(files);
                   } else {
-                    const file = dialog.get_file();
+                    const file = dialog.get_file()!;
                     setFile(file);
                     return resolve(file);
                   }

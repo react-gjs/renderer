@@ -114,7 +114,7 @@ export class PopoverMenuEntryElement
           this.widget.text = v;
         })
         .icon(DataType.String, (v = "") => {
-          this.widget.icon = Gio.Icon.new_for_string(v);
+          this.widget.icon = Gio.Icon.new_for_string(v)!;
         })
         .centered(DataType.Boolean, (v = false) => {
           this.widget.centered = v;

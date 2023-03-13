@@ -96,10 +96,10 @@ export class VolumeButtonElement
     (props) =>
       props
         .step(DataType.Number, (v = 0.02) => {
-          this.adjustment.set_page_increment(v);
+          this.adjustment!.set_page_increment(v);
         })
         .value(DataType.Number, (v = 0) => {
-          this.adjustment.set_value(v);
+          this.adjustment!.set_value(v);
         })
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
@@ -175,7 +175,7 @@ export class VolumeButtonElement
     this.handlers.bind("popup", "onPopupOpen", undefined, EventPhase.Action);
     this.handlers.bind("popdown", "onPopupClose", undefined, EventPhase.Action);
     this.handlers.bind("value-changed", "onValueChange", () => ({
-      value: this.adjustment.value,
+      value: this.adjustment!.value,
     }));
 
     this.updateProps(props);
@@ -184,10 +184,10 @@ export class VolumeButtonElement
   }
 
   private get scale(): Gtk.Scale {
-    const popover = this.widget.get_popup();
+    const popover = this.widget.get_popup() as Gtk.Bin;
     const box = popover.get_child() as Gtk.Box;
 
-    const scale = box.get_children()[1];
+    const scale = box.get_children()![1];
 
     return scale as Gtk.Scale;
   }

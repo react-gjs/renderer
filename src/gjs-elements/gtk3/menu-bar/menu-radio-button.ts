@@ -158,9 +158,7 @@ export class MenuRadioButtonElement
         MenuRadioButtonProps
       >(this);
 
-      // @ts-expect-error
       this.handlers.bind("clicked", "onClick");
-      // @ts-expect-error
       this.handlers.bind("toggled", "onToggle", () => {
         return {
           value: this.widget.active,

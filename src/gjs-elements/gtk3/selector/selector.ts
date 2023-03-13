@@ -126,7 +126,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
   private getCurrentActiveOption(): { index: number; value?: any } {
     const [success, iter] = this.widget.get_active_iter();
     if (success) {
-      const value = this.optionsList.getOptionForIter(iter);
+      const value = this.optionsList.getOptionForIter(iter!);
       return value;
     }
 

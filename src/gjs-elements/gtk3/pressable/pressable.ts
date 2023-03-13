@@ -97,13 +97,15 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   );
 
   constructor(props: DiffedProps) {
-    this.handlers.bind("button-press-event", "onClick", (e: Gdk.EventButton) =>
-      parseMouseButtonPressEvent(e)
+    this.handlers.bind(
+      "button-press-event",
+      "onClick",
+      (e: Gdk.Event & Gdk.EventButton) => parseMouseButtonPressEvent(e)
     );
     this.handlers.bind(
       "button-release-event",
       "onRelease",
-      (e: Gdk.EventButton) => parseMouseButtonPressEvent(e)
+      (e: Gdk.Event & Gdk.EventButton) => parseMouseButtonPressEvent(e)
     );
     this.handlers.bind(
       "enter-notify-event",

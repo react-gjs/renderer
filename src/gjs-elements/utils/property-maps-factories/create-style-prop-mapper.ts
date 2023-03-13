@@ -9,7 +9,7 @@ export const createStylePropMapper = (
   defaults?: StyleSheet
 ) => {
   const widgetClassName = generateName(16);
-  const styleContext = widget.get_style_context();
+  const styleContext = widget.get_style_context()!;
   styleContext.add_class(widgetClassName);
 
   return (props: PropCaseCollector<keyof StyleProps, any>) =>

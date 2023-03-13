@@ -135,13 +135,17 @@ export class NumberInputElement
   );
 
   constructor(props: DiffedProps) {
-    this.handlers.bind("key-press-event", "onKeyPress", (event: Gdk.EventKey) =>
-      parseEventKey(event, Gdk.EventType.KEY_PRESS)
+    this.handlers.bind(
+      "key-press-event",
+      "onKeyPress",
+      (event: Gdk.Event & Gdk.EventKey) =>
+        parseEventKey(event, Gdk.EventType.KEY_PRESS)
     );
     this.handlers.bind(
       "key-release-event",
       "onKeyRelease",
-      (event: Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_RELEASE)
+      (event: Gdk.Event & Gdk.EventKey) =>
+        parseEventKey(event, Gdk.EventType.KEY_RELEASE)
     );
 
     let previousValue = 0;

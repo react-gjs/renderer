@@ -239,7 +239,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     height?: number,
     preserveAspectRatio = true
   ) {
-    const image = this.widget.image;
+    const image = this.widget.image as Gtk.Image | null;
     if (image) {
       const pixbuff = image.get_pixbuf();
       if (pixbuff) {
