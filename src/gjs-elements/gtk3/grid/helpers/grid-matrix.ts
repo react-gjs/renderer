@@ -2,19 +2,21 @@ export class GridMatrix {
   private matrix: Array<Array<boolean>> = [];
   private lastUsedCoordinates = { x: -1, y: -1 };
   private currentRow = 0;
+  private newRowTemplate: Array<boolean>;
 
   constructor(private width: number) {
+    this.newRowTemplate = new Array(this.width).fill(false);
     this.addNextRow();
   }
 
   private addNextRow() {
-    this.matrix.push(new Array(this.width).fill(false));
+    this.matrix.push(this.newRowTemplate.slice());
   }
 
   /**
-   * Finds the first N cells within the row that are not taken,
-   * and returns the index of the first of those cells, if theres
-   * is no N free cells in the row, returns null.
+   * Finds the first N cells within the row that are not taken, and
+   * returns the index of the first of those cells, if theres is no N
+   * free cells in the row, returns null.
    */
   private getFirstNFreeCellsInRow(y: number, n: number, onlyAfterIndex = -1) {
     const row = this.matrix[y];
@@ -48,12 +50,13 @@ export class GridMatrix {
 
       for (let j = 0; j < colSpan; j++) {
         const nextColIndex = x + j;
+        const row = this.matrix[nextRowIndex];
 
-        if (this.matrix[nextRowIndex][nextColIndex]) {
+        if (row[nextColIndex]) {
           throw new Error("Cell already used.");
         }
 
-        this.matrix[nextRowIndex][nextColIndex] = true;
+        row[nextColIndex] = true;
       }
     }
 
