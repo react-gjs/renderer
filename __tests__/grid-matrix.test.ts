@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@reactgjs/gest";
 import { GridMatrix } from "../src/gjs-elements/gtk3/grid/helpers/grid-matrix";
 
 const child = (colsSpan: number, rowSpan: number) => ({
@@ -5,7 +6,7 @@ const child = (colsSpan: number, rowSpan: number) => ({
   rowSpan,
 });
 
-describe("GridMatrix", () => {
+export default describe("GridMatrix", () => {
   describe("should correctly calculate position of each element", () => {
     it("scenario 1", () => {
       const matrix = new GridMatrix(3);

@@ -17,8 +17,8 @@
         "script": "test:prettier"
       },
       {
-        "name": "Jest",
-        "script": "test:jest"
+        "name": "Gest",
+        "script": "test:unit"
       }
     ],
     "pre-commit": [],
