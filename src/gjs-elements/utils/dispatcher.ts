@@ -1,6 +1,6 @@
 export class Dispatcher {
   private nextDispatch?: () => void;
-  private timeoutID?: NodeJS.Timeout;
+  private timeoutID?: number;
 
   constructor(private timeout: number) {}
 

@@ -1,0 +1,4 @@
+{
+    "$schema": "node_modules/gest/dist/gest-config.schema.json",
+    "testDirectory": "./__tests__"
+}
