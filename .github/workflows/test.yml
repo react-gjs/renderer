@@ -14,16 +14,27 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
+      - name: Install GJS
+        run: |
+          sudo sed -i 's/azure\.//' /etc/apt/sources.list
+          echo nameserver 8.8.8.8 | sudo tee /etc/resolv.conf
+          echo "Starting update"
+          sudo apt-get update -o Acquire::ForceIPv4=true -y
+          echo "Installing GJS"
+          sudo apt-get install -o Acquire::ForceIPv4=true -y gjs
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Install dependencies
-        run: ./.yarn/yarn.cjs install --immutable
-      - name: Run tests
-        # Includes the following tests:
-        # - Jest tests
-        # - Prettier format check
-        # - ESLint lint
-        # - TypeScript type check
-        run: ./.yarn/yarn.cjs git-hook-tasks pre-push
+        run: ./.yarn/yarn.cjs install --immutable --mode=skip-build
+      - name: Run TypeScript
+        run: ./.yarn/yarn.cjs test:tsc
+      - name: Run Linter
+        run: ./.yarn/yarn.cjs test:lint
+      - name: Run Prettier Check
+        run: ./.yarn/yarn.cjs test:prettier
+      - name: Run Unit Test
+        run: ./.yarn/yarn.cjs test:unit
+      - name: Attempt Build
+        run: ./.yarn/yarn.cjs build
