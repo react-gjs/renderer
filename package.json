@@ -10,7 +10,7 @@
     "test:lint": "eslint .",
     "test:prettier": "prettier -c ./src && prettier -c ./__tests__",
     "test:tsc": "tsc --noEmit",
-    "build": "rm -rf ./dist && tsc && cp -r ./src/gjs-declarations ./dist/gjs-declarations"
+    "build": "rm -rf ./dist && tsc"
   },
   "keywords": [],
   "repository": {

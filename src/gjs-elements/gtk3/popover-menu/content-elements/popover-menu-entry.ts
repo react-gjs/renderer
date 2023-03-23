@@ -26,10 +26,11 @@ import type { TextNode } from "../../text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import {
-  popoverMenuModelButton,
   POPOVER_MENU_MARGIN,
+  popoverMenuModelButton,
 } from "../utils/popover-menu-model-button";
 import { PopoverMenuCheckButtonElement } from "./popover-menu-check-button";
+import { PopoverMenuItemElement } from "./popover-menu-item";
 import { PopoverMenuRadioButtonElement } from "./popover-menu-radio-button";
 import { PopoverMenuSeparatorElement } from "./popover-menu-separator";
 
@@ -93,6 +94,7 @@ export class PopoverMenuEntryElement
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController<
+    | PopoverMenuItemElement
     | PopoverMenuEntryElement
     | PopoverMenuCheckButtonElement
     | PopoverMenuRadioButtonElement
@@ -179,6 +181,7 @@ export class PopoverMenuEntryElement
   appendChild(child: TextNode | GjsElement): void {
     if (
       !GjsElementManager.isGjsElementOfKind(child, [
+        PopoverMenuItemElement,
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
         PopoverMenuRadioButtonElement,
@@ -206,6 +209,7 @@ export class PopoverMenuEntryElement
 
     if (
       !GjsElementManager.isGjsElementOfKind(child, [
+        PopoverMenuItemElement,
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
         PopoverMenuRadioButtonElement,

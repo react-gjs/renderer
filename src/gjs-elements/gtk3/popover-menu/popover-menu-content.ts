@@ -14,6 +14,7 @@ import { ensureNotText } from "../../utils/ensure-not-string";
 import type { TextNode } from "../text-node";
 import { PopoverMenuCheckButtonElement } from "./content-elements/popover-menu-check-button";
 import { PopoverMenuEntryElement } from "./content-elements/popover-menu-entry";
+import { PopoverMenuItemElement } from "./content-elements/popover-menu-item";
 import { PopoverMenuRadioButtonElement } from "./content-elements/popover-menu-radio-button";
 import { PopoverMenuSeparatorElement } from "./content-elements/popover-menu-separator";
 import { PopoverMenuElement } from "./popover-menu";
@@ -61,6 +62,7 @@ export class PopoverMenuContentElement
     PopoverMenuContentProps
   >(this);
   private readonly children = new ChildOrderController<
+    | PopoverMenuItemElement
     | PopoverMenuEntryElement
     | PopoverMenuCheckButtonElement
     | PopoverMenuRadioButtonElement
@@ -105,6 +107,7 @@ export class PopoverMenuContentElement
 
     if (
       !GjsElementManager.isGjsElementOfKind(child, [
+        PopoverMenuItemElement,
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
         PopoverMenuRadioButtonElement,
@@ -133,6 +136,7 @@ export class PopoverMenuContentElement
 
     if (
       !GjsElementManager.isGjsElementOfKind(newChild, [
+        PopoverMenuItemElement,
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
         PopoverMenuRadioButtonElement,
