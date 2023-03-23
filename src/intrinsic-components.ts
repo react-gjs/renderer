@@ -60,6 +60,11 @@ export const Image = IntrinsicElem("IMAGE");
 export const Pressable = IntrinsicElem("PRESSABLE");
 /** Equivalent to the Gtk.ModelButton widget. */
 export const PopoverMenuEntry = IntrinsicElem("POPOVER_MENU_ENTRY");
+/**
+ * A general use container that can be used within popover menus.
+ * Equivalent to the Gtk.Bin widget.
+ */
+export const PopoverMenuItem = IntrinsicElem("POPOVER_MENU_ITEM");
 /** Equivalent to the Gtk.ModelButton widget. */
 export const PopoverMenuCheckButton = IntrinsicElem(
   "POPOVER_MENU_CHECK_BUTTON"
