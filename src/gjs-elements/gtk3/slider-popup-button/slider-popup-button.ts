@@ -13,7 +13,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -33,7 +36,8 @@ type SliderPopupButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type SliderPopupButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, SliderPopupButtonElement>;
@@ -64,8 +68,8 @@ export interface SliderPopupButtonProps extends SliderPopupButtonPropsMixin {
   onActivate?: (event: SliderPopupButtonEvent) => void;
   onPressed?: (event: SliderPopupButtonEvent) => void;
   onReleased?: (event: SliderPopupButtonEvent) => void;
-  onMouseEnter?: (event: SliderPopupButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: SliderPopupButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: SliderPopupButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: SliderPopupButtonEvent<PointerData>) => void;
   onPopupOpen?: (event: SliderPopupButtonEvent) => void;
   onPopupClose?: (event: SliderPopupButtonEvent) => void;
   onValueChange?: (event: SliderPopupButtonEvent<{ value: number }>) => void;
@@ -105,6 +109,7 @@ export class SliderPopupButtonElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
     (props) =>
       props
         .max(DataType.Number, (v = 100, allProps) => {

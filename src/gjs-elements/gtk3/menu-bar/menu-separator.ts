@@ -16,6 +16,7 @@ import { createSizeRequestPropMapper } from "../../utils/property-maps-factories
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
+import type { MenuBarItemElement } from "./menu-bar-item";
 
 type MenuSeparatorPropsMixin = SizeRequestProps &
   MarginProps &
@@ -56,6 +57,8 @@ export class MenuSeparatorElement
 
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
+
+  setRootBarItem(barItem: MenuBarItemElement) {}
 
   updateProps(props: DiffedProps): void {
     this.lifecycle.emitLifecycleEventUpdate(props);

@@ -13,6 +13,7 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -28,6 +29,7 @@ import type { TextNode } from "../text-node";
 import { MenuBarElement } from "./menu-bar";
 import type { MenuItemElementType } from "./menu-elements";
 import { MENU_ELEMENTS } from "./menu-elements";
+import type { MenuRadioButtonElement } from "./menu-radio-button";
 
 type MenuBarItemPropsMixin = SizeRequestProps &
   MarginProps &
@@ -40,8 +42,8 @@ export type MenuBarItemEvent<P extends Record<string, any> = {}> =
 
 export interface MenuBarItemProps extends MenuBarItemPropsMixin {
   label?: string;
-  onMouseEnter?: (event: MenuBarItemEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: MenuBarItemEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: MenuBarItemEvent<PointerData>) => void;
+  onMouseLeave?: (event: MenuBarItemEvent<PointerData>) => void;
 }
 
 export class MenuBarItemElement
@@ -68,6 +70,9 @@ export class MenuBarItemElement
     this.widget,
     (child) => {
       this.submenu.append(child);
+    },
+    (child) => {
+      this.submenu.remove(child);
     }
   );
   private readonly propsMapper = new PropertyMapper<MenuBarItemProps>(
@@ -82,6 +87,8 @@ export class MenuBarItemElement
         this.widget.label = v;
       })
   );
+
+  private radioGroups = new Map<string, Gtk.RadioMenuItem>();
 
   constructor(props: DiffedProps) {
     this.widget.submenu = this.submenu;
@@ -104,8 +111,17 @@ export class MenuBarItemElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  getRadioGroup(groupName: string): Gtk.RadioToolButton {
-    return this.parent!.getRadioGroup(groupName);
+  getRadioGroup(groupName: string): Gtk.RadioMenuItem {
+    if (this.radioGroups.has(groupName)) {
+      return this.radioGroups.get(groupName)!;
+    }
+    const radioGroup = new Gtk.RadioMenuItem();
+    this.radioGroups.set(groupName, radioGroup);
+    return radioGroup;
+  }
+
+  reattachRadioButton(button: MenuRadioButtonElement) {
+    this.children.reattachWidget(button);
   }
 
   updateProps(props: DiffedProps): void {
@@ -123,6 +139,7 @@ export class MenuBarItemElement
 
     const shouldAppend = child.notifyWillAppendTo(this);
     this.children.addChild(child, !shouldAppend);
+    child.setRootBarItem(this);
     this.widget.show_all();
   }
 
@@ -135,6 +152,7 @@ export class MenuBarItemElement
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild, !shouldAppend);
+    newChild.setRootBarItem(this);
     this.widget.show_all();
   }
 

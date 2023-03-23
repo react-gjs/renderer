@@ -60,6 +60,8 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   readonly kind = "WINDOW";
   private widget = new Gtk.Window();
 
+  private accelGroup = new Gtk.AccelGroup();
+
   private mainApp?: ApplicationElement;
   private parent: GjsElement | null = null;
 
@@ -122,6 +124,8 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   isDisposed = false;
 
   constructor(props: DiffedProps, context: HostContext<GjsContext>) {
+    this.widget.add_accel_group(this.accelGroup);
+
     this.mainApp = context.get("application");
     if (this.mainApp) {
       this.mainApp.addWindowToApp(this);
@@ -156,6 +160,12 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+
+    const onMount = this.getProperty("onWindowMounted");
+
+    if (onMount) {
+      onMount(this);
+    }
   }
 
   private addChild(widget: Gtk.Widget, element: GjsElement, index: number) {
@@ -215,6 +225,10 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     return props;
   }
 
+  getAccelGroup(): Gtk.AccelGroup {
+    return this.accelGroup;
+  }
+
   updateProps(props: DiffedProps): void {
     if (this.isDisposed) {
       throw new Error("Can't update props of a disposed window");
@@ -272,6 +286,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     if (this.isDisposed) {
       throw new Error("Can't append child to disposed window");
     }
+
     this.parent = parent;
 
     return false;

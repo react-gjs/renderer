@@ -2,11 +2,22 @@ import type Gtk from "gi://Gtk";
 import React from "react";
 import type { GjsElement } from "../../../gjs-elements/gjs-element";
 import { compareRecordsShallow } from "../../../gjs-elements/utils/diff-props";
+import { isInstrinsic } from "../../../intrinsic-components";
 
-export const useChildProperties = <E extends keyof JSX.IntrinsicElements>(
+export const useChildProperties = <
+  E extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>
+>(
   element: E,
   childProperties: Record<string, string | number>
 ) => {
+  if (!(typeof element === "string" || isInstrinsic(element))) {
+    console.log("isInstrinsic(element)", isInstrinsic(element));
+
+    throw new Error(
+      `Child Properties can only be used with intrinsic elements. ${element} is not an intrinsic element.`
+    );
+  }
+
   const childProps = React.useRef({});
   const ref = React.useRef<GjsElement>();
 
@@ -24,10 +35,10 @@ export const useChildProperties = <E extends keyof JSX.IntrinsicElements>(
     }
   });
 
-  const [refCallback] = React.useState(() => (element?: GjsElement) => {
-    if (element) {
-      if (ref.current !== element) {
-        ref.current = element;
+  const [refCallback] = React.useState(() => (elem?: GjsElement) => {
+    if (elem) {
+      if (ref.current !== elem) {
+        ref.current = elem;
         applyProperties();
       }
     } else {

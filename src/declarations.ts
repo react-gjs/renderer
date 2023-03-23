@@ -160,8 +160,6 @@ declare global {
     package: Pkg;
   };
 
-  const pkg: Pkg;
-
   /**
    * Globally accessible equivalent of the `quit()` method that's
    * available through `useApp` hook.

@@ -11,7 +11,10 @@ import type { SyntheticEvent } from "../../utils/element-extenders/event-handler
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -30,7 +33,8 @@ type MenuRadioButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type MenuRadioButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, MenuRadioButtonElement>;
@@ -43,8 +47,8 @@ export interface MenuRadioButtonProps extends MenuRadioButtonPropsMixin {
   inconsistent?: boolean;
   onClick?: (event: MenuRadioButtonEvent) => void;
   onToggle?: (event: MenuRadioButtonEvent<{ value: boolean }>) => void;
-  onMouseEnter?: (event: MenuRadioButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: MenuRadioButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: MenuRadioButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: MenuRadioButtonEvent<PointerData>) => void;
 }
 
 export class MenuRadioButtonElement
@@ -60,18 +64,19 @@ export class MenuRadioButtonElement
   private widget = new Gtk.RadioMenuItem();
 
   private parent: MenuBarItemElement | MenuEntryElement | null = null;
+  private rootBarItem: MenuBarItemElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   private handlers = new EventHandlers<Gtk.MenuItem, MenuRadioButtonProps>(
     this
   );
 
-  private readonly propsMapper = new PropertyMapper<MenuRadioButtonProps>(
+  private propsMapper = new PropertyMapper<MenuRadioButtonProps>(
     this.lifecycle
   );
 
   private isInitialized = false;
-  private unappliedProps: DiffedProps = [];
+  private unappliedProps = new Map<string, any>();
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
@@ -79,15 +84,83 @@ export class MenuRadioButtonElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
+  setRootBarItem(barItem: MenuBarItemElement) {
+    if (barItem === this.rootBarItem) {
+      return;
+    }
+
+    const prevWidget = this.widget;
+
+    this.rootBarItem = barItem;
+
+    const radioGroup = this.rootBarItem.getRadioGroup(
+      this.unappliedProps.get("radioGroup")
+    );
+
+    const widget = Gtk.RadioMenuItem.new_from_widget(radioGroup);
+    this.widget = widget;
+
+    this.isInitialized = true;
+
+    this.propsMapper = new PropertyMapper<MenuRadioButtonProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(widget),
+      createMarginPropMapper(widget),
+      createExpandPropMapper(widget),
+      createStylePropMapper(widget),
+      createTooltipPropMapper(widget),
+      createAccelPropMapper(widget, "activate"),
+      (props) =>
+        props
+          .label(DataType.String, (v = "") => {
+            widget.label = v;
+          })
+          .inconsistent(DataType.Boolean, (v = false) => {
+            widget.inconsistent = v;
+          })
+    );
+
+    this.handlers = new EventHandlers<Gtk.RadioMenuItem, MenuRadioButtonProps>(
+      this
+    );
+
+    this.handlers.bind("clicked", "onClick");
+    this.handlers.bind("toggled", "onToggle", () => {
+      return {
+        value: widget.active,
+      };
+    });
+    this.handlers.bind(
+      "enter-notify-event",
+      "onMouseEnter",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+    this.handlers.bind(
+      "leave-notify-event",
+      "onMouseLeave",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+
+    this.lifecycle.emitLifecycleEventUpdate([...this.unappliedProps.entries()]);
+    this.unappliedProps.clear();
+
+    const groupHasActiveEntry = radioGroup.get_group().some((i) => i.active);
+    if (!groupHasActiveEntry && this.propsMapper.currentProps.isDefault) {
+      widget.set_active(true);
+    }
+
+    this.parent?.reattachRadioButton(this);
+    prevWidget.destroy();
+  }
+
   updateProps(props: DiffedProps): void {
     if (this.isInitialized) {
       this.lifecycle.emitLifecycleEventUpdate(props);
     } else {
       for (const prop of props) {
-        this.unappliedProps = this.unappliedProps.filter(
-          ([name]) => name !== prop[0]
-        );
-        this.unappliedProps.push(prop);
+        this.unappliedProps.set(prop[0], prop[1]);
       }
     }
   }
@@ -95,11 +168,11 @@ export class MenuRadioButtonElement
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    throw new Error("MenuCheckButton cannot have children.");
+    throw new Error("MenuRadioButton cannot have children.");
   }
 
   insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
-    throw new Error("MenuCheckButton cannot have children.");
+    throw new Error("MenuRadioButton cannot have children.");
   }
 
   remove(parent: GjsElement): void {
@@ -126,65 +199,10 @@ export class MenuRadioButtonElement
       ])
     ) {
       this.parent = parent;
-
-      const radioGroup = parent.getRadioGroup(
-        this.propsMapper.currentProps.radioGroup!
-      );
-
-      this.widget = Gtk.RadioToolButton.new_from_widget(
-        radioGroup
-      ) as any as Gtk.RadioMenuItem;
-
-      this.isInitialized = true;
-
-      this.propsMapper.addCases(
-        createSizeRequestPropMapper(this.widget),
-        createMarginPropMapper(this.widget),
-        createExpandPropMapper(this.widget),
-        createStylePropMapper(this.widget),
-        createTooltipPropMapper(this.widget),
-        (props) =>
-          props
-            .label(DataType.String, (v = "") => {
-              this.widget.label = v;
-            })
-            .inconsistent(DataType.Boolean, (v = false) => {
-              this.widget.inconsistent = v;
-            })
-      );
-
-      this.handlers = new EventHandlers<
-        Gtk.RadioMenuItem,
-        MenuRadioButtonProps
-      >(this);
-
-      this.handlers.bind("clicked", "onClick");
-      this.handlers.bind("toggled", "onToggle", () => {
-        return {
-          value: this.widget.active,
-        };
-      });
-      this.handlers.bind(
-        "enter-notify-event",
-        "onMouseEnter",
-        parseCrossingEvent,
-        EventPhase.Action
-      );
-      this.handlers.bind(
-        "leave-notify-event",
-        "onMouseLeave",
-        parseCrossingEvent,
-        EventPhase.Action
-      );
-
-      this.lifecycle.emitLifecycleEventUpdate(this.unappliedProps);
-      this.unappliedProps = [];
-
-      if (this.propsMapper.currentProps.isDefault) {
-        this.widget.set_active(true);
-      }
     } else {
-      throw new Error("ToolbarButton can only be a child of a toolbar.");
+      throw new Error(
+        "MenuRadioButton can only be a child of a MenuBarItem or MenuEntry."
+      );
     }
 
     return true;

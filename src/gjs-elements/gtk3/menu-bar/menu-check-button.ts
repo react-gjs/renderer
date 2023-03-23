@@ -12,7 +12,10 @@ import type { SyntheticEvent } from "../../utils/element-extenders/event-handler
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -31,7 +34,8 @@ type MenuCheckButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type MenuCheckButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, MenuCheckButtonElement>;
@@ -43,8 +47,8 @@ export interface MenuCheckButtonProps extends MenuCheckButtonPropsMixin {
   type?: MenuCheckButtonType;
   inconsistent?: boolean;
   onToggle?: (event: MenuCheckButtonEvent<{ value: boolean }>) => void;
-  onMouseEnter?: (event: MenuCheckButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: MenuCheckButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: MenuCheckButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: MenuCheckButtonEvent<PointerData>) => void;
 }
 
 export class MenuCheckButtonElement
@@ -74,6 +78,7 @@ export class MenuCheckButtonElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget, "activate"),
     (props) =>
       props
         .label(DataType.String, (v = "") => {
@@ -116,6 +121,8 @@ export class MenuCheckButtonElement
 
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
+
+  setRootBarItem(barItem: MenuBarItemElement) {}
 
   updateProps(props: DiffedProps): void {
     this.lifecycle.emitLifecycleEventUpdate(props);

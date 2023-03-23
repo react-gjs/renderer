@@ -74,15 +74,6 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  getRadioGroup(groupName: string): Gtk.RadioToolButton {
-    if (this.radioGroups.has(groupName)) {
-      return this.radioGroups.get(groupName)!;
-    }
-    const radioGroup = new Gtk.RadioToolButton();
-    this.radioGroups.set(groupName, radioGroup);
-    return radioGroup;
-  }
-
   updateProps(props: DiffedProps): void {
     this.lifecycle.emitLifecycleEventUpdate(props);
   }

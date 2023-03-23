@@ -12,7 +12,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -33,7 +36,8 @@ type ToolbarButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type ToolbarButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, ToolbarButtonElement>;
@@ -46,8 +50,8 @@ export interface ToolbarButtonProps extends ToolbarButtonPropsMixin {
   sameSize?: boolean;
   expand?: boolean;
   onClick?: (event: ToolbarButtonEvent) => void;
-  onMouseEnter?: (event: ToolbarButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: ToolbarButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: ToolbarButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: ToolbarButtonEvent<PointerData>) => void;
 }
 
 export class ToolbarButtonElement
@@ -79,6 +83,7 @@ export class ToolbarButtonElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
     (props) =>
       props
         .label(DataType.String, (v = "") => {

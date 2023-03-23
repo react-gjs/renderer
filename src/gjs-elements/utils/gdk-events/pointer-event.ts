@@ -1,6 +1,6 @@
 import type Gdk from "gi://Gdk";
 
-export type PointerEvent = {
+export type PointerData = {
   coords: {
     x: number;
     y: number;
@@ -11,7 +11,7 @@ export type PointerEvent = {
 
 export const parseCrossingEvent = (
   e: Gdk.Event & Gdk.EventCrossing
-): PointerEvent => {
+): PointerData => {
   const coords = e.get_coords();
   const rootCoords = e.get_root_coords();
 

@@ -16,7 +16,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -37,7 +40,8 @@ type ModelButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type ModelButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, ModelButtonElement>;
@@ -64,8 +68,8 @@ export interface ModelButtonProps extends ModelButtonPropsMixin {
   onActivate?: (event: ModelButtonEvent) => void;
   onPressed?: (event: ModelButtonEvent) => void;
   onReleased?: (event: ModelButtonEvent) => void;
-  onMouseEnter?: (event: ModelButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: ModelButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: ModelButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: ModelButtonEvent<PointerData>) => void;
 }
 
 const ImageDataType = DataType.OneOf(
@@ -102,6 +106,7 @@ export class ModelButtonElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
     (props) =>
       props
         .label(DataType.String, (v) => {

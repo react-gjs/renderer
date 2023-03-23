@@ -2,6 +2,7 @@ import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 
+export * from "./enums/gtk3-index";
 export { MouseButton } from "./gjs-elements/utils/gdk-events/mouse-button-press-event";
 export type { MouseButtonPressEvent } from "./gjs-elements/utils/gdk-events/mouse-button-press-event";
 

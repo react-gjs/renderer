@@ -16,7 +16,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -37,7 +40,8 @@ type ButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type ButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<
   P,
@@ -62,8 +66,8 @@ export interface ButtonProps extends ButtonPropsMixin {
   onActivate?: (event: ButtonEvent) => void;
   onPressed?: (event: ButtonEvent) => void;
   onReleased?: (event: ButtonEvent) => void;
-  onMouseEnter?: (event: ButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: ButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: ButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: ButtonEvent<PointerData>) => void;
 }
 
 const ImageDataType = DataType.OneOf(
@@ -95,6 +99,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget, "clicked"),
     (props) =>
       props
         .label(DataType.String, (v) => {

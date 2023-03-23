@@ -15,6 +15,7 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
 import type { MouseButtonPressEvent } from "../../utils/gdk-events/mouse-button-press-event";
 import { parseMouseButtonPressEvent } from "../../utils/gdk-events/mouse-button-press-event";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -43,10 +44,10 @@ export type PressableEvent<P extends Record<string, any> = {}> = SyntheticEvent<
 >;
 
 export interface PressableProps extends PressablePropsMixin {
-  onClick?: (event: PressableEvent<MouseButtonPressEvent>) => void;
+  onPress?: (event: PressableEvent<MouseButtonPressEvent>) => void;
   onRelease?: (event: PressableEvent<MouseButtonPressEvent>) => void;
-  onMouseEnter?: (event: PressableEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: PressableEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: PressableEvent<PointerData>) => void;
+  onMouseLeave?: (event: PressableEvent<PointerData>) => void;
   /**
    * If set to true, the pressable element will intercept mouse events
    * on it's children. Meaning children will not receive any mouse
@@ -99,7 +100,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   constructor(props: DiffedProps) {
     this.handlers.bind(
       "button-press-event",
-      "onClick",
+      "onPress",
       (e: Gdk.Event & Gdk.EventButton) => parseMouseButtonPressEvent(e)
     );
     this.handlers.bind(

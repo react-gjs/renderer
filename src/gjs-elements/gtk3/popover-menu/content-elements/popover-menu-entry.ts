@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
+import { EventPhase } from "../../../../reconciler/event-phase";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import type { GjsElement } from "../../../gjs-element";
@@ -13,7 +14,11 @@ import { EventHandlers } from "../../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../../utils/ensure-not-string";
+import type { PointerData } from "../../../utils/gdk-events/pointer-event";
+import { parseCrossingEvent } from "../../../utils/gdk-events/pointer-event";
 import { generateUID } from "../../../utils/generate-uid";
+import type { AccelProps } from "../../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
@@ -26,8 +31,8 @@ import type { TextNode } from "../../text-node";
 import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import {
-  POPOVER_MENU_MARGIN,
   popoverMenuModelButton,
+  POPOVER_MENU_MARGIN,
 } from "../utils/popover-menu-model-button";
 import { PopoverMenuCheckButtonElement } from "./popover-menu-check-button";
 import { PopoverMenuItemElement } from "./popover-menu-item";
@@ -37,7 +42,8 @@ import { PopoverMenuSeparatorElement } from "./popover-menu-separator";
 type PopoverMenuEntryPropsMixin = SizeRequestProps &
   MarginProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type PopoverMenuEntryEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, PopoverMenuEntryElement>;
@@ -49,6 +55,10 @@ export interface PopoverMenuEntryProps extends PopoverMenuEntryPropsMixin {
   inverted?: boolean;
   submenuBackButtonLabel?: string;
   onClick?: (e: PopoverMenuEntryEvent) => void;
+  onPressed?: (event: PopoverMenuEntryEvent) => void;
+  onReleased?: (event: PopoverMenuEntryEvent) => void;
+  onMouseEnter?: (event: PopoverMenuEntryEvent<PointerData>) => void;
+  onMouseLeave?: (event: PopoverMenuEntryEvent<PointerData>) => void;
 }
 
 export class PopoverMenuEntryElement
@@ -110,6 +120,7 @@ export class PopoverMenuEntryElement
     createMarginPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget, "clicked"),
     (props) =>
       props
         .label(DataType.String, (v = "") => {
@@ -129,10 +140,24 @@ export class PopoverMenuEntryElement
         })
   );
 
-  constructor(props: DiffedProps) {
+  constructor(props: DiffedProps, private context: HostContext<GjsContext>) {
     this.ownMenuName = "submenu_" + generateUID(8);
 
     this.handlers.bind("clicked", "onClick");
+    this.handlers.bind("pressed", "onPressed");
+    this.handlers.bind("released", "onReleased");
+    this.handlers.bind(
+      "enter-notify-event",
+      "onMouseEnter",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+    this.handlers.bind(
+      "leave-notify-event",
+      "onMouseLeave",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
 
     this.updateProps(props);
 

@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
+import { EventPhase } from "../../../../reconciler/event-phase";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import type { GjsElement } from "../../../gjs-element";
@@ -11,6 +12,10 @@ import type { SyntheticEvent } from "../../../utils/element-extenders/event-hand
 import { EventHandlers } from "../../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
+import type { PointerData } from "../../../utils/gdk-events/pointer-event";
+import { parseCrossingEvent } from "../../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
@@ -28,7 +33,8 @@ import { PopoverMenuEntryElement } from "./popover-menu-entry";
 type PopoverMenuCheckButtonPropsMixin = SizeRequestProps &
   MarginProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type PopoverMenuCheckButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, PopoverMenuCheckButtonElement>;
@@ -41,6 +47,10 @@ export interface PopoverMenuCheckButtonProps
   inverted?: boolean;
   active?: boolean;
   onChange?: (e: PopoverMenuCheckButtonEvent<{ isActive: boolean }>) => void;
+  onPressed?: (event: PopoverMenuCheckButtonEvent) => void;
+  onReleased?: (event: PopoverMenuCheckButtonEvent) => void;
+  onMouseEnter?: (event: PopoverMenuCheckButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: PopoverMenuCheckButtonEvent<PointerData>) => void;
 }
 
 export class PopoverMenuCheckButtonElement
@@ -70,6 +80,7 @@ export class PopoverMenuCheckButtonElement
       createMarginPropMapper(this.widget),
       createStylePropMapper(this.widget),
       createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget),
       (props) =>
         props
           .label(DataType.String, (v = "") => {
@@ -92,9 +103,29 @@ export class PopoverMenuCheckButtonElement
   constructor(props: DiffedProps) {
     this.widget.role = Gtk.ButtonRole.CHECK;
 
+    this.handlers.bindInternal("clicked", (e) => {
+      if (this.getProperty("active") == null) {
+        this.widget.active = !this.widget.active;
+      }
+    });
+
+    this.handlers.bind("pressed", "onPressed");
+    this.handlers.bind("released", "onReleased");
     this.handlers.bind("clicked", "onChange", () => ({
       isActive: !this.widget.active,
     }));
+    this.handlers.bind(
+      "enter-notify-event",
+      "onMouseEnter",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+    this.handlers.bind(
+      "leave-notify-event",
+      "onMouseLeave",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
 
     this.updateProps(props);
 

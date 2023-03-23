@@ -6,11 +6,12 @@ const CHILD_PROPS = {
   "pack-type": Gtk.PackType.END,
 };
 
-export const PackEnd = <E extends keyof JSX.IntrinsicElements>(
-  props: {
-    element: E;
-  } & JSX.IntrinsicElements[E]
-) => {
-  const Component = useChildProperties(props.element, CHILD_PROPS);
-  return React.createElement(Component, props);
+export const PackEnd = (props: { children: React.ReactElement }) => {
+  const element = props.children.type;
+  const elemProps = props.children.props;
+  const elemKey = props.children.key;
+
+  const Component = useChildProperties(element as any, CHILD_PROPS);
+
+  return React.createElement(Component, { ...elemProps, key: elemKey });
 };

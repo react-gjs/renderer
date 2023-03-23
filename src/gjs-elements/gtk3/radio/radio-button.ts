@@ -12,7 +12,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -33,7 +36,8 @@ type RadioButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type RadioButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, RadioButtonElement>;
@@ -46,8 +50,8 @@ export interface RadioButtonProps extends RadioButtonPropsMixin {
   onActivate?: (event: RadioButtonEvent) => void;
   onPressed?: (event: RadioButtonEvent) => void;
   onReleased?: (event: RadioButtonEvent) => void;
-  onMouseEnter?: (event: RadioButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: RadioButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: RadioButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: RadioButtonEvent<PointerData>) => void;
 }
 
 export class RadioButtonElement
@@ -161,6 +165,7 @@ export class RadioButtonElement
         createExpandPropMapper(widget),
         createStylePropMapper(widget),
         createTooltipPropMapper(widget),
+        createAccelPropMapper(widget),
         (props) =>
           props
             .label(DataType.String, (v = "") => {

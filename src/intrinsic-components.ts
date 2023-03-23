@@ -1,4 +1,44 @@
-const IntrinsicElem = <E extends Rg.GjsElementTypes>(v: E): E => v;
+import React from "react";
+import { useWindow } from "./hooks/gtk3";
+
+export const InstinsicElementSymbol = Symbol("IntrinsicElement");
+
+export const isInstrinsic = (
+  v: string | React.JSXElementConstructor<any>
+): v is React.FC => {
+  return (
+    (typeof v === "function" || typeof v === "object") &&
+    v != null &&
+    // @ts-expect-error
+    v[InstinsicElementSymbol]
+  );
+};
+
+const IntrinsicElem = <E extends keyof JSX.IntrinsicElements>(
+  v: E
+): React.FC<JSX.IntrinsicElements[E]> => {
+  const c = React.forwardRef<any, React.PropsWithChildren>(
+    ({ children, ...props }, ref): JSX.Element => {
+      const window = useWindow();
+
+      return React.createElement(
+        v,
+        { ...props, ref, __rg_parent_window: window },
+        children
+      );
+    }
+  );
+
+  c.displayName = `Intrinsic_${v}`;
+
+  Object.defineProperty(c, InstinsicElementSymbol, {
+    value: true,
+    configurable: false,
+    writable: false,
+  });
+
+  return c as any;
+};
 
 /** Equivalent to the Gtk.ActionBar widget. */
 export const ActionBar = IntrinsicElem("ACTION_BAR");
@@ -121,8 +161,7 @@ export const ToolbarSeparator = IntrinsicElem("TOOLBAR_SEPARATOR");
 /** Equivalent to the Gtk.VolumeButton widget. */
 export const VolumeButton = IntrinsicElem("VOLUME_BUTTON");
 /** Equivalent to the Gtk.Window widget. */
-export const Window = IntrinsicElem("WINDOW");
-
+export { Window } from "./components/window/window";
 export { PopoverMenu } from "./gjs-elements/gtk3/popover-menu/component";
 export { Popover } from "./gjs-elements/gtk3/popover/component";
 export { createStack, useStack } from "./gjs-elements/gtk3/stack/use-stack";

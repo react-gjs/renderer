@@ -1,6 +1,7 @@
 import type { AnyDataType, GetDataType } from "dilswer";
 import { createValidator } from "dilswer";
 import type { ElementLifecycle } from "../../element-extender";
+import type { WindowElement } from "../../rg-types";
 import { OrderedMap } from "../ordered-map";
 
 type KeysOf<P> = P extends P ? keyof P : never;
@@ -9,7 +10,9 @@ export type _PropsReader<P> = {
   [K in KeysOf<P>]?: P extends Record<K, infer T> ? T : never;
 };
 
-export type PropsReader<P> = _PropsReader<Required<P>>;
+export type PropsReader<P> = _PropsReader<Required<P>> & {
+  __rg_parent_window?: WindowElement;
+};
 
 export type MapperUpdateApi<P> = {
   instead(propertyName: KeysOf<P>): void;

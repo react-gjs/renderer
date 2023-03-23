@@ -13,7 +13,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -24,16 +27,17 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
-import { escapeHtml } from "../markup/utils/escape-html";
 import type { TextNode } from "../text-node";
 import { MenuBarItemElement } from "./menu-bar-item";
 import { MenuCheckButtonElement } from "./menu-check-button";
+import { MenuRadioButtonElement } from "./menu-radio-button";
 
 type MenuEntryPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type MenuEntryEvent<P extends Record<string, any> = {}> = SyntheticEvent<
   P,
@@ -43,15 +47,9 @@ export type MenuEntryEvent<P extends Record<string, any> = {}> = SyntheticEvent<
 export interface MenuEntryProps extends MenuEntryPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
-
-  /**
-   * Secondary text of the menu entry, displayed on the right side. It
-   * is displayed in a dimmed color.
-   */
-  secondaryLabel?: string;
   onActivate?: (event: MenuEntryEvent) => void;
-  onMouseEnter?: (event: MenuEntryEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: MenuEntryEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: MenuEntryEvent<PointerData>) => void;
+  onMouseLeave?: (event: MenuEntryEvent<PointerData>) => void;
 }
 
 export class MenuEntryElement
@@ -70,21 +68,31 @@ export class MenuEntryElement
   labelContainer = new Gtk.Box();
 
   private parent: MenuBarItemElement | MenuEntryElement | null = null;
+  private rootBarItem: MenuBarItemElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.MenuItem, MenuEntryProps>(
     this
   );
   private readonly children = new ChildOrderController<
-    MenuEntryElement | MenuCheckButtonElement
-  >(this.lifecycle, this.widget, (child) => {
-    if (!this.submenu) {
-      this.submenu = new Gtk.Menu();
-      this.widget.set_submenu(this.submenu);
-    }
+    MenuEntryElement | MenuCheckButtonElement | MenuRadioButtonElement
+  >(
+    this.lifecycle,
+    this.widget,
+    (child) => {
+      if (!this.submenu) {
+        this.submenu = new Gtk.Menu();
+        this.widget.set_submenu(this.submenu);
+      }
 
-    this.submenu.append(child);
-  });
+      this.submenu.append(child);
+    },
+    (child) => {
+      if (this.submenu) {
+        this.submenu.remove(child);
+      }
+    }
+  );
   private readonly propsMapper = new PropertyMapper<MenuEntryProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -92,21 +100,11 @@ export class MenuEntryElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget, "activate"),
     (props) =>
-      props
-        .label(DataType.String, (v = "", allProps) => {
-          this.labelContainer.destroy();
-          this.labelContainer = this.createLabel(
-            v,
-            allProps.secondaryLabel ?? ""
-          );
-          this.widget.add(this.labelContainer);
-        })
-        .secondaryLabel(DataType.String, (v = "", allProps) => {
-          this.labelContainer.destroy();
-          this.labelContainer = this.createLabel(allProps.label ?? "", v);
-          this.widget.add(this.labelContainer);
-        })
+      props.label(DataType.String, (v = "") => {
+        this.widget.label = v;
+      })
   );
 
   constructor(props: DiffedProps) {
@@ -129,31 +127,20 @@ export class MenuEntryElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  private createLabel(leftText: string, rightText: string) {
-    const box = new Gtk.Box();
-    box.orientation = Gtk.Orientation.HORIZONTAL;
+  setRootBarItem(barItem: MenuBarItemElement) {
+    this.rootBarItem = barItem;
 
-    const leftLabel = new Gtk.Label({ label: leftText });
-    leftLabel.expand = true;
-    leftLabel.halign = Gtk.Align.START;
-    box.add(leftLabel);
-
-    if (rightText !== "") {
-      const rightLabel = new Gtk.Label({
-        label: `<span alpha="50%">${escapeHtml(rightText)}</span>`,
-        use_markup: true,
-      });
-      rightLabel.halign = Gtk.Align.END;
-      rightLabel.margin_start = 10;
-      rightLabel.margin_end = 10;
-      box.add(rightLabel);
-    }
-
-    return box;
+    this.children.forEach((child) => {
+      child.setRootBarItem(barItem);
+    });
   }
 
-  getRadioGroup(groupName: string): Gtk.RadioToolButton {
+  getRadioGroup(groupName: string): Gtk.RadioMenuItem {
     return this.parent!.getRadioGroup(groupName);
+  }
+
+  reattachRadioButton(button: MenuRadioButtonElement) {
+    this.children.reattachWidget(button);
   }
 
   updateProps(props: DiffedProps): void {
@@ -168,6 +155,7 @@ export class MenuEntryElement
     if (
       !GjsElementManager.isGjsElementOfKind(child, [
         MenuEntryElement,
+        MenuRadioButtonElement,
         MenuCheckButtonElement,
       ])
     ) {
@@ -176,6 +164,9 @@ export class MenuEntryElement
 
     const shouldAppend = child.notifyWillAppendTo(this);
     this.children.addChild(child, !shouldAppend);
+    if (this.rootBarItem) {
+      child.setRootBarItem(this.rootBarItem);
+    }
     this.widget.show_all();
   }
 
@@ -185,6 +176,7 @@ export class MenuEntryElement
     if (
       !GjsElementManager.isGjsElementOfKind(newChild, [
         MenuEntryElement,
+        MenuRadioButtonElement,
         MenuCheckButtonElement,
       ])
     ) {
@@ -193,6 +185,9 @@ export class MenuEntryElement
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
     this.children.insertBefore(newChild, beforeChild, !shouldAppend);
+    if (this.rootBarItem) {
+      newChild.setRootBarItem(this.rootBarItem);
+    }
     this.widget.show_all();
   }
 

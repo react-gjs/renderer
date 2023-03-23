@@ -12,7 +12,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -32,7 +35,8 @@ type LinkButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type LinkButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, LinkButtonElement>;
@@ -45,8 +49,8 @@ export interface LinkButtonProps extends LinkButtonPropsMixin {
   onActivate?: (event: LinkButtonEvent) => void;
   onPressed?: (event: LinkButtonEvent) => void;
   onReleased?: (event: LinkButtonEvent) => void;
-  onMouseEnter?: (event: LinkButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: LinkButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: LinkButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: LinkButtonEvent<PointerData>) => void;
 }
 
 export class LinkButtonElement
@@ -78,6 +82,7 @@ export class LinkButtonElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
     (props) =>
       props
         .label(DataType.String, (v = "") => {

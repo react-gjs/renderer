@@ -1,6 +1,7 @@
 import { DataType } from "dilswer";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
+import { EventPhase } from "../../../../reconciler/event-phase";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import type { GjsElement } from "../../../gjs-element";
@@ -11,6 +12,10 @@ import type { SyntheticEvent } from "../../../utils/element-extenders/event-hand
 import { EventHandlers } from "../../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
+import type { PointerData } from "../../../utils/gdk-events/pointer-event";
+import { parseCrossingEvent } from "../../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
@@ -29,7 +34,8 @@ import { PopoverMenuEntryElement } from "./popover-menu-entry";
 type PopoverMenuRadioButtonPropsMixin = SizeRequestProps &
   MarginProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type PopoverMenuRadioButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, PopoverMenuRadioButtonElement>;
@@ -43,6 +49,11 @@ export interface PopoverMenuRadioButtonProps
   radioGroup: string;
   isDefault?: boolean;
   onChange?: (e: PopoverMenuRadioButtonEvent<{ isActive: boolean }>) => void;
+  onClick?: (e: PopoverMenuRadioButtonEvent) => void;
+  onPressed?: (event: PopoverMenuRadioButtonEvent) => void;
+  onReleased?: (event: PopoverMenuRadioButtonEvent) => void;
+  onMouseEnter?: (event: PopoverMenuRadioButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: PopoverMenuRadioButtonEvent<PointerData>) => void;
 }
 
 export class PopoverMenuRadioButtonElement
@@ -77,6 +88,7 @@ export class PopoverMenuRadioButtonElement
       createMarginPropMapper(this.widget),
       createStylePropMapper(this.widget),
       createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget, "clicked"),
       (props) =>
         props
           .label(DataType.String, (v = "") => {
@@ -112,15 +124,30 @@ export class PopoverMenuRadioButtonElement
   constructor(props: DiffedProps) {
     this.widget.role = Gtk.ButtonRole.RADIO;
 
-    this.handlers.bind("notify::active", "onChange", () => ({
-      isActive: this.widget.active,
-    }));
-
     this.handlers.bindInternal("clicked", (e) => {
       if (!this.widget.active) {
         this.radioGroup?.select(this);
       }
     });
+
+    this.handlers.bind("notify::active", "onChange", () => ({
+      isActive: this.widget.active,
+    }));
+    this.handlers.bind("clicked", "onClick");
+    this.handlers.bind("pressed", "onPressed");
+    this.handlers.bind("released", "onReleased");
+    this.handlers.bind(
+      "enter-notify-event",
+      "onMouseEnter",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
+    this.handlers.bind(
+      "leave-notify-event",
+      "onMouseLeave",
+      parseCrossingEvent,
+      EventPhase.Action
+    );
 
     this.widget.get_child;
 

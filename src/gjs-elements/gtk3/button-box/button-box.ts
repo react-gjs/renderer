@@ -11,7 +11,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -31,7 +34,8 @@ type ButtonBoxPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type ButtonBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
   P,
@@ -44,8 +48,8 @@ export interface ButtonBoxProps extends ButtonBoxPropsMixin {
   onActivate?: (event: ButtonBoxEvent) => void;
   onPressed?: (event: ButtonBoxEvent) => void;
   onReleased?: (event: ButtonBoxEvent) => void;
-  onMouseEnter?: (event: ButtonBoxEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: ButtonBoxEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: ButtonBoxEvent<PointerData>) => void;
+  onMouseLeave?: (event: ButtonBoxEvent<PointerData>) => void;
 }
 
 export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
@@ -75,7 +79,8 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget)
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget)
   );
 
   constructor(props: DiffedProps) {

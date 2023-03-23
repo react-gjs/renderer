@@ -1,3 +1,5 @@
+/// <reference path="../gi.d.ts" />
+
 import "gi://Gdk?version=3.0";
 import "gi://Gtk?version=3.0";
 import type { default as DeclarationTypes } from "./declarations";
