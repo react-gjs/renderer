@@ -3,7 +3,7 @@ import type { ElementLifecycle } from "../../element-extender";
 import type { GjsElement } from "../../gjs-element";
 
 class ChildEntry<C extends GjsElement> {
-  constructor(public element: C, public isTopLevel: boolean) {}
+  constructor(public element: C, public isNonAttachable: boolean) {}
 }
 
 export class ChildOrderController<C extends GjsElement = GjsElement> {
@@ -45,15 +45,15 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
    * it regardless, otherwise there's a chance for `insertBefore`
    * method to fail in the future)
    */
-  addChild(child: C, isTopLevel = false) {
-    if (!isTopLevel) {
+  addChild(child: C, isNonAttachable = false) {
+    if (!isNonAttachable) {
       this.addChildToContainer(
         child.getWidget() as ReturnType<C["getWidget"]>,
         child,
         this.children.length
       );
     }
-    this.children.push(new ChildEntry(child, isTopLevel));
+    this.children.push(new ChildEntry(child, isNonAttachable));
   }
 
   /**
@@ -72,7 +72,7 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
    * there's a chance for `insertBefore` method to fail in the
    * future)
    */
-  insertBefore(newChild: C, beforeChild: GjsElement, isTopLevel = false) {
+  insertBefore(newChild: C, beforeChild: GjsElement, isNonAttachable = false) {
     const beforeIndex = this.children.findIndex(
       (c) => c.element === beforeChild
     );
@@ -83,9 +83,9 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
 
     const childrenAfter = this.children.slice(beforeIndex);
 
-    if (!isTopLevel) {
+    if (!isNonAttachable) {
       for (let i = 0; i < childrenAfter.length; i++) {
-        if (!childrenAfter[i].isTopLevel) {
+        if (!childrenAfter[i].isNonAttachable) {
           this.removeChildFromContainer(
             childrenAfter[i].element.getWidget() as ReturnType<C["getWidget"]>,
             childrenAfter[i].element
@@ -100,7 +100,7 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
       );
 
       for (let i = 0; i < childrenAfter.length; i++) {
-        if (!childrenAfter[i].isTopLevel) {
+        if (!childrenAfter[i].isNonAttachable) {
           this.addChildToContainer(
             childrenAfter[i].element.getWidget() as ReturnType<C["getWidget"]>,
             childrenAfter[i].element,
@@ -110,6 +110,51 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
       }
     }
 
-    this.children.splice(beforeIndex, 0, new ChildEntry(newChild, isTopLevel));
+    this.children.splice(
+      beforeIndex,
+      0,
+      new ChildEntry(newChild, isNonAttachable)
+    );
+  }
+
+  reattachWidget(child: C) {
+    const childIndex = this.children.findIndex((c) => c.element === child);
+
+    const entry = this.children[childIndex];
+
+    if (childIndex === -1) {
+      return;
+    }
+
+    if (entry.isNonAttachable) {
+      return;
+    }
+
+    const childrenAfter = this.children.slice(childIndex);
+
+    for (let i = 0; i < childrenAfter.length; i++) {
+      if (!childrenAfter[i].isNonAttachable) {
+        this.removeChildFromContainer(
+          childrenAfter[i].element.getWidget() as ReturnType<C["getWidget"]>,
+          childrenAfter[i].element
+        );
+      }
+    }
+
+    for (let i = 0; i < childrenAfter.length; i++) {
+      if (!childrenAfter[i].isNonAttachable) {
+        this.addChildToContainer(
+          childrenAfter[i].element.getWidget() as ReturnType<C["getWidget"]>,
+          childrenAfter[i].element,
+          childIndex + i + 1
+        );
+      }
+    }
+
+    this.children.splice(
+      childIndex,
+      0,
+      new ChildEntry(child, entry.isNonAttachable)
+    );
   }
 }

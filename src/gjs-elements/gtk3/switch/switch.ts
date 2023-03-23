@@ -10,6 +10,8 @@ import type { SyntheticEvent } from "../../utils/element-extenders/event-handler
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -28,7 +30,8 @@ type SwitchPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type SwitchEvent<P extends Record<string, any> = {}> = SyntheticEvent<
   P,
@@ -64,6 +67,7 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget, "activate"),
     (props) =>
       props.value(DataType.Boolean, (v = false) => {
         this.widget.state = v;

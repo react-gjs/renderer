@@ -13,7 +13,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -33,7 +36,8 @@ type VolumeButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type VolumeButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, VolumeButtonElement>;
@@ -56,8 +60,8 @@ export interface VolumeButtonProps extends VolumeButtonPropsMixin {
   onActivate?: (event: VolumeButtonEvent) => void;
   onPressed?: (event: VolumeButtonEvent) => void;
   onReleased?: (event: VolumeButtonEvent) => void;
-  onMouseEnter?: (event: VolumeButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: VolumeButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: VolumeButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: VolumeButtonEvent<PointerData>) => void;
   onPopupOpen?: (event: VolumeButtonEvent) => void;
   onPopupClose?: (event: VolumeButtonEvent) => void;
   onValueChange?: (event: VolumeButtonEvent<{ value: number }>) => void;
@@ -93,6 +97,7 @@ export class VolumeButtonElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
     (props) =>
       props
         .step(DataType.Number, (v = 0.02) => {

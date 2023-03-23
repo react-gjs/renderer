@@ -12,7 +12,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -33,7 +36,8 @@ type ToolbarRadioButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type ToolbarRadioButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, ToolbarRadioButtonElement>;
@@ -49,8 +53,8 @@ export interface ToolbarRadioButtonProps extends ToolbarRadioButtonPropsMixin {
   expand?: boolean;
   onClick?: (event: ToolbarRadioButtonEvent) => void;
   onChange?: (event: ToolbarRadioButtonEvent<{ isActive: boolean }>) => void;
-  onMouseEnter?: (event: ToolbarRadioButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: ToolbarRadioButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: ToolbarRadioButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: ToolbarRadioButtonEvent<PointerData>) => void;
 }
 
 export class ToolbarRadioButtonElement
@@ -170,6 +174,7 @@ export class ToolbarRadioButtonElement
         createExpandPropMapper(this.widget),
         createStylePropMapper(this.widget),
         createTooltipPropMapper(this.widget),
+        createAccelPropMapper(this.widget),
         (props) =>
           props
             .label(DataType.String, (v = "") => {

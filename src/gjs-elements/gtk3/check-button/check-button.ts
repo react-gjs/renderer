@@ -11,7 +11,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
+import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
@@ -31,7 +34,8 @@ type CheckButtonPropsMixin = SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
-  TooltipProps;
+  TooltipProps &
+  AccelProps;
 
 export type CheckButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, CheckButtonElement>;
@@ -45,8 +49,8 @@ export interface CheckButtonProps extends CheckButtonPropsMixin {
   onActivate?: (event: CheckButtonEvent) => void;
   onPressed?: (event: CheckButtonEvent) => void;
   onReleased?: (event: CheckButtonEvent) => void;
-  onMouseEnter?: (event: CheckButtonEvent<PointerEvent>) => void;
-  onMouseLeave?: (event: CheckButtonEvent<PointerEvent>) => void;
+  onMouseEnter?: (event: CheckButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: CheckButtonEvent<PointerData>) => void;
 }
 
 export class CheckButtonElement
@@ -78,6 +82,7 @@ export class CheckButtonElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
     (props) =>
       props
         .active(DataType.Boolean, (v = false) => {
