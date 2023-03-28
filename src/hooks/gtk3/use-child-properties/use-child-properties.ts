@@ -11,8 +11,6 @@ export const useChildProperties = <
   childProperties: Record<string, string | number>
 ) => {
   if (!(typeof element === "string" || isInstrinsic(element))) {
-    console.log("isInstrinsic(element)", isInstrinsic(element));
-
     throw new Error(
       `Child Properties can only be used with intrinsic elements. ${element} is not an intrinsic element.`
     );
