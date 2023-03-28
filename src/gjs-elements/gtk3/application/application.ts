@@ -130,6 +130,10 @@ export class ApplicationElement extends Gtk.Application {
   }
 
   vfunc_activate() {
+    if (applicationCss) {
+      applicationCss.install();
+    }
+
     this._rootGjsElement?.render();
   }
 }
