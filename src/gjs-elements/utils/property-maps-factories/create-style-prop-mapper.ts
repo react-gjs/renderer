@@ -188,17 +188,9 @@ function parseToCss(styles: StyleSheet, className: string) {
   return rules.join("\n");
 }
 
-function stringToUint8Array(str: string): Uint8Array {
-  const arr = new Uint8Array(str.length);
-  for (let i = 0; i < str.length; i++) {
-    arr[i] = str.charCodeAt(i);
-  }
-  return arr;
-}
-
 function stylesToData(styles: StyleSheet, className: string) {
   const css = parseToCss(styles, className);
-  const data = stringToUint8Array(css);
+  const data = new TextEncoder().encode(css);
   return { buffer: data, stylesheet: css };
 }
 
