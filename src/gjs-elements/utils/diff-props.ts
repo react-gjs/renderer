@@ -1,6 +1,10 @@
 import type { DiffedProps } from "./element-extenders/map-properties";
 import { UnsetProp } from "./element-extenders/map-properties";
 
+const isObject = (obj: any): obj is Record<any, any> => {
+  return typeof obj === "object" && obj !== null;
+};
+
 export const compareArraysShallow = (oldArray?: any[], newArray?: any[]) => {
   if (typeof oldArray !== typeof newArray) {
     return true;
@@ -29,7 +33,7 @@ export const compareRecordsShallow = (
     return true;
   }
 
-  if (oldStyle == undefined) return false;
+  if (oldStyle == undefined) return true;
 
   const oldStyleKeys = Object.keys(oldStyle);
   const newStyleKeys = Object.keys(newStyle!);
@@ -91,13 +95,72 @@ export const compareRecordsDeep = (
   return false;
 };
 
+export const compareStyles = (
+  oldStyle: undefined | Record<string, any>,
+  newStyle: undefined | Record<string, any>
+) => {
+  if (typeof oldStyle !== typeof newStyle) {
+    return true;
+  }
+
+  if (oldStyle == undefined) return true;
+
+  const oldStyleKeys = Object.keys(oldStyle);
+  const newStyleKeys = Object.keys(newStyle!);
+
+  if (oldStyleKeys.length !== newStyleKeys.length) {
+    return true;
+  }
+
+  for (let i = 0; i < oldStyleKeys.length; i++) {
+    const key = oldStyleKeys[i];
+
+    if (oldStyle[key] !== newStyle![key]) {
+      if (
+        key.startsWith(":") &&
+        isObject(oldStyle[key]) &&
+        isObject(newStyle![key])
+      ) {
+        if (compareStyles(oldStyle[key], newStyle![key])) {
+          return true;
+        }
+      }
+
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const compareMargins = (m1: number | number[], m2: number | number[]) => {
+  if (m1 === m2) return false;
+
+  if (typeof m1 !== "number" && typeof m2 !== "number") {
+    return compareArraysShallow(m1, m2);
+  }
+
+  return true;
+};
+
+const compareClassNames = (cn1: string | string[], cn2: string | string[]) => {
+  if (cn1 === cn2) return false;
+
+  if (typeof cn1 !== "string" && typeof cn2 !== "string") {
+    return compareArraysShallow(cn1, cn2);
+  }
+
+  return true;
+};
+
 const SpecialPropDiffers = new Map<
   string,
   (oldProp: any, newProp: any) => boolean
 >();
 
-SpecialPropDiffers.set("margin", compareArraysShallow);
-SpecialPropDiffers.set("style", compareRecordsShallow);
+SpecialPropDiffers.set("margin", compareMargins);
+SpecialPropDiffers.set("style", compareStyles);
+SpecialPropDiffers.set("className", compareClassNames);
 
 export const diffProps = (
   oldProps: any,
@@ -107,11 +170,14 @@ export const diffProps = (
 ) => {
   const diffedProps: DiffedProps = [];
 
-  const oldPropsKeys = Object.keys(oldProps).filter((k) => k !== "children");
-  const newPropsKeys = Object.keys(newProps).filter((k) => k !== "children");
+  const oldPropsKeys = Object.keys(oldProps);
+  const newPropsKeys = Object.keys(newProps);
 
   for (let i = 0; i < newPropsKeys.length; i++) {
     const key = newPropsKeys[i];
+
+    if (key === "children") continue;
+
     if (gjsElem) {
       const differ = SpecialPropDiffers.get(key);
 
@@ -139,6 +205,8 @@ export const diffProps = (
 
   for (let i = 0; i < oldPropsKeys.length; i++) {
     const key = oldPropsKeys[i];
+
+    if (key === "children") continue;
 
     if (!newPropsKeys.includes(key)) {
       diffedProps.push([key, UnsetProp]);
