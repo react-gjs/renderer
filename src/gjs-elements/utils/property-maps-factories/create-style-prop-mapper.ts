@@ -8,40 +8,63 @@ export const createStylePropMapper = (
   widget: Gtk.Widget,
   defaults?: StyleSheet
 ) => {
-  const widgetClassName = generateName(16);
+  const uniqueClassName = generateName(16);
   const styleContext = widget.get_style_context()!;
-  styleContext.add_class(widgetClassName);
+  styleContext.add_class(uniqueClassName);
 
   return (props: PropCaseCollector<keyof StyleProps, any>) =>
-    props.style(DataType.RecordOf({}), (v) => {
-      const finalStyles = v
-        ? defaults
-          ? mergeObjects(defaults, v)
-          : v
-        : defaults;
+    props
+      .style(DataType.RecordOf({}), (v) => {
+        const finalStyles = v
+          ? defaults
+            ? mergeObjects(defaults, v)
+            : v
+          : defaults;
 
-      if (finalStyles) {
-        const { buffer, stylesheet } = stylesToData(
-          finalStyles,
-          widgetClassName
-        );
-
-        try {
-          const provider = new Gtk.CssProvider();
-          provider.load_from_data(buffer);
-
-          styleContext.add_provider(
-            provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        if (finalStyles) {
+          const { buffer, stylesheet } = stylesToData(
+            finalStyles,
+            uniqueClassName
           );
 
-          return () => styleContext.remove_provider(provider);
-        } catch (e) {
-          console.error(stylesheet);
-          throw new Error("Failed to apply the above CSS styles.");
+          try {
+            const provider = new Gtk.CssProvider();
+            provider.load_from_data(buffer);
+
+            styleContext.add_provider(
+              provider,
+              Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            );
+
+            return () => styleContext.remove_provider(provider);
+          } catch (e) {
+            console.error(stylesheet);
+            throw new Error("Failed to apply the above CSS styles.");
+          }
         }
-      }
-    });
+      })
+      .className(
+        DataType.OneOf(DataType.String, DataType.ArrayOf(DataType.String)),
+        (v) => {
+          if (v) {
+            const classNames = typeof v === "string" ? [v] : v;
+
+            for (const className of classNames) {
+              if (className.length > 0) {
+                styleContext.add_class(className);
+              }
+            }
+
+            return () => {
+              for (const className of classNames) {
+                if (className.length > 0) {
+                  styleContext.remove_class(className);
+                }
+              }
+            };
+          }
+        }
+      );
 };
 
 function pascalCaseToKebabCase(name: string): string {
@@ -213,7 +236,7 @@ export type StyleSheet = CssRules & {
   [key in ChildSelector]?: CssRules;
 };
 
-export type StyleProps = { style?: StyleSheet };
+export type StyleProps = { style?: StyleSheet; className?: string | string[] };
 
 // TODO: remove properties that are not supported by GTK
 export type CssRules = {
