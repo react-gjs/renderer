@@ -49,6 +49,10 @@ if (yarnPath === "") {
   process.exit(1);
 }
 
-childProcess.spawnSync("node", [yarnPath, ...args], {
+const proc = childProcess.spawn("node", [yarnPath, ...args], {
   stdio: "inherit",
+});
+
+proc.on("exit", (code) => {
+  process.exit(code);
 });
