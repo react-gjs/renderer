@@ -1,4 +1,8 @@
 import React from "react";
+import type {
+  CustomWidgetElement,
+  CustomWidgetProps,
+} from "./gjs-elements/gtk3/custom-widget/custom-widget";
 import { useWindow } from "./hooks/gtk3";
 
 export const InstinsicElementSymbol = Symbol("IntrinsicElement");
@@ -210,3 +214,15 @@ export const Sub = IntrinsicElem("M_SUBSCRIPT");
 export const Sup = IntrinsicElem("M_SUPERSCRIPT");
 /** A Markup element. Must be used inside a `<Markup />`. */
 export const Underline = IntrinsicElem("M_UNDERLINE");
+
+// #endregion
+
+// #region CustomWidget
+
+export const CustomWidget: <P extends object>(
+  props: Rg.IntrinsicComponent<CustomWidgetProps<P>, CustomWidgetElement>
+) => JSX.Element = React.forwardRef<any, React.PropsWithChildren>(
+  (props, ref): JSX.Element => {
+    return React.createElement("CUSTOM_WIDGET", { ...props, ref });
+  }
+) as any;

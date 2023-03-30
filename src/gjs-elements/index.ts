@@ -6,3 +6,5 @@ declare global {
     export import Element = RT;
   }
 }
+
+export type { ICustomWidget } from "./gtk3/custom-widget/custom-widget";

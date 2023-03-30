@@ -16,6 +16,10 @@ export type {
   CheckButtonElement,
   CheckButtonProps,
 } from "./gtk3/check-button/check-button";
+export type {
+  CustomWidgetElement,
+  CustomWidgetProps,
+} from "./gtk3/custom-widget/custom-widget";
 export type { ExpanderElement, ExpanderProps } from "./gtk3/expander/expander";
 export type { FlowBoxElement, FlowBoxProps } from "./gtk3/flow-box/flow-box";
 export type {
