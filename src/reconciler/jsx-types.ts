@@ -255,9 +255,9 @@ declare global {
     type IntrinsicComponent<P, W> = {
       ref?:
         | {
-            current?: W | null;
+            current: W | null;
           }
-        | ((ref: W) => void);
+        | ((ref: W | null) => void);
     } & P;
   }
 
