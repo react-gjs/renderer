@@ -1,11 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import {
-  Align,
-  Orientation,
-  PositionType,
-  Sensitivity,
-} from "../../../g-enums";
+import type { Orientation, SensitivityType } from "../../../enums/gtk3-index";
+import { PositionType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -58,7 +54,7 @@ export interface SliderProps extends SliderPropsMixin {
   restrictToFillLevel?: boolean;
   flip?: boolean;
   invert?: boolean;
-  stepSensitivity?: Sensitivity;
+  stepSensitivity?: SensitivityType;
   fixedSize?: boolean;
   marks?: { [key: number]: string };
   marksPosition?: PositionType;
@@ -83,7 +79,10 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
   private readonly propsMapper = new PropertyMapper<SliderProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget, { h: Align.FILL, v: Align.FILL }),
+    createAlignmentPropMapper(this.widget, {
+      h: Gtk.Align.FILL,
+      v: Gtk.Align.FILL,
+    }),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
@@ -107,8 +106,8 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
           this.adjustment.set_value(v);
         })
         .orientation(
-          DataType.Enum(Orientation),
-          (v = Orientation.HORIZONTAL) => {
+          DataType.Enum(Gtk.Orientation),
+          (v = Gtk.Orientation.HORIZONTAL) => {
             this.widget.set_orientation(v);
           }
         )
@@ -136,15 +135,20 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
         .invert(DataType.Boolean, (v = false) => {
           this.widget.set_inverted(v);
         })
-        .stepSensitivity(DataType.Enum(Sensitivity), (v = Sensitivity.AUTO) => {
-          this.widget.set_upper_stepper_sensitivity(v);
-          this.widget.set_lower_stepper_sensitivity(v);
-        })
+        .stepSensitivity(
+          DataType.Enum(Gtk.SensitivityType),
+          (v = Gtk.SensitivityType.AUTO) => {
+            this.widget.set_upper_stepper_sensitivity(v);
+            this.widget.set_lower_stepper_sensitivity(v);
+          }
+        )
         .fixedSize(DataType.Boolean, (v = false) => {
           this.widget.set_slider_size_fixed(v);
         })
         .marks(DataType.Dict(DataType.String), (v = {}, allProps) => {
-          const position = allProps.marksPosition ?? PositionType.TOP;
+          const position =
+            (allProps.marksPosition as any as Gtk.PositionType) ??
+            PositionType.TOP;
 
           this.widget.clear_marks();
           for (const [key, value] of Object.entries(v)) {

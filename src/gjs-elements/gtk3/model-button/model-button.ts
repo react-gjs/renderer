@@ -2,8 +2,8 @@ import { DataType } from "dilswer";
 import GdkPixbuf from "gi://GdkPixbuf";
 import type Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
-import type { PositionType } from "../../../g-enums";
-import { ButtonRole, ButtonType } from "../../../g-enums";
+import { ButtonType } from "../../../enums/custom";
+import type { ButtonRole, PositionType } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -223,7 +223,7 @@ export class ModelButtonElement
         .inverted(DataType.Boolean, (v = false) => {
           this.widget.inverted = v;
         })
-        .role(DataType.Enum(ButtonRole), (v = ButtonRole.NORMAL) => {
+        .role(DataType.Enum(Gtk.ButtonRole), (v = Gtk.ButtonRole.NORMAL) => {
           this.widget.role = v;
         })
   );

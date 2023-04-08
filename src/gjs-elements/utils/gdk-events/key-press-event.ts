@@ -1,15 +1,5 @@
 import type Gdk from "gi://Gdk";
-
-export enum KeyPressModifiers {
-  NONE = "NONE",
-  SHIFT = "SHIFT",
-  CTRL = "CTRL",
-  ALT = "ALT",
-  CTR_ALT = "CTRL_ALT",
-  ALT_SHIFT = "ALT_SHIFT",
-  CTRL_SHIFT = "CTRL_SHIFT",
-  CTR_ALT_SHIFT = "CTRL_ALT_SHIFT",
-}
+import { KeyPressModifiers } from "../../../enums/custom";
 
 declare global {
   namespace Rg {

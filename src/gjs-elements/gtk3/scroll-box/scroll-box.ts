@@ -1,7 +1,11 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { PositionType } from "../../../g-enums";
-import { CornerType, PolicyType, ShadowType } from "../../../g-enums";
+import type {
+  CornerType,
+  PolicyType,
+  PositionType,
+  ShadowType,
+} from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -111,14 +115,14 @@ export class ScrollBoxElement
     (props) =>
       props
         .horizontalScrollbar(
-          DataType.Enum(PolicyType),
-          (v = PolicyType.AUTOMATIC) => {
+          DataType.Enum(Gtk.PolicyType),
+          (v = Gtk.PolicyType.AUTOMATIC) => {
             this.widget.hscrollbar_policy = v;
           }
         )
         .verticalScrollbar(
-          DataType.Enum(PolicyType),
-          (v = PolicyType.AUTOMATIC) => {
+          DataType.Enum(Gtk.PolicyType),
+          (v = Gtk.PolicyType.AUTOMATIC) => {
             this.widget.vscrollbar_policy = v;
           }
         )
@@ -143,10 +147,13 @@ export class ScrollBoxElement
         .overlayScrolling(DataType.Boolean, (v = true) => {
           this.widget.overlay_scrolling = v;
         })
-        .placement(DataType.Enum(CornerType), (v = CornerType.TOP_LEFT) => {
-          this.widget.window_placement = v;
-        })
-        .shadow(DataType.Enum(ShadowType), (v = ShadowType.NONE) => {
+        .placement(
+          DataType.Enum(Gtk.CornerType),
+          (v = Gtk.CornerType.TOP_LEFT) => {
+            this.widget.window_placement = v;
+          }
+        )
+        .shadow(DataType.Enum(Gtk.ShadowType), (v = Gtk.ShadowType.NONE) => {
           this.widget.shadow_type = v;
         })
   );

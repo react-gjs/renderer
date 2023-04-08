@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { Orientation, SelectionMode } from "../../../g-enums";
+import type { Orientation } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -71,16 +71,16 @@ export class FlowBoxElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
       props
         .orientation(
           DataType.Enum(Gtk.Orientation),
-          (v = Orientation.HORIZONTAL) => {
+          (v = Gtk.Orientation.HORIZONTAL) => {
             this.widget.orientation =
-              v === Orientation.HORIZONTAL
-                ? Orientation.VERTICAL
-                : Orientation.HORIZONTAL;
+              v === Gtk.Orientation.HORIZONTAL
+                ? Gtk.Orientation.VERTICAL
+                : Gtk.Orientation.HORIZONTAL;
           }
         )
         .selectionMode(
           DataType.Enum(Gtk.SelectionMode),
-          (v = SelectionMode.NONE) => {
+          (v = Gtk.SelectionMode.NONE) => {
             this.widget.selection_mode = v;
           }
         )

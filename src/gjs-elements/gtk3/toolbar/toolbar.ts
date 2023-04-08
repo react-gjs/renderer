@@ -1,7 +1,10 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { Orientation } from "../../../g-enums";
-import { IconSize, ToolbarStyle } from "../../../g-enums";
+import type {
+  IconSize,
+  Orientation,
+  ToolbarStyle,
+} from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -97,10 +100,10 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
         .showArrow(DataType.Boolean, (v = true) => {
           this.widget.show_arrow = v;
         })
-        .type(DataType.Enum(ToolbarStyle), (v = ToolbarStyle.ICONS) => {
+        .type(DataType.Enum(Gtk.ToolbarStyle), (v = Gtk.ToolbarStyle.ICONS) => {
           this.widget.toolbar_style = v;
         })
-        .iconSize(DataType.Enum(IconSize), (v) => {
+        .iconSize(DataType.Enum(Gtk.IconSize), (v) => {
           if (v) {
             const defaultSize = this.widget.icon_size;
             this.widget.icon_size = v;

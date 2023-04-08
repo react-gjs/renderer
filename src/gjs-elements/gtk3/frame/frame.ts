@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { ShadowType } from "../../../g-enums";
+import type { ShadowType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -72,7 +72,7 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
         .labelAlignY(DataType.Number, (v = 0, allProps) => {
           this.widget.set_label_align(allProps.labelAlignX ?? 0, v);
         })
-        .shadowType(DataType.Enum(ShadowType), (v = ShadowType.IN) => {
+        .shadowType(DataType.Enum(Gtk.ShadowType), (v = Gtk.ShadowType.IN) => {
           this.widget.set_shadow_type(v);
         })
   );

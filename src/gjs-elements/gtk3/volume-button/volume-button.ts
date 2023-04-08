@@ -1,6 +1,8 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { ButtonType, PositionType, Sensitivity } from "../../../g-enums";
+import { ButtonType } from "../../../enums/custom";
+import type { SensitivityType } from "../../../enums/gtk3-index";
+import { PositionType } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -52,7 +54,7 @@ export interface VolumeButtonProps extends VolumeButtonPropsMixin {
   precision?: number;
   flip?: boolean;
   invert?: boolean;
-  stepSensitivity?: Sensitivity;
+  stepSensitivity?: SensitivityType;
   fixedSize?: boolean;
   marks?: { [key: number]: string };
   marksPosition?: PositionType;
@@ -131,16 +133,21 @@ export class VolumeButtonElement
         .invert(DataType.Boolean, (v = true) => {
           this.scale.set_inverted(v);
         })
-        .stepSensitivity(DataType.Enum(Sensitivity), (v = Sensitivity.AUTO) => {
-          const scale = this.scale;
-          scale.set_upper_stepper_sensitivity(v);
-          scale.set_lower_stepper_sensitivity(v);
-        })
+        .stepSensitivity(
+          DataType.Enum(Gtk.SensitivityType),
+          (v = Gtk.SensitivityType.AUTO) => {
+            const scale = this.scale;
+            scale.set_upper_stepper_sensitivity(v);
+            scale.set_lower_stepper_sensitivity(v);
+          }
+        )
         .fixedSize(DataType.Boolean, (v = false) => {
           this.scale.set_slider_size_fixed(v);
         })
         .marks(DataType.Dict(DataType.String), (v = {}, allProps) => {
-          const position = allProps.marksPosition ?? PositionType.TOP;
+          const position =
+            (allProps.marksPosition as any as Gtk.PositionType) ??
+            PositionType.TOP;
 
           this.scale.clear_marks();
           for (const [key, value] of Object.entries(v)) {

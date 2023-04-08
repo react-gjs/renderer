@@ -1,7 +1,8 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-import { InputType, Justification, WrapMode } from "../../../g-enums";
+import type { InputPurpose, Justification } from "../../../enums/gtk3-index";
+import { WrapMode } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -51,7 +52,7 @@ export interface TextAreaProps extends TextAreaPropsMixin {
   padding?: TextAreaPadding;
   disabled?: boolean;
   indent?: number;
-  type?: InputType;
+  type?: InputPurpose;
   justification?: Justification;
   monospace?: boolean;
   wrapMode?: WrapMode;
@@ -128,17 +129,20 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
           this.widget.set_indent(Math.round(v));
         })
         .justification(
-          DataType.Enum(Justification),
-          (v = Justification.LEFT) => {
+          DataType.Enum(Gtk.Justification),
+          (v = Gtk.Justification.LEFT) => {
             this.widget.set_justification(v);
           }
         )
         .monospace(DataType.Boolean, (v = false) => {
           this.widget.set_monospace(v);
         })
-        .type(DataType.Enum(InputType), (v = InputType.FREE_FORM) => {
-          this.widget.set_input_purpose(v);
-        })
+        .type(
+          DataType.Enum(Gtk.InputPurpose),
+          (v = Gtk.InputPurpose.FREE_FORM) => {
+            this.widget.set_input_purpose(v);
+          }
+        )
         .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.WORD_CHAR) => {
           this.widget.set_wrap_mode(TO_GTK_WRAP_MODE.get(v)!);
         })

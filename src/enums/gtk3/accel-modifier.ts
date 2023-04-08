@@ -1,4 +1,4 @@
-import Gdk from "gi://Gdk";
+import Gdk from "gi://Gdk?version=3.0";
 
 // @ts-expect-error
 declare enum AccelModifier {

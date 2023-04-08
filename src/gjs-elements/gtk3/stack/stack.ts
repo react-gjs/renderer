@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
-import type Gtk from "gi://Gtk";
-import { StackTransitionType } from "../../../g-enums";
+import Gtk from "gi://Gtk";
+import type { StackTransitionType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -92,8 +92,8 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
             this.widget.set_transition_duration(v);
           })
           .transitionType(
-            DataType.Enum(StackTransitionType),
-            (v = StackTransitionType.CROSSFADE) => {
+            DataType.Enum(Gtk.StackTransitionType),
+            (v = Gtk.StackTransitionType.CROSSFADE) => {
               this.widget.set_transition_type(v);
             }
           )

@@ -1,7 +1,8 @@
 import { DataType } from "dilswer";
+import Gdk from "gi://Gdk";
 import GdkPixbuf from "gi://GdkPixbuf";
 import Gtk from "gi://Gtk";
-import { WindowTypeHint } from "../../../g-enums";
+import type { WindowTypeHint } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -104,8 +105,8 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
           this.widget.deletable = v;
         })
         .windowTypeHint(
-          DataType.Enum(WindowTypeHint),
-          (v = WindowTypeHint.NORMAL) => {
+          DataType.Enum(Gdk.WindowTypeHint),
+          (v = Gdk.WindowTypeHint.NORMAL) => {
             this.widget.type_hint = v;
           }
         )
