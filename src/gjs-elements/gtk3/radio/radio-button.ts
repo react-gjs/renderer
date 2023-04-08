@@ -29,7 +29,7 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
-import { RadioBoxElement } from "./radio-box";
+import { RadioGroupElement } from "./radio-group";
 
 type RadioButtonPropsMixin = SizeRequestProps &
   AlignmentProps &
@@ -149,7 +149,7 @@ export class RadioButtonElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (GjsElementManager.isGjsElementOfKind(parent, RadioBoxElement)) {
+    if (GjsElementManager.isGjsElementOfKind(parent, RadioGroupElement)) {
       this.parent = parent;
 
       const widget = (this.widget = Gtk.RadioButton.new_from_widget(

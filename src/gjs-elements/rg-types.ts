@@ -135,11 +135,14 @@ export type {
   PressableElement,
   PressableProps,
 } from "./gtk3/pressable/pressable";
-export type { RadioBoxElement, RadioBoxProps } from "./gtk3/radio/radio-box";
 export type {
   RadioButtonElement,
   RadioButtonProps,
 } from "./gtk3/radio/radio-button";
+export type {
+  RadioGroupElement as RadioBoxElement,
+  RadioGroupProps as RadioBoxProps,
+} from "./gtk3/radio/radio-group";
 export type { RevealerElement, RevealerProps } from "./gtk3/revealer/revealer";
 export type {
   ScrollBoxElement,
