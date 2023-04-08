@@ -120,7 +120,7 @@ export const PopoverMenuRadioButton = IntrinsicElem(
 /** Equivalent to the Gtk.Separator widget. */
 export const PopoverMenuSeparator = IntrinsicElem("POPOVER_MENU_SEPARATOR");
 /** Equivalent to the Gtk.Box widget. */
-export const RadioBox = IntrinsicElem("RADIO_BOX");
+export const RadioBox = IntrinsicElem("RADIO_GROUP");
 /** Equivalent to the Gtk.RadioButton widget. */
 export const RadioButton = IntrinsicElem("RADIO_BUTTON");
 /** Equivalent to the Gtk.Revealer widget. */
@@ -164,8 +164,6 @@ export const ToolbarToggleButton = IntrinsicElem("TOOLBAR_TOGGLE_BUTTON");
 export const ToolbarSeparator = IntrinsicElem("TOOLBAR_SEPARATOR");
 /** Equivalent to the Gtk.VolumeButton widget. */
 export const VolumeButton = IntrinsicElem("VOLUME_BUTTON");
-/** Equivalent to the Gtk.Window widget. */
-export { Window } from "./components/window/window";
 export { PopoverMenu } from "./gjs-elements/gtk3/popover-menu/component";
 export { Popover } from "./gjs-elements/gtk3/popover/component";
 export { createStack, useStack } from "./gjs-elements/gtk3/stack/use-stack";

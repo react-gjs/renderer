@@ -23,38 +23,38 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type RadioBoxPropsMixin = SizeRequestProps &
+type RadioGroupPropsMixin = SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
   StyleProps;
 
-export interface RadioBoxProps extends RadioBoxPropsMixin {
+export interface RadioGroupProps extends RadioGroupPropsMixin {
   spacing?: number;
   baselinePosition?: BaselinePosition;
   orientation?: Orientation;
 }
 
-export class RadioBoxElement implements GjsElement<"RADIO_BOX", Gtk.Box> {
+export class RadioGroupElement implements GjsElement<"RADIO_GROUP", Gtk.Box> {
   static getContext(
     currentContext: HostContext<GjsContext>
   ): HostContext<GjsContext> {
     return currentContext;
   }
 
-  readonly kind = "RADIO_BOX";
+  readonly kind = "RADIO_GROUP";
   private widget = new Gtk.Box();
   radioGroup = new Gtk.RadioButton();
 
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Box, RadioBoxProps>(this);
+  private readonly handlers = new EventHandlers<Gtk.Box, RadioGroupProps>(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget
   );
-  private readonly propsMapper = new PropertyMapper<RadioBoxProps>(
+  private readonly propsMapper = new PropertyMapper<RadioGroupProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),

@@ -133,13 +133,13 @@ import type {
   PressableProps,
 } from "../gjs-elements/gtk3/pressable/pressable";
 import type {
-  RadioBoxElement,
-  RadioBoxProps,
-} from "../gjs-elements/gtk3/radio/radio-box";
-import type {
   RadioButtonElement,
   RadioButtonProps,
 } from "../gjs-elements/gtk3/radio/radio-button";
+import type {
+  RadioGroupElement,
+  RadioGroupProps,
+} from "../gjs-elements/gtk3/radio/radio-group";
 import type {
   RevealerElement,
   RevealerProps,
@@ -417,9 +417,9 @@ declare global {
         PopoverMenuSeparatorProps,
         PopoverMenuSeparatorElement
       >;
-      RADIO_BOX: Rg.IntrinsicComponent<
-        Rg.ComponentWithChildren<RadioBoxProps>,
-        RadioBoxElement
+      RADIO_GROUP: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<RadioGroupProps>,
+        RadioGroupElement
       >;
       RADIO_BUTTON: Rg.IntrinsicComponent<RadioButtonProps, RadioButtonElement>;
       REVEALER: Rg.IntrinsicComponent<

@@ -49,8 +49,8 @@ import { PopoverElement } from "./popover/popover";
 import { PopoverContentElement } from "./popover/popover-content";
 import { PopoverTargetElement } from "./popover/popover-target";
 import { PressableElement } from "./pressable/pressable";
-import { RadioBoxElement } from "./radio/radio-box";
 import { RadioButtonElement } from "./radio/radio-button";
+import { RadioGroupElement } from "./radio/radio-group";
 import { RevealerElement } from "./revealer/revealer";
 import { ScrollBoxElement } from "./scroll-box/scroll-box";
 import { SelectorElement } from "./selector/selector";
@@ -130,7 +130,7 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("POPOVER_MENU_RADIO_BUTTON", PopoverMenuRadioButtonElement);
   manager.register("POPOVER_MENU_SEPARATOR", PopoverMenuSeparatorElement);
   manager.register("PRESSABLE", PressableElement);
-  manager.register("RADIO_BOX", RadioBoxElement);
+  manager.register("RADIO_GROUP", RadioGroupElement);
   manager.register("RADIO_BUTTON", RadioButtonElement);
   manager.register("REVEALER", RevealerElement);
   manager.register("SCROLL_BOX", ScrollBoxElement);
