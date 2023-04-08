@@ -1,7 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { ControlButton } from "../../../g-enums";
-import { Align } from "../../../g-enums";
+import type { ControlButton } from "../../../enums/custom";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -65,7 +64,7 @@ export class HeaderBarElement
   private readonly propsMapper = new PropertyMapper<HeaderBarProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget, { h: Align.FILL }),
+    createAlignmentPropMapper(this.widget, { h: Gtk.Align.FILL }),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),

@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { Orientation } from "../../../g-enums";
+import type { Orientation } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -57,8 +57,8 @@ export class SeparatorElement
     createStylePropMapper(this.widget),
     (props) =>
       props.orientation(
-        DataType.Enum(Orientation),
-        (v = Orientation.HORIZONTAL) => {
+        DataType.Enum(Gtk.Orientation),
+        (v = Gtk.Orientation.HORIZONTAL) => {
           this.widget.set_orientation(v);
         }
       )

@@ -4,7 +4,7 @@ import type {
   BaselinePosition,
   Orientation,
   SizeGroupMode,
-} from "../../../g-enums";
+} from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";

@@ -1,5 +1,6 @@
 import { DataType } from "dilswer";
-import { Align } from "../../../g-enums";
+import Gtk from "gi://Gtk";
+import type { Align } from "../../../enums/gtk3-index";
 import type { PropCaseCollector } from "../element-extenders/map-properties";
 
 export type AlignmentProps = {
@@ -18,20 +19,20 @@ export type AlignmentProps = {
 
 export const createAlignmentPropMapper = (
   widget: {
-    halign: Align;
-    valign: Align;
+    halign: Gtk.Align;
+    valign: Gtk.Align;
   },
-  defaults?: { h?: Align; v?: Align }
+  defaults?: { h?: Gtk.Align; v?: Gtk.Align }
 ) => {
-  const defaultV = defaults?.v ?? Align.START;
-  const defaultH = defaults?.h ?? Align.CENTER;
+  const defaultV = defaults?.v ?? Gtk.Align.START;
+  const defaultH = defaults?.h ?? Gtk.Align.CENTER;
 
   return (mapper: PropCaseCollector<keyof AlignmentProps, any>) =>
     mapper
-      .horizontalAlign(DataType.Enum(Align), (v = defaultH) => {
+      .horizontalAlign(DataType.Enum(Gtk.Align), (v = defaultH) => {
         widget.halign = v;
       })
-      .verticalAlign(DataType.Enum(Align), (v = defaultV) => {
+      .verticalAlign(DataType.Enum(Gtk.Align), (v = defaultV) => {
         widget.valign = v;
       });
 };

@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { BaselinePosition, Orientation } from "../../../g-enums";
-import { PackType } from "../../../g-enums";
+import type { BaselinePosition, Orientation } from "../../../enums/gtk3-index";
+import { PackType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";

@@ -1,6 +1,9 @@
 import { DataType } from "dilswer";
-import type Gtk from "gi://Gtk";
-import { PopoverConstraint, PositionType } from "../../../g-enums";
+import Gtk from "gi://Gtk";
+import type {
+  PopoverConstraint,
+  PositionType,
+} from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -86,14 +89,17 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
           this.popover.set_modal(v);
         })
         .constraint(
-          DataType.Enum(PopoverConstraint),
-          (v = PopoverConstraint.NONE) => {
+          DataType.Enum(Gtk.PopoverConstraint),
+          (v = Gtk.PopoverConstraint.NONE) => {
             this.popover.set_constrain_to(v);
           }
         )
-        .position(DataType.Enum(PositionType), (v = PositionType.TOP) => {
-          this.popover.set_position(v);
-        })
+        .position(
+          DataType.Enum(Gtk.PositionType),
+          (v = Gtk.PositionType.TOP) => {
+            this.popover.set_position(v);
+          }
+        )
   );
 
   private hasContentChild = false;

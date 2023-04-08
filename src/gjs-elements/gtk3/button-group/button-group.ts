@@ -1,7 +1,10 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { BaselinePosition, Orientation } from "../../../g-enums";
-import { ButtonBoxStyle } from "../../../g-enums";
+import type {
+  BaselinePosition,
+  ButtonBoxStyle,
+  Orientation,
+} from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -84,9 +87,12 @@ export class ButtonGroupElement
             this.widget.orientation = v;
           }
         )
-        .layout(DataType.Enum(ButtonBoxStyle), (v = ButtonBoxStyle.EXPAND) => {
-          this.widget.layout_style = v;
-        })
+        .layout(
+          DataType.Enum(Gtk.ButtonBoxStyle),
+          (v = Gtk.ButtonBoxStyle.EXPAND) => {
+            this.widget.layout_style = v;
+          }
+        )
   );
 
   constructor(props: DiffedProps) {

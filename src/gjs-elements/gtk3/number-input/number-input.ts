@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-import { SpinButtonUpdatePolicy } from "../../../g-enums";
+import type { SpinButtonUpdatePolicy } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -103,8 +103,8 @@ export class NumberInputElement
           }
         })
         .updatePolicy(
-          DataType.Enum(SpinButtonUpdatePolicy),
-          (v = SpinButtonUpdatePolicy.ALWAYS) => {
+          DataType.Enum(Gtk.SpinButtonUpdatePolicy),
+          (v = Gtk.SpinButtonUpdatePolicy.ALWAYS) => {
             this.widget.set_update_policy(v);
           }
         )

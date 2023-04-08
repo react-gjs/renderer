@@ -1,6 +1,6 @@
 import Gtk from "gi://Gtk?version=3.0";
 import Pango from "gi://Pango";
-import { WrapMode } from "../../g-enums";
+import { WrapMode } from "../../enums/custom";
 
 export const TO_PANGO_WRAP_MODE = new Map([
   [WrapMode.NONE, Pango.WrapMode.CHAR],

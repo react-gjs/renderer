@@ -1,7 +1,8 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk?version=3.0";
 import Gtk from "gi://Gtk";
-import { Align, Justification, WrapMode } from "../../../g-enums";
+import { WrapMode } from "../../../enums/custom";
+import type { Justification } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -79,7 +80,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
   private readonly propsMapper = new PropertyMapper<TextViewProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget, { h: Align.FILL }),
+    createAlignmentPropMapper(this.widget, { h: Gtk.Align.FILL }),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget, { h: true }),
     createStylePropMapper(this.widget, {
@@ -97,8 +98,8 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
           this.widget.indent = v;
         })
         .jusification(
-          DataType.Enum(Justification),
-          (v = Justification.LEFT) => {
+          DataType.Enum(Gtk.Justification),
+          (v = Gtk.Justification.LEFT) => {
             this.widget.justification = v;
           }
         )

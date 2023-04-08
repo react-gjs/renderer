@@ -1,6 +1,5 @@
 import { DataType } from "dilswer";
-import type Gtk from "gi://Gtk";
-import { Align } from "../../../g-enums";
+import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -78,7 +77,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
   private readonly propsMapper = new PropertyMapper<SelectorProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget, { v: Align.START }),
+    createAlignmentPropMapper(this.widget, { v: Gtk.Align.START }),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),

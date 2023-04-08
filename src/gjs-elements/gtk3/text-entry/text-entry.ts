@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk?version=3.0";
 import Gtk from "gi://Gtk";
-import { InputType } from "../../../g-enums";
+import type { InputPurpose } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -39,7 +39,7 @@ export interface TextEntryProps extends TextEntryPropsMixin {
   value?: string;
   capsLockWarning?: boolean;
   disabled?: boolean;
-  type?: InputType;
+  type?: InputPurpose;
   maxLength?: number;
   placeholder?: string;
   icon?: Rg.IconName;
@@ -121,15 +121,18 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
         .truncateMultilinePaste(DataType.Boolean, (v = false) => {
           this.widget.truncate_multiline = v;
         })
-        .type(DataType.Enum(InputType), (v = InputType.FREE_FORM) => {
-          this.widget.input_purpose = v;
+        .type(
+          DataType.Enum(Gtk.InputPurpose),
+          (v = Gtk.InputPurpose.FREE_FORM) => {
+            this.widget.input_purpose = v;
 
-          if (v === InputType.PASSWORD || v === InputType.PIN) {
-            this.widget.visibility = false;
-          } else {
-            this.widget.visibility = true;
+            if (v === Gtk.InputPurpose.PASSWORD || v === Gtk.InputPurpose.PIN) {
+              this.widget.visibility = false;
+            } else {
+              this.widget.visibility = true;
+            }
           }
-        })
+        )
   );
 
   constructor(props: DiffedProps) {
