@@ -57,10 +57,10 @@ export class CustomWidgetElement
   constructor(props: DiffedProps) {
     this.currentProps = Object.fromEntries(props);
 
-    const constuctorProp = props.find((p) => p[0] === "widget");
+    const constuctorProp = this.currentProps.widget;
 
     if (!constuctorProp) {
-      throw new Error("'widget' is not defined!");
+      throw new Error("'widget' prop is not defined!");
     }
 
     const constructor = constuctorProp[1] as new (
@@ -77,6 +77,10 @@ export class CustomWidgetElement
     });
 
     this.lifecycle.emitLifecycleEventAfterCreate();
+  }
+
+  getCustomWidget<CW extends ICustomWidget<any>>() {
+    return this.customWidget as CW;
   }
 
   updateProps(props: DiffedProps): void {
