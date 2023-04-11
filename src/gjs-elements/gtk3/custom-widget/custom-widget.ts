@@ -63,7 +63,7 @@ export class CustomWidgetElement
       throw new Error("'widget' prop is not defined!");
     }
 
-    const constructor = constuctorProp[1] as new (
+    const constructor = constuctorProp as new (
       props: object
     ) => ICustomWidget<any>;
 
