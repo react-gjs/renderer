@@ -12,7 +12,7 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import { isUnicodeLetter } from "../../utils/is-unicode-letter";
+import { isKeyboardSymbol } from "../../utils/is-keyboard-symbol-unicode";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
@@ -96,7 +96,7 @@ export class SearchBarElement
 
     const keyUnicode = Gdk.keyval_to_unicode(keyval);
 
-    if (!isSearchMode && isUnicodeLetter(keyUnicode)) {
+    if (!isSearchMode && isKeyboardSymbol(keyUnicode)) {
       const { onVisibilityChange } = this.propsMapper.currentProps;
       if (onVisibilityChange) {
         onVisibilityChange({
