@@ -30,7 +30,11 @@ export const mapContextToProps = <E extends keyof JSX.IntrinsicElements>(
       Object.freeze(maps);
 
       const useMappedContext = (props: Record<string, any>) => {
-        for (const [ctx, mapper] of maps) {
+        for (let i = 0; i < maps.length; i++) {
+          const entry = maps[i];
+          const ctx = entry[0];
+          const mapper = entry[1];
+
           const context = React.useContext(ctx);
 
           Object.assign(props, mapper(context));
@@ -39,15 +43,13 @@ export const mapContextToProps = <E extends keyof JSX.IntrinsicElements>(
         return props;
       };
 
-      let c = React.memo(
-        React.forwardRef<any, React.PropsWithChildren>(
-          ({ children, ...props }, ref): JSX.Element => {
-            const mappedProps = useMappedContext(props);
-            mappedProps.ref = ref;
+      let c = React.forwardRef<any, React.PropsWithChildren>(
+        ({ children, ...props }, ref): JSX.Element => {
+          const mappedProps = useMappedContext(props);
+          mappedProps.ref = ref;
 
-            return React.createElement(v, mappedProps, children);
-          }
-        )
+          return React.createElement(v, mappedProps, children);
+        }
       ) as any;
 
       for (const m of middleware) {

@@ -2,6 +2,7 @@ import { DataType } from "dilswer";
 import GObject from "gi://GObject";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk?version=3.0";
+import { KeyPressModifiers } from "../../../enums/custom";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -13,6 +14,10 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import {
+  mapKeypressEventState,
+  parseEventKey,
+} from "../../utils/gdk-events/key-press-event";
 import { isKeyboardSymbol } from "../../utils/is-keyboard-symbol-unicode";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
@@ -29,6 +34,25 @@ export type SearchBarEvent<P extends Record<string, any> = {}> = SyntheticEvent<
 export interface SearchBarProps extends SearchBarPropsMixin {
   isVisible?: boolean;
   showCloseButton?: boolean;
+  /**
+   * When enabled, search bar will be shown when a keyboard symbol is
+   * pressed, unless `isVisible` is set to `false`.
+   *
+   * @default true
+   */
+  showOnKeypress?:
+    | boolean
+    | ((
+        window: Gtk.Window,
+        event: SearchBarEvent<Rg.KeyPressEventData>
+      ) => boolean);
+  /**
+   * When a keyboard symbol is pressed and no other input is in focus,
+   * this event will be fired. If the `isVisible` property of the
+   * SearchBar component is set to false, the search bar will not be
+   * shown even if the event is emitted with a `isVisible` value of
+   * `true`.
+   */
   onVisibilityChange?: (event: SearchBarEvent<{ isVisible: boolean }>) => void;
 }
 
@@ -91,51 +115,13 @@ export class SearchBarElement
 
   private onWindowKeyPress = (w: Gtk.Widget, e: any) => {
     const window = w as Gtk.Window;
-
-    if (!this.searchEntry?.is_focus) {
-      const focused = window.get_focus();
-
-      if (focused) {
-        // if the focused widget is an input type, don't do anything
-        const widgetName = GObject.type_name_from_instance(focused as any);
-
-        if (
-          widgetName === "GtkEntry" ||
-          widgetName === "GtkSearchEntry" ||
-          widgetName === "GtkTextView"
-        ) {
-          return;
-        }
-      }
-    }
-
     const event = e as Gdk.Event & Gdk.EventKey;
 
     const isSearchMode = this.widget.get_search_mode();
     const keyval = event.get_keyval()[1]!;
+    const keypressMod = mapKeypressEventState(event);
     const isControlled = this.propsMapper.currentProps.isVisible != null;
-
     const keyUnicode = Gdk.keyval_to_unicode(keyval);
-
-    if (!isSearchMode && isKeyboardSymbol(keyUnicode)) {
-      const { onVisibilityChange } = this.propsMapper.currentProps;
-      if (onVisibilityChange) {
-        onVisibilityChange({
-          isVisible: true,
-          originalEvent: event,
-          target: this,
-          targetWidget: this.widget,
-          preventDefault: () => {},
-          stopPropagation: () => {},
-        });
-      } else if (!isControlled) {
-        this.widget.set_search_mode(true);
-      } else {
-        this.widget.set_search_mode(this.propsMapper.currentProps.isVisible!);
-      }
-
-      return;
-    }
 
     if (isSearchMode && keyval === Gdk.KEY_Escape) {
       const { onVisibilityChange } = this.propsMapper.currentProps;
@@ -155,6 +141,86 @@ export class SearchBarElement
       }
 
       return;
+    }
+
+    if (!isSearchMode) {
+      if (this.propsMapper.currentProps.showOnKeypress === false) {
+        return;
+      }
+
+      if (!this.searchEntry?.is_focus) {
+        const focused = window.get_focus();
+
+        if (focused) {
+          // if the focused widget is an input type, don't do anything
+          const widgetName = GObject.type_name_from_instance(focused as any);
+
+          if (
+            widgetName === "GtkEntry" ||
+            widgetName === "GtkSearchEntry" ||
+            widgetName === "GtkTextView"
+          ) {
+            return;
+          }
+        }
+      }
+
+      if (typeof this.propsMapper.currentProps.showOnKeypress === "function") {
+        const shouldShow = this.propsMapper.currentProps.showOnKeypress(
+          window,
+          {
+            ...parseEventKey(event),
+            originalEvent: event,
+            target: this,
+            targetWidget: this.widget,
+            preventDefault: () => {},
+            stopPropagation: () => {},
+          }
+        );
+
+        if (!shouldShow) {
+          return;
+        }
+
+        const { onVisibilityChange } = this.propsMapper.currentProps;
+        if (onVisibilityChange) {
+          onVisibilityChange({
+            isVisible: true,
+            originalEvent: event,
+            target: this,
+            targetWidget: this.widget,
+            preventDefault: () => {},
+            stopPropagation: () => {},
+          });
+        } else if (!isControlled) {
+          this.widget.set_search_mode(true);
+        } else {
+          this.widget.set_search_mode(this.propsMapper.currentProps.isVisible!);
+        }
+      }
+
+      if (
+        isKeyboardSymbol(keyUnicode) &&
+        keypressMod === KeyPressModifiers.NONE
+      ) {
+        const { onVisibilityChange } = this.propsMapper.currentProps;
+        if (onVisibilityChange) {
+          onVisibilityChange({
+            isVisible: true,
+            originalEvent: event,
+            target: this,
+            targetWidget: this.widget,
+            preventDefault: () => {},
+            stopPropagation: () => {},
+          });
+        } else if (!isControlled) {
+          this.widget.set_search_mode(true);
+        } else {
+          this.widget.set_search_mode(this.propsMapper.currentProps.isVisible!);
+        }
+
+        return;
+      }
     }
 
     if (isControlled) {
