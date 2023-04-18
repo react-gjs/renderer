@@ -1,7 +1,10 @@
 import Gtk from "gi://Gtk";
 import React from "react";
 import { EventLoop } from "../../utils/event-loop";
-import type { PopoverMenuProps as BaseProps } from "./popover-menu";
+import type {
+  PopoverMenuProps as BaseProps,
+  PopoverMenuElement,
+} from "./popover-menu";
 
 const PopoverElem: Rg.GjsElementTypes = "POPOVER_MENU";
 const TargetElem: Rg.GjsElementTypes = "POPOVER_MENU_TARGET";
@@ -63,28 +66,30 @@ const getPopoverMenuWidget = () => {
   };
 };
 
-export const PopoverMenu = (props: PopoverMenuProps) => {
-  const {
-    renderAnchor: children,
-    renderPopover: content,
-    minWidth,
-    ...rest
-  } = props;
+export const PopoverMenu = React.forwardRef(
+  (props: PopoverMenuProps, ref: React.ForwardedRef<PopoverMenuElement>) => {
+    const {
+      renderAnchor: children,
+      renderPopover: content,
+      minWidth,
+      ...rest
+    } = props;
 
-  const [popover] = React.useState(getPopoverMenuWidget);
+    const [popover] = React.useState(getPopoverMenuWidget);
 
-  return React.createElement(
-    PopoverElem,
-    { ...rest, popoverWidget: popover.widget },
-    React.createElement(
-      ContentElem,
-      { minWidth },
-      props.renderPopover(popover.hidePopover)
-    ),
-    React.createElement(
-      TargetElem,
-      {},
-      props.renderAnchor(popover.showPopover, popover.hidePopover)
-    )
-  );
-};
+    return React.createElement(
+      PopoverElem,
+      { ...rest, ref, popoverWidget: popover.widget },
+      React.createElement(
+        ContentElem,
+        { minWidth },
+        content(popover.hidePopover)
+      ),
+      React.createElement(
+        TargetElem,
+        {},
+        children(popover.showPopover, popover.hidePopover)
+      )
+    );
+  }
+);
