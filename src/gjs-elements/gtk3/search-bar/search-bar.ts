@@ -1,4 +1,5 @@
 import { DataType } from "dilswer";
+import GObject from "gi://GObject";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk?version=3.0";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
@@ -48,6 +49,7 @@ export class SearchBarElement
   private widget = new Gtk.SearchBar();
 
   private parent: GjsElement | null = null;
+  private searchEntry: Gtk.SearchEntry | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<Gtk.SearchBar, SearchBarProps>(
@@ -87,7 +89,26 @@ export class SearchBarElement
     }
   }
 
-  private onWindowKeyPress = (_: any, e: any) => {
+  private onWindowKeyPress = (w: Gtk.Widget, e: any) => {
+    const window = w as Gtk.Window;
+
+    if (!this.searchEntry?.is_focus) {
+      const focused = window.get_focus();
+
+      if (focused) {
+        // if the focused widget is an input type, don't do anything
+        const widgetName = GObject.type_name_from_instance(focused as any);
+
+        if (
+          widgetName === "GtkEntry" ||
+          widgetName === "GtkSearchEntry" ||
+          widgetName === "GtkTextView"
+        ) {
+          return;
+        }
+      }
+    }
+
     const event = e as Gdk.Event & Gdk.EventKey;
 
     const isSearchMode = this.widget.get_search_mode();
@@ -147,6 +168,7 @@ export class SearchBarElement
 
   registerEntry(entry: Gtk.SearchEntry) {
     this.widget.connect_entry(entry);
+    this.searchEntry = entry;
   }
 
   connectToWindowEvents(window: WindowElement) {
