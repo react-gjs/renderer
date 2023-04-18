@@ -2,7 +2,7 @@ import type Gtk from "gi://Gtk";
 import React from "react";
 import type { GjsElement } from "../../../gjs-elements/gjs-element";
 import { compareRecordsShallow } from "../../../gjs-elements/utils/diff-props";
-import { isInstrinsic } from "../../../intrinsic-components";
+import { isInstrinsic } from "../../../utils/intrinsic-marker";
 
 export const useChildProperties = <
   E extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>

@@ -53,6 +53,8 @@ import { RadioButtonElement } from "./radio/radio-button";
 import { RadioGroupElement } from "./radio/radio-group";
 import { RevealerElement } from "./revealer/revealer";
 import { ScrollBoxElement } from "./scroll-box/scroll-box";
+import { SearchBarElement } from "./search-bar/search-bar";
+import { SearchInputElement } from "./search-input/search-input";
 import { SelectorElement } from "./selector/selector";
 import { SeparatorElement } from "./separator/separator";
 import { SizeGroupBoxElement } from "./size-group-box/size-group-box";
@@ -134,6 +136,8 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("RADIO_BUTTON", RadioButtonElement);
   manager.register("REVEALER", RevealerElement);
   manager.register("SCROLL_BOX", ScrollBoxElement);
+  manager.register("SEARCH_BAR", SearchBarElement);
+  manager.register("SEARCH_INPUT", SearchInputElement);
   manager.register("SELECTOR", SelectorElement);
   manager.register("SEPARATOR", SeparatorElement);
   manager.register("SIZE_GROUP_BOX", SizeGroupBoxElement);

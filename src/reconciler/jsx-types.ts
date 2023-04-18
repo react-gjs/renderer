@@ -149,6 +149,14 @@ import type {
   ScrollBoxProps,
 } from "../gjs-elements/gtk3/scroll-box/scroll-box";
 import type {
+  SearchBarElement,
+  SearchBarProps,
+} from "../gjs-elements/gtk3/search-bar/search-bar";
+import type {
+  SearchInputElement,
+  SearchInputProps,
+} from "../gjs-elements/gtk3/search-input/search-input";
+import type {
   SelectorElement,
   SelectorProps,
 } from "../gjs-elements/gtk3/selector/selector";
@@ -430,6 +438,11 @@ declare global {
         Rg.ComponentWithChild<ScrollBoxProps, React.ReactElement>,
         ScrollBoxElement
       >;
+      SEARCH_BAR: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<SearchBarProps>,
+        SearchBarElement
+      >;
+      SEARCH_INPUT: Rg.IntrinsicComponent<SearchInputProps, SearchInputElement>;
       SELECTOR: Rg.IntrinsicComponent<SelectorProps, SelectorElement>;
       SEPARATOR: Rg.IntrinsicComponent<SeparatorProps, SeparatorElement>;
       SIZE_GROUP_BOX: Rg.IntrinsicComponent<
