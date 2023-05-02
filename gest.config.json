@@ -1,4 +1,0 @@
-{
-    "$schema": "node_modules/@reactgjs/gest/dist/gest-config.schema.json",
-    "testDirectory": "./__tests__"
-}

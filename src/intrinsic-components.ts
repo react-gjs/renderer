@@ -99,6 +99,8 @@ export const PopoverMenuRadioButton = IntrinsicElem(
 export const PopoverMenuSeparator = IntrinsicElem(
   "POPOVER_MENU_SEPARATOR"
 ).component();
+/** Equivalent to the Gtk.ProgressBar widget. */
+export const ProgressBar = IntrinsicElem("PROGRESS_BAR").component();
 /** Equivalent to the Gtk.Box widget. */
 export const RadioBox = IntrinsicElem("RADIO_GROUP").component();
 /** Equivalent to the Gtk.RadioButton widget. */

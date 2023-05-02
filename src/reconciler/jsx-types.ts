@@ -133,6 +133,10 @@ import type {
   PressableProps,
 } from "../gjs-elements/gtk3/pressable/pressable";
 import type {
+  ProgressBarElement,
+  ProgressBarProps,
+} from "../gjs-elements/gtk3/progress-bar/progress-bar";
+import type {
   RadioButtonElement,
   RadioButtonProps,
 } from "../gjs-elements/gtk3/radio/radio-button";
@@ -425,6 +429,7 @@ declare global {
         PopoverMenuSeparatorProps,
         PopoverMenuSeparatorElement
       >;
+      PROGRESS_BAR: Rg.IntrinsicComponent<ProgressBarProps, ProgressBarElement>;
       RADIO_GROUP: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<RadioGroupProps>,
         RadioGroupElement
