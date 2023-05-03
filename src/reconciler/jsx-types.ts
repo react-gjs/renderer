@@ -109,6 +109,10 @@ import type {
   NumberInputProps,
 } from "../gjs-elements/gtk3/number-input/number-input";
 import type {
+  PanedElement,
+  PanedProps,
+} from "../gjs-elements/gtk3/paned/paned";
+import type {
   PopoverMenuCheckButtonElement,
   PopoverMenuCheckButtonProps,
 } from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-check-button";
@@ -405,6 +409,10 @@ declare global {
         ModelButtonElement
       >;
       NUMBER_INPUT: Rg.IntrinsicComponent<NumberInputProps, NumberInputElement>;
+      PANED: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<PanedProps>,
+        PanedElement
+      >;
       PRESSABLE: Rg.IntrinsicComponent<
         Rg.ComponentWithChild<PressableProps, React.ReactElement>,
         PressableElement
