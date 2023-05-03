@@ -78,6 +78,8 @@ export const NumberInput = IntrinsicElem("NUMBER_INPUT").component();
 export const Icon = IntrinsicElem("ICON").component();
 /** Equivalent to the Gtk.Image widget. */
 export const Image = IntrinsicElem("IMAGE").component();
+/** Equivalent to the Gtk.Paned widget. */
+export const Paned = IntrinsicElem("PANED").component();
 /** Equivalent to the Gtk.EventBox widget. */
 export const Pressable = IntrinsicElem("PRESSABLE").component();
 /** Equivalent to the Gtk.ModelButton widget. */
