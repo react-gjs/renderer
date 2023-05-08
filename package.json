@@ -27,15 +27,15 @@
     "react-reconciler": "^0.29.0"
   },
   "devDependencies": {
-    "@reactgjs/gest": "^0.1.1",
+    "@reactgjs/gest": "^0.2.0",
     "@types/react-reconciler": "^0.28.2",
     "@typescript-eslint/eslint-plugin": "^5.59.2",
-    "@typescript-eslint/parser": "^5.59.1",
-    "eslint": "^8.39.0",
+    "@typescript-eslint/parser": "^5.59.2",
+    "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
-    "gjs-esm-types": "^0.0.3",
+    "gjs-esm-types": "^0.0.4",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "prettier-plugin-jsdoc": "^0.4.2",
@@ -43,7 +43,7 @@
     "typescript": "5.0.4"
   },
   "peerDependencies": {
-    "gjs-esm-types": "^0.0.3"
+    "gjs-esm-types": "^0.0.4"
   },
   "resolutions": {
     "json5": "2.2.3"
