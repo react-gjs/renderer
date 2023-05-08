@@ -35,7 +35,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
-    "gjs-esm-types": "^0.0.3",
+    "gjs-esm-types": "^0.0.4",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "prettier-plugin-jsdoc": "^0.4.2",
@@ -43,7 +43,7 @@
     "typescript": "5.0.4"
   },
   "peerDependencies": {
-    "gjs-esm-types": "^0.0.3"
+    "gjs-esm-types": "^0.0.4"
   },
   "resolutions": {
     "json5": "2.2.3"

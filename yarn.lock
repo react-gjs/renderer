@@ -1090,10 +1090,10 @@ clify.js@ncpa0cpl/clify.js:
   languageName: node
   linkType: hard
 
-"gjs-esm-types@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "gjs-esm-types@npm:0.0.3"
-  checksum: d76e99d3dba47132c1c74fc725c8778a62465f50301e3019035ec3c3a8f77d27241e67cba0bc84a3fcd69ee684ce381ac5d1e3c1c25cbaa3d254489cd3f2aa0a
+"gjs-esm-types@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "gjs-esm-types@npm:0.0.4"
+  checksum: 41272ca4c8fb53f0ad16b789831e9ef662b1214358f3586f298fceb2b064a2c4f933ff11e2a60744dcf11d104325c24adad01c73bd22f091ffbbe0c9cc02c716
   languageName: node
   linkType: hard
 
@@ -1820,7 +1820,7 @@ clify.js@ncpa0cpl/clify.js:
     eslint-config-prettier: ^8.8.0
     eslint-plugin-prettier: ^4.2.1
     git-hook-tasks: "ncpa0cpl/git-hook-tasks#master"
-    gjs-esm-types: ^0.0.3
+    gjs-esm-types: ^0.0.4
     husky: ^8.0.3
     prettier: ^2.8.8
     prettier-plugin-jsdoc: ^0.4.2
@@ -1828,7 +1828,7 @@ clify.js@ncpa0cpl/clify.js:
     react-reconciler: ^0.29.0
     typescript: 5.0.4
   peerDependencies:
-    gjs-esm-types: ^0.0.3
+    gjs-esm-types: ^0.0.4
   languageName: unknown
   linkType: soft
 
