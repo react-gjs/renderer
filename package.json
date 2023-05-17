@@ -6,7 +6,7 @@
     "repo-sync": "./scripts/repo-sync.sh",
     "fix:lint": "eslint --fix .",
     "fix:prettier": "prettier -w ./src .",
-    "test:unit": "gest -v",
+    "test:unit": "gest",
     "test:lint": "eslint .",
     "test:prettier": "prettier -c ./src && prettier -c ./__tests__",
     "test:tsc": "tsc --noEmit",
@@ -27,7 +27,7 @@
     "react-reconciler": "^0.29.0"
   },
   "devDependencies": {
-    "@reactgjs/gest": "^0.3.0",
+    "@reactgjs/gest": "^0.3.1",
     "@types/react-reconciler": "^0.28.2",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.5",
