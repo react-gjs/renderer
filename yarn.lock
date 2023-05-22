@@ -253,16 +253,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reactgjs/gest@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@reactgjs/gest@npm:0.2.0"
+"@reactgjs/gest@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@reactgjs/gest@npm:0.3.0"
   dependencies:
-    dilswer: ^2.0.2
     esbuild: ^0.17.17
-    termx-markup: ^1.1.0
   bin:
     gest: bin/gest.cjs
-  checksum: 1e31e4310a24ec7b4360eb616c6a9a2e80bf6b0add70a4a2831fb8268dbdf499b5205336cb3a6558d8dfb746f396dc58545b54a08e51b9eb4b3d8f76c67133a3
+  checksum: 79f6041f15511ca152a24599f65e5895305ba01356b54facc9a06412679eadeac194282993157e98dc3f06fa53d0b83081a7191758896590f075e3fc1248d253
   languageName: node
   linkType: hard
 
@@ -1856,7 +1854,7 @@ clify.js@ncpa0cpl/clify.js:
   version: 0.0.0-use.local
   resolution: "react-gjs-renderer@workspace:."
   dependencies:
-    "@reactgjs/gest": ^0.2.0
+    "@reactgjs/gest": ^0.3.0
     "@types/react-reconciler": ^0.28.2
     "@typescript-eslint/eslint-plugin": ^5.59.6
     "@typescript-eslint/parser": ^5.59.5
@@ -2006,13 +2004,6 @@ clify.js@ncpa0cpl/clify.js:
   dependencies:
     has-flag: ^4.0.0
   checksum: 3dda818de06ebbe5b9653e07842d9479f3555ebc77e9a0280caf5a14fb877ffee9ed57007c3b78f5a6324b8dbeec648d9e97a24e2ed9fdb81ddc69ea07100f4a
-  languageName: node
-  linkType: hard
-
-"termx-markup@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "termx-markup@npm:1.1.0"
-  checksum: d8b4a2ad887a7faad4bbff7a3dfa7de9b0e954a4c8da1a2d87afc2eaf9d44923909f60f087fd129ad8cda095b2b4463f8d86e2019dea4e27c806dae693b70b95
   languageName: node
   linkType: hard
 
