@@ -280,6 +280,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json-schema@npm:^7.0.12":
+  version: 7.0.12
+  resolution: "@types/json-schema@npm:7.0.12"
+  checksum: 00239e97234eeb5ceefb0c1875d98ade6e922bfec39dd365ec6bd360b5c2f825e612ac4f6e5f1d13601b8b30f378f15e6faa805a3a732f4a1bbe61915163d293
+  languageName: node
+  linkType: hard
+
 "@types/mdast@npm:^3.0.0":
   version: 3.0.10
   resolution: "@types/mdast@npm:3.0.10"
@@ -697,12 +704,12 @@ clify.js@ncpa0cpl/clify.js:
   languageName: node
   linkType: hard
 
-"dilswer@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "dilswer@npm:2.0.2"
+"dilswer@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "dilswer@npm:2.1.1"
   dependencies:
-    "@types/json-schema": ^7.0.11
-  checksum: 53c0b1e348dc4e86a9d9869e22b5f6ded65c104a0af033d6d1bd70d58c61af123da1887de68fb2be9563e6909f565af25e6dae1ef8f0547306457c866cfd402e
+    "@types/json-schema": ^7.0.12
+  checksum: 4b02ef1864341767cde436fe5971f9e272a92385f415290d0f7165e33ed1d89b2df320416357bf0bc9fb11018a229b49ecd6c91ee6a28c8fe9f8c211b9e6a8fe
   languageName: node
   linkType: hard
 
@@ -1812,7 +1819,7 @@ clify.js@ncpa0cpl/clify.js:
     "@types/react-reconciler": ^0.28.2
     "@typescript-eslint/eslint-plugin": ^5.59.7
     "@typescript-eslint/parser": ^5.59.7
-    dilswer: ^2.0.2
+    dilswer: ^2.1.1
     eslint: ^8.41.0
     eslint-config-prettier: ^8.8.0
     eslint-plugin-prettier: ^4.2.1
