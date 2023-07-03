@@ -29,7 +29,7 @@
   "devDependencies": {
     "@reactgjs/gest": "^0.3.2",
     "@types/react-reconciler": "^0.28.2",
-    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.59.11",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
