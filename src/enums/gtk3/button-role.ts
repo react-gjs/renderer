@@ -1,6 +1,8 @@
 import Gtk from "gi://Gtk?version=3.0";
 
-/** The role specifies the desired appearance of a #GtkModelButton. */
+/**
+ * The role specifies the desired appearance of a #GtkModelButton.
+ */
 // @ts-expect-error
 declare enum ButtonRole {
   NORMAL = 0,

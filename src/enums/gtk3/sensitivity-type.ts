@@ -6,11 +6,17 @@ import Gtk from "gi://Gtk?version=3.0";
  */
 // @ts-expect-error
 declare enum SensitivityType {
-  /** The arrow is made insensitive if the thumb is at the end */
+  /**
+   * The arrow is made insensitive if the thumb is at the end
+   */
   AUTO = 0,
-  /** The arrow is always sensitive */
+  /**
+   * The arrow is always sensitive
+   */
   ON = 1,
-  /** The arrow is always insensitive */
+  /**
+   * The arrow is always insensitive
+   */
   OFF = 2,
 }
 

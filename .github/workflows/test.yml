@@ -34,7 +34,7 @@ jobs:
       - name: Run Linter
         run: ./.yarn/yarn.cjs test:lint
       - name: Run Prettier Check
-        run: ./.yarn/yarn.cjs test:prettier
+        run: ./.yarn/yarn.cjs test:format
       - name: Run Unit Test
         run: ./.yarn/yarn.cjs test:unit
       - name: Attempt Build

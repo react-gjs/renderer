@@ -14,7 +14,7 @@
       },
       {
         "name": "Prettier",
-        "script": "test:prettier"
+        "script": "test:format"
       },
       {
         "name": "Gest",

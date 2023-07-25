@@ -21,7 +21,9 @@ export class MarkupAttributes {
     return result;
   }
 
-  /** Returns a copy of this object. */
+  /**
+   * Returns a copy of this object.
+   */
   copy(): MarkupAttributes {
     const result = new MarkupAttributes();
     result.attributes = new Map(this.attributes);

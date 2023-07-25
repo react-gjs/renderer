@@ -1,4 +1,6 @@
-/** @type {import("@reactgjs/gest/config").ConfigGetter} */
+/**
+ * @type {import("@reactgjs/gest/config").ConfigGetter}
+ */
 const getConfig = () => {
   return {
     $schema:

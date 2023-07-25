@@ -133,7 +133,9 @@ class EventBind {
   }
 }
 
-/** A helper class to bind props callbacks to the widget's `connect`. */
+/**
+ * A helper class to bind props callbacks to the widget's `connect`.
+ */
 export class EventHandlers<
   W extends Widget<any>,
   P extends Record<string, any>,

@@ -4,9 +4,13 @@ import { KeyPressModifiers } from "../../../enums/custom";
 declare global {
   namespace Rg {
     type KeyPressEventData = {
-      /** A modifier key(s) that was pressed at the same time. */
+      /**
+       * A modifier key(s) that was pressed at the same time.
+       */
       modifier: KeyPressModifiers;
-      /** ASCII character code of the pressed button. */
+      /**
+       * ASCII character code of the pressed button.
+       */
       keyCode: number;
     };
   }

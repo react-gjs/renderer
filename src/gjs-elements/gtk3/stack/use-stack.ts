@@ -51,7 +51,9 @@ export const createStack = <R extends string = string>() => {
   };
 
   return {
-    /** The Stack component that should contain StackScreen components. */
+    /**
+     * The Stack component that should contain StackScreen components.
+     */
     Stack,
     /**
      * A component that can be used to navigate between StackItem

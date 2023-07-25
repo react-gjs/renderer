@@ -1,11 +1,17 @@
 import Gtk from "gi://Gtk?version=3.0";
 
-/** Used to control what selections users are allowed to make. */
+/**
+ * Used to control what selections users are allowed to make.
+ */
 // @ts-expect-error
 declare enum SelectionMode {
-  /** No selection is possible. */
+  /**
+   * No selection is possible.
+   */
   NONE = 0,
-  /** Zero or one element may be selected. */
+  /**
+   * Zero or one element may be selected.
+   */
   SINGLE = 1,
   /**
    * Exactly one element is selected. In some circumstances, such as

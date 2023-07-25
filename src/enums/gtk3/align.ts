@@ -26,13 +26,21 @@ declare enum Align {
    * way to stretch
    */
   FILL = 0,
-  /** Snap to left or top side, leaving space on right or bottom */
+  /**
+   * Snap to left or top side, leaving space on right or bottom
+   */
   START = 1,
-  /** Snap to right or bottom side, leaving space on left or top */
+  /**
+   * Snap to right or bottom side, leaving space on left or top
+   */
   END = 2,
-  /** Center natural width of widget inside the allocation */
+  /**
+   * Center natural width of widget inside the allocation
+   */
   CENTER = 3,
-  /** Align the widget according to the baseline. Since 3.10. */
+  /**
+   * Align the widget according to the baseline. Since 3.10.
+   */
   BASELINE = 4,
 }
 
