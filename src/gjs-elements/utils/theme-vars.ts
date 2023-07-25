@@ -1,4 +1,6 @@
-/** Css variable names available for Gtk Applications */
+/**
+ * Css variable names available for Gtk Applications
+ */
 export enum ThemeVariable {
   ForegroundColor = "@theme_fg_color",
   BackgroundColor = "@theme_bg_color",

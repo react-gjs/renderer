@@ -11,15 +11,25 @@ import Gtk from "gi://Gtk?version=3.0";
  */
 // @ts-expect-error
 declare enum ImageType {
-  /** There is no image displayed by the widget */
+  /**
+   * There is no image displayed by the widget
+   */
   EMPTY = 0,
-  /** The widget contains a #GdkPixbuf */
+  /**
+   * The widget contains a #GdkPixbuf
+   */
   PIXBUF = 1,
-  /** The widget contains a [stock item name][gtkstock] */
+  /**
+   * The widget contains a [stock item name][gtkstock]
+   */
   STOCK = 2,
-  /** The widget contains a #GtkIconSet */
+  /**
+   * The widget contains a #GtkIconSet
+   */
   ICON_SET = 3,
-  /** The widget contains a #GdkPixbufAnimation */
+  /**
+   * The widget contains a #GdkPixbufAnimation
+   */
   ANIMATION = 4,
   /**
    * The widget contains a named icon. This image type was added in

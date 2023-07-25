@@ -229,10 +229,12 @@ export class ScrollBoxElement
     position: number,
     from: "top" | "bottom" | "left" | "right" = "top",
   ) {
-    // changing the value of the adjustment will trigger a "changed" event
-    // immediately after, so to avoid unexpected side-effects taking
-    // place on every "scrollTo" call, we use a microtask to delay the
-    // change of the adjustment value
+    /**
+     * Changing the value of the adjustment will trigger a "changed"
+     * event immediately after, so to avoid unexpected side-effects
+     * taking place on every "scrollTo" call, we use a microtask to
+     * delay the change of the adjustment value
+     */
     switch (from) {
       case "top": {
         microtask(() => {
@@ -266,10 +268,12 @@ export class ScrollBoxElement
   scrollToEnd(
     orientation: "vertically" | "horizontally" = "vertically",
   ) {
-    // changing the value of the adjustment will trigger a "changed" event
-    // immediately after, so to avoid unexpected side-effects taking
-    // place on every "scrollTo" call, we use a microtask to delay the
-    // change of the adjustment value
+    /**
+     * Changing the value of the adjustment will trigger a "changed"
+     * event immediately after, so to avoid unexpected side-effects
+     * taking place on every "scrollTo" call, we use a microtask to
+     * delay the change of the adjustment value
+     */
     switch (orientation) {
       case "vertically": {
         const currentUpper = this.vAdjustment!.get_upper();

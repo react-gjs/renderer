@@ -41,7 +41,9 @@ export type MenuRadioButtonEvent<P extends Record<string, any> = {}> =
 
 export interface MenuRadioButtonProps
   extends MenuRadioButtonPropsMixin {
-  /** Main text of the menu entry, displayed on the left side. */
+  /**
+   * Main text of the menu entry, displayed on the left side.
+   */
   label?: string;
   radioGroup: string;
   isDefault?: boolean;

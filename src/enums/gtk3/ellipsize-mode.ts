@@ -10,13 +10,21 @@ import Pango from "gi://Pango?version=1.0";
  */
 // @ts-expect-error
 declare enum EllipsizeMode {
-  /** No ellipsization */
+  /**
+   * No ellipsization
+   */
   NONE = 0,
-  /** Omit characters at the start of the text */
+  /**
+   * Omit characters at the start of the text
+   */
   START = 1,
-  /** Omit characters in the middle of the text */
+  /**
+   * Omit characters in the middle of the text
+   */
   MIDDLE = 2,
-  /** Omit characters at the end of the text */
+  /**
+   * Omit characters at the end of the text
+   */
   END = 3,
 }
 

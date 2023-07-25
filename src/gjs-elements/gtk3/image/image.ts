@@ -1,8 +1,8 @@
 import { DataType } from "dilswer";
-import cairo from "gi://cairo";
 import GdkPixbuf from "gi://GdkPixbuf";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
+import cairo from "gi://cairo";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -119,7 +119,10 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
             this.widget.set_from_surface(src);
           }
 
-          if (allProps.resizeToWidth || allProps.resizeToHeight) {
+          if (
+            allProps.resizeToWidth != null ||
+            allProps.resizeToHeight != null
+          ) {
             this.resizeImage();
           }
         })

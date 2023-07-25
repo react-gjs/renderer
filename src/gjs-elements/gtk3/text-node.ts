@@ -5,7 +5,9 @@ import type { GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 
 export class TextNode {
-  /** @internal */
+  /**
+   * @internal
+   */
   static isTextNode(element: any): element is TextNode {
     return (
       typeof element === "object" &&

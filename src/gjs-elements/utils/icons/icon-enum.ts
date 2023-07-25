@@ -1,4 +1,6 @@
-/** Icon Names available for Gtk Applications */
+/**
+ * Icon Names available for Gtk Applications
+ */
 export enum IconName {
   AccessoriesCalculator = "accessories-calculator",
   AccessoriesCalculatorSymbolic = "accessories-calculator-symbolic",

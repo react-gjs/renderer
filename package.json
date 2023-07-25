@@ -5,10 +5,13 @@
   "scripts": {
     "repo-sync": "./scripts/repo-sync.sh",
     "fix:lint": "eslint --fix .",
-    "fix:prettier": "prettier -w ./src .",
+    "fix:prettier": "prettier -w ./src",
     "test:unit": "gest",
     "test:lint": "eslint .",
-    "test:prettier": "prettier -c ./src && prettier -c ./__tests__",
+    "test:format:tests": "prettier -c ./__tests__/**/*.{js,mjs,ts,mts,tsx,mtsx} --parser babel-ts",
+    "test:format:ts": "prettier -c ./src/**/*.{js,mjs,ts,mts,tsx,mtsx} --parser babel-ts",
+    "test:format:md": "prettier -c ./**/*.md --parser markdown",
+    "test:format": "yarn test:format:tests && yarn test:format:ts && yarn test:format:md",
     "test:tsc": "tsc --noEmit",
     "build": "rm -rf ./dist && tsc"
   },

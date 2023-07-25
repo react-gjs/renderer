@@ -158,7 +158,8 @@ export class PropertyMapper<P = Record<string, any>> {
     const mapperUpdateApi: MapperUpdateApi<P> = {
       instead: (propName) => {
         if (updated.has(propName as string)) {
-          return; // no-op, mapping function was already called this cycle
+          // no-op, mapping function was already called this cycle
+          return;
         }
         const entry = this.map.get(propName as string)!;
         entry.nextCleanup?.();
