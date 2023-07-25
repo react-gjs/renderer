@@ -1,5 +1,5 @@
 import type { AnyDataType, GetDataType } from "dilswer";
-import { createValidator } from "dilswer";
+import { compileFastValidator } from "dilswer";
 import type { ElementLifecycle } from "../../element-extender";
 import type { WindowElement } from "../../rg-types";
 import { OrderedMap } from "../ordered-map";
@@ -96,7 +96,7 @@ export class PropertyMapper<P = Record<string, any>> {
           ) => {
             this.map.set(propName, {
               propName,
-              validate: createValidator(dataType),
+              validate: compileFastValidator(dataType),
               callback,
             });
             return caseCollector;
