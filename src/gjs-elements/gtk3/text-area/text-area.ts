@@ -8,8 +8,7 @@ import type {
 import { WrapMode } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
-import { diffProps } from "../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import {
@@ -21,6 +20,8 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { parseEventKey } from "../../utils/gdk-events/key-press-event";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -38,7 +39,8 @@ type TextAreaPadding =
   | [number, number, number]
   | [number, number, number, number];
 
-type TextAreaPropsMixin = SizeRequestProps &
+type TextAreaPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -72,6 +74,7 @@ export interface TextAreaProps extends TextAreaPropsMixin {
 }
 
 export class TextAreaElement
+  extends BaseElement
   implements GjsElement<"TEXT_AREA", Gtk.TextView>
 {
   static getContext(
@@ -81,19 +84,20 @@ export class TextAreaElement
   }
 
   readonly kind = "TEXT_AREA";
-  private textBuffer = new Gtk.TextBuffer();
-  private widget = new Gtk.TextView({
+  protected textBuffer = new Gtk.TextBuffer();
+  protected widget = new Gtk.TextView({
     buffer: this.textBuffer,
   });
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly viewHandlers = new EventHandlers<
+  protected readonly handlers = null;
+  protected readonly viewHandlers = new EventHandlers<
     Gtk.TextView,
     TextAreaProps
   >(this);
-  private readonly bufferHandlers = new EventHandlers<
+  protected readonly bufferHandlers = new EventHandlers<
     Gtk.TextBuffer,
     TextAreaProps
   >({
@@ -101,13 +105,17 @@ export class TextAreaElement
     getWidget: () => this.textBuffer,
   });
 
-  private readonly propsMapper = new PropertyMapper<TextAreaProps>(
+  protected readonly propsMapper = new PropertyMapper<TextAreaProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .value(DataType.String, (v = "") => {
@@ -163,13 +171,14 @@ export class TextAreaElement
         ),
   );
 
-  private previousSelection = {
+  protected previousSelection = {
     start: 0,
     end: 0,
     text: "",
   };
 
   constructor(props: DiffedProps) {
+    super();
     let lastText = "";
 
     this.bufferHandlers.bind("changed", "onChange", () => {
@@ -219,7 +228,7 @@ export class TextAreaElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  private getSelectionEventData() {
+  protected getSelectionEventData() {
     const [_, start, end] = this.textBuffer.get_selection_bounds();
     const selectedText = this.textBuffer.get_text(start, end, false)!;
     const selectionStartIndex = start!.get_offset();
@@ -244,7 +253,7 @@ export class TextAreaElement
     };
   }
 
-  private applyPadding(padding: number | number[]) {
+  protected applyPadding(padding: number | number[]) {
     if (typeof padding === "number") {
       this.widget.top_margin = padding;
       this.widget.right_margin = padding;
@@ -298,7 +307,7 @@ export class TextAreaElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -313,12 +322,16 @@ export class TextAreaElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount() {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount() {}
 
   // #endregion
 
@@ -338,35 +351,6 @@ export class TextAreaElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.viewHandlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.viewHandlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

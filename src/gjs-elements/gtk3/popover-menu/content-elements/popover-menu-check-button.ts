@@ -4,9 +4,8 @@ import Gtk from "gi://Gtk";
 import { EventPhase } from "../../../../reconciler/event-phase";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
-import type { GjsElement } from "../../../gjs-element";
+import { BaseElement, type GjsElement } from "../../../gjs-element";
 import { GjsElementManager } from "../../../gjs-element-manager";
-import { diffProps } from "../../../utils/diff-props";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../../utils/element-extenders/event-handlers";
@@ -16,6 +15,8 @@ import type { PointerData } from "../../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../../utils/gdk-events/pointer-event";
 import type { AccelProps } from "../../../utils/property-maps-factories/create-accel-prop-mapper";
 import { createAccelPropMapper } from "../../../utils/property-maps-factories/create-accel-prop-mapper";
+import type { ChildPropertiesProps } from "../../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../../utils/property-maps-factories/create-child-props-mapper";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
@@ -30,7 +31,8 @@ import { PopoverMenuContentElement } from "../popover-menu-content";
 import { popoverMenuModelButton } from "../utils/popover-menu-model-button";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuCheckButtonPropsMixin = SizeRequestProps &
+type PopoverMenuCheckButtonPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   MarginProps &
   StyleProps &
   TooltipProps &
@@ -61,6 +63,7 @@ export interface PopoverMenuCheckButtonProps
 }
 
 export class PopoverMenuCheckButtonElement
+  extends BaseElement
   implements GjsElement<"POPOVER_MENU_CHECK_BUTTON", Gtk.ModelButton>
 {
   static getContext(
@@ -70,19 +73,19 @@ export class PopoverMenuCheckButtonElement
   }
 
   readonly kind = "POPOVER_MENU_CHECK_BUTTON";
-  private widget = popoverMenuModelButton();
+  protected widget = popoverMenuModelButton();
 
-  private parent:
+  protected parent:
     | PopoverMenuEntryElement
     | PopoverMenuContentElement
     | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.ModelButton,
     PopoverMenuCheckButtonProps
   >(this);
-  private readonly propsMapper =
+  protected readonly propsMapper =
     new PropertyMapper<PopoverMenuCheckButtonProps>(
       this.lifecycle,
       createSizeRequestPropMapper(this.widget),
@@ -90,6 +93,10 @@ export class PopoverMenuCheckButtonElement
       createStylePropMapper(this.widget),
       createTooltipPropMapper(this.widget),
       createAccelPropMapper(this.widget),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
       (props) =>
         props
           .label(DataType.String, (v = "") => {
@@ -110,6 +117,7 @@ export class PopoverMenuCheckButtonElement
     );
 
   constructor(props: DiffedProps) {
+    super();
     this.widget.role = Gtk.ButtonRole.CHECK;
 
     this.handlers.bindInternal("clicked", (e) => {
@@ -163,7 +171,7 @@ export class PopoverMenuCheckButtonElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -178,7 +186,7 @@ export class PopoverMenuCheckButtonElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       !GjsElementManager.isGjsElementOfKind(parent, [
         PopoverMenuEntryElement,
@@ -193,7 +201,11 @@ export class PopoverMenuCheckButtonElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement) {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement) {}
 
   // #endregion
 
@@ -213,35 +225,6 @@ export class PopoverMenuCheckButtonElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

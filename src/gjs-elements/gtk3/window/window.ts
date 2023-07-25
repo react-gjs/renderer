@@ -6,9 +6,8 @@ import type { WindowTypeHint } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
@@ -16,6 +15,7 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { mountAction } from "../../utils/mount-action";
 import type { ApplicationElement } from "../application/application";
 import { HeaderBarElement } from "../headerbar/headerbar";
 import type { TextNode } from "../text-node";
@@ -52,6 +52,7 @@ export type WindowProps = {
 };
 
 export class WindowElement
+  extends BaseElement
   implements GjsElement<"WINDOW", Gtk.Window>
 {
   static getContext(
@@ -61,21 +62,21 @@ export class WindowElement
   }
 
   readonly kind = "WINDOW";
-  private widget = new Gtk.Window();
+  protected widget = new Gtk.Window();
 
-  private accelGroup = new Gtk.AccelGroup();
+  protected accelGroup = new Gtk.AccelGroup();
 
-  private mainApp?: ApplicationElement;
-  private parent: GjsElement | null = null;
+  protected mainApp?: ApplicationElement;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly children = new ChildOrderController(
+  protected readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget,
     this.addChild.bind(this),
   );
-  private readonly handlers = new EventHandlers(this);
-  private readonly propsMapper = new PropertyMapper<WindowProps>(
+  protected readonly handlers = new EventHandlers(this);
+  protected readonly propsMapper = new PropertyMapper<WindowProps>(
     this.lifecycle,
     (props) =>
       props
@@ -127,6 +128,7 @@ export class WindowElement
   isDisposed = false;
 
   constructor(props: DiffedProps, context: HostContext<GjsContext>) {
+    super();
     this.widget.add_accel_group(this.accelGroup);
 
     this.mainApp = context.get("application");
@@ -186,7 +188,7 @@ export class WindowElement
     }
   }
 
-  private addChild(
+  protected addChild(
     widget: Gtk.Widget,
     element: GjsElement,
     index: number,
@@ -201,7 +203,7 @@ export class WindowElement
     }
   }
 
-  private defaultOnCloseHandler(
+  protected defaultOnCloseHandler(
     event: WindowEvent,
     originalHandler?: WindowProps["onClose"],
   ) {
@@ -226,7 +228,7 @@ export class WindowElement
     return result;
   }
 
-  private wrapOnCloseProp(props: DiffedProps): DiffedProps {
+  protected wrapOnCloseProp(props: DiffedProps): DiffedProps {
     const propName: keyof WindowProps = "onClose";
     const onclose = props.find(([k]) => k === propName);
 
@@ -272,28 +274,47 @@ export class WindowElement
 
     ensureNotText(child);
 
-    const shouldAppend = child.notifyWillAppendTo(this);
-    this.children.addChild(child, !shouldAppend);
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.addChild(child, shouldOmitMount);
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   insertBefore(
-    newChild: GjsElement | TextNode,
+    child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
     if (this.isDisposed) {
       throw new Error("Can't append child to disposed window");
     }
 
-    ensureNotText(newChild);
+    ensureNotText(child);
 
-    const shouldAppend = newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
-    this.widget.show_all();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.insertBefore(
+          child,
+          beforeChild,
+          shouldOmitMount,
+        );
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   remove(parent: GjsElement): void {
     this.mainApp?.removeWindowFromApp(this);
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -311,7 +332,7 @@ export class WindowElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (this.isDisposed) {
       throw new Error("Can't append child to disposed window");
     }
@@ -321,7 +342,11 @@ export class WindowElement
     return false;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {
     if (!this.isDisposed) this.children.removeChild(child);
   }
 
@@ -345,20 +370,6 @@ export class WindowElement
     return this.parent;
   }
 
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
   setProperty(key: string, value: any) {
     if (this.isDisposed) {
       throw new Error("Can't append child to disposed window");
@@ -368,17 +379,5 @@ export class WindowElement
       this.wrapOnCloseProp([[key, value]]),
     );
   }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
-
   // #endregion
 }

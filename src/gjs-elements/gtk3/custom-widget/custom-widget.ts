@@ -1,8 +1,7 @@
 import type Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
-import { diffProps } from "../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import type { TextNode } from "../text-node";
@@ -36,6 +35,7 @@ export type CustomWidgetProps<P extends object> = P & {
 };
 
 export class CustomWidgetElement
+  extends BaseElement
   implements GjsElement<"CUSTOM_WIDGET", Gtk.Widget>
 {
   static getContext(
@@ -46,15 +46,17 @@ export class CustomWidgetElement
 
   readonly kind = "CUSTOM_WIDGET";
   readonly customWidget: ICustomWidget<any>;
-  private readonly widget: Gtk.Widget;
+  protected readonly widget: Gtk.Widget;
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
-  readonly lifecycle = new ElementLifecycleController();
-
-  private currentProps: Record<string, any> = {};
+  protected readonly lifecycle = new ElementLifecycleController();
+  protected handlers = null;
+  protected propsMapper = null;
+  protected currentProps: Record<string, any> = {};
 
   constructor(props: DiffedProps) {
+    super();
     this.currentProps = Object.fromEntries(props);
 
     const constuctorProp = this.currentProps.widget;
@@ -101,7 +103,7 @@ export class CustomWidgetElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -116,12 +118,16 @@ export class CustomWidgetElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {}
 
   // #endregion
 
@@ -145,28 +151,13 @@ export class CustomWidgetElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.currentProps[key];
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
 
   // #endregion
 }

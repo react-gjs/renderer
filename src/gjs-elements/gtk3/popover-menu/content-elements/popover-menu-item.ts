@@ -1,12 +1,14 @@
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
-import type { GjsElement } from "../../../gjs-element";
+import { BaseElement, type GjsElement } from "../../../gjs-element";
 import { GjsElementManager } from "../../../gjs-element-manager";
-import { diffProps } from "../../../utils/diff-props";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../../utils/ensure-not-string";
+import { mountAction } from "../../../utils/mount-action";
+import type { ChildPropertiesProps } from "../../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../../utils/property-maps-factories/create-child-props-mapper";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
@@ -20,7 +22,8 @@ import type { TextNode } from "../../text-node";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuItemPropsMixin = SizeRequestProps &
+type PopoverMenuItemPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   MarginProps &
   StyleProps &
   TooltipProps;
@@ -28,6 +31,7 @@ type PopoverMenuItemPropsMixin = SizeRequestProps &
 export type PopoverMenuItemProps = PopoverMenuItemPropsMixin;
 
 export class PopoverMenuItemElement
+  extends BaseElement
   implements GjsElement<"POPOVER_MENU_ITEM", Bin>
 {
   static getContext(
@@ -37,28 +41,32 @@ export class PopoverMenuItemElement
   }
 
   readonly kind = "POPOVER_MENU_ITEM";
-  private widget = new Bin();
+  protected widget = new Bin();
 
-  private parent:
+  protected parent:
     | PopoverMenuEntryElement
     | PopoverMenuContentElement
     | null = null;
 
-  readonly lifecycle = new ElementLifecycleController();
-
-  private readonly propsMapper =
+  protected readonly lifecycle = new ElementLifecycleController();
+  protected handlers = null;
+  protected readonly propsMapper =
     new PropertyMapper<PopoverMenuItemProps>(
       this.lifecycle,
       createSizeRequestPropMapper(this.widget),
       createMarginPropMapper(this.widget),
       createStylePropMapper(this.widget),
       createTooltipPropMapper(this.widget),
-      (props) => props,
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
     );
 
-  private child: GjsElement | null = null;
+  protected child: GjsElement | null = null;
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -81,20 +89,34 @@ export class PopoverMenuItemElement
       throw new Error("PopoverMenuItem can only have one child.");
     }
 
-    this.child = child;
-
-    this.widget.add(child.getWidget());
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        if (!shouldOmitMount) {
+          this.child = child;
+          this.widget.add(child.getWidget());
+        }
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   insertBefore(
     child: TextNode | GjsElement,
     beforeChild: GjsElement,
   ): void {
-    throw new Error("PopoverMenuItem can only have one child.");
+    mountAction(this, child, (shouldOmitMount) => {
+      if (!shouldOmitMount) {
+        throw new Error("PopoverMenuItem can only have one child.");
+      }
+    });
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -109,7 +131,7 @@ export class PopoverMenuItemElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       !GjsElementManager.isGjsElementOfKind(parent, [
         PopoverMenuEntryElement,
@@ -124,7 +146,11 @@ export class PopoverMenuItemElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement) {
     if (child === this.child) {
       this.child = null;
     }
@@ -148,31 +174,6 @@ export class PopoverMenuItemElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {}
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {}
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

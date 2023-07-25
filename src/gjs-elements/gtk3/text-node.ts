@@ -1,10 +1,10 @@
 import type Gtk from "gi://Gtk";
 import type { GjsContext } from "../../reconciler/gjs-renderer";
 import type { HostContext } from "../../reconciler/host-context";
-import type { GjsElement } from "../gjs-element";
+import { BaseElement, type GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 
-export class TextNode {
+export class TextNode extends BaseElement {
   /**
    * @internal
    */
@@ -25,14 +25,20 @@ export class TextNode {
 
   readonly kind = "TEXT_NODE";
 
-  private get widget(): Gtk.Widget {
+  protected get widget(): Gtk.Widget {
     throw new Error("TextNode elements do not have widgets.");
   }
 
-  private isVisible = true;
-  private parent: GjsElement | null = null;
+  protected isVisible = true;
+  protected parent: GjsElement | null = null;
 
-  constructor(private text: string) {}
+  protected readonly lifecycle = null;
+  protected readonly handlers = null;
+  protected readonly propsMapper = null;
+
+  constructor(protected text: string) {
+    super();
+  }
 
   updateProps(): void {}
 
@@ -43,7 +49,7 @@ export class TextNode {
   insertBefore(): void {}
 
   remove(parent: GjsElement): void {
-    this.parent?.notifyWillUnmount(this);
+    this.parent?.notifyChildWillUnmount(this);
   }
 
   render() {
@@ -54,12 +60,14 @@ export class TextNode {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): true {
+  notifyWillMountTo(parent: GjsElement): true {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount() {}
+  notifyMounted(): void {}
+
+  notifyChildWillUnmount() {}
 
   // #endregion
 

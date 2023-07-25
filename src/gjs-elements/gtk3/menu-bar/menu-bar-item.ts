@@ -3,9 +3,8 @@ import Gtk from "gi://Gtk";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
@@ -15,6 +14,9 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
 import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import { mountAction } from "../../utils/mount-action";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -31,7 +33,8 @@ import type { MenuItemElementType } from "./menu-elements";
 import { MENU_ELEMENTS } from "./menu-elements";
 import type { MenuRadioButtonElement } from "./menu-radio-button";
 
-type MenuBarItemPropsMixin = SizeRequestProps &
+type MenuBarItemPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
@@ -47,6 +50,7 @@ export interface MenuBarItemProps extends MenuBarItemPropsMixin {
 }
 
 export class MenuBarItemElement
+  extends BaseElement
   implements GjsElement<"MENU_BAR_ITEM", Gtk.MenuItem>
 {
   static getContext(
@@ -56,17 +60,17 @@ export class MenuBarItemElement
   }
 
   readonly kind = "MENU_BAR_ITEM";
-  private widget = new Gtk.MenuItem();
+  protected widget = new Gtk.MenuItem();
   submenu = new Gtk.Menu();
 
-  private parent: MenuBarElement | null = null;
+  protected parent: MenuBarElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.MenuItem,
     MenuBarItemProps
   >(this);
-  private readonly children =
+  protected readonly children =
     new ChildOrderController<MenuItemElementType>(
       this.lifecycle,
       this.widget,
@@ -77,22 +81,28 @@ export class MenuBarItemElement
         this.submenu.remove(child);
       },
     );
-  private readonly propsMapper = new PropertyMapper<MenuBarItemProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    (props) =>
-      props.label(DataType.String, (v = "") => {
-        this.widget.label = v;
-      }),
-  );
+  protected readonly propsMapper =
+    new PropertyMapper<MenuBarItemProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
+      (props) =>
+        props.label(DataType.String, (v = "") => {
+          this.widget.label = v;
+        }),
+    );
 
-  private radioGroups = new Map<string, Gtk.RadioMenuItem>();
+  protected radioGroups = new Map<string, Gtk.RadioMenuItem>();
 
   constructor(props: DiffedProps) {
+    super();
     this.widget.submenu = this.submenu;
 
     this.handlers.bind(
@@ -141,34 +151,50 @@ export class MenuBarItemElement
       );
     }
 
-    const shouldAppend = child.notifyWillAppendTo(this);
-    this.children.addChild(child, !shouldAppend);
-    child.setRootBarItem(this);
-    this.widget.show_all();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.addChild(child, shouldOmitMount);
+        child.setRootBarItem(this);
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   insertBefore(
-    newChild: GjsElement | TextNode,
+    child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
-    ensureNotText(newChild);
+    ensureNotText(child);
 
-    if (
-      !GjsElementManager.isGjsElementOfKind(newChild, MENU_ELEMENTS)
-    ) {
+    if (!GjsElementManager.isGjsElementOfKind(child, MENU_ELEMENTS)) {
       throw new Error(
         "Only MenuEntry can be a child of MenuBarItem.",
       );
     }
 
-    const shouldAppend = newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
-    newChild.setRootBarItem(this);
-    this.widget.show_all();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.insertBefore(
+          child,
+          beforeChild,
+          shouldOmitMount,
+        );
+        child.setRootBarItem(this);
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -183,7 +209,7 @@ export class MenuBarItemElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       !GjsElementManager.isGjsElementOfKind(parent, MenuBarElement)
     ) {
@@ -194,7 +220,11 @@ export class MenuBarItemElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {
     this.children.removeChild(child);
   }
 
@@ -216,35 +246,6 @@ export class MenuBarItemElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

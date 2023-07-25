@@ -1,15 +1,16 @@
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { mountAction } from "../../utils/mount-action";
 import type { TextNode } from "../text-node";
 import { PopoverElement } from "./popover";
 
 export class PopoverTargetElement
+  extends BaseElement
   implements GjsElement<"POPOVER_TARGET", Gtk.Widget>
 {
   static getContext(
@@ -19,9 +20,9 @@ export class PopoverTargetElement
   }
 
   readonly kind = "POPOVER_TARGET";
-  private emptyReplacement = new Gtk.Box();
-  private childElement: GjsElement | null = null;
-  private get widget(): Gtk.Widget {
+  protected emptyReplacement = new Gtk.Box();
+  protected childElement: GjsElement | null = null;
+  protected get widget(): Gtk.Widget {
     if (!this.childElement) {
       throw this.emptyReplacement;
     }
@@ -32,9 +33,14 @@ export class PopoverTargetElement
     return this.childElement != null;
   }
 
-  private parent: PopoverElement | null = null;
+  protected parent: PopoverElement | null = null;
+
+  protected readonly lifecycle = null;
+  protected readonly handlers = null;
+  protected readonly propsMapper = null;
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
   }
 
@@ -48,11 +54,12 @@ export class PopoverTargetElement
     if (this.childElement != null) {
       throw new Error("PopoverTarget can only have one child.");
     } else {
-      const shouldAppend = child.notifyWillAppendTo(this);
-      if (shouldAppend) {
-        this.childElement = child;
-        this.parent?.onTargetChange();
-      }
+      mountAction(this, child, (shouldOmitMount) => {
+        if (!shouldOmitMount) {
+          this.childElement = child;
+          this.parent?.onTargetChange();
+        }
+      });
     }
   }
 
@@ -64,7 +71,7 @@ export class PopoverTargetElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.childElement = null;
 
@@ -81,7 +88,7 @@ export class PopoverTargetElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       !GjsElementManager.isGjsElementOfKind(parent, PopoverElement)
     ) {
@@ -93,7 +100,9 @@ export class PopoverTargetElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {}
+
+  notifyChildWillUnmount(child: GjsElement): void {
     this.childElement = null;
     this.parent?.onTargetChange();
   }
@@ -120,24 +129,17 @@ export class PopoverTargetElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {}
 
   getProperty(key: string) {}
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
 
   // #endregion
 }

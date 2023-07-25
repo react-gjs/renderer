@@ -11,69 +11,118 @@ import type { DiffedProps } from "./map-properties";
  * actions.
  */
 export class ElementLifecycleController implements ElementLifecycle {
-  private afterCreateCallback: (() => void) | null = null;
-  private beforeDestroyCallback: (() => void) | null = null;
-  private updateCallback: ((props: DiffedProps) => void) | null =
-    null;
+  private updateCallbacks: ((props: DiffedProps) => void)[] = [];
+  private afterCreateCallbacks: (() => void)[] = [];
+  private beforeDestroyCallbacks: (() => void)[] = [];
+  private mountedCallbacks: (() => void)[] = [];
+  private unmountedCallbacks: (() => void)[] = [];
 
-  afterCreate(hook: () => void): void {
-    const currentHook = this.afterCreateCallback;
-
-    this.afterCreateCallback = currentHook
-      ? () => {
-          currentHook();
-          try {
-            hook();
-          } catch {
-            // no-op
-          }
-        }
-      : hook;
+  onAfterCreate(cb: () => void): void {
+    this.afterCreateCallbacks.push(cb);
   }
 
-  beforeDestroy(hook: () => void): void {
-    const currentHook = this.beforeDestroyCallback;
-
-    this.beforeDestroyCallback = currentHook
-      ? () => {
-          currentHook();
-          try {
-            hook();
-          } catch {
-            // no-op
-          }
-        }
-      : hook;
+  onBeforeDestroy(cb: () => void): void {
+    this.beforeDestroyCallbacks.push(cb);
   }
 
-  onUpdate(hook: (props: DiffedProps) => void): void {
-    const currentHook = this.updateCallback;
+  onUpdate(cb: (props: DiffedProps) => void): void {
+    this.updateCallbacks.push(cb);
+  }
 
-    this.updateCallback = currentHook
-      ? (props) => {
-          currentHook(props);
-          try {
-            hook(props);
-          } catch {
-            // no-op
-          }
-        }
-      : hook;
+  onMounted(cb: () => void): void {
+    this.mountedCallbacks.push(cb);
+  }
+
+  onUnmounted(cb: () => void): void {
+    this.unmountedCallbacks.push(cb);
+  }
+
+  offAfterCreate(cb: () => void): void {
+    const index = this.afterCreateCallbacks.indexOf(cb);
+    if (index !== -1) {
+      this.afterCreateCallbacks.splice(index, 1);
+    }
+  }
+
+  offBeforeDestroy(cb: () => void): void {
+    const index = this.beforeDestroyCallbacks.indexOf(cb);
+    if (index !== -1) {
+      this.beforeDestroyCallbacks.splice(index, 1);
+    }
+  }
+
+  offUpdate(cb: (props: DiffedProps) => void): void {
+    const index = this.updateCallbacks.indexOf(cb);
+    if (index !== -1) {
+      this.updateCallbacks.splice(index, 1);
+    }
+  }
+
+  offMounted(cb: () => void): void {
+    const index = this.mountedCallbacks.indexOf(cb);
+    if (index !== -1) {
+      this.mountedCallbacks.splice(index, 1);
+    }
+  }
+
+  offUnmounted(cb: () => void): void {
+    const index = this.unmountedCallbacks.indexOf(cb);
+    if (index !== -1) {
+      this.unmountedCallbacks.splice(index, 1);
+    }
   }
 
   emitLifecycleEventAfterCreate(): void {
-    if (this.afterCreateCallback) this.afterCreateCallback();
-    this.afterCreateCallback = null;
+    for (let i = 0; i < this.afterCreateCallbacks.length; i++) {
+      try {
+        this.afterCreateCallbacks[i]();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    this.afterCreateCallbacks = [];
   }
 
   emitLifecycleEventBeforeDestroy(): void {
-    if (this.beforeDestroyCallback) this.beforeDestroyCallback();
-    this.beforeDestroyCallback = null;
-    this.afterCreateCallback = null;
-    this.updateCallback = null;
+    for (let i = 0; i < this.beforeDestroyCallbacks.length; i++) {
+      try {
+        this.beforeDestroyCallbacks[i]();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    this.beforeDestroyCallbacks = [];
+    this.afterCreateCallbacks = [];
+    this.updateCallbacks = [];
   }
 
   emitLifecycleEventUpdate(props: DiffedProps): void {
-    if (this.updateCallback) this.updateCallback(props);
+    for (let i = 0; i < this.updateCallbacks.length; i++) {
+      try {
+        this.updateCallbacks[i](props);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
+  emitMountedEvent(): void {
+    for (let i = 0; i < this.mountedCallbacks.length; i++) {
+      try {
+        this.mountedCallbacks[i]();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
+  emitUnmountedEvent(): void {
+    for (let i = 0; i < this.unmountedCallbacks.length; i++) {
+      try {
+        this.unmountedCallbacks[i]();
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }
 }

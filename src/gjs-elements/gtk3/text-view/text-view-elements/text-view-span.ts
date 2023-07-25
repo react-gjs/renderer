@@ -1,12 +1,12 @@
 import type Gtk from "gi://Gtk?version=3.0";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
-import type { GjsElement } from "../../../gjs-element";
-import { diffProps } from "../../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../../gjs-element";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import { MarkupAttributes } from "../../../utils/markup-attributes";
+import { mountAction } from "../../../utils/mount-action";
 import type { MarkupElementProps } from "../../markup/markup-elem";
 import { createMarkupPropMapper } from "../../markup/utils/create-markup-prop-mapper";
 import { escapeHtml } from "../../markup/utils/escape-html";
@@ -27,7 +27,10 @@ export type TextViewSpanProps = MarkupElementProps;
 type TextViewSpanElementMixin = GjsElement<"TEXT_VIEW_SPAN"> &
   ITextViewElement;
 
-export class TextViewSpanElement implements TextViewSpanElementMixin {
+export class TextViewSpanElement
+  extends BaseElement
+  implements TextViewSpanElementMixin
+{
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -43,19 +46,21 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
   protected attributes = new MarkupAttributes();
 
   readonly lifecycle = new ElementLifecycleController();
+  protected handlers = null;
   protected readonly propsMapper =
     new PropertyMapper<TextViewSpanProps>(
       this.lifecycle,
       createMarkupPropMapper(this.attributes),
     );
 
-  private isVisible = true;
+  protected isVisible = true;
 
   constructor(
     props: DiffedProps,
     context: HostContext<GjsContext>,
     beforeFirstUpdate?: (self: any) => void,
   ) {
+    super();
     if (beforeFirstUpdate) {
       beforeFirstUpdate(this);
     }
@@ -79,9 +84,16 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
       );
     }
 
-    this.children.push(child);
-
-    this.render();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.push(child);
+      },
+      () => {
+        this.render();
+      },
+    );
   }
 
   insertBefore(
@@ -102,13 +114,20 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
       throw new Error("The beforeChild element was not found.");
     }
 
-    this.children.splice(beforeChildIndex, 0, child);
-
-    this.render();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.splice(beforeChildIndex, 0, child);
+      },
+      () => {
+        this.render();
+      },
+    );
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
   }
@@ -121,7 +140,7 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (isTextViewElementContainer(parent)) {
       this.parent = parent;
     } else {
@@ -132,7 +151,11 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement) {
+  notifyMountedTo(parent: GjsElement): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement) {
     const childIndex = this.children.indexOf(child as any);
 
     if (childIndex === -1) {
@@ -169,28 +192,13 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
 
   // #endregion
 
