@@ -65,9 +65,17 @@ export type MarkupFontUnderline =
 
 export type MarkupFontOverline = "none" | "single";
 
-export type MarkupFontScale = "superscript" | "subscript" | "small-caps";
+export type MarkupFontScale =
+  | "superscript"
+  | "subscript"
+  | "small-caps";
 
-export type MarkupFontGravity = "south" | "east" | "north" | "west" | "auto";
+export type MarkupFontGravity =
+  | "south"
+  | "east"
+  | "north"
+  | "west"
+  | "auto";
 
 export type MarkupFontGravityHint = "natural" | "strong" | "line";
 

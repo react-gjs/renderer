@@ -2,7 +2,10 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 import { WrapMode } from "../../../enums/custom";
-import type { EllipsizeMode, Justification } from "../../../enums/gtk3-index";
+import type {
+  EllipsizeMode,
+  Justification,
+} from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -35,10 +38,8 @@ type MarkupPropsMixin = SizeRequestProps &
   ExpandProps &
   StyleProps;
 
-export type MarkupEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  MarkupElement
->;
+export type MarkupEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, MarkupElement>;
 
 export interface MarkupProps extends MarkupPropsMixin {
   wrapMode?: WrapMode;
@@ -50,9 +51,11 @@ export interface MarkupProps extends MarkupPropsMixin {
   onAnchorClick?: (event: MarkupEvent<{ href: string }>) => void;
 }
 
-export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
+export class MarkupElement
+  implements GjsElement<"MARKUP", Gtk.Label>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -64,7 +67,10 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   private children: Array<BaseMarkupElement> = [];
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Label, MarkupProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Label,
+    MarkupProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<MarkupProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -84,18 +90,21 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
           DataType.Enum(Pango.EllipsizeMode),
           (v = Pango.EllipsizeMode.NONE) => {
             this.widget.ellipsize = v;
-          }
+          },
         )
-        .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.WORD_CHAR) => {
-          this.widget.wrap = v !== WrapMode.NONE;
-          this.widget.wrap_mode = TO_PANGO_WRAP_MODE.get(v)!;
-        })
+        .wrapMode(
+          DataType.Enum(WrapMode),
+          (v = WrapMode.WORD_CHAR) => {
+            this.widget.wrap = v !== WrapMode.NONE;
+            this.widget.wrap_mode = TO_PANGO_WRAP_MODE.get(v)!;
+          },
+        )
         .justify(
           DataType.Enum(Gtk.Justification),
           (v = Gtk.Justification.CENTER) => {
             this.widget.justify = v;
-          }
-        )
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -117,7 +126,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
   appendChild(child: GjsElement | TextNode): void {
     if (child.kind === "TEXT_NODE" || !isMarkupElement(child)) {
       throw new Error(
-        "Markup root element can only have other Markup elements, like <span />, <i />, etc."
+        "Markup root element can only have other Markup elements, like <span />, <i />, etc.",
       );
     }
 
@@ -127,15 +136,17 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
 
   insertBefore(
     child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void {
     if (child.kind === "TEXT_NODE" || !isMarkupElement(child)) {
       throw new Error(
-        "Markup root element can only have other Markup elements, like <span />, <i />, etc."
+        "Markup root element can only have other Markup elements, like <span />, <i />, etc.",
       );
     }
 
-    const beforeChildIndex = this.children.indexOf(beforeChild as any);
+    const beforeChildIndex = this.children.indexOf(
+      beforeChild as any,
+    );
 
     if (beforeChildIndex === -1) {
       throw new Error("The beforeChild element was not found.");
@@ -203,14 +214,14 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -225,7 +236,7 @@ export class MarkupElement implements GjsElement<"MARKUP", Gtk.Label> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

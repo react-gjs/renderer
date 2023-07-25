@@ -57,7 +57,7 @@ export class LinkButtonElement
   implements GjsElement<"LINK_BUTTON", Gtk.LinkButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -70,9 +70,10 @@ export class LinkButtonElement
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Button, LinkButtonProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Button,
+    LinkButtonProps
+  >(this);
 
   private readonly propsMapper = new PropertyMapper<LinkButtonProps>(
     this.lifecycle,
@@ -90,14 +91,14 @@ export class LinkButtonElement
         })
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
-        })
+        }),
   );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   constructor(props: DiffedProps) {
@@ -109,13 +110,13 @@ export class LinkButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.widget.connect("activate-link", () => {
@@ -145,7 +146,7 @@ export class LinkButtonElement
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -204,14 +205,14 @@ export class LinkButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -226,7 +227,7 @@ export class LinkButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

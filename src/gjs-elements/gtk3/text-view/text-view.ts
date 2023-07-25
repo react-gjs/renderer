@@ -42,10 +42,8 @@ type TextViewPropsMixin = SizeRequestProps &
   ExpandProps &
   StyleProps;
 
-export type TextViewEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  TextViewElement
->;
+export type TextViewEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, TextViewElement>;
 
 export interface TextViewProps extends TextViewPropsMixin {
   wrapMode?: WrapMode;
@@ -57,9 +55,11 @@ export interface TextViewProps extends TextViewPropsMixin {
   onLinkClick?: (event: TextViewEvent<{ href: string }>) => void;
 }
 
-export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
+export class TextViewElement
+  implements GjsElement<"TEXT_VIEW", Gtk.TextView>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -74,9 +74,10 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
   private children: Array<ITextViewElement> = [];
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.TextView, TextViewProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.TextView,
+    TextViewProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<TextViewProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -91,9 +92,12 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
     }),
     (props) =>
       props
-        .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.WORD_CHAR) => {
-          this.widget.wrap_mode = TO_GTK_WRAP_MODE.get(v)!;
-        })
+        .wrapMode(
+          DataType.Enum(WrapMode),
+          (v = WrapMode.WORD_CHAR) => {
+            this.widget.wrap_mode = TO_GTK_WRAP_MODE.get(v)!;
+          },
+        )
         .indent(DataType.Number, (v = 0) => {
           this.widget.indent = v;
         })
@@ -101,7 +105,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
           DataType.Enum(Gtk.Justification),
           (v = Gtk.Justification.LEFT) => {
             this.widget.justification = v;
-          }
+          },
         )
         .lineBottomMargin(DataType.Number, (v = 0) => {
           this.widget.set_pixels_below_lines(v);
@@ -111,7 +115,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
         })
         .monospace(DataType.Boolean, (v = false) => {
           this.widget.monospace = v;
-        })
+        }),
   );
 
   private embeddedLinks: Array<{
@@ -132,10 +136,15 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
     this.handlers.bind("button-release-event", "onLinkClick", () => {
       if (!this.textBuffer.has_selection) {
         const cursorPosition = this.textBuffer.cursor_position;
-        const iter = this.textBuffer.get_iter_at_offset(cursorPosition);
+        const iter =
+          this.textBuffer.get_iter_at_offset(cursorPosition);
         for (const link of this.embeddedLinks) {
-          const startIter = this.textBuffer.get_iter_at_offset(link.start);
-          const endIter = this.textBuffer.get_iter_at_offset(link.end);
+          const startIter = this.textBuffer.get_iter_at_offset(
+            link.start,
+          );
+          const endIter = this.textBuffer.get_iter_at_offset(
+            link.end,
+          );
           if (iter!.in_range(startIter, endIter)) {
             return {
               href: link.href,
@@ -153,16 +162,24 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
       if (x != null && y != null) {
         const [, iter] = this.widget.get_iter_at_location(x, y);
         for (const link of this.embeddedLinks) {
-          const startIter = this.textBuffer.get_iter_at_offset(link.start);
-          const endIter = this.textBuffer.get_iter_at_offset(link.end);
+          const startIter = this.textBuffer.get_iter_at_offset(
+            link.start,
+          );
+          const endIter = this.textBuffer.get_iter_at_offset(
+            link.end,
+          );
           if (iter!.in_range(startIter, endIter)) {
             this.setCursor(Gdk.CursorType.HAND2);
             return;
           }
         }
         for (const widget of this.embeddedWidgets) {
-          const startIter = this.textBuffer.get_iter_at_offset(widget.start);
-          const endIter = this.textBuffer.get_iter_at_offset(widget.end);
+          const startIter = this.textBuffer.get_iter_at_offset(
+            widget.start,
+          );
+          const endIter = this.textBuffer.get_iter_at_offset(
+            widget.end,
+          );
           if (iter!.in_range(startIter, endIter)) {
             this.setCursor(Gdk.CursorType.ARROW);
             return;
@@ -183,7 +200,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
 
     if (currentCursor?.get_cursor_type() !== type) {
       window?.set_cursor(
-        Gdk.Cursor.new_for_display(Gdk.Display.get_default()!, type)
+        Gdk.Cursor.new_for_display(Gdk.Display.get_default()!, type),
       );
     }
   }
@@ -197,7 +214,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
   appendChild(child: GjsElement | TextNode): void {
     if (child.kind === "TEXT_NODE" || !isTextViewElement(child)) {
       throw new Error(
-        "TextView root element can only have other TextView elements, like <TextViewSpan /> or <TextViewImage />, etc."
+        "TextView root element can only have other TextView elements, like <TextViewSpan /> or <TextViewImage />, etc.",
       );
     }
 
@@ -207,15 +224,17 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
 
   insertBefore(
     child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void {
     if (child.kind === "TEXT_NODE" || !isTextViewElement(child)) {
       throw new Error(
-        "TextView root element can only have other TextView elements, like <TextViewSpan /> or <TextViewImage />, etc."
+        "TextView root element can only have other TextView elements, like <TextViewSpan /> or <TextViewImage />, etc.",
       );
     }
 
-    const beforeChildIndex = this.children.indexOf(beforeChild as any);
+    const beforeChildIndex = this.children.indexOf(
+      beforeChild as any,
+    );
 
     if (beforeChildIndex === -1) {
       throw new Error("The beforeChild element was not found.");
@@ -283,14 +302,14 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -305,7 +324,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
@@ -321,7 +340,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
     parent?: {
       tag: string;
       attributes: MarkupAttributes;
-    }
+    },
   ) {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i]!;
@@ -329,7 +348,9 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
         case "TEXT": {
           const asMarkup = parent
             ? (text: string) =>
-                `<${parent.tag} ${parent.attributes.stringify()}>${text}</${
+                `<${
+                  parent.tag
+                } ${parent.attributes.stringify()}>${text}</${
                   parent.tag
                 }>`
             : (text: string) => `<span>${text}</span>`;
@@ -338,7 +359,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
             this.textBuffer.insert_markup(
               this.textBuffer.get_end_iter(),
               asMarkup(nodeTextEntry),
-              -1
+              -1,
             );
           }
           break;
@@ -347,7 +368,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
           for (const nodeImageEntry of node.children) {
             this.textBuffer.insert_pixbuf(
               this.textBuffer.get_end_iter(),
-              nodeImageEntry
+              nodeImageEntry,
             );
           }
           break;
@@ -360,7 +381,8 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
               ? parent.attributes.merge(node.attributes)
               : node.attributes,
           });
-          const end = this.textBuffer.get_end_iter()!.get_offset() + 1;
+          const end =
+            this.textBuffer.get_end_iter()!.get_offset() + 1;
 
           this.embeddedLinks.push({ start, end, href: node.href });
           break;
@@ -380,11 +402,12 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
             const anchor = new Gtk.TextChildAnchor();
             this.textBuffer.insert_child_anchor(
               this.textBuffer.get_end_iter(),
-              anchor
+              anchor,
             );
             this.widget.add_child_at_anchor(widget, anchor);
           }
-          const end = this.textBuffer.get_end_iter()!.get_offset() + 1;
+          const end =
+            this.textBuffer.get_end_iter()!.get_offset() + 1;
           this.embeddedWidgets.push({ start, end });
           break;
         }
@@ -398,7 +421,7 @@ export class TextViewElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
     this.embeddedLinks = [];
     this.textBuffer.delete(
       this.textBuffer.get_start_iter(),
-      this.textBuffer.get_end_iter()
+      this.textBuffer.get_end_iter(),
     );
 
     this.insertNodesToBuffer(nodes);

@@ -1,11 +1,17 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { Orientation, SensitivityType } from "../../../enums/gtk3-index";
+import type {
+  Orientation,
+  SensitivityType,
+} from "../../../enums/gtk3-index";
 import { PositionType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
-import { compareRecordsShallow, diffProps } from "../../utils/diff-props";
+import {
+  compareRecordsShallow,
+  diffProps,
+} from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -31,10 +37,8 @@ type SliderPropsMixin = SizeRequestProps &
   StyleProps &
   TooltipProps;
 
-export type SliderEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  SliderElement
->;
+export type SliderEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, SliderElement>;
 
 export interface SliderProps extends SliderPropsMixin {
   orientation?: Orientation;
@@ -61,9 +65,11 @@ export interface SliderProps extends SliderPropsMixin {
   onValueChange?: (event: SliderEvent<{ value: number }>) => void;
 }
 
-export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
+export class SliderElement
+  implements GjsElement<"SLIDER", Gtk.Scale>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -75,7 +81,10 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
   private adjustment = new Gtk.Adjustment();
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Scale, SliderProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Scale,
+    SliderProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<SliderProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -92,12 +101,14 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
         .max(DataType.Number, (v = 100, allProps) => {
           this.adjustment.set_upper(v);
 
-          if (allProps.fillLevel) this.updateFillLevel(allProps.fillLevel);
+          if (allProps.fillLevel)
+            this.updateFillLevel(allProps.fillLevel);
         })
         .min(DataType.Number, (v = 0, allProps) => {
           this.adjustment.set_lower(v);
 
-          if (allProps.fillLevel) this.updateFillLevel(allProps.fillLevel);
+          if (allProps.fillLevel)
+            this.updateFillLevel(allProps.fillLevel);
         })
         .step(DataType.Number, (v = 1) => {
           this.adjustment.set_page_increment(v);
@@ -109,7 +120,7 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
           DataType.Enum(Gtk.Orientation),
           (v = Gtk.Orientation.HORIZONTAL) => {
             this.widget.set_orientation(v);
-          }
+          },
         )
         .showValue(DataType.Boolean, (v = true) => {
           this.widget.set_draw_value(v);
@@ -140,7 +151,7 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
           (v = Gtk.SensitivityType.AUTO) => {
             this.widget.set_upper_stepper_sensitivity(v);
             this.widget.set_lower_stepper_sensitivity(v);
-          }
+          },
         )
         .fixedSize(DataType.Boolean, (v = false) => {
           this.widget.set_slider_size_fixed(v);
@@ -155,9 +166,12 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
             this.widget.add_mark(Number(key), position, value);
           }
         })
-        .marksPosition(DataType.Enum(PositionType), (_, __, { instead }) => {
-          instead("marks");
-        })
+        .marksPosition(
+          DataType.Enum(PositionType),
+          (_, __, { instead }) => {
+            instead("marks");
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -179,7 +193,10 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
 
     const acceptableRange = max - min;
 
-    const fillAmount = Math.max(min, Math.min(max, min + v * acceptableRange));
+    const fillAmount = Math.max(
+      min,
+      Math.min(max, min + v * acceptableRange),
+    );
 
     this.widget.set_fill_level(fillAmount);
   }
@@ -243,14 +260,14 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -270,9 +287,14 @@ export class SliderElement implements GjsElement<"SLIDER", Gtk.Scale> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
-    return diffProps(oldProps, newProps, true, SliderElement.SliderDiffers);
+    return diffProps(
+      oldProps,
+      newProps,
+      true,
+      SliderElement.SliderDiffers,
+    );
   }
 
   // #endregion

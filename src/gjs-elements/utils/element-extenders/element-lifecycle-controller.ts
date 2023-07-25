@@ -13,7 +13,8 @@ import type { DiffedProps } from "./map-properties";
 export class ElementLifecycleController implements ElementLifecycle {
   private afterCreateCallback: (() => void) | null = null;
   private beforeDestroyCallback: (() => void) | null = null;
-  private updateCallback: ((props: DiffedProps) => void) | null = null;
+  private updateCallback: ((props: DiffedProps) => void) | null =
+    null;
 
   afterCreate(hook: () => void): void {
     const currentHook = this.afterCreateCallback;

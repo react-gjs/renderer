@@ -29,9 +29,11 @@ export interface SpinnerProps extends SpinnerPropsMixin {
   visible?: boolean;
 }
 
-export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
+export class SpinnerElement
+  implements GjsElement<"SPINNER", Gtk.Spinner>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -42,9 +44,10 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Spinner, SpinnerProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Spinner,
+    SpinnerProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<SpinnerProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -55,7 +58,7 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
     (props) =>
       props.visible(DataType.Boolean, (v = true) => {
         this.widget.active = v;
-      })
+      }),
   );
 
   constructor(props: DiffedProps) {
@@ -123,14 +126,14 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -145,7 +148,7 @@ export class SpinnerElement implements GjsElement<"SPINNER", Gtk.Spinner> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

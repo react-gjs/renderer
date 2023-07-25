@@ -34,7 +34,7 @@ export class SeparatorElement
   implements GjsElement<"SEPARATOR", Gtk.Separator>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -45,9 +45,10 @@ export class SeparatorElement
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Separator, SeparatorProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Separator,
+    SeparatorProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<SeparatorProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -60,8 +61,8 @@ export class SeparatorElement
         DataType.Enum(Gtk.Orientation),
         (v = Gtk.Orientation.HORIZONTAL) => {
           this.widget.set_orientation(v);
-        }
-      )
+        },
+      ),
   );
 
   constructor(props: DiffedProps) {
@@ -129,14 +130,14 @@ export class SeparatorElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -151,7 +152,7 @@ export class SeparatorElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

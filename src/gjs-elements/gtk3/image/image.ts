@@ -55,14 +55,20 @@ export type ImageProps = ImagePropsMixin & {
   pixelSize?: number;
 };
 
-const SrcDataType = DataType.OneOf(DataType.String, DataType.RecordOf({}));
-const IconDataType = DataType.OneOf(DataType.String, DataType.RecordOf({}));
+const SrcDataType = DataType.OneOf(
+  DataType.String,
+  DataType.RecordOf({}),
+);
+const IconDataType = DataType.OneOf(
+  DataType.String,
+  DataType.RecordOf({}),
+);
 
 const DEFAULT_ICON_SIZE = Gtk.IconSize.BUTTON;
 
 export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -73,7 +79,10 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Image, ImageProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Image,
+    ImageProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<ImageProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -88,15 +97,15 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
           this.resizeImage();
         })
         .resizeToWidth(DataType.Number, (_, __, { instead }) =>
-          instead("resizeToHeight")
+          instead("resizeToHeight"),
         )
         .preserveAspectRatio(DataType.Boolean, (_, __, { instead }) =>
-          instead("resizeToHeight")
+          instead("resizeToHeight"),
         )
         .src(SrcDataType, (src, allProps) => {
           if (src && allProps?.icon) {
             throw new Error(
-              "'icon' and 'src' props cannot be both used at the same time."
+              "'icon' and 'src' props cannot be both used at the same time.",
             );
           }
 
@@ -117,19 +126,19 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
         .icon(IconDataType, (icon, allProps) => {
           if (icon && allProps?.src) {
             throw new Error(
-              "'icon' and 'src' props cannot be both used at the same time."
+              "'icon' and 'src' props cannot be both used at the same time.",
             );
           }
 
           if (typeof icon === "string") {
             this.widget.set_from_icon_name(
               icon,
-              allProps?.iconSize ?? DEFAULT_ICON_SIZE
+              allProps?.iconSize ?? DEFAULT_ICON_SIZE,
             );
           } else if (icon instanceof Gio.Icon) {
             this.widget.set_from_gicon(
               icon,
-              allProps?.iconSize ?? DEFAULT_ICON_SIZE
+              allProps?.iconSize ?? DEFAULT_ICON_SIZE,
             );
           }
         })
@@ -143,7 +152,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
           const prev = this.widget.pixel_size;
           if (v) this.widget.set_pixel_size(v);
           return () => this.widget.set_pixel_size(prev);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -153,8 +162,10 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
   }
 
   private resizeImage() {
-    const width: number | undefined = this.propsMapper.get("resizeToWidth");
-    const height: number | undefined = this.propsMapper.get("resizeToHeight");
+    const width: number | undefined =
+      this.propsMapper.get("resizeToWidth");
+    const height: number | undefined =
+      this.propsMapper.get("resizeToHeight");
     const preserveAspectRatio: boolean =
       this.propsMapper.get("preserveAspectRatio") ?? true;
 
@@ -166,7 +177,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
       pixbuff,
       width,
       height,
-      preserveAspectRatio
+      preserveAspectRatio,
     );
 
     this.widget.set_from_pixbuf(newPixbuff);
@@ -174,7 +185,9 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
   private setSrcFromString(src: string) {
     if (src.startsWith("resource://")) {
-      this.widget.set_from_resource(src.replace(/^resource:\/\//, ""));
+      this.widget.set_from_resource(
+        src.replace(/^resource:\/\//, ""),
+      );
     } else {
       this.widget.set_from_file(src);
     }
@@ -239,14 +252,14 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -261,7 +274,7 @@ export class ImageElement implements GjsElement<"IMAGE", Gtk.Image> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

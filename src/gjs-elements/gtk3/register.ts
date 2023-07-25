@@ -83,7 +83,9 @@ import { ToolbarToggleButtonElement } from "./toolbar/toolbar-toggle-button";
 import { VolumeButtonElement } from "./volume-button/volume-button";
 import { WindowElement } from "./window/window";
 
-export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
+export const registerGtk3Elements = (
+  manager: typeof GjsElementManager,
+) => {
   manager.register("ACTION_BAR", ActionBarElement);
   manager.register("BOX", BoxElement);
   manager.register("BUTTON_BOX", ButtonBoxElement);
@@ -131,9 +133,18 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("POPOVER_MENU_ITEM", PopoverMenuItemElement);
   manager.register("POPOVER_MENU_CONTENT", PopoverMenuContentElement);
   manager.register("POPOVER_MENU_TARGET", PopoverMenuTargetElement);
-  manager.register("POPOVER_MENU_CHECK_BUTTON", PopoverMenuCheckButtonElement);
-  manager.register("POPOVER_MENU_RADIO_BUTTON", PopoverMenuRadioButtonElement);
-  manager.register("POPOVER_MENU_SEPARATOR", PopoverMenuSeparatorElement);
+  manager.register(
+    "POPOVER_MENU_CHECK_BUTTON",
+    PopoverMenuCheckButtonElement,
+  );
+  manager.register(
+    "POPOVER_MENU_RADIO_BUTTON",
+    PopoverMenuRadioButtonElement,
+  );
+  manager.register(
+    "POPOVER_MENU_SEPARATOR",
+    PopoverMenuSeparatorElement,
+  );
   manager.register("PRESSABLE", PressableElement);
   manager.register("PROGRESS_BAR", ProgressBarElement);
   manager.register("RADIO_GROUP", RadioGroupElement);
@@ -163,7 +174,10 @@ export const registerGtk3Elements = (manager: typeof GjsElementManager) => {
   manager.register("TOOLBAR_ITEM", ToolbarItemElement);
   manager.register("TOOLBAR_RADIO_BUTTON", ToolbarRadioButtonElement);
   manager.register("TOOLBAR_SEPARATOR", ToolbarSeparatorElement);
-  manager.register("TOOLBAR_TOGGLE_BUTTON", ToolbarToggleButtonElement);
+  manager.register(
+    "TOOLBAR_TOGGLE_BUTTON",
+    ToolbarToggleButtonElement,
+  );
   manager.register("TOOLBAR", ToolbarElement);
   manager.register("VOLUME_BUTTON", VolumeButtonElement);
   manager.register("WINDOW", WindowElement);

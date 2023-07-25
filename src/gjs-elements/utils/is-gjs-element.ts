@@ -5,9 +5,10 @@ import { TextNode } from "../gtk3/text-node";
 import Gtk from "gi://Gtk";
 
 export const isGjsElementOrText = (
-  element: any
+  element: any,
 ): element is GjsElement | TextNode => {
   return (
-    GjsElementManager.isGjsElement(element) || TextNode.isTextNode(element)
+    GjsElementManager.isGjsElement(element) ||
+    TextNode.isTextNode(element)
   );
 };

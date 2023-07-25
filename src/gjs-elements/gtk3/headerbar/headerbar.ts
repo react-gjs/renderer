@@ -4,7 +4,10 @@ import type { ControlButton } from "../../../enums/custom";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
-import { compareArraysShallow, diffProps } from "../../utils/diff-props";
+import {
+  compareArraysShallow,
+  diffProps,
+} from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -43,7 +46,7 @@ export class HeaderBarElement
   implements GjsElement<"HEADER_BAR", Gtk.HeaderBar>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -54,12 +57,13 @@ export class HeaderBarElement
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.HeaderBar, HeaderBarProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.HeaderBar,
+    HeaderBarProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<HeaderBarProps>(
     this.lifecycle,
@@ -83,37 +87,40 @@ export class HeaderBarElement
         .subtitle(DataType.String, (v = "") => {
           this.widget.subtitle = v;
         })
-        .showControlButtons(DataType.Boolean, (v = false, allProps) => {
-          this.widget.show_close_button = v;
+        .showControlButtons(
+          DataType.Boolean,
+          (v = false, allProps) => {
+            this.widget.show_close_button = v;
 
-          if (v) {
-            const rightBtns = allProps.rightControlButtons ?? [];
-            const leftBtns = allProps.leftControlButtons ?? [];
+            if (v) {
+              const rightBtns = allProps.rightControlButtons ?? [];
+              const leftBtns = allProps.leftControlButtons ?? [];
 
-            if (rightBtns.length === 0 && leftBtns.length === 0) {
-              return;
+              if (rightBtns.length === 0 && leftBtns.length === 0) {
+                return;
+              }
+
+              this.widget.set_decoration_layout(
+                `${leftBtns.join(",")}:${rightBtns.join(",")}`,
+              );
+              return () => {
+                this.widget.set_decoration_layout(null);
+              };
             }
-
-            this.widget.set_decoration_layout(
-              `${leftBtns.join(",")}:${rightBtns.join(",")}`
-            );
-            return () => {
-              this.widget.set_decoration_layout(null);
-            };
-          }
-        })
+          },
+        )
         .leftControlButtons(
           DataType.ArrayOf(DataType.String),
           (_, __, { instead }) => {
             instead("showControlButtons");
-          }
+          },
         )
         .rightControlButtons(
           DataType.ArrayOf(DataType.String),
           (_, __, { instead }) => {
             instead("showControlButtons");
-          }
-        )
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -136,7 +143,10 @@ export class HeaderBarElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -191,14 +201,14 @@ export class HeaderBarElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -221,13 +231,13 @@ export class HeaderBarElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(
       oldProps,
       newProps,
       true,
-      HeaderBarElement.controlBtnDiffers
+      HeaderBarElement.controlBtnDiffers,
     );
   }
 

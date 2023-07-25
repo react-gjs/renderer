@@ -53,15 +53,19 @@ export interface NumberInputProps extends NumberInputPropsMixin {
   value?: number;
   wrapOnBounds?: boolean;
   onChange?: (event: NumberInputEvent<{ value: number }>) => void;
-  onKeyPress?: (event: NumberInputEvent<Rg.KeyPressEventData>) => void;
-  onKeyRelease?: (event: NumberInputEvent<Rg.KeyPressEventData>) => void;
+  onKeyPress?: (
+    event: NumberInputEvent<Rg.KeyPressEventData>,
+  ) => void;
+  onKeyRelease?: (
+    event: NumberInputEvent<Rg.KeyPressEventData>,
+  ) => void;
 }
 
 export class NumberInputElement
   implements GjsElement<"NUMBER_INPUT", Gtk.SpinButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -106,17 +110,29 @@ export class NumberInputElement
           DataType.Enum(Gtk.SpinButtonUpdatePolicy),
           (v = Gtk.SpinButtonUpdatePolicy.ALWAYS) => {
             this.widget.set_update_policy(v);
-          }
+          },
         )
         .precision(DataType.Int, (v = 0) => {
           this.widget.set_digits(v);
         })
-        .max(DataType.Number, (v = Number.MAX_SAFE_INTEGER, allProps) => {
-          this.widget.set_range(allProps.min ?? Number.MIN_SAFE_INTEGER, v);
-        })
-        .min(DataType.Number, (v = Number.MIN_SAFE_INTEGER, allProps) => {
-          this.widget.set_range(v, allProps.max ?? Number.MAX_SAFE_INTEGER);
-        })
+        .max(
+          DataType.Number,
+          (v = Number.MAX_SAFE_INTEGER, allProps) => {
+            this.widget.set_range(
+              allProps.min ?? Number.MIN_SAFE_INTEGER,
+              v,
+            );
+          },
+        )
+        .min(
+          DataType.Number,
+          (v = Number.MIN_SAFE_INTEGER, allProps) => {
+            this.widget.set_range(
+              v,
+              allProps.max ?? Number.MAX_SAFE_INTEGER,
+            );
+          },
+        )
         .increments(DataType.Number, (v = 1, allProps) => {
           this.widget.set_increments(v, allProps.rmbIncrements ?? 1);
         })
@@ -131,7 +147,7 @@ export class NumberInputElement
         })
         .wrapOnBounds(DataType.Boolean, (v = false) => {
           this.widget.set_wrap(v);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -139,13 +155,13 @@ export class NumberInputElement
       "key-press-event",
       "onKeyPress",
       (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_PRESS)
+        parseEventKey(event, Gdk.EventType.KEY_PRESS),
     );
     this.handlers.bind(
       "key-release-event",
       "onKeyRelease",
       (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_RELEASE)
+        parseEventKey(event, Gdk.EventType.KEY_RELEASE),
     );
 
     let previousValue = 0;
@@ -227,14 +243,14 @@ export class NumberInputElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -249,7 +265,7 @@ export class NumberInputElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

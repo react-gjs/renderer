@@ -1,8 +1,8 @@
 import Gtk from "gi://Gtk?version=3.0";
 
 /**
- * These enumeration values describe the possible transitions
- * between pages in a #GtkStack widget.
+ * These enumeration values describe the possible transitions between
+ * pages in a #GtkStack widget.
  *
  * New values may be added to this enumeration over time.
  */

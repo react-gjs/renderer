@@ -31,7 +31,7 @@ export class PopoverMenuItemElement
   implements GjsElement<"POPOVER_MENU_ITEM", Bin>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -39,19 +39,22 @@ export class PopoverMenuItemElement
   readonly kind = "POPOVER_MENU_ITEM";
   private widget = new Bin();
 
-  private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
-    null;
+  private parent:
+    | PopoverMenuEntryElement
+    | PopoverMenuContentElement
+    | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
 
-  private readonly propsMapper = new PropertyMapper<PopoverMenuItemProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    (props) => props
-  );
+  private readonly propsMapper =
+    new PropertyMapper<PopoverMenuItemProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      (props) => props,
+    );
 
   private child: GjsElement | null = null;
 
@@ -83,7 +86,10 @@ export class PopoverMenuItemElement
     this.widget.add(child.getWidget());
   }
 
-  insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
+  insertBefore(
+    child: TextNode | GjsElement,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("PopoverMenuItem can only have one child.");
   }
 
@@ -111,7 +117,7 @@ export class PopoverMenuItemElement
       ])
     ) {
       throw new Error(
-        "PopoverMenuEntry can only be appended to a Popover or another PopoverMenuEntry."
+        "PopoverMenuEntry can only be appended to a Popover or another PopoverMenuEntry.",
       );
     }
     this.parent = parent;
@@ -146,12 +152,12 @@ export class PopoverMenuItemElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {
@@ -164,7 +170,7 @@ export class PopoverMenuItemElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

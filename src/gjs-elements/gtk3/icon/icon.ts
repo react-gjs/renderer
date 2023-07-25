@@ -34,7 +34,7 @@ export type IconProps = IconPropsMixin & {
 
 export class IconElement implements GjsElement<"ICON", Gtk.Image> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -45,7 +45,9 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Image, IconProps>(this);
+  private readonly handlers = new EventHandlers<Gtk.Image, IconProps>(
+    this,
+  );
   private readonly propsMapper = new PropertyMapper<IconProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -67,7 +69,7 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
         .pixelSize(DataType.Number, (v = 32, _, mapperApi) => {
           if (mapperApi.isUpdatedInThisCycle("iconName")) return;
           this.widget.set_pixel_size(v);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -135,14 +137,14 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -157,7 +159,7 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

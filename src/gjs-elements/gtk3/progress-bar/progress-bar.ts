@@ -41,7 +41,7 @@ export class ProgressBarElement
   implements GjsElement<"PROGRESS_BAR", Gtk.ProgressBar>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -72,7 +72,7 @@ export class ProgressBarElement
           Type.Enum(Pango.EllipsizeMode),
           (v = Pango.EllipsizeMode.NONE) => {
             this.widget.set_ellipsize(v);
-          }
+          },
         )
         .invert(Type.Boolean, (v = false) => {
           this.widget.set_inverted(v);
@@ -87,7 +87,7 @@ export class ProgressBarElement
         .step(Type.Number, (v = 0) => {
           v = Math.max(0, Math.min(1, v));
           this.widget.set_pulse_step(v);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -106,7 +106,10 @@ export class ProgressBarElement
     throw new Error("Progress bar cannot have children");
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("Progress bar cannot have children");
   }
 
@@ -155,14 +158,14 @@ export class ProgressBarElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -177,7 +180,7 @@ export class ProgressBarElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

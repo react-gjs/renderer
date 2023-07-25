@@ -57,7 +57,7 @@ export class CheckButtonElement
   implements GjsElement<"CHECK_BUTTON", Gtk.CheckButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -93,14 +93,14 @@ export class CheckButtonElement
         })
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
-        })
+        }),
   );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   constructor(props: DiffedProps) {
@@ -115,13 +115,13 @@ export class CheckButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -147,7 +147,7 @@ export class CheckButtonElement
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -206,14 +206,14 @@ export class CheckButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -228,7 +228,7 @@ export class CheckButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

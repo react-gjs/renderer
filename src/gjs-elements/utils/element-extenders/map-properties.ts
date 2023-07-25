@@ -1,5 +1,5 @@
 import type { AnyDataType, GetDataType } from "dilswer";
-import { createValidator } from "dilswer";
+import { compileFastValidator } from "dilswer";
 import type { ElementLifecycle } from "../../element-extender";
 import type { WindowElement } from "../../rg-types";
 import { OrderedMap } from "../ordered-map";
@@ -21,7 +21,7 @@ export type MapperUpdateApi<P> = {
 
 export type PropCaseCollector<
   K extends string | symbol | number = string,
-  P = {}
+  P = {},
 > = Record<
   K,
   <T extends AnyDataType>(
@@ -29,8 +29,8 @@ export type PropCaseCollector<
     mapper: (
       v: GetDataType<T> | undefined,
       allProps: PropsReader<P>,
-      mapperUpdateApi: MapperUpdateApi<P>
-    ) => void | (() => void)
+      mapperUpdateApi: MapperUpdateApi<P>,
+    ) => void | (() => void),
   ) => PropCaseCollector<K, P>
 >;
 
@@ -42,7 +42,7 @@ type MapEntry<P> = {
   callback: (
     v: any,
     props: PropsReader<P>,
-    mapperUpdateApi: MapperUpdateApi<P>
+    mapperUpdateApi: MapperUpdateApi<P>,
   ) => void | (() => void);
   nextCleanup?: () => void;
 };
@@ -63,7 +63,9 @@ export class PropertyMapper<P = Record<string, any>> {
 
   constructor(
     private element: ElementLifecycle,
-    ...getCases: Array<(caseCollector: PropCaseCollector<KeysOf<P>, P>) => void>
+    ...getCases: Array<
+      (caseCollector: PropCaseCollector<KeysOf<P>, P>) => void
+    >
   ) {
     this.addCases(...getCases);
 
@@ -77,7 +79,9 @@ export class PropertyMapper<P = Record<string, any>> {
   }
 
   addCases(
-    ...getCases: Array<(caseCollector: PropCaseCollector<KeysOf<P>, P>) => void>
+    ...getCases: Array<
+      (caseCollector: PropCaseCollector<KeysOf<P>, P>) => void
+    >
   ) {
     const caseCollector = new Proxy(
       {},
@@ -87,18 +91,18 @@ export class PropertyMapper<P = Record<string, any>> {
             dataType: AnyDataType,
             callback: (
               value: GetDataType<AnyDataType>,
-              allProps: PropsReader<P>
-            ) => void | (() => void)
+              allProps: PropsReader<P>,
+            ) => void | (() => void),
           ) => {
             this.map.set(propName, {
               propName,
-              validate: createValidator(dataType),
+              validate: compileFastValidator(dataType),
               callback,
             });
             return caseCollector;
           };
         },
-      }
+      },
     ) as PropCaseCollector<KeysOf<P>, P>;
 
     for (let i = 0; i < getCases.length; i++) {
@@ -124,8 +128,8 @@ export class PropertyMapper<P = Record<string, any>> {
         } else {
           console.error(
             new TypeError(
-              `Invalid prop type. (${propName}) Received value: ${value}`
-            )
+              `Invalid prop type. (${propName}) Received value: ${value}`,
+            ),
           );
         }
       } else {
@@ -160,7 +164,8 @@ export class PropertyMapper<P = Record<string, any>> {
         entry.nextCleanup?.();
         updateEntry(entry, this.properties[propName as string]);
       },
-      isUpdatedInThisCycle: (propName) => updated.has(propName as string),
+      isUpdatedInThisCycle: (propName) =>
+        updated.has(propName as string),
     };
 
     if (this.isFirstUpdate) {

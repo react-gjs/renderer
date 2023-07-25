@@ -44,7 +44,7 @@ export class SizeGroupBoxElement
   implements GjsElement<"SIZE_GROUP_BOX", Gtk.Box>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -56,44 +56,46 @@ export class SizeGroupBoxElement
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Box, SizeGroupBoxProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Box,
+    SizeGroupBoxProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
-  private readonly propsMapper = new PropertyMapper<SizeGroupBoxProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    (props) =>
-      props
-        .spacing(DataType.Number, (v = 0) => {
-          this.widget.spacing = v;
-        })
-        .baselinePosition(
-          DataType.Enum(Gtk.BaselinePosition),
-          (v = Gtk.BaselinePosition.TOP) => {
-            this.widget.baseline_position = v;
-          }
-        )
-        .orientation(
-          DataType.Enum(Gtk.Orientation),
-          (v = Gtk.Orientation.VERTICAL) => {
-            this.widget.orientation = v;
-          }
-        )
-        .mode(
-          DataType.Enum(Gtk.SizeGroupMode),
-          (v = Gtk.SizeGroupMode.BOTH) => {
-            this.sizeGroup.mode = v;
-          }
-        )
-  );
+  private readonly propsMapper =
+    new PropertyMapper<SizeGroupBoxProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      (props) =>
+        props
+          .spacing(DataType.Number, (v = 0) => {
+            this.widget.spacing = v;
+          })
+          .baselinePosition(
+            DataType.Enum(Gtk.BaselinePosition),
+            (v = Gtk.BaselinePosition.TOP) => {
+              this.widget.baseline_position = v;
+            },
+          )
+          .orientation(
+            DataType.Enum(Gtk.Orientation),
+            (v = Gtk.Orientation.VERTICAL) => {
+              this.widget.orientation = v;
+            },
+          )
+          .mode(
+            DataType.Enum(Gtk.SizeGroupMode),
+            (v = Gtk.SizeGroupMode.BOTH) => {
+              this.sizeGroup.mode = v;
+            },
+          ),
+    );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
@@ -118,7 +120,10 @@ export class SizeGroupBoxElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -177,14 +182,14 @@ export class SizeGroupBoxElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -199,7 +204,7 @@ export class SizeGroupBoxElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

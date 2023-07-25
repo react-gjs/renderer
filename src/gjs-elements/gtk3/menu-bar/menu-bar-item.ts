@@ -50,7 +50,7 @@ export class MenuBarItemElement
   implements GjsElement<"MENU_BAR_ITEM", Gtk.MenuItem>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -62,19 +62,21 @@ export class MenuBarItemElement
   private parent: MenuBarElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.MenuItem, MenuBarItemProps>(
-    this
-  );
-  private readonly children = new ChildOrderController<MenuItemElementType>(
-    this.lifecycle,
-    this.widget,
-    (child) => {
-      this.submenu.append(child);
-    },
-    (child) => {
-      this.submenu.remove(child);
-    }
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.MenuItem,
+    MenuBarItemProps
+  >(this);
+  private readonly children =
+    new ChildOrderController<MenuItemElementType>(
+      this.lifecycle,
+      this.widget,
+      (child) => {
+        this.submenu.append(child);
+      },
+      (child) => {
+        this.submenu.remove(child);
+      },
+    );
   private readonly propsMapper = new PropertyMapper<MenuBarItemProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -85,7 +87,7 @@ export class MenuBarItemElement
     (props) =>
       props.label(DataType.String, (v = "") => {
         this.widget.label = v;
-      })
+      }),
   );
 
   private radioGroups = new Map<string, Gtk.RadioMenuItem>();
@@ -97,13 +99,13 @@ export class MenuBarItemElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -134,7 +136,9 @@ export class MenuBarItemElement
     ensureNotText(child);
 
     if (!GjsElementManager.isGjsElementOfKind(child, MENU_ELEMENTS)) {
-      throw new Error("Only MenuEntry can be a child of MenuBarItem.");
+      throw new Error(
+        "Only MenuEntry can be a child of MenuBarItem.",
+      );
     }
 
     const shouldAppend = child.notifyWillAppendTo(this);
@@ -143,11 +147,18 @@ export class MenuBarItemElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
-    if (!GjsElementManager.isGjsElementOfKind(newChild, MENU_ELEMENTS)) {
-      throw new Error("Only MenuEntry can be a child of MenuBarItem.");
+    if (
+      !GjsElementManager.isGjsElementOfKind(newChild, MENU_ELEMENTS)
+    ) {
+      throw new Error(
+        "Only MenuEntry can be a child of MenuBarItem.",
+      );
     }
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -173,7 +184,9 @@ export class MenuBarItemElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (!GjsElementManager.isGjsElementOfKind(parent, MenuBarElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(parent, MenuBarElement)
+    ) {
       throw new Error("MenuBarItem can only be a child of MenuBar.");
     }
 
@@ -207,14 +220,14 @@ export class MenuBarItemElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -229,7 +242,7 @@ export class MenuBarItemElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

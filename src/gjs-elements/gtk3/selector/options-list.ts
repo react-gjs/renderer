@@ -14,7 +14,10 @@ export class OptionsList {
   }> = [];
 
   constructor(private lifecycle: ElementLifecycle) {
-    this.listStore.set_column_types([GObject.TYPE_STRING, GObject.TYPE_INT]);
+    this.listStore.set_column_types([
+      GObject.TYPE_STRING,
+      GObject.TYPE_INT,
+    ]);
 
     this.comboBox = new Gtk.ComboBox({
       model: this.listStore,

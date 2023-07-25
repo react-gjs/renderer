@@ -1,6 +1,9 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { BaselinePosition, Orientation } from "../../../enums/gtk3-index";
+import type {
+  BaselinePosition,
+  Orientation,
+} from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -35,9 +38,11 @@ export interface RadioGroupProps extends RadioGroupPropsMixin {
   orientation?: Orientation;
 }
 
-export class RadioGroupElement implements GjsElement<"RADIO_GROUP", Gtk.Box> {
+export class RadioGroupElement
+  implements GjsElement<"RADIO_GROUP", Gtk.Box>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -49,10 +54,13 @@ export class RadioGroupElement implements GjsElement<"RADIO_GROUP", Gtk.Box> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Box, RadioGroupProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Box,
+    RadioGroupProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<RadioGroupProps>(
     this.lifecycle,
@@ -70,14 +78,14 @@ export class RadioGroupElement implements GjsElement<"RADIO_GROUP", Gtk.Box> {
           DataType.Enum(Gtk.BaselinePosition),
           (v = Gtk.BaselinePosition.TOP) => {
             this.widget.baseline_position = v;
-          }
+          },
         )
         .orientation(
           DataType.Enum(Gtk.Orientation),
           (v = Gtk.Orientation.VERTICAL) => {
             this.widget.orientation = v;
-          }
-        )
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -100,7 +108,10 @@ export class RadioGroupElement implements GjsElement<"RADIO_GROUP", Gtk.Box> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -155,14 +166,14 @@ export class RadioGroupElement implements GjsElement<"RADIO_GROUP", Gtk.Box> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -177,7 +188,7 @@ export class RadioGroupElement implements GjsElement<"RADIO_GROUP", Gtk.Box> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

@@ -5,7 +5,7 @@ import type { SyntheticEmitter } from "./utils/element-extenders/synthetic-emitt
 
 export interface GjsElement<
   K extends Rg.GjsElementTypes | "APPLICATION" = Rg.GjsElementTypes,
-  W extends Gtk.Widget = Gtk.Widget
+  W extends Gtk.Widget = Gtk.Widget,
 > {
   /**
    * String identifier that can be used to distinguis between
@@ -41,7 +41,7 @@ export interface GjsElement<
    */
   insertBefore(
     newChild: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void;
   /**
    * This function is called by the React Reconciler when the React
@@ -63,12 +63,12 @@ export interface GjsElement<
   /** Attaches a listener to the element Widget for a given signal. */
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void;
   /** Detaches a listener from the element Widget for a given signal. */
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void;
   /**
    * This function is called by the React Reconciler when the element
@@ -106,7 +106,7 @@ export interface GjsElement<
    */
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps;
 }
 
@@ -115,9 +115,8 @@ type GjsElementAlias = GjsElement;
 declare global {
   namespace Rg {
     type GjsElement = GjsElementAlias;
-    type GjsElementEvenTListenerCallback<W extends Gtk.Widget = Gtk.Widget> = (
-      widget: W,
-      event?: unknown
-    ) => boolean | void;
+    type GjsElementEvenTListenerCallback<
+      W extends Gtk.Widget = Gtk.Widget,
+    > = (widget: W, event?: unknown) => boolean | void;
   }
 }

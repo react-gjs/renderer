@@ -10,4 +10,6 @@ export const MENU_ELEMENTS = [
   MenuSeparatorElement,
 ];
 
-export type MenuItemElementType = InstanceType<(typeof MENU_ELEMENTS)[number]>;
+export type MenuItemElementType = InstanceType<
+  (typeof MENU_ELEMENTS)[number]
+>;

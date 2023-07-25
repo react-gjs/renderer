@@ -28,7 +28,7 @@ export class PopoverMenuContentElement
   implements GjsElement<"POPOVER_MENU_CONTENT", Gtk.ScrolledWindow>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -48,7 +48,7 @@ export class PopoverMenuContentElement
   readonly kind = "POPOVER_MENU_CONTENT";
   private widget = PopoverMenuContentElement.createWidget(
     this.scrollBox,
-    this.box
+    this.box,
   );
 
   parentMenu: string | null = null;
@@ -68,13 +68,14 @@ export class PopoverMenuContentElement
     | PopoverMenuRadioButtonElement
     | PopoverMenuSeparatorElement
   >(this.lifecycle, this.box);
-  private readonly propsMapper = new PropertyMapper<PopoverMenuContentProps>(
-    this.lifecycle,
-    (props) =>
-      props.minWidth(DataType.Number, (v = -1) => {
-        this.scrollBox.min_content_width = v;
-      })
-  );
+  private readonly propsMapper =
+    new PropertyMapper<PopoverMenuContentProps>(
+      this.lifecycle,
+      (props) =>
+        props.minWidth(DataType.Number, (v = -1) => {
+          this.scrollBox.min_content_width = v;
+        }),
+    );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
@@ -114,7 +115,9 @@ export class PopoverMenuContentElement
         PopoverMenuSeparatorElement,
       ])
     ) {
-      throw new Error("Popover can only have PopoverEntry as children");
+      throw new Error(
+        "Popover can only have PopoverEntry as children",
+      );
     }
 
     const shouldAppend = child.notifyWillAppendTo(this);
@@ -131,7 +134,10 @@ export class PopoverMenuContentElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     if (
@@ -143,7 +149,9 @@ export class PopoverMenuContentElement
         PopoverMenuSeparatorElement,
       ])
     ) {
-      throw new Error("Popover can only have PopoverEntry as children");
+      throw new Error(
+        "Popover can only have PopoverEntry as children",
+      );
     }
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -177,9 +185,14 @@ export class PopoverMenuContentElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (!GjsElementManager.isGjsElementOfKind(parent, PopoverMenuElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(
+        parent,
+        PopoverMenuElement,
+      )
+    ) {
       throw new Error(
-        "PopoverContentElement can only be a child of PopoverElement"
+        "PopoverContentElement can only be a child of PopoverElement",
       );
     }
     this.parent = parent;
@@ -212,14 +225,14 @@ export class PopoverMenuContentElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -234,7 +247,7 @@ export class PopoverMenuContentElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

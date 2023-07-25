@@ -6,7 +6,10 @@ import type { InputPurpose } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
-import { compareArraysShallow, diffProps } from "../../utils/diff-props";
+import {
+  compareArraysShallow,
+  diffProps,
+} from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -34,8 +37,9 @@ type SearchInputPropsMixin = SizeRequestProps &
   StyleProps &
   TooltipProps;
 
-export type SearchInputElementEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, SearchInputElement>;
+export type SearchInputElementEvent<
+  P extends Record<string, any> = {},
+> = SyntheticEvent<P, SearchInputElement>;
 
 export interface SearchInputProps extends SearchInputPropsMixin {
   value?: string;
@@ -72,13 +76,21 @@ export interface SearchInputProps extends SearchInputPropsMixin {
    * @default true
    */
   suggestionMatchAnywhere?: boolean;
-  onChange?: (event: SearchInputElementEvent<{ text: string }>) => void;
+  onChange?: (
+    event: SearchInputElementEvent<{ text: string }>,
+  ) => void;
   onEnter?: (event: SearchInputElementEvent) => void;
-  onKeyPress?: (event: SearchInputElementEvent<Rg.KeyPressEventData>) => void;
-  onKeyRelease?: (event: SearchInputElementEvent<Rg.KeyPressEventData>) => void;
+  onKeyPress?: (
+    event: SearchInputElementEvent<Rg.KeyPressEventData>,
+  ) => void;
+  onKeyRelease?: (
+    event: SearchInputElementEvent<Rg.KeyPressEventData>,
+  ) => void;
   onNextMatch?: (event: SearchInputElementEvent) => void;
   onPreviousMatch?: (event: SearchInputElementEvent) => void;
-  onSearchChanged?: (event: SearchInputElementEvent<{ text: string }>) => void;
+  onSearchChanged?: (
+    event: SearchInputElementEvent<{ text: string }>,
+  ) => void;
   onSearchStopped?: (event: SearchInputElementEvent) => void;
 }
 
@@ -90,7 +102,7 @@ export class SearchInputElement
   implements GjsElement<"SEARCH_INPUT", Gtk.SearchEntry>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -111,99 +123,109 @@ export class SearchInputElement
     SearchInputProps
   >(this);
 
-  private readonly propsMapper = new PropertyMapper<SearchInputInternalProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    (props) =>
-      props
-        .value(DataType.String, (v = "") => {
-          if (this.widget.text !== v) {
-            this.widget.set_text(v);
-          }
-        })
-        .suggestions(DataType.ArrayOf(DataType.String), (v) => {
-          if (v) {
-            for (const suggestion of v) {
-              this.suggestionStore.set_value(
-                this.suggestionStore.append(),
+  private readonly propsMapper =
+    new PropertyMapper<SearchInputInternalProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      (props) =>
+        props
+          .value(DataType.String, (v = "") => {
+            if (this.widget.text !== v) {
+              this.widget.set_text(v);
+            }
+          })
+          .suggestions(DataType.ArrayOf(DataType.String), (v) => {
+            if (v) {
+              for (const suggestion of v) {
+                this.suggestionStore.set_value(
+                  this.suggestionStore.append(),
+                  0,
+                  suggestion,
+                );
+              }
+
+              return () => {
+                this.suggestionStore.clear();
+              };
+            }
+          })
+          .capsLockWarning(DataType.Boolean, (v = false) => {
+            this.widget.caps_lock_warning = v;
+          })
+          .disabled(DataType.Boolean, (v = false) => {
+            this.widget.editable = !v;
+          })
+          .icon(DataType.String, (v) => {
+            this.widget.primary_icon_name = v ?? null;
+          })
+          .iconTooltip(DataType.String, (v) => {
+            this.widget.primary_icon_tooltip_text = v ?? null;
+          })
+          .maxLength(DataType.Number, (v) => {
+            this.widget.max_length = v ?? 0;
+          })
+          .placeholder(DataType.String, (v) => {
+            this.widget.placeholder_text = v ?? null;
+          })
+          .progress(DataType.Number, (v) => {
+            if (v) {
+              this.widget.progress_fraction = Math.min(
                 0,
-                suggestion
+                Math.max(v, 1),
               );
             }
+          })
+          .secondaryIcon(DataType.String, (v) => {
+            this.widget.secondary_icon_name = v ?? null;
+          })
+          .secondaryIconTooltip(DataType.String, (v) => {
+            this.widget.secondary_icon_tooltip_text = v ?? null;
+          })
+          .truncateMultilinePaste(DataType.Boolean, (v = false) => {
+            this.widget.truncate_multiline = v;
+          })
+          .type(
+            DataType.Enum(Gtk.InputPurpose),
+            (v = Gtk.InputPurpose.FREE_FORM) => {
+              this.widget.input_purpose = v;
 
-            return () => {
-              this.suggestionStore.clear();
-            };
-          }
-        })
-        .capsLockWarning(DataType.Boolean, (v = false) => {
-          this.widget.caps_lock_warning = v;
-        })
-        .disabled(DataType.Boolean, (v = false) => {
-          this.widget.editable = !v;
-        })
-        .icon(DataType.String, (v) => {
-          this.widget.primary_icon_name = v ?? null;
-        })
-        .iconTooltip(DataType.String, (v) => {
-          this.widget.primary_icon_tooltip_text = v ?? null;
-        })
-        .maxLength(DataType.Number, (v) => {
-          this.widget.max_length = v ?? 0;
-        })
-        .placeholder(DataType.String, (v) => {
-          this.widget.placeholder_text = v ?? null;
-        })
-        .progress(DataType.Number, (v) => {
-          if (v) {
-            this.widget.progress_fraction = Math.min(0, Math.max(v, 1));
-          }
-        })
-        .secondaryIcon(DataType.String, (v) => {
-          this.widget.secondary_icon_name = v ?? null;
-        })
-        .secondaryIconTooltip(DataType.String, (v) => {
-          this.widget.secondary_icon_tooltip_text = v ?? null;
-        })
-        .truncateMultilinePaste(DataType.Boolean, (v = false) => {
-          this.widget.truncate_multiline = v;
-        })
-        .type(
-          DataType.Enum(Gtk.InputPurpose),
-          (v = Gtk.InputPurpose.FREE_FORM) => {
-            this.widget.input_purpose = v;
-
-            if (v === Gtk.InputPurpose.PASSWORD || v === Gtk.InputPurpose.PIN) {
-              this.widget.visibility = false;
-            } else {
-              this.widget.visibility = true;
-            }
-          }
-        )
-        .__rg_search_bar(
-          DataType.OneOf(DataType.Null, DataType.InstanceOf(SearchBarElement)),
-          (searchBar, allProps) => {
-            if (searchBar) {
-              searchBar.registerEntry(this.widget);
-
-              if (allProps.__rg_parent_window) {
-                const window = allProps.__rg_parent_window;
-
-                searchBar.connectToWindowEvents(window);
-
-                return () => {
-                  searchBar.disconnectFromWindowEvents(window);
-                };
+              if (
+                v === Gtk.InputPurpose.PASSWORD ||
+                v === Gtk.InputPurpose.PIN
+              ) {
+                this.widget.visibility = false;
+              } else {
+                this.widget.visibility = true;
               }
-            }
-          }
-        )
-  );
+            },
+          )
+          .__rg_search_bar(
+            DataType.OneOf(
+              DataType.Null,
+              DataType.InstanceOf(SearchBarElement),
+            ),
+            (searchBar, allProps) => {
+              if (searchBar) {
+                searchBar.registerEntry(this.widget);
+
+                if (allProps.__rg_parent_window) {
+                  const window = allProps.__rg_parent_window;
+
+                  searchBar.connectToWindowEvents(window);
+
+                  return () => {
+                    searchBar.disconnectFromWindowEvents(window);
+                  };
+                }
+              }
+            },
+          ),
+    );
 
   constructor(props: DiffedProps) {
     this.suggestionStore.set_column_types([GObject.TYPE_STRING]);
@@ -212,7 +234,9 @@ export class SearchInputElement
     completion.set_text_column(0);
     completion.set_match_func((_, __, iter) => {
       const input = this.widget.text;
-      const value = this.suggestionStore.get_value(iter, 0) as string | null;
+      const value = this.suggestionStore.get_value(iter, 0) as
+        | string
+        | null;
       return !!(value && input && this.compare(input, value));
     });
     this.widget.set_completion(completion);
@@ -231,13 +255,13 @@ export class SearchInputElement
       "key-press-event",
       "onKeyPress",
       (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_PRESS)
+        parseEventKey(event, Gdk.EventType.KEY_PRESS),
     );
     this.handlers.bind(
       "key-release-event",
       "onKeyRelease",
       (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_RELEASE)
+        parseEventKey(event, Gdk.EventType.KEY_RELEASE),
     );
 
     this.updateProps(props);
@@ -255,7 +279,10 @@ export class SearchInputElement
     let a = input;
     let b = suggestionValue;
 
-    if (suggestionMinInput != null && input.length < suggestionMinInput) {
+    if (
+      suggestionMinInput != null &&
+      input.length < suggestionMinInput
+    ) {
       return false;
     }
 
@@ -330,14 +357,14 @@ export class SearchInputElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -356,13 +383,13 @@ export class SearchInputElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(
       oldProps,
       newProps,
       true,
-      SearchInputElement.SearchInputPropDiffers
+      SearchInputElement.SearchInputPropDiffers,
     );
   }
 

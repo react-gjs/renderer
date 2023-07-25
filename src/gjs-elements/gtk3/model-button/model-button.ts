@@ -3,7 +3,10 @@ import GdkPixbuf from "gi://GdkPixbuf";
 import type Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import { ButtonType } from "../../../enums/custom";
-import type { ButtonRole, PositionType } from "../../../enums/gtk3-index";
+import type {
+  ButtonRole,
+  PositionType,
+} from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -74,14 +77,16 @@ export interface ModelButtonProps extends ModelButtonPropsMixin {
 
 const ImageDataType = DataType.OneOf(
   DataType.String,
-  DataType.Custom((v): v is GdkPixbuf.Pixbuf => typeof v === "object")
+  DataType.Custom(
+    (v): v is GdkPixbuf.Pixbuf => typeof v === "object",
+  ),
 );
 
 export class ModelButtonElement
   implements GjsElement<"MODEL_BUTTON", Gtk.ModelButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -125,7 +130,7 @@ export class ModelButtonElement
               v,
               allProps.imageWidth,
               allProps.imageHeight,
-              allProps.imagePreserveAspectRatio
+              allProps.imagePreserveAspectRatio,
             );
 
             return () => this.widget.set_image(null);
@@ -137,7 +142,7 @@ export class ModelButtonElement
               this.resizeCurrentImage(
                 v,
                 allProps.imageHeight,
-                allProps.imagePreserveAspectRatio
+                allProps.imagePreserveAspectRatio,
               );
             }
           }
@@ -151,7 +156,7 @@ export class ModelButtonElement
               this.resizeCurrentImage(
                 allProps.imageWidth,
                 v,
-                allProps.imagePreserveAspectRatio
+                allProps.imagePreserveAspectRatio,
               );
             }
           }
@@ -168,17 +173,17 @@ export class ModelButtonElement
                 this.resizeCurrentImage(
                   allProps.imageWidth,
                   allProps.imageHeight,
-                  v
+                  v,
                 );
               }
             }
-          }
+          },
         )
         .imagePosition(
           DataType.Enum(Gtk.PositionType),
           (v = Gtk.PositionType.LEFT) => {
             this.widget.image_position = v;
-          }
+          },
         )
         .icon(DataType.String, (v, allProps) => {
           if (allProps.image) {
@@ -190,14 +195,17 @@ export class ModelButtonElement
             return () => this.widget.set_image(null);
           }
         })
-        .iconPixelSize(DataType.Number, (v = 16, allProps, mapperApi) => {
-          if (
-            allProps.icon != null &&
-            !mapperApi.isUpdatedInThisCycle("icon")
-          ) {
-            this.setImageIcon(allProps.icon, v);
-          }
-        })
+        .iconPixelSize(
+          DataType.Number,
+          (v = 16, allProps, mapperApi) => {
+            if (
+              allProps.icon != null &&
+              !mapperApi.isUpdatedInThisCycle("icon")
+            ) {
+              this.setImageIcon(allProps.icon, v);
+            }
+          },
+        )
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
@@ -223,16 +231,19 @@ export class ModelButtonElement
         .inverted(DataType.Boolean, (v = false) => {
           this.widget.inverted = v;
         })
-        .role(DataType.Enum(Gtk.ButtonRole), (v = Gtk.ButtonRole.NORMAL) => {
-          this.widget.role = v;
-        })
+        .role(
+          DataType.Enum(Gtk.ButtonRole),
+          (v = Gtk.ButtonRole.NORMAL) => {
+            this.widget.role = v;
+          },
+        ),
   );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.text = text;
-    }
+    },
   );
 
   constructor(props: DiffedProps) {
@@ -244,13 +255,13 @@ export class ModelButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -261,14 +272,14 @@ export class ModelButtonElement
   private resizeCurrentImage(
     width?: number,
     height?: number,
-    preserveAspectRatio = true
+    preserveAspectRatio = true,
   ) {
     const image = this.widget.image as Gtk.Image | null;
     if (image) {
       const pixbuff = image.get_pixbuf();
       if (pixbuff) {
         image.set_from_pixbuf(
-          resizePixbuff(pixbuff, width, height, preserveAspectRatio)
+          resizePixbuff(pixbuff, width, height, preserveAspectRatio),
         );
         this.widget.set_image(image);
       }
@@ -279,14 +290,14 @@ export class ModelButtonElement
     src: string | GdkPixbuf.Pixbuf,
     width?: number,
     height?: number,
-    preserveAspectRatio = true
+    preserveAspectRatio = true,
   ) {
     let pixbuff: GdkPixbuf.Pixbuf;
 
     if (typeof src === "string") {
       if (src.startsWith("resource://")) {
         pixbuff = GdkPixbuf.Pixbuf.new_from_resource(
-          src.replace(/^resource:\/\//, "")
+          src.replace(/^resource:\/\//, ""),
         )!;
       } else {
         pixbuff = GdkPixbuf.Pixbuf.new_from_file(src)!;
@@ -296,7 +307,12 @@ export class ModelButtonElement
     }
 
     if (width != null && height != null) {
-      pixbuff = resizePixbuff(pixbuff, width, height, preserveAspectRatio);
+      pixbuff = resizePixbuff(
+        pixbuff,
+        width,
+        height,
+        preserveAspectRatio,
+      );
     }
 
     const image = Gtk.Image.new_from_pixbuf(pixbuff);
@@ -335,7 +351,7 @@ export class ModelButtonElement
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -394,14 +410,14 @@ export class ModelButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -416,7 +432,7 @@ export class ModelButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

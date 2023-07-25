@@ -5,33 +5,42 @@ import type { MarkupElementProps } from "../markup-elem";
 
 export const createMarkupPropMapper = <A extends MarkupAttributes>(
   attributes: A,
-  defaults: Partial<MarkupElementProps> = {}
+  defaults: Partial<MarkupElementProps> = {},
 ) => {
   return <
-    M extends PropCaseCollector<keyof MarkupElementProps, MarkupElementProps>
+    M extends PropCaseCollector<
+      keyof MarkupElementProps,
+      MarkupElementProps
+    >,
   >(
-    mapper: M
+    mapper: M,
   ) =>
     mapper
       .allowBreaks(Type.Boolean, (v = defaults.allowBreaks) => {
         if (v) attributes.set("allow_breaks", v.toString());
         else attributes.delete("allow_breaks");
       })
-      .alpha(Type.OneOf(Type.Int, Type.String), (v = defaults.alpha) => {
-        if (v) attributes.set("alpha", v.toString());
-        else attributes.delete("alpha");
-      })
+      .alpha(
+        Type.OneOf(Type.Int, Type.String),
+        (v = defaults.alpha) => {
+          if (v) attributes.set("alpha", v.toString());
+          else attributes.delete("alpha");
+        },
+      )
       .backgroundAlpha(
         Type.OneOf(Type.Int, Type.String),
         (v = defaults.backgroundAlpha) => {
           if (v) attributes.set("bgalpha", v.toString());
           else attributes.delete("bgalpha");
-        }
+        },
       )
-      .backgroundColor(Type.String, (v = defaults.backgroundColor) => {
-        if (v) attributes.set("background", v);
-        else attributes.delete("background");
-      })
+      .backgroundColor(
+        Type.String,
+        (v = defaults.backgroundColor) => {
+          if (v) attributes.set("background", v);
+          else attributes.delete("background");
+        },
+      )
       .baselineShift(Type.Int, (v = defaults.baselineShift) => {
         if (v) attributes.set("baseline_shift", `${v}pt`);
         else attributes.delete("baseline_shift");
@@ -63,9 +72,13 @@ export const createMarkupPropMapper = <A extends MarkupAttributes>(
       .fontSize(
         Type.OneOf(Type.Number, Type.String),
         (v = defaults.fontSize) => {
-          if (v) attributes.set("size", typeof v === "number" ? `${v}pt` : v);
+          if (v)
+            attributes.set(
+              "size",
+              typeof v === "number" ? `${v}pt` : v,
+            );
           else attributes.delete("size");
-        }
+        },
       )
       .fontStretch(Type.String, (v = defaults.fontStretch) => {
         if (v) attributes.set("stretch", v);
@@ -84,7 +97,7 @@ export const createMarkupPropMapper = <A extends MarkupAttributes>(
         (v = defaults.fontWeight) => {
           if (v) attributes.set("weight", v.toString());
           else attributes.delete("weight");
-        }
+        },
       )
       .gravity(Type.String, (v = defaults.gravity) => {
         if (v) attributes.set("gravity", v);
@@ -134,10 +147,13 @@ export const createMarkupPropMapper = <A extends MarkupAttributes>(
         if (v) attributes.set("strikethrough", v.toString());
         else attributes.delete("strikethrough");
       })
-      .strikethroughColor(Type.String, (v = defaults.strikethroughColor) => {
-        if (v) attributes.set("strikethrough_color", v);
-        else attributes.delete("strikethrough_color");
-      })
+      .strikethroughColor(
+        Type.String,
+        (v = defaults.strikethroughColor) => {
+          if (v) attributes.set("strikethrough_color", v);
+          else attributes.delete("strikethrough_color");
+        },
+      )
       .transform(Type.String, (v = defaults.transform) => {
         if (v) attributes.set("text_transform", v);
         else attributes.delete("text_transform");

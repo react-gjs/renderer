@@ -43,10 +43,8 @@ type ButtonPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type ButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  ButtonElement
->;
+export type ButtonEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, ButtonElement>;
 
 export interface ButtonProps extends ButtonPropsMixin {
   type?: ButtonType;
@@ -72,12 +70,16 @@ export interface ButtonProps extends ButtonPropsMixin {
 
 const ImageDataType = DataType.OneOf(
   DataType.String,
-  DataType.Custom((v): v is GdkPixbuf.Pixbuf => typeof v === "object")
+  DataType.Custom(
+    (v): v is GdkPixbuf.Pixbuf => typeof v === "object",
+  ),
 );
 
-export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
+export class ButtonElement
+  implements GjsElement<"BUTTON", Gtk.Button>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -90,7 +92,10 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Button,
+    ButtonProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<ButtonProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -118,7 +123,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
               v,
               allProps.imageWidth,
               allProps.imageHeight,
-              allProps.imagePreserveAspectRatio
+              allProps.imagePreserveAspectRatio,
             );
 
             return () => this.widget.set_image(null);
@@ -130,7 +135,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
               this.resizeCurrentImage(
                 v,
                 allProps.imageHeight,
-                allProps.imagePreserveAspectRatio
+                allProps.imagePreserveAspectRatio,
               );
             }
           }
@@ -144,7 +149,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
               this.resizeCurrentImage(
                 allProps.imageWidth,
                 v,
-                allProps.imagePreserveAspectRatio
+                allProps.imagePreserveAspectRatio,
               );
             }
           }
@@ -161,17 +166,17 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
                 this.resizeCurrentImage(
                   allProps.imageWidth,
                   allProps.imageHeight,
-                  v
+                  v,
                 );
               }
             }
-          }
+          },
         )
         .imagePosition(
           DataType.Enum(Gtk.PositionType),
           (v = Gtk.PositionType.LEFT) => {
             this.widget.image_position = v;
-          }
+          },
         )
         .icon(DataType.String, (v, allProps) => {
           if (allProps.image) {
@@ -183,14 +188,17 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
             return () => this.widget.set_image(null);
           }
         })
-        .iconPixelSize(DataType.Number, (v = 16, allProps, mapperApi) => {
-          if (
-            allProps.icon != null &&
-            !mapperApi.isUpdatedInThisCycle("icon")
-          ) {
-            this.setImageIcon(allProps.icon, v);
-          }
-        })
+        .iconPixelSize(
+          DataType.Number,
+          (v = 16, allProps, mapperApi) => {
+            if (
+              allProps.icon != null &&
+              !mapperApi.isUpdatedInThisCycle("icon")
+            ) {
+              this.setImageIcon(allProps.icon, v);
+            }
+          },
+        )
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
@@ -206,14 +214,14 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
         })
         .focusOnClick(DataType.Boolean, (v = true) => {
           this.widget.focus_on_click = v;
-        })
+        }),
   );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   constructor(props: DiffedProps) {
@@ -225,13 +233,13 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -242,14 +250,14 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
   private resizeCurrentImage(
     width?: number,
     height?: number,
-    preserveAspectRatio = true
+    preserveAspectRatio = true,
   ) {
     const image = this.widget.image as Gtk.Image | null;
     if (image) {
       const pixbuff = image.get_pixbuf();
       if (pixbuff) {
         image.set_from_pixbuf(
-          resizePixbuff(pixbuff, width, height, preserveAspectRatio)
+          resizePixbuff(pixbuff, width, height, preserveAspectRatio),
         );
         this.widget.set_image(image);
       }
@@ -260,14 +268,14 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     src: string | GdkPixbuf.Pixbuf,
     width?: number,
     height?: number,
-    preserveAspectRatio = true
+    preserveAspectRatio = true,
   ) {
     let pixbuff: GdkPixbuf.Pixbuf;
 
     if (typeof src === "string") {
       if (src.startsWith("resource://")) {
         pixbuff = GdkPixbuf.Pixbuf.new_from_resource(
-          src.replace(/^resource:\/\//, "")
+          src.replace(/^resource:\/\//, ""),
         )!;
       } else {
         pixbuff = GdkPixbuf.Pixbuf.new_from_file(src)!;
@@ -277,7 +285,12 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
     }
 
     if (width != null && height != null) {
-      pixbuff = resizePixbuff(pixbuff, width, height, preserveAspectRatio);
+      pixbuff = resizePixbuff(
+        pixbuff,
+        width,
+        height,
+        preserveAspectRatio,
+      );
     }
 
     const image = Gtk.Image.new_from_pixbuf(pixbuff);
@@ -316,7 +329,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -375,14 +388,14 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -397,7 +410,7 @@ export class ButtonElement implements GjsElement<"BUTTON", Gtk.Button> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

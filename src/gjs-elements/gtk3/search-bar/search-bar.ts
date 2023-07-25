@@ -26,10 +26,8 @@ import type { WindowElement } from "../window/window";
 
 export type SearchBarPropsMixin = StyleProps;
 
-export type SearchBarEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  SearchBarElement
->;
+export type SearchBarEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, SearchBarElement>;
 
 export interface SearchBarProps extends SearchBarPropsMixin {
   isVisible?: boolean;
@@ -44,7 +42,7 @@ export interface SearchBarProps extends SearchBarPropsMixin {
     | boolean
     | ((
         window: Gtk.Window,
-        event: SearchBarEvent<Rg.KeyPressEventData>
+        event: SearchBarEvent<Rg.KeyPressEventData>,
       ) => boolean);
   /**
    * When a keyboard symbol is pressed and no other input is in focus,
@@ -53,7 +51,9 @@ export interface SearchBarProps extends SearchBarPropsMixin {
    * shown even if the event is emitted with a `isVisible` value of
    * `true`.
    */
-  onVisibilityChange?: (event: SearchBarEvent<{ isVisible: boolean }>) => void;
+  onVisibilityChange?: (
+    event: SearchBarEvent<{ isVisible: boolean }>,
+  ) => void;
 }
 
 interface SearchBarInternalProps extends SearchBarProps {
@@ -64,7 +64,7 @@ export class SearchBarElement
   implements GjsElement<"SEARCH_BAR", Gtk.SearchBar>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -76,32 +76,37 @@ export class SearchBarElement
   private searchEntry: Gtk.SearchEntry | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.SearchBar, SearchBarProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.SearchBar,
+    SearchBarProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
-  private readonly propsMapper = new PropertyMapper<SearchBarInternalProps>(
-    this.lifecycle,
-    createStylePropMapper(this.widget),
-    (props) =>
-      props
-        .showCloseButton(DataType.Boolean, (v = false) => {
-          this.widget.set_show_close_button(v);
-        })
-        .isVisible(DataType.Boolean, (v = false) => {
-          this.widget.set_search_mode(v);
-        })
-  );
+  private readonly propsMapper =
+    new PropertyMapper<SearchBarInternalProps>(
+      this.lifecycle,
+      createStylePropMapper(this.widget),
+      (props) =>
+        props
+          .showCloseButton(DataType.Boolean, (v = false) => {
+            this.widget.set_show_close_button(v);
+          })
+          .isVisible(DataType.Boolean, (v = false) => {
+            this.widget.set_search_mode(v);
+          }),
+    );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
 
     this.handlers.bindInternal("notify::search-mode-enabled", () => {
       const { isVisible } = this.propsMapper.currentProps;
-      if (isVisible != null && this.widget.get_search_mode() !== isVisible) {
+      if (
+        isVisible != null &&
+        this.widget.get_search_mode() !== isVisible
+      ) {
         this.widget.set_search_mode(isVisible);
       }
     });
@@ -120,7 +125,8 @@ export class SearchBarElement
     const isSearchMode = this.widget.get_search_mode();
     const keyval = event.get_keyval()[1]!;
     const keypressMod = mapKeypressEventState(event);
-    const isControlled = this.propsMapper.currentProps.isVisible != null;
+    const isControlled =
+      this.propsMapper.currentProps.isVisible != null;
     const keyUnicode = Gdk.keyval_to_unicode(keyval);
 
     if (isSearchMode && keyval === Gdk.KEY_Escape) {
@@ -137,7 +143,9 @@ export class SearchBarElement
       } else if (!isControlled) {
         this.widget.set_search_mode(true);
       } else {
-        this.widget.set_search_mode(this.propsMapper.currentProps.isVisible!);
+        this.widget.set_search_mode(
+          this.propsMapper.currentProps.isVisible!,
+        );
       }
 
       return;
@@ -153,7 +161,9 @@ export class SearchBarElement
 
         if (focused) {
           // if the focused widget is an input type, don't do anything
-          const widgetName = GObject.type_name_from_instance(focused as any);
+          const widgetName = GObject.type_name_from_instance(
+            focused as any,
+          );
 
           if (
             widgetName === "GtkEntry" ||
@@ -165,18 +175,19 @@ export class SearchBarElement
         }
       }
 
-      if (typeof this.propsMapper.currentProps.showOnKeypress === "function") {
-        const shouldShow = this.propsMapper.currentProps.showOnKeypress(
-          window,
-          {
+      if (
+        typeof this.propsMapper.currentProps.showOnKeypress ===
+        "function"
+      ) {
+        const shouldShow =
+          this.propsMapper.currentProps.showOnKeypress(window, {
             ...parseEventKey(event),
             originalEvent: event,
             target: this,
             targetWidget: this.widget,
             preventDefault: () => {},
             stopPropagation: () => {},
-          }
-        );
+          });
 
         if (!shouldShow) {
           return;
@@ -195,7 +206,9 @@ export class SearchBarElement
         } else if (!isControlled) {
           this.widget.set_search_mode(true);
         } else {
-          this.widget.set_search_mode(this.propsMapper.currentProps.isVisible!);
+          this.widget.set_search_mode(
+            this.propsMapper.currentProps.isVisible!,
+          );
         }
       }
 
@@ -216,7 +229,9 @@ export class SearchBarElement
         } else if (!isControlled) {
           this.widget.set_search_mode(true);
         } else {
-          this.widget.set_search_mode(this.propsMapper.currentProps.isVisible!);
+          this.widget.set_search_mode(
+            this.propsMapper.currentProps.isVisible!,
+          );
         }
 
         return;
@@ -242,7 +257,10 @@ export class SearchBarElement
   }
 
   disconnectFromWindowEvents(window: WindowElement) {
-    window.removeEventListener("key-press-event", this.onWindowKeyPress);
+    window.removeEventListener(
+      "key-press-event",
+      this.onWindowKeyPress,
+    );
   }
 
   updateProps(props: DiffedProps): void {
@@ -259,7 +277,10 @@ export class SearchBarElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -314,14 +335,14 @@ export class SearchBarElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -336,7 +357,7 @@ export class SearchBarElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

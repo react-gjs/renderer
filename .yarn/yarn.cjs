@@ -20,7 +20,7 @@ const args = process.argv.slice(2);
 
 const yarnrc = fs.readFileSync(
   path.join(__dirname, "..", ".yarnrc.yml"),
-  "utf8"
+  "utf8",
 );
 
 let yarnPath = "";

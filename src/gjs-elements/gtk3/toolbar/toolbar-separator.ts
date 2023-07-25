@@ -27,7 +27,8 @@ type ToolbarSeparatorPropsMixin = SizeRequestProps &
   ExpandProps &
   StyleProps;
 
-export interface ToolbarSeparatorProps extends ToolbarSeparatorPropsMixin {
+export interface ToolbarSeparatorProps
+  extends ToolbarSeparatorPropsMixin {
   sameSize?: boolean;
   expand?: boolean;
   show?: boolean;
@@ -37,7 +38,7 @@ export class ToolbarSeparatorElement
   implements GjsElement<"TOOLBAR_SEPARATOR", Gtk.SeparatorToolItem>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -52,25 +53,26 @@ export class ToolbarSeparatorElement
     Gtk.SeparatorToolItem,
     ToolbarSeparatorProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<ToolbarSeparatorProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    (props) =>
-      props
-        .sameSize(DataType.Boolean, (v = true) => {
-          this.widget.set_homogeneous(v);
-        })
-        .expand(DataType.Boolean, (v = false) => {
-          this.widget.set_expand(v);
-        })
-        .show(DataType.Boolean, (v = true) => {
-          this.widget.set_draw(v);
-        })
-  );
+  private readonly propsMapper =
+    new PropertyMapper<ToolbarSeparatorProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      (props) =>
+        props
+          .sameSize(DataType.Boolean, (v = true) => {
+            this.widget.set_homogeneous(v);
+          })
+          .expand(DataType.Boolean, (v = false) => {
+            this.widget.set_expand(v);
+          })
+          .show(DataType.Boolean, (v = true) => {
+            this.widget.set_draw(v);
+          }),
+    );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
@@ -109,10 +111,14 @@ export class ToolbarSeparatorElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)
+    ) {
       this.parent = parent;
     } else {
-      throw new Error("ToolbarButton can only be a child of a toolbar.");
+      throw new Error(
+        "ToolbarButton can only be a child of a toolbar.",
+      );
     }
     return true;
   }
@@ -141,14 +147,14 @@ export class ToolbarSeparatorElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -163,7 +169,7 @@ export class ToolbarSeparatorElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

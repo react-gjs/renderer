@@ -47,10 +47,8 @@ type DefaultEventData = {
   currentHPosition: number;
 };
 
-export type ScrollBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P & DefaultEventData,
-  ScrollBoxElement
->;
+export type ScrollBoxEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P & DefaultEventData, ScrollBoxElement>;
 
 export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   maxWidth?: number;
@@ -64,7 +62,9 @@ export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   verticalScrollbar?: PolicyType;
   shadow?: ShadowType;
   overlayScrolling?: boolean;
-  onEdgeReached?: (event: ScrollBoxEvent<{ position: PositionType }>) => void;
+  onEdgeReached?: (
+    event: ScrollBoxEvent<{ position: PositionType }>,
+  ) => void;
   onScroll?: (event: ScrollBoxEvent) => void;
   onContentSizeChange?: (event: ScrollBoxEvent) => void;
 }
@@ -73,7 +73,7 @@ export class ScrollBoxElement
   implements GjsElement<"SCROLL_BOX", Gtk.ScrolledWindow>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -86,10 +86,14 @@ export class ScrollBoxElement
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private children = new ChildOrderController(this.lifecycle, this.widget);
-  private handlers = new EventHandlers<Gtk.ScrolledWindow, ScrollBoxProps>(
-    this
+  private children = new ChildOrderController(
+    this.lifecycle,
+    this.widget,
   );
+  private handlers = new EventHandlers<
+    Gtk.ScrolledWindow,
+    ScrollBoxProps
+  >(this);
   private vAdjustmentHandlers = new EventHandlers<
     Gtk.Adjustment,
     ScrollBoxProps
@@ -118,13 +122,13 @@ export class ScrollBoxElement
           DataType.Enum(Gtk.PolicyType),
           (v = Gtk.PolicyType.AUTOMATIC) => {
             this.widget.hscrollbar_policy = v;
-          }
+          },
         )
         .verticalScrollbar(
           DataType.Enum(Gtk.PolicyType),
           (v = Gtk.PolicyType.AUTOMATIC) => {
             this.widget.vscrollbar_policy = v;
-          }
+          },
         )
         .maxHeight(DataType.Number, (v = -1) => {
           this.widget.max_content_height = v;
@@ -151,11 +155,14 @@ export class ScrollBoxElement
           DataType.Enum(Gtk.CornerType),
           (v = Gtk.CornerType.TOP_LEFT) => {
             this.widget.window_placement = v;
-          }
+          },
         )
-        .shadow(DataType.Enum(Gtk.ShadowType), (v = Gtk.ShadowType.NONE) => {
-          this.widget.shadow_type = v;
-        })
+        .shadow(
+          DataType.Enum(Gtk.ShadowType),
+          (v = Gtk.ShadowType.NONE) => {
+            this.widget.shadow_type = v;
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -165,35 +172,43 @@ export class ScrollBoxElement
       (e: PositionType) => {
         return { position: e };
       },
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.handlers.bind(
       "scroll-event",
       "onScroll",
       () => this.getDefaultEventData(),
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     let lastVUpper = -1;
-    this.vAdjustmentHandlers.bind("changed", "onContentSizeChange", () => {
-      const upper = this.widget.vadjustment.get_upper();
-      if (lastVUpper !== upper) {
-        lastVUpper = upper;
-        return this.getDefaultEventData();
-      }
-      throw new EventNoop();
-    });
+    this.vAdjustmentHandlers.bind(
+      "changed",
+      "onContentSizeChange",
+      () => {
+        const upper = this.widget.vadjustment.get_upper();
+        if (lastVUpper !== upper) {
+          lastVUpper = upper;
+          return this.getDefaultEventData();
+        }
+        throw new EventNoop();
+      },
+    );
 
     let lastHUpper = -1;
-    this.hAdjustmentHandlers.bind("changed", "onContentSizeChange", () => {
-      const upper = this.widget.hadjustment.get_upper();
-      if (lastHUpper !== upper) {
-        lastHUpper = upper;
-        return this.getDefaultEventData();
-      }
-      throw new EventNoop();
-    });
+    this.hAdjustmentHandlers.bind(
+      "changed",
+      "onContentSizeChange",
+      () => {
+        const upper = this.widget.hadjustment.get_upper();
+        if (lastHUpper !== upper) {
+          lastHUpper = upper;
+          return this.getDefaultEventData();
+        }
+        throw new EventNoop();
+      },
+    );
 
     this.updateProps(props);
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -212,7 +227,7 @@ export class ScrollBoxElement
 
   scrollTo(
     position: number,
-    from: "top" | "bottom" | "left" | "right" = "top"
+    from: "top" | "bottom" | "left" | "right" = "top",
   ) {
     // changing the value of the adjustment will trigger a "changed" event
     // immediately after, so to avoid unexpected side-effects taking
@@ -248,7 +263,9 @@ export class ScrollBoxElement
     }
   }
 
-  scrollToEnd(orientation: "vertically" | "horizontally" = "vertically") {
+  scrollToEnd(
+    orientation: "vertically" | "horizontally" = "vertically",
+  ) {
     // changing the value of the adjustment will trigger a "changed" event
     // immediately after, so to avoid unexpected side-effects taking
     // place on every "scrollTo" call, we use a microtask to delay the
@@ -276,11 +293,17 @@ export class ScrollBoxElement
       case "top":
         return this.vAdjustment!.get_value();
       case "bottom":
-        return this.vAdjustment!.get_upper() - this.vAdjustment!.get_value();
+        return (
+          this.vAdjustment!.get_upper() -
+          this.vAdjustment!.get_value()
+        );
       case "left":
         return this.hAdjustment!.get_value();
       case "right":
-        return this.hAdjustment!.get_upper() - this.hAdjustment!.get_value();
+        return (
+          this.hAdjustment!.get_upper() -
+          this.hAdjustment!.get_value()
+        );
     }
   }
 
@@ -302,7 +325,10 @@ export class ScrollBoxElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("ScrollBox can only have one child.");
   }
 
@@ -353,14 +379,14 @@ export class ScrollBoxElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -375,7 +401,7 @@ export class ScrollBoxElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

@@ -52,7 +52,10 @@ export default describe("PanedElement", () => {
 
     expect(panedWidgetMock.current1).toEqual(child1);
     expect(panedWidgetMock.current2).toEqual(child2);
-    expect(paned["children"]).toMatch([match.is(child1), match.is(child2)]);
+    expect(paned["children"]).toMatch([
+      match.is(child1),
+      match.is(child2),
+    ]);
   });
 
   skip("should throw an error if more than two children are appended", () => {
@@ -106,7 +109,10 @@ export default describe("PanedElement", () => {
 
     expect(panedWidgetMock.current1).toEqual(child2);
     expect(panedWidgetMock.current2).toEqual(child1);
-    expect(paned["children"]).toMatch([match.is(child2), match.is(child1)]);
+    expect(paned["children"]).toMatch([
+      match.is(child2),
+      match.is(child1),
+    ]);
   });
 
   skip("when only first child is present, it should be moved to the second position on insertBefore", () => {
@@ -124,6 +130,9 @@ export default describe("PanedElement", () => {
 
     expect(panedWidgetMock.current1).toEqual(child2);
     expect(panedWidgetMock.current2).toEqual(child1);
-    expect(paned["children"]).toMatch([match.is(child2), match.is(child1)]);
+    expect(paned["children"]).toMatch([
+      match.is(child2),
+      match.is(child1),
+    ]);
   });
 });

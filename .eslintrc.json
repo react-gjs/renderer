@@ -1,7 +1,5 @@
 {
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "env": {
     "browser": true,
     "es2021": true
@@ -30,10 +28,7 @@
         "ignoreTemplateLiterals": true
       }
     ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
+    "linebreak-style": ["error", "unix"],
     "quotes": [
       "error",
       "double",
@@ -41,10 +36,7 @@
         "avoidEscape": true
       }
     ],
-    "semi": [
-      "error",
-      "always"
-    ],
+    "semi": ["error", "always"],
     "@typescript-eslint/consistent-type-imports": 2,
     "@typescript-eslint/consistent-type-exports": 2,
     "@typescript-eslint/member-delimiter-style": 2,

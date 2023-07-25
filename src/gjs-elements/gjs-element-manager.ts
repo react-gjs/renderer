@@ -4,21 +4,29 @@ import type { GjsElement } from "./gjs-element";
 import type { DiffedProps } from "./utils/element-extenders/map-properties";
 
 export interface GjsElementConstructor<
-  K extends Rg.GjsElementTypes | "APPLICATION"
+  K extends Rg.GjsElementTypes | "APPLICATION",
 > {
-  new (props: DiffedProps, context: HostContext<GjsContext>): GjsElement<K>;
+  new (
+    props: DiffedProps,
+    context: HostContext<GjsContext>,
+  ): GjsElement<K>;
 
-  getContext(currentContext: HostContext<GjsContext>): HostContext<GjsContext>;
+  getContext(
+    currentContext: HostContext<GjsContext>,
+  ): HostContext<GjsContext>;
 }
 
 export class GjsElementManager {
   private static elementKinds: string[] = [];
-  private static elements = new Map<string, GjsElementConstructor<any>>();
+  private static elements = new Map<
+    string,
+    GjsElementConstructor<any>
+  >();
   private static elementsReverseMap = new Map<object, string>();
 
   static register<K extends Rg.GjsElementTypes | "APPLICATION">(
     kind: K,
-    element: GjsElementConstructor<K>
+    element: GjsElementConstructor<K>,
   ) {
     this.elementKinds.push(kind);
     this.elements.set(kind, element);
@@ -29,7 +37,7 @@ export class GjsElementManager {
   static create(
     kind: string,
     props: DiffedProps,
-    context: HostContext<GjsContext>
+    context: HostContext<GjsContext>,
   ) {
     const element = this.elements.get(kind);
     if (!element) {
@@ -40,7 +48,7 @@ export class GjsElementManager {
 
   static getContextForKind(
     kind: string,
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ) {
     const element = this.elements.get(kind);
     if (!element) {
@@ -67,9 +75,11 @@ export class GjsElementManager {
   /** @internal */
   static isGjsElementOfKind<E extends GjsElementConstructor<any>>(
     element: any,
-    constructor: E | Array<E>
+    constructor: E | Array<E>,
   ): element is InstanceType<E> {
-    const constrList = Array.isArray(constructor) ? constructor : [constructor];
+    const constrList = Array.isArray(constructor)
+      ? constructor
+      : [constructor];
 
     for (const constr of constrList) {
       const kindName = this.elementsReverseMap.get(constr);

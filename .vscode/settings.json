@@ -12,7 +12,5 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "task.allowAutomaticTasks": "on",
-  "cSpell.words": [
-    "PANGO"
-  ]
+  "cSpell.words": ["PANGO"]
 }

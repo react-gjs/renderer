@@ -39,14 +39,17 @@ type MenuRadioButtonPropsMixin = SizeRequestProps &
 export type MenuRadioButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, MenuRadioButtonElement>;
 
-export interface MenuRadioButtonProps extends MenuRadioButtonPropsMixin {
+export interface MenuRadioButtonProps
+  extends MenuRadioButtonPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
   radioGroup: string;
   isDefault?: boolean;
   inconsistent?: boolean;
   onClick?: (event: MenuRadioButtonEvent) => void;
-  onToggle?: (event: MenuRadioButtonEvent<{ value: boolean }>) => void;
+  onToggle?: (
+    event: MenuRadioButtonEvent<{ value: boolean }>,
+  ) => void;
   onMouseEnter?: (event: MenuRadioButtonEvent<PointerData>) => void;
   onMouseLeave?: (event: MenuRadioButtonEvent<PointerData>) => void;
 }
@@ -55,7 +58,7 @@ export class MenuRadioButtonElement
   implements GjsElement<"MENU_RADIO_BUTTON", Gtk.RadioMenuItem>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -67,12 +70,13 @@ export class MenuRadioButtonElement
   private rootBarItem: MenuBarItemElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private handlers = new EventHandlers<Gtk.MenuItem, MenuRadioButtonProps>(
-    this
-  );
+  private handlers = new EventHandlers<
+    Gtk.MenuItem,
+    MenuRadioButtonProps
+  >(this);
 
   private propsMapper = new PropertyMapper<MenuRadioButtonProps>(
-    this.lifecycle
+    this.lifecycle,
   );
 
   private isInitialized = false;
@@ -94,7 +98,7 @@ export class MenuRadioButtonElement
     this.rootBarItem = barItem;
 
     const radioGroup = this.rootBarItem.getRadioGroup(
-      this.unappliedProps.get("radioGroup")
+      this.unappliedProps.get("radioGroup"),
     );
 
     const widget = Gtk.RadioMenuItem.new_from_widget(radioGroup);
@@ -117,12 +121,13 @@ export class MenuRadioButtonElement
           })
           .inconsistent(DataType.Boolean, (v = false) => {
             widget.inconsistent = v;
-          })
+          }),
     );
 
-    this.handlers = new EventHandlers<Gtk.RadioMenuItem, MenuRadioButtonProps>(
-      this
-    );
+    this.handlers = new EventHandlers<
+      Gtk.RadioMenuItem,
+      MenuRadioButtonProps
+    >(this);
 
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("toggled", "onToggle", () => {
@@ -134,20 +139,27 @@ export class MenuRadioButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
-    this.lifecycle.emitLifecycleEventUpdate([...this.unappliedProps.entries()]);
+    this.lifecycle.emitLifecycleEventUpdate([
+      ...this.unappliedProps.entries(),
+    ]);
     this.unappliedProps.clear();
 
-    const groupHasActiveEntry = radioGroup.get_group().some((i) => i.active);
-    if (!groupHasActiveEntry && this.propsMapper.currentProps.isDefault) {
+    const groupHasActiveEntry = radioGroup
+      .get_group()
+      .some((i) => i.active);
+    if (
+      !groupHasActiveEntry &&
+      this.propsMapper.currentProps.isDefault
+    ) {
       widget.set_active(true);
     }
 
@@ -171,7 +183,10 @@ export class MenuRadioButtonElement
     throw new Error("MenuRadioButton cannot have children.");
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("MenuRadioButton cannot have children.");
   }
 
@@ -201,7 +216,7 @@ export class MenuRadioButtonElement
       this.parent = parent;
     } else {
       throw new Error(
-        "MenuRadioButton can only be a child of a MenuBarItem or MenuEntry."
+        "MenuRadioButton can only be a child of a MenuBarItem or MenuEntry.",
       );
     }
 
@@ -232,14 +247,14 @@ export class MenuRadioButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -254,7 +269,7 @@ export class MenuRadioButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

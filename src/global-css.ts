@@ -67,13 +67,15 @@ class ApplicationCss {
         Gtk.StyleContext.add_provider_for_screen(
           screen,
           cssProvider,
-          Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+          Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
         );
       } catch (e) {
         console.error(
           new Error(
-            `Failed to install a stylesheet due to an error: \n${String(e)}`
-          )
+            `Failed to install a stylesheet due to an error: \n${String(
+              e,
+            )}`,
+          ),
         );
       }
     }

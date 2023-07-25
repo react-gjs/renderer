@@ -10,7 +10,7 @@ export type PointerData = {
 };
 
 export const parseCrossingEvent = (
-  e: Gdk.Event & Gdk.EventCrossing
+  e: Gdk.Event & Gdk.EventCrossing,
 ): PointerData => {
   const coords = e.get_coords();
   const rootCoords = e.get_root_coords();

@@ -18,7 +18,11 @@ export class GridMatrix {
    * returns the index of the first of those cells, if theres is no N
    * free cells in the row, returns null.
    */
-  private getFirstNFreeCellsInRow(y: number, n: number, onlyAfterIndex = -1) {
+  private getFirstNFreeCellsInRow(
+    y: number,
+    n: number,
+    onlyAfterIndex = -1,
+  ) {
     const row = this.matrix[y];
     let result = [];
 
@@ -39,7 +43,7 @@ export class GridMatrix {
     x: number,
     y: number,
     colSpan: number,
-    rowSpan: number
+    rowSpan: number,
   ) {
     for (let i = 0; i < rowSpan; i++) {
       const nextRowIndex = y + i;
@@ -77,7 +81,7 @@ export class GridMatrix {
     const currentRowX = this.getFirstNFreeCellsInRow(
       this.currentRow,
       colSpan,
-      this.lastUsedCoordinates.x
+      this.lastUsedCoordinates.x,
     );
 
     if (currentRowX != null) {

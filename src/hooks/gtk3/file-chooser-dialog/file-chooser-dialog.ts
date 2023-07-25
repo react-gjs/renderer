@@ -94,7 +94,9 @@ type FileChooserApi<F> = {
    * Opens the FileChooserDialog and returns a promise that resolves
    * once the user selects a file or cancels the dialog.
    */
-  openDialog: (params: Rg.FileChooserDialogParams) => Promise<F | undefined>;
+  openDialog: (
+    params: Rg.FileChooserDialogParams,
+  ) => Promise<F | undefined>;
   /**
    * Clears the selected file(s) and filter. This will not close the
    * dialog if it is open.
@@ -113,7 +115,7 @@ class FileChooserFilterController {
   constructor(
     private dialog: Gtk.FileChooserNative,
     private filters: Required<Rg.FileChooserDialogParams>["filters"],
-    label: string
+    label: string,
   ) {
     const extraWidget = new Gtk.Box();
     extraWidget.set_margin_start(3);
@@ -192,20 +194,22 @@ class FileChooserFilterController {
 
 export function useFileChooser(
   action: Gtk.FileChooserAction,
-  selectMultiple: true
+  selectMultiple: true,
 ): FileChooserApi<Gio.File[]>;
 export function useFileChooser(
   action: Gtk.FileChooserAction,
-  selectMultiple: false
+  selectMultiple: false,
 ): FileChooserApi<Gio.File>;
 export function useFileChooser(
   action: Gtk.FileChooserAction,
-  selectMultiple: boolean
+  selectMultiple: boolean,
 ): any {
   const isMounted = useIsMounted();
   const [file, setFile] = React.useState<Gio.File | Gio.File[]>();
   const [filter, setFilter] =
-    React.useState<Required<Rg.FileChooserDialogParams>["filters"][number]>();
+    React.useState<
+      Required<Rg.FileChooserDialogParams>["filters"][number]
+    >();
   const dialogWidget = React.useRef<Gtk.FileChooserNative>();
 
   const openDialog = React.useCallback(
@@ -213,14 +217,17 @@ export function useFileChooser(
       return new Promise<Gio.File | Gio.File[] | undefined>(
         (resolve, reject) => {
           if (dialogWidget.current) {
-            return reject(new Error("This FileChooserDialog is already open."));
+            return reject(
+              new Error("This FileChooserDialog is already open."),
+            );
           }
 
           try {
             const dialog = new Gtk.FileChooserNative();
             dialogWidget.current = dialog;
 
-            const app = Gio.Application.get_default() as Gtk.Application;
+            const app =
+              Gio.Application.get_default() as Gtk.Application;
 
             dialog.set_transient_for(app.active_window);
             dialog.set_action(action);
@@ -259,7 +266,7 @@ export function useFileChooser(
 
               if (params.requireOverwriteConfirmation !== undefined) {
                 dialog.set_do_overwrite_confirmation(
-                  params.requireOverwriteConfirmation
+                  params.requireOverwriteConfirmation,
                 );
               }
 
@@ -273,7 +280,7 @@ export function useFileChooser(
               filters = new FileChooserFilterController(
                 dialog,
                 params.filters,
-                params.filtersLabel ?? ""
+                params.filtersLabel ?? "",
               );
             }
 
@@ -314,10 +321,10 @@ export function useFileChooser(
             dialogWidget.current = undefined;
             return reject(error);
           }
-        }
+        },
       );
     },
-    [action, selectMultiple]
+    [action, selectMultiple],
   );
 
   const clearSelection = React.useCallback(() => {
@@ -339,5 +346,11 @@ export function useFileChooser(
     };
   }, []);
 
-  return { file, filter, openDialog, clearSelection, forceCloseDialog };
+  return {
+    file,
+    filter,
+    openDialog,
+    clearSelection,
+    forceCloseDialog,
+  };
 }
