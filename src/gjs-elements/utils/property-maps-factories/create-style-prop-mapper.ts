@@ -6,7 +6,7 @@ import { mergeObjects } from "../merge-objects";
 
 export const createStylePropMapper = (
   widget: Gtk.Widget,
-  defaults?: StyleSheet
+  defaults?: StyleSheet,
 ) => {
   const uniqueClassName = generateName(16);
   const styleContext = widget.get_style_context()!;
@@ -24,7 +24,7 @@ export const createStylePropMapper = (
         if (finalStyles) {
           const { buffer, stylesheet } = stylesToData(
             finalStyles,
-            uniqueClassName
+            uniqueClassName,
           );
 
           try {
@@ -33,7 +33,7 @@ export const createStylePropMapper = (
 
             styleContext.add_provider(
               provider,
-              Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+              Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
             );
 
             return () => styleContext.remove_provider(provider);
@@ -44,7 +44,10 @@ export const createStylePropMapper = (
         }
       })
       .className(
-        DataType.OneOf(DataType.String, DataType.ArrayOf(DataType.String)),
+        DataType.OneOf(
+          DataType.String,
+          DataType.ArrayOf(DataType.String),
+        ),
         (v) => {
           if (v) {
             const classNames = typeof v === "string" ? [v] : v;
@@ -63,7 +66,7 @@ export const createStylePropMapper = (
               }
             };
           }
-        }
+        },
       );
 };
 
@@ -95,7 +98,7 @@ function parseCssRulesToString(styles: CssRules) {
   return Object.entries(styles)
     .map(
       ([name, value]) =>
-        `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`
+        `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`,
     )
     .join("\n");
 }
@@ -104,11 +107,12 @@ function parseToCss(styles: StyleSheet, className: string) {
   const mainRule = `.${className} {
     ${Object.entries(styles)
       .filter(
-        (entry): entry is [string, string | number] => !entry[0].startsWith(":")
+        (entry): entry is [string, string | number] =>
+          !entry[0].startsWith(":"),
       )
       .map(
         ([name, value]) =>
-          `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`
+          `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`,
       )
       .join("\n")}
 }`;
@@ -129,82 +133,82 @@ function parseToCss(styles: StyleSheet, className: string) {
   if (hover) {
     rules.push(
       `.${className}:hover {
-        ${parseCssRulesToString(hover)}\n}`
+        ${parseCssRulesToString(hover)}\n}`,
     );
   }
 
   if (active) {
     rules.push(
       `.${className}:active {
-        ${parseCssRulesToString(active)}\n}`
+        ${parseCssRulesToString(active)}\n}`,
     );
   }
 
   if (focus) {
     rules.push(
       `.${className}:focus {
-        ${parseCssRulesToString(focus)}\n}`
+        ${parseCssRulesToString(focus)}\n}`,
     );
   }
 
   if (disabled) {
     rules.push(
       `.${className}:disabled {
-        ${parseCssRulesToString(disabled)}\n}`
+        ${parseCssRulesToString(disabled)}\n}`,
     );
   }
 
   if (selected) {
     rules.push(
       `.${className}:selected {
-        ${parseCssRulesToString(selected)}\n}`
+        ${parseCssRulesToString(selected)}\n}`,
     );
   }
 
   if (checked) {
     rules.push(
       `.${className}:checked {
-        ${parseCssRulesToString(checked)}\n}`
+        ${parseCssRulesToString(checked)}\n}`,
     );
   }
 
   if (indeterminate) {
     rules.push(
       `.${className}:indeterminate {
-        ${parseCssRulesToString(indeterminate)}\n}`
+        ${parseCssRulesToString(indeterminate)}\n}`,
     );
   }
 
   if (backdrop) {
     rules.push(
       `.${className}:backdrop {
-        ${parseCssRulesToString(backdrop)}\n}`
+        ${parseCssRulesToString(backdrop)}\n}`,
     );
   }
 
   if (link) {
     rules.push(
       `.${className}:link {
-        ${parseCssRulesToString(link)}\n}`
+        ${parseCssRulesToString(link)}\n}`,
     );
   }
 
   if (visited) {
     rules.push(
       `.${className}:visited {
-        ${parseCssRulesToString(visited)}\n}`
+        ${parseCssRulesToString(visited)}\n}`,
     );
   }
 
   const childRules = Object.entries(styles).filter(([entry]) =>
-    entry.startsWith(":child(")
+    entry.startsWith(":child("),
   );
 
   for (const [name, cRules] of childRules) {
     const selector = name.slice(7, -1);
     rules.push(
       `.${className} ${selector} {
-        ${parseCssRulesToString(cRules as CssRules)}\n}`
+        ${parseCssRulesToString(cRules as CssRules)}\n}`,
     );
   }
 
@@ -236,7 +240,10 @@ export type StyleSheet = CssRules & {
   [key in ChildSelector]?: CssRules;
 };
 
-export type StyleProps = { style?: StyleSheet; className?: string | string[] };
+export type StyleProps = {
+  style?: StyleSheet;
+  className?: string | string[];
+};
 
 // TODO: remove properties that are not supported by GTK
 export type CssRules = {

@@ -39,10 +39,12 @@ type ToolbarRadioButtonPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type ToolbarRadioButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, ToolbarRadioButtonElement>;
+export type ToolbarRadioButtonEvent<
+  P extends Record<string, any> = {},
+> = SyntheticEvent<P, ToolbarRadioButtonElement>;
 
-export interface ToolbarRadioButtonProps extends ToolbarRadioButtonPropsMixin {
+export interface ToolbarRadioButtonProps
+  extends ToolbarRadioButtonPropsMixin {
   radioGroup: string;
   label?: string;
   icon?: Rg.IconName;
@@ -52,16 +54,22 @@ export interface ToolbarRadioButtonProps extends ToolbarRadioButtonPropsMixin {
   sameSize?: boolean;
   expand?: boolean;
   onClick?: (event: ToolbarRadioButtonEvent) => void;
-  onChange?: (event: ToolbarRadioButtonEvent<{ isActive: boolean }>) => void;
-  onMouseEnter?: (event: ToolbarRadioButtonEvent<PointerData>) => void;
-  onMouseLeave?: (event: ToolbarRadioButtonEvent<PointerData>) => void;
+  onChange?: (
+    event: ToolbarRadioButtonEvent<{ isActive: boolean }>,
+  ) => void;
+  onMouseEnter?: (
+    event: ToolbarRadioButtonEvent<PointerData>,
+  ) => void;
+  onMouseLeave?: (
+    event: ToolbarRadioButtonEvent<PointerData>,
+  ) => void;
 }
 
 export class ToolbarRadioButtonElement
   implements GjsElement<"TOOLBAR_RADIO_BUTTON", Gtk.RadioToolButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -78,15 +86,14 @@ export class ToolbarRadioButtonElement
     Gtk.ToggleToolButton,
     ToolbarRadioButtonProps
   >;
-  private readonly propsMapper = new PropertyMapper<ToolbarRadioButtonProps>(
-    this.lifecycle
-  );
+  private readonly propsMapper =
+    new PropertyMapper<ToolbarRadioButtonProps>(this.lifecycle);
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   private isInitialized = false;
@@ -104,7 +111,7 @@ export class ToolbarRadioButtonElement
     } else {
       for (const prop of props) {
         this.unappliedProps = this.unappliedProps.filter(
-          ([name]) => name !== prop[0]
+          ([name]) => name !== prop[0],
         );
         this.unappliedProps.push(prop);
       }
@@ -125,7 +132,7 @@ export class ToolbarRadioButtonElement
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -154,15 +161,17 @@ export class ToolbarRadioButtonElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)
+    ) {
       this.parent = parent;
 
       const radioGroup = parent.getRadioGroup(
-        this.propsMapper.currentProps.radioGroup!
+        this.propsMapper.currentProps.radioGroup!,
       );
 
       this.widget = Gtk.RadioToolButton.new_from_widget(
-        radioGroup
+        radioGroup,
       ) as Gtk.RadioToolButton;
 
       this.isInitialized = true;
@@ -196,7 +205,7 @@ export class ToolbarRadioButtonElement
             })
             .expand(DataType.Boolean, (v = false) => {
               this.widget.set_expand(v);
-            })
+            }),
       );
 
       this.handlers = new EventHandlers<
@@ -214,13 +223,13 @@ export class ToolbarRadioButtonElement
         "enter-notify-event",
         "onMouseEnter",
         parseCrossingEvent,
-        EventPhase.Action
+        EventPhase.Action,
       );
       this.handlers.bind(
         "leave-notify-event",
         "onMouseLeave",
         parseCrossingEvent,
-        EventPhase.Action
+        EventPhase.Action,
       );
 
       this.lifecycle.emitLifecycleEventUpdate(this.unappliedProps);
@@ -231,7 +240,9 @@ export class ToolbarRadioButtonElement
         this.widget.set_active(true);
       }
     } else {
-      throw new Error("ToolbarButton can only be a child of a toolbar.");
+      throw new Error(
+        "ToolbarButton can only be a child of a toolbar.",
+      );
     }
 
     return true;
@@ -263,14 +274,14 @@ export class ToolbarRadioButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -285,7 +296,7 @@ export class ToolbarRadioButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

@@ -9,11 +9,12 @@ type AcceleratorKey =
   | {
       key: string;
       /**
-       * The modifier keys that must be held down for this accelerator to
-       * trigger.
+       * The modifier keys that must be held down for this accelerator
+       * to trigger.
        *
-       * Can be an `AccelModifier` or a bitwise combination of multiple
-       * `AccelModifier`s, for example for a combination Ctrl+Shift:
+       * Can be an `AccelModifier` or a bitwise combination of
+       * multiple `AccelModifier`s, for example for a combination
+       * Ctrl+Shift:
        *
        * @example
        *   const accelModifier =
@@ -24,7 +25,7 @@ type AcceleratorKey =
 
 export const useAccelerator = (
   key: AcceleratorKey,
-  callback: (...args: any[]) => void
+  callback: (...args: any[]) => void,
 ) => {
   const window = useWindow();
   const [accelGroup] = React.useState(() => {
@@ -56,12 +57,18 @@ export const useAccelerator = (
         continue;
       }
 
-      accelGroup.connect(keyCode, modifier!, null as any, (...args: any[]) =>
-        callbackRef.current(...args)
+      accelGroup.connect(
+        keyCode,
+        modifier!,
+        null as any,
+        (...args: any[]) => callbackRef.current(...args),
       );
 
       cleanups.push(() => {
-        accelGroup.disconnect_key(keyCode, modifier as Gdk.ModifierType);
+        accelGroup.disconnect_key(
+          keyCode,
+          modifier as Gdk.ModifierType,
+        );
       });
     }
 

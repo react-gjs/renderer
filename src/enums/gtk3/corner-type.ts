@@ -2,8 +2,8 @@ import Gtk from "gi://Gtk?version=3.0";
 
 /**
  * Specifies which corner a child widget should be placed in when
- * packed into a #GtkScrolledWindow. This is effectively the
- * opposite of where the scroll bars are placed.
+ * packed into a #GtkScrolledWindow. This is effectively the opposite
+ * of where the scroll bars are placed.
  */
 // @ts-expect-error
 declare enum CornerType {

@@ -22,25 +22,25 @@ export default describe("GridMatrix", () => {
       ];
 
       expect(
-        matrix.nextElement(children[0].colsSpan, children[0].rowSpan)
+        matrix.nextElement(children[0].colsSpan, children[0].rowSpan),
       ).toEqual({ x: 0, y: 0 });
       expect(
-        matrix.nextElement(children[1].colsSpan, children[1].rowSpan)
+        matrix.nextElement(children[1].colsSpan, children[1].rowSpan),
       ).toEqual({ x: 1, y: 0 });
       expect(
-        matrix.nextElement(children[2].colsSpan, children[2].rowSpan)
+        matrix.nextElement(children[2].colsSpan, children[2].rowSpan),
       ).toEqual({ x: 2, y: 0 });
       expect(
-        matrix.nextElement(children[3].colsSpan, children[3].rowSpan)
+        matrix.nextElement(children[3].colsSpan, children[3].rowSpan),
       ).toEqual({ x: 0, y: 1 });
       expect(
-        matrix.nextElement(children[4].colsSpan, children[4].rowSpan)
+        matrix.nextElement(children[4].colsSpan, children[4].rowSpan),
       ).toEqual({ x: 1, y: 1 });
       expect(
-        matrix.nextElement(children[5].colsSpan, children[5].rowSpan)
+        matrix.nextElement(children[5].colsSpan, children[5].rowSpan),
       ).toEqual({ x: 2, y: 1 });
       expect(
-        matrix.nextElement(children[6].colsSpan, children[6].rowSpan)
+        matrix.nextElement(children[6].colsSpan, children[6].rowSpan),
       ).toEqual({ x: 0, y: 2 });
     });
 
@@ -67,31 +67,31 @@ export default describe("GridMatrix", () => {
 
       // A
       expect(
-        matrix.nextElement(children[0].colsSpan, children[0].rowSpan)
+        matrix.nextElement(children[0].colsSpan, children[0].rowSpan),
       ).toEqual({ x: 0, y: 0 });
       // B
       expect(
-        matrix.nextElement(children[1].colsSpan, children[1].rowSpan)
+        matrix.nextElement(children[1].colsSpan, children[1].rowSpan),
       ).toEqual({ x: 1, y: 0 });
       // C
       expect(
-        matrix.nextElement(children[2].colsSpan, children[2].rowSpan)
+        matrix.nextElement(children[2].colsSpan, children[2].rowSpan),
       ).toEqual({ x: 0, y: 1 });
       // D
       expect(
-        matrix.nextElement(children[3].colsSpan, children[3].rowSpan)
+        matrix.nextElement(children[3].colsSpan, children[3].rowSpan),
       ).toEqual({ x: 1, y: 1 });
       // E
       expect(
-        matrix.nextElement(children[4].colsSpan, children[4].rowSpan)
+        matrix.nextElement(children[4].colsSpan, children[4].rowSpan),
       ).toEqual({ x: 0, y: 2 });
       // F
       expect(
-        matrix.nextElement(children[5].colsSpan, children[5].rowSpan)
+        matrix.nextElement(children[5].colsSpan, children[5].rowSpan),
       ).toEqual({ x: 2, y: 2 });
       // G
       expect(
-        matrix.nextElement(children[6].colsSpan, children[6].rowSpan)
+        matrix.nextElement(children[6].colsSpan, children[6].rowSpan),
       ).toEqual({ x: 0, y: 3 });
     });
 
@@ -118,27 +118,27 @@ export default describe("GridMatrix", () => {
 
       // A
       expect(
-        matrix.nextElement(children[0].colsSpan, children[0].rowSpan)
+        matrix.nextElement(children[0].colsSpan, children[0].rowSpan),
       ).toEqual({ x: 0, y: 0 });
       // B
       expect(
-        matrix.nextElement(children[1].colsSpan, children[1].rowSpan)
+        matrix.nextElement(children[1].colsSpan, children[1].rowSpan),
       ).toEqual({ x: 2, y: 0 });
       // C
       expect(
-        matrix.nextElement(children[2].colsSpan, children[2].rowSpan)
+        matrix.nextElement(children[2].colsSpan, children[2].rowSpan),
       ).toEqual({ x: 2, y: 1 });
       // D
       expect(
-        matrix.nextElement(children[3].colsSpan, children[3].rowSpan)
+        matrix.nextElement(children[3].colsSpan, children[3].rowSpan),
       ).toEqual({ x: 0, y: 2 });
       // E
       expect(
-        matrix.nextElement(children[4].colsSpan, children[4].rowSpan)
+        matrix.nextElement(children[4].colsSpan, children[4].rowSpan),
       ).toEqual({ x: 1, y: 2 });
       // F
       expect(
-        matrix.nextElement(children[5].colsSpan, children[5].rowSpan)
+        matrix.nextElement(children[5].colsSpan, children[5].rowSpan),
       ).toEqual({ x: 0, y: 3 });
     });
 
@@ -166,35 +166,35 @@ export default describe("GridMatrix", () => {
 
       // A
       expect(
-        matrix.nextElement(children[0].colsSpan, children[0].rowSpan)
+        matrix.nextElement(children[0].colsSpan, children[0].rowSpan),
       ).toEqual({ x: 0, y: 0 });
       // B
       expect(
-        matrix.nextElement(children[1].colsSpan, children[1].rowSpan)
+        matrix.nextElement(children[1].colsSpan, children[1].rowSpan),
       ).toEqual({ x: 2, y: 0 });
       // C
       expect(
-        matrix.nextElement(children[2].colsSpan, children[2].rowSpan)
+        matrix.nextElement(children[2].colsSpan, children[2].rowSpan),
       ).toEqual({ x: 3, y: 0 });
       // D
       expect(
-        matrix.nextElement(children[3].colsSpan, children[3].rowSpan)
+        matrix.nextElement(children[3].colsSpan, children[3].rowSpan),
       ).toEqual({ x: 0, y: 1 });
       // E
       expect(
-        matrix.nextElement(children[4].colsSpan, children[4].rowSpan)
+        matrix.nextElement(children[4].colsSpan, children[4].rowSpan),
       ).toEqual({ x: 1, y: 1 });
       // F
       expect(
-        matrix.nextElement(children[5].colsSpan, children[5].rowSpan)
+        matrix.nextElement(children[5].colsSpan, children[5].rowSpan),
       ).toEqual({ x: 3, y: 1 });
       // G
       expect(
-        matrix.nextElement(children[6].colsSpan, children[6].rowSpan)
+        matrix.nextElement(children[6].colsSpan, children[6].rowSpan),
       ).toEqual({ x: 1, y: 2 });
       // H
       expect(
-        matrix.nextElement(children[7].colsSpan, children[7].rowSpan)
+        matrix.nextElement(children[7].colsSpan, children[7].rowSpan),
       ).toEqual({ x: 2, y: 3 });
     });
 
@@ -218,19 +218,19 @@ export default describe("GridMatrix", () => {
 
       // A
       expect(
-        matrix.nextElement(children[0].colsSpan, children[0].rowSpan)
+        matrix.nextElement(children[0].colsSpan, children[0].rowSpan),
       ).toEqual({ x: 0, y: 0 });
       // B
       expect(
-        matrix.nextElement(children[1].colsSpan, children[1].rowSpan)
+        matrix.nextElement(children[1].colsSpan, children[1].rowSpan),
       ).toEqual({ x: 2, y: 0 });
       // C
       expect(
-        matrix.nextElement(children[2].colsSpan, children[2].rowSpan)
+        matrix.nextElement(children[2].colsSpan, children[2].rowSpan),
       ).toEqual({ x: 0, y: 3 });
       // D
       expect(
-        matrix.nextElement(children[3].colsSpan, children[3].rowSpan)
+        matrix.nextElement(children[3].colsSpan, children[3].rowSpan),
       ).toEqual({ x: 3, y: 3 });
     });
   });

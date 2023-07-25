@@ -24,16 +24,18 @@ type PopoverMenuSeparatorPropsMixin = SizeRequestProps &
   MarginProps &
   StyleProps;
 
-export type PopoverMenuSeparatorEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, PopoverMenuSeparatorElement>;
+export type PopoverMenuSeparatorEvent<
+  P extends Record<string, any> = {},
+> = SyntheticEvent<P, PopoverMenuSeparatorElement>;
 
-export type PopoverMenuSeparatorProps = PopoverMenuSeparatorPropsMixin;
+export type PopoverMenuSeparatorProps =
+  PopoverMenuSeparatorPropsMixin;
 
 export class PopoverMenuSeparatorElement
   implements GjsElement<"POPOVER_MENU_SEPARATOR", Gtk.Separator>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -41,20 +43,23 @@ export class PopoverMenuSeparatorElement
   readonly kind = "POPOVER_MENU_SEPARATOR";
   private widget = new Gtk.Separator();
 
-  private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
-    null;
+  private parent:
+    | PopoverMenuEntryElement
+    | PopoverMenuContentElement
+    | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
     Gtk.Separator,
     PopoverMenuSeparatorProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<PopoverMenuSeparatorProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createStylePropMapper(this.widget)
-  );
+  private readonly propsMapper =
+    new PropertyMapper<PopoverMenuSeparatorProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+    );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
@@ -76,7 +81,10 @@ export class PopoverMenuSeparatorElement
     throw new Error("PopoverMenuSeparator cannot have children.");
   }
 
-  insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
+  insertBefore(
+    child: TextNode | GjsElement,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("PopoverMenuSeparator cannot have children.");
   }
 
@@ -104,7 +112,7 @@ export class PopoverMenuSeparatorElement
       ])
     ) {
       throw new Error(
-        "PopoverMenuEntry can only be appended to a Popover or another PopoverMenuEntry."
+        "PopoverMenuEntry can only be appended to a Popover or another PopoverMenuEntry.",
       );
     }
     this.parent = parent;
@@ -135,14 +143,14 @@ export class PopoverMenuSeparatorElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -157,7 +165,7 @@ export class PopoverMenuSeparatorElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

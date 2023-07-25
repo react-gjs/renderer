@@ -33,10 +33,8 @@ type SwitchPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type SwitchEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  SwitchElement
->;
+export type SwitchEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, SwitchElement>;
 
 export interface SwitchProps extends SwitchPropsMixin {
   margin?: ElementMargin;
@@ -44,9 +42,11 @@ export interface SwitchProps extends SwitchPropsMixin {
   onToggle?: (event: SwitchEvent<{ state: boolean }>) => void;
 }
 
-export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
+export class SwitchElement
+  implements GjsElement<"SWITCH", Gtk.Switch>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -57,7 +57,10 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Switch, SwitchProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Switch,
+    SwitchProps
+  >(this);
 
   private readonly propsMapper = new PropertyMapper<SwitchProps>(
     this.lifecycle,
@@ -72,7 +75,7 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
       props.value(DataType.Boolean, (v = false) => {
         this.widget.state = v;
         this.widget.active = v;
-      })
+      }),
   );
 
   constructor(props: DiffedProps) {
@@ -146,14 +149,14 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -168,7 +171,7 @@ export class SwitchElement implements GjsElement<"SWITCH", Gtk.Switch> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

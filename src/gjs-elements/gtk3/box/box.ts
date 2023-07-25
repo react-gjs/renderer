@@ -1,6 +1,9 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { BaselinePosition, Orientation } from "../../../enums/gtk3-index";
+import type {
+  BaselinePosition,
+  Orientation,
+} from "../../../enums/gtk3-index";
 import { PackType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -39,7 +42,7 @@ export interface BoxProps extends BoxPropsMixin {
 
 export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -50,10 +53,12 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Box, BoxProps>(this);
+  private readonly handlers = new EventHandlers<Gtk.Box, BoxProps>(
+    this,
+  );
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<BoxProps>(
     this.lifecycle,
@@ -71,19 +76,19 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
           DataType.Enum(Gtk.BaselinePosition),
           (v = Gtk.BaselinePosition.TOP) => {
             this.widget.baseline_position = v;
-          }
+          },
         )
         .orientation(
           DataType.Enum(Gtk.Orientation),
           (v = Gtk.Orientation.VERTICAL) => {
             this.widget.orientation = v;
-          }
+          },
         )
         .childPackType(DataType.Enum(Gtk.PackType), () => {
           this.children.forEach((child) => {
             this.applyPackType(child);
           });
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -96,7 +101,11 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
     const packType =
       this.propsMapper.currentProps.childPackType ?? PackType.START;
 
-    this.widget.child_set_property(child.getWidget(), "pack-type", packType);
+    this.widget.child_set_property(
+      child.getWidget(),
+      "pack-type",
+      packType,
+    );
   }
 
   updateProps(props: DiffedProps): void {
@@ -114,7 +123,10 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -170,14 +182,14 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -192,7 +204,7 @@ export class BoxElement implements GjsElement<"BOX", Gtk.Box> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

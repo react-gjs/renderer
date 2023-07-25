@@ -8,7 +8,7 @@ import { GjsRenderer } from "./gjs-renderer";
 
 export const render = (
   appContent: JSX.Element,
-  options: ApplicationOptions
+  options: ApplicationOptions,
 ) => {
   Object.assign(globalThis, {
     getApp: function () {
@@ -26,18 +26,18 @@ export const render = (
     null,
     "",
     () => console.error,
-    null
+    null,
   );
 
   GjsRenderer.updateContainer(
     React.createElement(
       ApplicationContextProvider,
       { application },
-      appContent
+      appContent,
     ),
     container,
     null,
-    () => {}
+    () => {},
   );
 
   setTimeout(() => {

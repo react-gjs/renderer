@@ -27,7 +27,7 @@ export type GridItemEvents = {
 
 export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -55,7 +55,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
         })
         .rowSpan(DataType.Number, (v = 1) => {
           this.emitter.emit("rowSpanChanged", v);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -115,7 +115,9 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   notifyWillAppendTo(parent: GjsElement): boolean {
     if (!GjsElementManager.isGjsElementOfKind(parent, GridElement)) {
-      throw new Error("GridItem can only be appended to the Grid container.");
+      throw new Error(
+        "GridItem can only be appended to the Grid container.",
+      );
     }
     this.parent = parent;
     return true;
@@ -148,12 +150,12 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {
@@ -166,7 +168,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

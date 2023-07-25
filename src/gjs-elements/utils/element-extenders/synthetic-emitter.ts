@@ -1,7 +1,10 @@
 import type { ElementLifecycle } from "../../element-extender";
 
 export class SyntheticEmitter<E extends Record<string, any[]>> {
-  private listeners = new Map<keyof E, Map<symbol, (...args: any[]) => void>>();
+  private listeners = new Map<
+    keyof E,
+    Map<symbol, (...args: any[]) => void>
+  >();
 
   constructor(private element: ElementLifecycle) {
     element.beforeDestroy(() => {

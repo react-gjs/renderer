@@ -29,9 +29,11 @@ export type TextViewImageProps = {
 type TextViewImageElementMixin = GjsElement<"TEXT_VIEW_IMAGE"> &
   ITextViewElement;
 
-export class TextViewImageElement implements TextViewImageElementMixin {
+export class TextViewImageElement
+  implements TextViewImageElementMixin
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: false,
@@ -44,34 +46,36 @@ export class TextViewImageElement implements TextViewImageElementMixin {
   protected parent: TextViewElementContainer | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly propsMapper = new PropertyMapper<TextViewImageProps>(
-    this.lifecycle,
-    (props) =>
+  protected readonly propsMapper =
+    new PropertyMapper<TextViewImageProps>(this.lifecycle, (props) =>
       props
-        .src(DataType.OneOf(DataType.String, DataType.RecordOf({})), (v) => {
-          if (typeof v === "string") {
-            this.pixbuf = GdkPixbuf.Pixbuf.new_from_file(v)!;
-          } else {
-            this.pixbuf = v as any as GdkPixbuf.Pixbuf;
-          }
-        })
+        .src(
+          DataType.OneOf(DataType.String, DataType.RecordOf({})),
+          (v) => {
+            if (typeof v === "string") {
+              this.pixbuf = GdkPixbuf.Pixbuf.new_from_file(v)!;
+            } else {
+              this.pixbuf = v as any as GdkPixbuf.Pixbuf;
+            }
+          },
+        )
         .resizeToHeight(DataType.Number, () => {
           this.resizeImage();
         })
         .resizeToWidth(DataType.Number, (_, __, { instead }) =>
-          instead("resizeToHeight")
+          instead("resizeToHeight"),
         )
         .preserveAspectRatio(DataType.Boolean, (_, __, { instead }) =>
-          instead("resizeToHeight")
-        )
-  );
+          instead("resizeToHeight"),
+        ),
+    );
 
   private isVisible = true;
 
   constructor(
     props: DiffedProps,
     context: HostContext<GjsContext>,
-    beforeFirstUpdate?: (self: any) => void
+    beforeFirstUpdate?: (self: any) => void,
   ) {
     if (beforeFirstUpdate) {
       beforeFirstUpdate(this);
@@ -83,8 +87,10 @@ export class TextViewImageElement implements TextViewImageElementMixin {
   }
 
   private resizeImage() {
-    const width: number | undefined = this.propsMapper.get("resizeToWidth");
-    const height: number | undefined = this.propsMapper.get("resizeToHeight");
+    const width: number | undefined =
+      this.propsMapper.get("resizeToWidth");
+    const height: number | undefined =
+      this.propsMapper.get("resizeToHeight");
     const preserveAspectRatio: boolean =
       this.propsMapper.get("preserveAspectRatio") ?? true;
 
@@ -96,7 +102,7 @@ export class TextViewImageElement implements TextViewImageElementMixin {
       pixbuff,
       width,
       height,
-      preserveAspectRatio
+      preserveAspectRatio,
     );
 
     this.pixbuf = newPixbuff;
@@ -115,7 +121,7 @@ export class TextViewImageElement implements TextViewImageElementMixin {
 
   insertBefore(
     child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void {
     throw new Error("TextViewImage elements cannot have children.");
   }
@@ -139,7 +145,7 @@ export class TextViewImageElement implements TextViewImageElementMixin {
       this.parent = parent;
     } else {
       throw new Error(
-        "TextViewImage elements can only be appended to a TextView elements."
+        "TextViewImage elements can only be appended to a TextView elements.",
       );
     }
     return true;
@@ -162,7 +168,9 @@ export class TextViewImageElement implements TextViewImageElementMixin {
   }
 
   getWidget(): Gtk.Widget {
-    throw new Error("TextViewImage does not have a corresponding widget.");
+    throw new Error(
+      "TextViewImage does not have a corresponding widget.",
+    );
   }
 
   getParentElement() {
@@ -171,12 +179,12 @@ export class TextViewImageElement implements TextViewImageElementMixin {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {
@@ -189,7 +197,7 @@ export class TextViewImageElement implements TextViewImageElementMixin {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

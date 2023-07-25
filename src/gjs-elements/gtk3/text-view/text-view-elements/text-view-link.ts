@@ -27,11 +27,12 @@ export interface TextViewLinkProps extends MarkupElementProps {
   href?: string;
 }
 
-type TextViewLinkElementMixin = GjsElement<"TEXT_VIEW_LINK"> & ITextViewElement;
+type TextViewLinkElementMixin = GjsElement<"TEXT_VIEW_LINK"> &
+  ITextViewElement;
 
 export class TextViewLinkElement implements TextViewLinkElementMixin {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -45,17 +46,18 @@ export class TextViewLinkElement implements TextViewLinkElementMixin {
   protected attributes = new MarkupAttributes();
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly propsMapper = new PropertyMapper<TextViewLinkProps>(
-    this.lifecycle,
-    createMarkupPropMapper(this.attributes, {
-      color: "#297ad2",
-      underline: "single",
-    }),
-    (props) =>
-      props.href(DataType.String, (href = "") => {
-        this.linkHref = href;
-      })
-  );
+  protected readonly propsMapper =
+    new PropertyMapper<TextViewLinkProps>(
+      this.lifecycle,
+      createMarkupPropMapper(this.attributes, {
+        color: "#297ad2",
+        underline: "single",
+      }),
+      (props) =>
+        props.href(DataType.String, (href = "") => {
+          this.linkHref = href;
+        }),
+    );
 
   private linkHref = "";
   private isVisible = true;
@@ -63,7 +65,7 @@ export class TextViewLinkElement implements TextViewLinkElementMixin {
   constructor(
     props: DiffedProps,
     context: HostContext<GjsContext>,
-    beforeFirstUpdate?: (self: any) => void
+    beforeFirstUpdate?: (self: any) => void,
   ) {
     if (beforeFirstUpdate) {
       beforeFirstUpdate(this);
@@ -84,7 +86,7 @@ export class TextViewLinkElement implements TextViewLinkElementMixin {
   appendChild(child: GjsElement | TextNode): void {
     if (!isTextViewElement(child)) {
       throw new Error(
-        "TextViewLink elements can only have other TextView elements or strings as children."
+        "TextViewLink elements can only have other TextView elements or strings as children.",
       );
     }
 
@@ -95,15 +97,17 @@ export class TextViewLinkElement implements TextViewLinkElementMixin {
 
   insertBefore(
     child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void {
     if (!isTextViewElement(child)) {
       throw new Error(
-        "TextViewLink elements can only have other TextView elements or strings as children."
+        "TextViewLink elements can only have other TextView elements or strings as children.",
       );
     }
 
-    const beforeChildIndex = this.children.indexOf(beforeChild as any);
+    const beforeChildIndex = this.children.indexOf(
+      beforeChild as any,
+    );
 
     if (beforeChildIndex === -1) {
       throw new Error("The beforeChild element was not found.");
@@ -133,7 +137,7 @@ export class TextViewLinkElement implements TextViewLinkElementMixin {
       this.parent = parent;
     } else {
       throw new Error(
-        "TextViewLink elements can only be appended to a TextView elements."
+        "TextViewLink elements can only be appended to a TextView elements.",
       );
     }
     return true;
@@ -165,7 +169,9 @@ export class TextViewLinkElement implements TextViewLinkElementMixin {
   }
 
   getWidget(): Gtk.Widget {
-    throw new Error("TextViewSpan does not have a corresponding widget.");
+    throw new Error(
+      "TextViewSpan does not have a corresponding widget.",
+    );
   }
 
   getParentElement() {
@@ -174,12 +180,12 @@ export class TextViewLinkElement implements TextViewLinkElementMixin {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {
@@ -192,7 +198,7 @@ export class TextViewLinkElement implements TextViewLinkElementMixin {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

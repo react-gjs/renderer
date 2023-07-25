@@ -5,7 +5,10 @@ const isObject = (obj: any): obj is Record<any, any> => {
   return typeof obj === "object" && obj !== null;
 };
 
-export const compareArraysShallow = (oldArray?: any[], newArray?: any[]) => {
+export const compareArraysShallow = (
+  oldArray?: any[],
+  newArray?: any[],
+) => {
   if (typeof oldArray !== typeof newArray) {
     return true;
   }
@@ -27,7 +30,7 @@ export const compareArraysShallow = (oldArray?: any[], newArray?: any[]) => {
 
 export const compareRecordsShallow = (
   oldStyle: undefined | Record<string, any>,
-  newStyle: undefined | Record<string, any>
+  newStyle: undefined | Record<string, any>,
 ) => {
   if (typeof oldStyle !== typeof newStyle) {
     return true;
@@ -55,7 +58,7 @@ export const compareRecordsShallow = (
 
 export const compareRecordsDeep = (
   oldStyle: undefined | Record<string, any>,
-  newStyle: undefined | Record<string, any>
+  newStyle: undefined | Record<string, any>,
 ) => {
   if (typeof oldStyle !== typeof newStyle) {
     return true;
@@ -97,7 +100,7 @@ export const compareRecordsDeep = (
 
 export const compareStyles = (
   oldStyle: undefined | Record<string, any>,
-  newStyle: undefined | Record<string, any>
+  newStyle: undefined | Record<string, any>,
 ) => {
   if (typeof oldStyle !== typeof newStyle) {
     return true;
@@ -133,7 +136,10 @@ export const compareStyles = (
   return false;
 };
 
-const compareMargins = (m1: number | number[], m2: number | number[]) => {
+const compareMargins = (
+  m1: number | number[],
+  m2: number | number[],
+) => {
   if (m1 === m2) return false;
 
   if (typeof m1 !== "number" && typeof m2 !== "number") {
@@ -143,7 +149,10 @@ const compareMargins = (m1: number | number[], m2: number | number[]) => {
   return true;
 };
 
-const compareClassNames = (cn1: string | string[], cn2: string | string[]) => {
+const compareClassNames = (
+  cn1: string | string[],
+  cn2: string | string[],
+) => {
   if (cn1 === cn2) return false;
 
   if (typeof cn1 !== "string" && typeof cn2 !== "string") {
@@ -166,7 +175,10 @@ export const diffProps = (
   oldProps: any,
   newProps: any,
   gjsElem: boolean,
-  customPropDiffers?: Map<string, (oldProp: any, newProp: any) => boolean>
+  customPropDiffers?: Map<
+    string,
+    (oldProp: any, newProp: any) => boolean
+  >,
 ) => {
   const diffedProps: DiffedProps = [];
 

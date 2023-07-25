@@ -36,8 +36,9 @@ type PopoverMenuCheckButtonPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type PopoverMenuCheckButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, PopoverMenuCheckButtonElement>;
+export type PopoverMenuCheckButtonEvent<
+  P extends Record<string, any> = {},
+> = SyntheticEvent<P, PopoverMenuCheckButtonElement>;
 
 export interface PopoverMenuCheckButtonProps
   extends PopoverMenuCheckButtonPropsMixin {
@@ -46,18 +47,24 @@ export interface PopoverMenuCheckButtonProps
   centered?: boolean;
   inverted?: boolean;
   active?: boolean;
-  onChange?: (e: PopoverMenuCheckButtonEvent<{ isActive: boolean }>) => void;
+  onChange?: (
+    e: PopoverMenuCheckButtonEvent<{ isActive: boolean }>,
+  ) => void;
   onPressed?: (event: PopoverMenuCheckButtonEvent) => void;
   onReleased?: (event: PopoverMenuCheckButtonEvent) => void;
-  onMouseEnter?: (event: PopoverMenuCheckButtonEvent<PointerData>) => void;
-  onMouseLeave?: (event: PopoverMenuCheckButtonEvent<PointerData>) => void;
+  onMouseEnter?: (
+    event: PopoverMenuCheckButtonEvent<PointerData>,
+  ) => void;
+  onMouseLeave?: (
+    event: PopoverMenuCheckButtonEvent<PointerData>,
+  ) => void;
 }
 
 export class PopoverMenuCheckButtonElement
   implements GjsElement<"POPOVER_MENU_CHECK_BUTTON", Gtk.ModelButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -65,8 +72,10 @@ export class PopoverMenuCheckButtonElement
   readonly kind = "POPOVER_MENU_CHECK_BUTTON";
   private widget = popoverMenuModelButton();
 
-  private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
-    null;
+  private parent:
+    | PopoverMenuEntryElement
+    | PopoverMenuContentElement
+    | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
@@ -97,7 +106,7 @@ export class PopoverMenuCheckButtonElement
           })
           .active(DataType.Boolean, (v = false) => {
             this.widget.active = v;
-          })
+          }),
     );
 
   constructor(props: DiffedProps) {
@@ -118,13 +127,13 @@ export class PopoverMenuCheckButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -146,7 +155,10 @@ export class PopoverMenuCheckButtonElement
     throw new Error("PopoverMenuCheckButton cannot have children.");
   }
 
-  insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
+  insertBefore(
+    child: TextNode | GjsElement,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("PopoverMenuCheckButton cannot have children.");
   }
 
@@ -174,7 +186,7 @@ export class PopoverMenuCheckButtonElement
       ])
     ) {
       throw new Error(
-        "PopoverMenuCheckButton can only be appended to a Popover or another PopoverMenuEntry."
+        "PopoverMenuCheckButton can only be appended to a Popover or another PopoverMenuEntry.",
       );
     }
     this.parent = parent;
@@ -205,14 +217,14 @@ export class PopoverMenuCheckButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -227,7 +239,7 @@ export class PopoverMenuCheckButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

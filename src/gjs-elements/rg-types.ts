@@ -11,7 +11,10 @@ export type {
   ButtonGroupElement,
   ButtonGroupProps,
 } from "./gtk3/button-group/button-group";
-export type { ButtonElement, ButtonProps } from "./gtk3/button/button";
+export type {
+  ButtonElement,
+  ButtonProps,
+} from "./gtk3/button/button";
 export type {
   CheckButtonElement,
   CheckButtonProps,
@@ -20,15 +23,24 @@ export type {
   CustomWidgetElement,
   CustomWidgetProps,
 } from "./gtk3/custom-widget/custom-widget";
-export type { ExpanderElement, ExpanderProps } from "./gtk3/expander/expander";
-export type { FlowBoxElement, FlowBoxProps } from "./gtk3/flow-box/flow-box";
+export type {
+  ExpanderElement,
+  ExpanderProps,
+} from "./gtk3/expander/expander";
+export type {
+  FlowBoxElement,
+  FlowBoxProps,
+} from "./gtk3/flow-box/flow-box";
 export type {
   FlowBoxEntryElement,
   FlowBoxEntryProps,
 } from "./gtk3/flow-box/flow-box-entry";
 export type { FrameElement, FrameProps } from "./gtk3/frame/frame";
 export type { GridElement, GridProps } from "./gtk3/grid/grid";
-export type { GridItemElement, GridItemProps } from "./gtk3/grid/grid-item";
+export type {
+  GridItemElement,
+  GridItemProps,
+} from "./gtk3/grid/grid-item";
 export type {
   HeaderBarElement,
   HeaderBarProps,
@@ -39,7 +51,10 @@ export type {
   LinkButtonElement,
   LinkButtonProps,
 } from "./gtk3/link-button/link-button";
-export type { MarkupElement, MarkupProps } from "./gtk3/markup/markup";
+export type {
+  MarkupElement,
+  MarkupProps,
+} from "./gtk3/markup/markup";
 export type {
   MarkupFontGravity,
   MarkupFontGravityHint,
@@ -54,8 +69,14 @@ export type {
   MarkupSegment,
   MarkupTextTransform,
 } from "./gtk3/markup/markup-elem";
-export type { MBoldElement, MBoldProps } from "./gtk3/markup/markup-elements/b";
-export type { MBigElement, MBigProps } from "./gtk3/markup/markup-elements/big";
+export type {
+  MBoldElement,
+  MBoldProps,
+} from "./gtk3/markup/markup-elements/b";
+export type {
+  MBigElement,
+  MBigProps,
+} from "./gtk3/markup/markup-elements/big";
 export type {
   MItalicElement,
   MItalicProps,
@@ -72,8 +93,14 @@ export type {
   MSpanElement,
   MSpanProps,
 } from "./gtk3/markup/markup-elements/span";
-export type { MSubElement, MSubProps } from "./gtk3/markup/markup-elements/sub";
-export type { MSupElement, MSupProps } from "./gtk3/markup/markup-elements/sup";
+export type {
+  MSubElement,
+  MSubProps,
+} from "./gtk3/markup/markup-elements/sub";
+export type {
+  MSupElement,
+  MSupProps,
+} from "./gtk3/markup/markup-elements/sup";
 export type {
   MMonospaceElement,
   MMonospaceProps,
@@ -82,7 +109,10 @@ export type {
   MUnderlineElement,
   MUnderlineProps,
 } from "./gtk3/markup/markup-elements/u";
-export type { MenuBarElement, MenuBarProps } from "./gtk3/menu-bar/menu-bar";
+export type {
+  MenuBarElement,
+  MenuBarProps,
+} from "./gtk3/menu-bar/menu-bar";
 export type {
   MenuBarItemElement,
   MenuBarItemProps,
@@ -130,7 +160,10 @@ export type {
   PopoverMenuSeparatorProps,
 } from "./gtk3/popover-menu/content-elements/popover-menu-separator";
 export type { PopoverMenuElement } from "./gtk3/popover-menu/popover-menu";
-export type { PopoverElement, PopoverProps } from "./gtk3/popover/popover";
+export type {
+  PopoverElement,
+  PopoverProps,
+} from "./gtk3/popover/popover";
 export type {
   PressableElement,
   PressableProps,
@@ -143,12 +176,18 @@ export type {
   RadioGroupElement as RadioBoxElement,
   RadioGroupProps as RadioBoxProps,
 } from "./gtk3/radio/radio-group";
-export type { RevealerElement, RevealerProps } from "./gtk3/revealer/revealer";
+export type {
+  RevealerElement,
+  RevealerProps,
+} from "./gtk3/revealer/revealer";
 export type {
   ScrollBoxElement,
   ScrollBoxProps,
 } from "./gtk3/scroll-box/scroll-box";
-export type { SelectorElement, SelectorProps } from "./gtk3/selector/selector";
+export type {
+  SelectorElement,
+  SelectorProps,
+} from "./gtk3/selector/selector";
 export type {
   SeparatorElement,
   SeparatorProps,
@@ -161,8 +200,14 @@ export type {
   SliderPopupButtonElement,
   SliderPopupButtonProps,
 } from "./gtk3/slider-popup-button/slider-popup-button";
-export type { SliderElement, SliderProps } from "./gtk3/slider/slider";
-export type { SpinnerElement, SpinnerProps } from "./gtk3/spinner/spinner";
+export type {
+  SliderElement,
+  SliderProps,
+} from "./gtk3/slider/slider";
+export type {
+  SpinnerElement,
+  SpinnerProps,
+} from "./gtk3/spinner/spinner";
 export type { StackElement, StackProps } from "./gtk3/stack/stack";
 export type {
   StackScreenElement,
@@ -172,7 +217,10 @@ export type {
   StackSwitcherElement,
   StackSwitcherProps,
 } from "./gtk3/stack/stack-switcher";
-export type { SwitchElement, SwitchProps } from "./gtk3/switch/switch";
+export type {
+  SwitchElement,
+  SwitchProps,
+} from "./gtk3/switch/switch";
 export type {
   TextAreaElement,
   TextAreaProps,
@@ -181,7 +229,10 @@ export type {
   TextEntryElement,
   TextEntryProps,
 } from "./gtk3/text-entry/text-entry";
-export type { ToolbarElement, ToolbarProps } from "./gtk3/toolbar/toolbar";
+export type {
+  ToolbarElement,
+  ToolbarProps,
+} from "./gtk3/toolbar/toolbar";
 export type {
   ToolbarButtonElement,
   ToolbarButtonProps,
@@ -206,5 +257,8 @@ export type {
   VolumeButtonElement,
   VolumeButtonProps,
 } from "./gtk3/volume-button/volume-button";
-export type { WindowElement, WindowProps } from "./gtk3/window/window";
+export type {
+  WindowElement,
+  WindowProps,
+} from "./gtk3/window/window";
 export type { SyntheticEvent } from "./utils/element-extenders/event-handlers";

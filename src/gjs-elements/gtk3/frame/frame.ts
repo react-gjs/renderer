@@ -38,7 +38,7 @@ export interface FrameProps extends FramePropsMixin {
 
 export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -49,10 +49,13 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Frame, FrameProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Frame,
+    FrameProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<FrameProps>(
     this.lifecycle,
@@ -63,18 +66,24 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
     createStylePropMapper(this.widget),
     (props) =>
       props
-        .label(DataType.OneOf(DataType.String, DataType.Null), (v = null) => {
-          this.widget.set_label(v);
-        })
+        .label(
+          DataType.OneOf(DataType.String, DataType.Null),
+          (v = null) => {
+            this.widget.set_label(v);
+          },
+        )
         .labelAlignX(DataType.Number, (v = 0, allProps) => {
           this.widget.set_label_align(v, allProps.labelAlignY ?? 0);
         })
         .labelAlignY(DataType.Number, (v = 0, allProps) => {
           this.widget.set_label_align(allProps.labelAlignX ?? 0, v);
         })
-        .shadowType(DataType.Enum(Gtk.ShadowType), (v = Gtk.ShadowType.IN) => {
-          this.widget.set_shadow_type(v);
-        })
+        .shadowType(
+          DataType.Enum(Gtk.ShadowType),
+          (v = Gtk.ShadowType.IN) => {
+            this.widget.set_shadow_type(v);
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -101,7 +110,10 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("Expander can only have one child.");
   }
 
@@ -152,14 +164,14 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -174,7 +186,7 @@ export class FrameElement implements GjsElement<"FRAME", Gtk.Frame> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

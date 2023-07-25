@@ -5,14 +5,16 @@ import { compareRecordsShallow } from "../../../gjs-elements/utils/diff-props";
 import { isInstrinsic } from "../../../utils/intrinsic-marker";
 
 export const useChildProperties = <
-  E extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>
+  E extends
+    | keyof JSX.IntrinsicElements
+    | React.JSXElementConstructor<any>,
 >(
   element: E,
-  childProperties: Record<string, string | number>
+  childProperties: Record<string, string | number>,
 ) => {
   if (!(typeof element === "string" || isInstrinsic(element))) {
     throw new Error(
-      `Child Properties can only be used with intrinsic elements. ${element} is not an intrinsic element.`
+      `Child Properties can only be used with intrinsic elements. ${element} is not an intrinsic element.`,
     );
   }
 
@@ -28,7 +30,11 @@ export const useChildProperties = <
 
     if ("child_set_property" in parent) {
       for (const [key, value] of Object.entries(childProps.current)) {
-        parent.child_set_property(ref.current.getWidget(), key, value);
+        parent.child_set_property(
+          ref.current.getWidget(),
+          key,
+          value,
+        );
       }
     }
   });
@@ -45,11 +51,17 @@ export const useChildProperties = <
   });
 
   const [Component] = React.useState(() => (props: any) => {
-    return React.createElement(element, { ...props, ref: refCallback });
+    return React.createElement(element, {
+      ...props,
+      ref: refCallback,
+    });
   });
 
   React.useEffect(() => {
-    const changed = compareRecordsShallow(childProps.current, childProperties);
+    const changed = compareRecordsShallow(
+      childProps.current,
+      childProperties,
+    );
 
     if (changed) {
       childProps.current = childProperties;

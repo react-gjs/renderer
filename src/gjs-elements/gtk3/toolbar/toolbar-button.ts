@@ -58,7 +58,7 @@ export class ToolbarButtonElement
   implements GjsElement<"TOOLBAR_BUTTON", Gtk.ToolButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -75,44 +75,45 @@ export class ToolbarButtonElement
     Gtk.ToolButton,
     ToolbarButtonProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<ToolbarButtonProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    createAccelPropMapper(this.widget),
-    (props) =>
-      props
-        .label(DataType.String, (v = "") => {
-          this.widget.label = v;
-        })
-        .useUnderline(DataType.Boolean, (v = false) => {
-          this.widget.use_underline = v;
-        })
-        .focusOnClick(DataType.Boolean, (v = true) => {
-          this.widget.focus_on_click = v;
-        })
-        .icon(DataType.String, (v) => {
-          if (v) {
-            this.widget.icon_name = v;
-          }
-        })
-        .sameSize(DataType.Boolean, (v = true) => {
-          this.widget.set_homogeneous(v);
-        })
-        .expand(DataType.Boolean, (v = false) => {
-          this.widget.set_expand(v);
-        })
-  );
+  private readonly propsMapper =
+    new PropertyMapper<ToolbarButtonProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget),
+      (props) =>
+        props
+          .label(DataType.String, (v = "") => {
+            this.widget.label = v;
+          })
+          .useUnderline(DataType.Boolean, (v = false) => {
+            this.widget.use_underline = v;
+          })
+          .focusOnClick(DataType.Boolean, (v = true) => {
+            this.widget.focus_on_click = v;
+          })
+          .icon(DataType.String, (v) => {
+            if (v) {
+              this.widget.icon_name = v;
+            }
+          })
+          .sameSize(DataType.Boolean, (v = true) => {
+            this.widget.set_homogeneous(v);
+          })
+          .expand(DataType.Boolean, (v = false) => {
+            this.widget.set_expand(v);
+          }),
+    );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   constructor(props: DiffedProps) {
@@ -121,13 +122,13 @@ export class ToolbarButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -153,7 +154,7 @@ export class ToolbarButtonElement
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -182,10 +183,14 @@ export class ToolbarButtonElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)
+    ) {
       this.parent = parent;
     } else {
-      throw new Error("ToolbarButton can only be a child of a toolbar.");
+      throw new Error(
+        "ToolbarButton can only be a child of a toolbar.",
+      );
     }
     return true;
   }
@@ -216,14 +221,14 @@ export class ToolbarButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -238,7 +243,7 @@ export class ToolbarButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

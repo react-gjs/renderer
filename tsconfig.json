@@ -15,13 +15,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "stripInternal": true,
-    "typeRoots": [
-      "node_modules/gjs-esm-types",
-      "node_modules/@types",
-    ]
+    "typeRoots": ["node_modules/gjs-esm-types", "node_modules/@types"]
   },
-  "include": [
-    "src/**/*",
-    "gi.d.ts"
-  ]
+  "include": ["src/**/*", "gi.d.ts"]
 }

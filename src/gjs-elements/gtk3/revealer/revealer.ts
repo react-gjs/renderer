@@ -33,9 +33,11 @@ export interface RevealerProps extends RevealerPropsMixin {
   transitionType?: Gtk.RevealerTransitionType;
 }
 
-export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
+export class RevealerElement
+  implements GjsElement<"REVEALER", Gtk.Revealer>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -46,12 +48,13 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Revealer, RevealerProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Revealer,
+    RevealerProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<RevealerProps>(
     this.lifecycle,
@@ -72,8 +75,8 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
           DataType.Enum(Gtk.RevealerTransitionType),
           (v = Gtk.RevealerTransitionType.NONE) => {
             this.widget.transition_type = v;
-          }
-        )
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -96,7 +99,10 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -151,14 +157,14 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -173,7 +179,7 @@ export class RevealerElement implements GjsElement<"REVEALER", Gtk.Revealer> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

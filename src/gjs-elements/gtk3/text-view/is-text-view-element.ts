@@ -9,7 +9,7 @@ import type {
 import { TextViewLinkElement } from "./text-view-elements/text-view-link";
 
 export const isTextViewElement = (
-  element: GjsElement | TextNode
+  element: GjsElement | TextNode,
 ): element is ITextViewElement => {
   return (
     element.kind === "TEXT_VIEW_SPAN" ||
@@ -21,7 +21,7 @@ export const isTextViewElement = (
 };
 
 export const isTextViewElementContainer = (
-  element: GjsElement
+  element: GjsElement,
 ): element is TextViewElementContainer => {
   return GjsElementManager.isGjsElementOfKind(element, [
     TextViewElement,

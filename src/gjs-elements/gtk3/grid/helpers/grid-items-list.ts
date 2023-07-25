@@ -27,7 +27,7 @@ export class GridItemsList {
       onChildChange(params: ChildrenInfo): void;
       onChildAdded(params: ChildrenInfo): void;
       onChildRemoved(params: GridItemElement): void;
-    }
+    },
   ) {
     lifecycle.beforeDestroy(() => this.cleanup());
   }
@@ -37,7 +37,9 @@ export class GridItemsList {
   }
 
   getIndexOf(child: GjsElement) {
-    return this.items.findIndex((item) => item.element === (child as any));
+    return this.items.findIndex(
+      (item) => item.element === (child as any),
+    );
   }
 
   add(child: GridItemElement, atIndex?: number) {
@@ -65,18 +67,18 @@ export class GridItemsList {
       child.emitter.on("columnSpanChanged", (newColSpan) => {
         childEntry.columnSpan = newColSpan;
         childEntry.dispatcher.dispatch(() =>
-          this.onChildChangeInterface.onChildChange(childEntry)
+          this.onChildChangeInterface.onChildChange(childEntry),
         );
       }),
       child.emitter.on("rowSpanChanged", (newRowSpan) => {
         childEntry.rowSpan = newRowSpan;
         childEntry.dispatcher.dispatch(() =>
-          this.onChildChangeInterface.onChildChange(childEntry)
+          this.onChildChangeInterface.onChildChange(childEntry),
         );
       }),
       child.emitter.on("itemUpdated", () => {
         childEntry.dispatcher.dispatch(() =>
-          this.onChildChangeInterface.onChildChange(childEntry)
+          this.onChildChangeInterface.onChildChange(childEntry),
         );
       }),
       child.emitter.on("itemDestroyed", () => {
@@ -84,7 +86,7 @@ export class GridItemsList {
         childEntry.dispatcher.cancelPreviousDispatch();
         childEntry.listeners.forEach((listener) => listener.remove());
         this.onChildChangeInterface.onChildRemoved(child);
-      })
+      }),
     );
 
     this.onChildChangeInterface.onChildAdded(childEntry);

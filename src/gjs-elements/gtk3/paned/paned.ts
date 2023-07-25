@@ -37,7 +37,7 @@ export interface PanedProps extends PanedPropsMixin {
 
 export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -48,11 +48,12 @@ export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Paned, PanedProps>(this);
-  private readonly children: [GjsElement | null, GjsElement | null] = [
-    null,
-    null,
-  ];
+  private readonly handlers = new EventHandlers<
+    Gtk.Paned,
+    PanedProps
+  >(this);
+  private readonly children: [GjsElement | null, GjsElement | null] =
+    [null, null];
   private readonly propsMapper = new PropertyMapper<PanedProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -66,7 +67,7 @@ export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
           DataType.Enum(Gtk.Orientation),
           (v = Gtk.Orientation.VERTICAL) => {
             this.widget.set_orientation(v);
-          }
+          },
         )
         .wideHandle(DataType.Boolean, (v = false) => {
           this.widget.set_wide_handle(v);
@@ -80,7 +81,7 @@ export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
           this.children.forEach((child) => {
             if (child) this.applyShrink(child, v);
           });
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -90,11 +91,19 @@ export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
   }
 
   private applyResize(child: GjsElement, resizable: boolean) {
-    this.widget.child_set_property(child.getWidget(), "resize", resizable);
+    this.widget.child_set_property(
+      child.getWidget(),
+      "resize",
+      resizable,
+    );
   }
 
   private applyShrink(child: GjsElement, shrinkable: boolean) {
-    this.widget.child_set_property(child.getWidget(), "shrink", shrinkable);
+    this.widget.child_set_property(
+      child.getWidget(),
+      "shrink",
+      shrinkable,
+    );
   }
 
   updateProps(props: DiffedProps): void {
@@ -123,16 +132,25 @@ export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
     }
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
 
     if (shouldAppend) {
-      if (this.children[1] === beforeChild && this.children[0] == null) {
+      if (
+        this.children[1] === beforeChild &&
+        this.children[0] == null
+      ) {
         this.children[0] = newChild;
         this.widget.add1(newChild.getWidget());
-      } else if (this.children[0] === beforeChild && this.children[1] == null) {
+      } else if (
+        this.children[0] === beforeChild &&
+        this.children[1] == null
+      ) {
         this.widget.remove(this.children[0].getWidget());
         this.children[1] = this.children[0];
         this.children[0] = newChild;
@@ -149,7 +167,9 @@ export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
         this.widget.add1(this.children[0].getWidget());
         this.widget.add2(this.children[1].getWidget());
       } else {
-        throw new Error("Unable to insert a children into this Paned element.");
+        throw new Error(
+          "Unable to insert a children into this Paned element.",
+        );
       }
 
       this.widget.show_all();
@@ -215,14 +235,14 @@ export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -237,7 +257,7 @@ export class PanedElement implements GjsElement<"PANED", Gtk.Paned> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

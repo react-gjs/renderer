@@ -10,7 +10,9 @@ export type TooltipProps = {
   tooltip?: string;
 };
 
-export const createTooltipPropMapper = (widget: WidgetWithTooltip) => {
+export const createTooltipPropMapper = (
+  widget: WidgetWithTooltip,
+) => {
   return (mapper: PropCaseCollector<keyof TooltipProps, any>) =>
     mapper.tooltip(DataType.String, (v) => {
       widget.tooltip_text = v ?? null;

@@ -2,7 +2,10 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 import { WrapMode } from "../../../enums/custom";
-import type { EllipsizeMode, Justification } from "../../../enums/gtk3-index";
+import type {
+  EllipsizeMode,
+  Justification,
+} from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -43,7 +46,7 @@ export interface LabelProps extends LabelPropsMixin {
 
 export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -56,7 +59,10 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Label, LabelProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Label,
+    LabelProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<LabelProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -76,7 +82,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
           DataType.Enum(Pango.EllipsizeMode),
           (v = Pango.EllipsizeMode.NONE) => {
             this.widget.ellipsize = v;
-          }
+          },
         )
         .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.CHAR) => {
           this.widget.wrap = v !== WrapMode.NONE;
@@ -86,15 +92,15 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
           DataType.Enum(Gtk.Justification),
           (v = Gtk.Justification.CENTER) => {
             this.widget.justify = v;
-          }
-        )
+          },
+        ),
   );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   constructor(props: DiffedProps) {
@@ -121,7 +127,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   insertBefore(
     child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -180,14 +186,14 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -202,7 +208,7 @@ export class LabelElement implements GjsElement<"LABEL", Gtk.Label> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

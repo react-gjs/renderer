@@ -10,7 +10,10 @@ import { PropertyMapper } from "../../../utils/element-extenders/map-properties"
 import { MarkupAttributes } from "../../../utils/markup-attributes";
 import type { TextNode } from "../../text-node";
 import { MarkupElement } from "../markup";
-import type { BaseMarkupElement, MarkupElementProps } from "../markup-elem";
+import type {
+  BaseMarkupElement,
+  MarkupElementProps,
+} from "../markup-elem";
 import { createMarkupPropMapper } from "../utils/create-markup-prop-mapper";
 import { escapeHtml } from "../utils/escape-html";
 import { isMarkupElement } from "../utils/is-markup-elements";
@@ -19,7 +22,7 @@ export type MSpanProps = MarkupElementProps;
 
 export class MSpanElement {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -39,13 +42,13 @@ export class MSpanElement {
   readonly lifecycle = new ElementLifecycleController();
   protected readonly propsMapper = new PropertyMapper<MSpanProps>(
     this.lifecycle,
-    createMarkupPropMapper(this.attributes)
+    createMarkupPropMapper(this.attributes),
   );
 
   constructor(
     props: DiffedProps,
     context: HostContext<GjsContext>,
-    beforeFirstUpdate?: (self: any) => void
+    beforeFirstUpdate?: (self: any) => void,
   ) {
     if (beforeFirstUpdate) {
       beforeFirstUpdate(this);
@@ -66,7 +69,7 @@ export class MSpanElement {
   appendChild(child: GjsElement | TextNode): void {
     if (!isMarkupElement(child)) {
       throw new Error(
-        "Markup elements can only have other Markup elements or strings as children."
+        "Markup elements can only have other Markup elements or strings as children.",
       );
     }
 
@@ -79,17 +82,19 @@ export class MSpanElement {
 
   insertBefore(
     child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void {
     if (!isMarkupElement(child)) {
       throw new Error(
-        "Markup elements can only have other Markup elements or strings as children."
+        "Markup elements can only have other Markup elements or strings as children.",
       );
     }
 
     child.notifyWillAppendTo(this);
 
-    const beforeChildIndex = this.children.indexOf(beforeChild as any);
+    const beforeChildIndex = this.children.indexOf(
+      beforeChild as any,
+    );
 
     if (beforeChildIndex === -1) {
       throw new Error("The beforeChild element was not found.");
@@ -123,7 +128,9 @@ export class MSpanElement {
     ) {
       this.parent = parent;
     } else {
-      throw new Error("Markup elements can only be appended to a Markup.");
+      throw new Error(
+        "Markup elements can only be appended to a Markup.",
+      );
     }
     return true;
   }
@@ -160,12 +167,12 @@ export class MSpanElement {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {
@@ -178,7 +185,7 @@ export class MSpanElement {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

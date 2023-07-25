@@ -39,9 +39,11 @@ export interface ExpanderProps extends ExpanderPropsMixin {
   resizeParent?: boolean;
 }
 
-export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
+export class ExpanderElement
+  implements GjsElement<"EXPANDER", Gtk.Expander>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -52,12 +54,13 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Expander, ExpanderProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Expander,
+    ExpanderProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<ExpanderProps>(
     this.lifecycle,
@@ -83,7 +86,7 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
         })
         .resizeParent(DataType.Boolean, (v = false) => {
           this.widget.set_resize_toplevel(v);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -110,7 +113,10 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("Expander can only have one child.");
   }
 
@@ -161,14 +167,14 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -183,7 +189,7 @@ export class ExpanderElement implements GjsElement<"EXPANDER", Gtk.Expander> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

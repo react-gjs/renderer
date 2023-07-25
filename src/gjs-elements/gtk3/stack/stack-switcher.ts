@@ -34,7 +34,7 @@ export class StackSwitcherElement
   implements GjsElement<"STACK_SWITCHER", Gtk.StackSwitcher>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -49,9 +49,8 @@ export class StackSwitcherElement
     Gtk.StackSwitcher,
     StackSwitcherProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<StackSwitcherProps>(
-    this.lifecycle
-  );
+  private readonly propsMapper =
+    new PropertyMapper<StackSwitcherProps>(this.lifecycle);
 
   constructor(props: DiffedProps) {
     const widget = props.find(([name]) => name === "_widget")?.[1] as
@@ -59,7 +58,9 @@ export class StackSwitcherElement
       | undefined;
 
     if (!widget) {
-      throw new Error("StackSwitcher must be created with a _widget prop.");
+      throw new Error(
+        "StackSwitcher must be created with a _widget prop.",
+      );
     }
 
     this.widget = new Gtk.StackSwitcher({ stack: widget });
@@ -73,7 +74,7 @@ export class StackSwitcherElement
       (props) =>
         props.iconSize(DataType.Number, (v = 32) => {
           this.widget.icon_size = v;
-        })
+        }),
     );
 
     this.updateProps(props);
@@ -91,7 +92,7 @@ export class StackSwitcherElement
 
   insertBefore(
     newChild: GjsElement | TextNode,
-    beforeChild: GjsElement
+    beforeChild: GjsElement,
   ): void {}
 
   remove(parent: GjsElement): void {
@@ -139,14 +140,14 @@ export class StackSwitcherElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -161,7 +162,7 @@ export class StackSwitcherElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

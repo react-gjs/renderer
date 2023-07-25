@@ -1,6 +1,9 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type { BaselinePosition, Orientation } from "../../../enums/gtk3-index";
+import type {
+  BaselinePosition,
+  Orientation,
+} from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
@@ -39,9 +42,11 @@ export interface StackScreenProps<R extends string = string>
   uid?: R;
 }
 
-export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
+export class StackScreenElement
+  implements GjsElement<"STACK_SCREEN", Gtk.Box>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -56,12 +61,13 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Box, StackScreenProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Box,
+    StackScreenProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<StackScreenProps>(
     this.lifecycle,
@@ -82,17 +88,19 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
           DataType.Enum(Gtk.BaselinePosition),
           (v = Gtk.BaselinePosition.TOP) => {
             this.widget.baseline_position = v;
-          }
+          },
         )
         .orientation(
           DataType.Enum(Gtk.Orientation),
           (v = Gtk.Orientation.VERTICAL) => {
             this.widget.orientation = v;
-          }
+          },
         )
         .uid(DataType.String, (v) => {
           if (this.uid) {
-            console.error(new Error("StackItem uid cannot be changed."));
+            console.error(
+              new Error("StackItem uid cannot be changed."),
+            );
           }
 
           if (v) {
@@ -100,7 +108,7 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
           } else {
             this.uid = generateUID(16);
           }
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -123,7 +131,10 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -178,14 +189,14 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -200,7 +211,7 @@ export class StackScreenElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

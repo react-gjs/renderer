@@ -30,7 +30,7 @@ export const createSizeRequestPropMapper = (
   defaults?: {
     widthRequest?: number;
     heightRequest?: number;
-  }
+  },
 ) => {
   return (mapper: PropCaseCollector<keyof SizeRequestProps, any>) =>
     mapper

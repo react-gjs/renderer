@@ -29,7 +29,7 @@ export class MenuSeparatorElement
   implements GjsElement<"MENU_SEPARATOR", Gtk.SeparatorMenuItem>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -44,13 +44,14 @@ export class MenuSeparatorElement
     Gtk.SeparatorMenuItem,
     MenuSeparatorProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<MenuSeparatorProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget)
-  );
+  private readonly propsMapper =
+    new PropertyMapper<MenuSeparatorProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+    );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
@@ -70,7 +71,10 @@ export class MenuSeparatorElement
     throw new Error("MenuSeparator cannot have children.");
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("MenuSeparator cannot have children.");
   }
 
@@ -119,14 +123,14 @@ export class MenuSeparatorElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -141,7 +145,7 @@ export class MenuSeparatorElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

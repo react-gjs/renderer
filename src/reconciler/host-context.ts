@@ -1,5 +1,7 @@
 export class HostContext<D extends Record<string, any>> {
-  static init<D extends Record<string, any>>(initialData: D): HostContext<D> {
+  static init<D extends Record<string, any>>(
+    initialData: D,
+  ): HostContext<D> {
     const context = new HostContext();
     context.data = new Map(Object.entries(initialData));
     return context as HostContext<D>;

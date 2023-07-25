@@ -51,7 +51,7 @@ export interface GridProps extends GridPropsMixin {
 
 export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -70,7 +70,9 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   private previousColumnCount = 0;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Grid, GridProps>(this);
+  private readonly handlers = new EventHandlers<Gtk.Grid, GridProps>(
+    this,
+  );
   private readonly children = new GridItemsList(this.lifecycle, this);
   private readonly propsMapper = new PropertyMapper<GridProps>(
     this.lifecycle,
@@ -96,7 +98,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
         })
         .sameRowHeight(DataType.Boolean, (V = false) => {
           this.widget.row_homogeneous = V;
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -113,14 +115,17 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
     const gridMatrix = new GridMatrix(this.columns);
 
     for (const child of this.children.getAll()) {
-      const { x, y } = gridMatrix.nextElement(child.columnSpan, child.rowSpan);
+      const { x, y } = gridMatrix.nextElement(
+        child.columnSpan,
+        child.rowSpan,
+      );
 
       this.widget.attach(
         child.element.getWidget(),
         x,
         y,
         child.columnSpan,
-        child.rowSpan
+        child.rowSpan,
       );
     }
 
@@ -168,14 +173,19 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    if (GjsElementManager.isGjsElementOfKind(child, GridItemElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(child, GridItemElement)
+    ) {
       // TODO: handle the should append logic
       child.notifyWillAppendTo(this);
       this.children.add(child);
     }
   }
 
-  insertBefore(newChild: TextNode | GjsElement, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: TextNode | GjsElement,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const position = this.children.getIndexOf(beforeChild);
@@ -184,7 +194,9 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
       throw new Error("The beforeChild was not found.");
     }
 
-    if (GjsElementManager.isGjsElementOfKind(newChild, GridItemElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(newChild, GridItemElement)
+    ) {
       // TODO: handle the should append logic
       newChild.notifyWillAppendTo(this);
       this.children.add(newChild, position);
@@ -236,14 +248,14 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -258,7 +270,7 @@ export class GridElement implements GjsElement<"GRID", Gtk.Grid> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

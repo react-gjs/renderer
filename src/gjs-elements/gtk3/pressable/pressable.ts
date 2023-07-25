@@ -38,10 +38,8 @@ type PressablePropsMixin = SizeRequestProps &
   StyleProps &
   TooltipProps;
 
-export type PressableEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  PressableElement
->;
+export type PressableEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, PressableElement>;
 
 export interface PressableProps extends PressablePropsMixin {
   onPress?: (event: PressableEvent<MouseButtonPressEvent>) => void;
@@ -64,9 +62,11 @@ export interface PressableProps extends PressablePropsMixin {
   draw?: boolean;
 }
 
-export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
+export class PressableElement
+  implements GjsElement<"PRESSABLE", Gtk.EventBox>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -77,8 +77,13 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private children = new ChildOrderController(this.lifecycle, this.widget);
-  private handlers = new EventHandlers<Gtk.EventBox, PressableProps>(this);
+  private children = new ChildOrderController(
+    this.lifecycle,
+    this.widget,
+  );
+  private handlers = new EventHandlers<Gtk.EventBox, PressableProps>(
+    this,
+  );
   private readonly propsMapper = new PropertyMapper<PressableProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -94,31 +99,33 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
         })
         .draw(DataType.Boolean, (v = false) => {
           this.widget.set_visible_window(v);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
     this.handlers.bind(
       "button-press-event",
       "onPress",
-      (e: Gdk.Event & Gdk.EventButton) => parseMouseButtonPressEvent(e)
+      (e: Gdk.Event & Gdk.EventButton) =>
+        parseMouseButtonPressEvent(e),
     );
     this.handlers.bind(
       "button-release-event",
       "onRelease",
-      (e: Gdk.Event & Gdk.EventButton) => parseMouseButtonPressEvent(e)
+      (e: Gdk.Event & Gdk.EventButton) =>
+        parseMouseButtonPressEvent(e),
     );
     this.handlers.bind(
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -140,7 +147,10 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -197,14 +207,14 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -219,7 +229,7 @@ export class PressableElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

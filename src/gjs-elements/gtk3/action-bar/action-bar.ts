@@ -33,7 +33,7 @@ export class ActionBarElement
   implements GjsElement<"ACTION_BAR", Gtk.ActionBar>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -44,12 +44,13 @@ export class ActionBarElement
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.ActionBar, ActionBarProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.ActionBar,
+    ActionBarProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<ActionBarProps>(
     this.lifecycle,
@@ -57,7 +58,7 @@ export class ActionBarElement
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget)
+    createStylePropMapper(this.widget),
   );
 
   constructor(props: DiffedProps) {
@@ -80,7 +81,10 @@ export class ActionBarElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -135,14 +139,14 @@ export class ActionBarElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -157,7 +161,7 @@ export class ActionBarElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

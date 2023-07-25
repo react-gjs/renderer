@@ -8,7 +8,7 @@ export class TextChildController {
 
   constructor(
     private element: ElementLifecycle,
-    private setWidgetText: (text: string) => void
+    private setWidgetText: (text: string) => void,
   ) {}
 
   private getText() {
@@ -40,8 +40,13 @@ export class TextChildController {
     this.update();
   }
 
-  insertBefore(newChild: TextNode, beforeChild: GjsElement | TextNode) {
-    const beforeIndex = this.children.findIndex((c) => c === beforeChild);
+  insertBefore(
+    newChild: TextNode,
+    beforeChild: GjsElement | TextNode,
+  ) {
+    const beforeIndex = this.children.findIndex(
+      (c) => c === beforeChild,
+    );
 
     if (beforeIndex === -1) {
       throw new Error("beforeChild not found in the children list");

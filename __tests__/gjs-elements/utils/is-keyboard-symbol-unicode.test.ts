@@ -5,7 +5,9 @@ import { isKeyboardSymbol } from "../../../src/gjs-elements/utils/is-keyboard-sy
 export default describe("isKeyboardSymbol", () => {
   it("should return true for keyboard symbols", () => {
     const letters =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+        "",
+      );
     const numbers = "0123456789".split("");
     const symbols = "!@#$%^&*()_+=-[];',./?><:\"}{|`".split("");
 
@@ -121,7 +123,9 @@ export default describe("isKeyboardSymbol", () => {
     ];
 
     for (const constant of gdkConstants) {
-      expect(isKeyboardSymbol(Gdk.keyval_to_unicode(constant))).toBe(true);
+      expect(isKeyboardSymbol(Gdk.keyval_to_unicode(constant))).toBe(
+        true,
+      );
     }
   });
 

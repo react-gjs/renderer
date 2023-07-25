@@ -13,5 +13,8 @@ export const PackEnd = (props: { children: React.ReactElement }) => {
 
   const Component = useChildProperties(element as any, CHILD_PROPS);
 
-  return React.createElement(Component, { ...elemProps, key: elemKey });
+  return React.createElement(Component, {
+    ...elemProps,
+    key: elemKey,
+  });
 };

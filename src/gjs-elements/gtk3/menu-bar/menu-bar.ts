@@ -34,9 +34,11 @@ export interface MenuBarProps extends MenuBarPropsMixin {
   icon?: Rg.IconName;
 }
 
-export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
+export class MenuBarElement
+  implements GjsElement<"MENU_BAR", Gtk.MenuBar>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -47,23 +49,25 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.MenuBar, MenuBarProps>(
-    this
-  );
-  private readonly children = new ChildOrderController<MenuBarItemElement>(
-    this.lifecycle,
-    this.widget,
-    (child) => {
-      this.widget.append(child);
-    }
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.MenuBar,
+    MenuBarProps
+  >(this);
+  private readonly children =
+    new ChildOrderController<MenuBarItemElement>(
+      this.lifecycle,
+      this.widget,
+      (child) => {
+        this.widget.append(child);
+      },
+    );
   private readonly propsMapper = new PropertyMapper<MenuBarProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget)
+    createStylePropMapper(this.widget),
   );
 
   private radioGroups = new Map<string, Gtk.RadioToolButton>();
@@ -83,7 +87,9 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    if (!GjsElementManager.isGjsElementOfKind(child, MenuBarItemElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(child, MenuBarItemElement)
+    ) {
       throw new Error("Only MenuBarItem can be a child of MenuBar.");
     }
 
@@ -92,10 +98,18 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
-    if (!GjsElementManager.isGjsElementOfKind(newChild, MenuBarItemElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(
+        newChild,
+        MenuBarItemElement,
+      )
+    ) {
       throw new Error("Only MenuBarItem can be a child of MenuBar.");
     }
 
@@ -151,14 +165,14 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -173,7 +187,7 @@ export class MenuBarElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

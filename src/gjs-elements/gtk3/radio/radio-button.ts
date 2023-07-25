@@ -58,7 +58,7 @@ export class RadioButtonElement
   implements GjsElement<"RADIO_BUTTON", Gtk.RadioButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -74,14 +74,14 @@ export class RadioButtonElement
   readonly lifecycle = new ElementLifecycleController();
   private handlers!: EventHandlers<Gtk.RadioButton, RadioButtonProps>;
   private readonly propsMapper = new PropertyMapper<RadioButtonProps>(
-    this.lifecycle
+    this.lifecycle,
   );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   private isInitialized = false;
@@ -99,7 +99,7 @@ export class RadioButtonElement
     } else {
       for (const prop of props) {
         this.unappliedProps = this.unappliedProps.filter(
-          ([name]) => name !== prop[0]
+          ([name]) => name !== prop[0],
         );
         this.unappliedProps.push(prop);
       }
@@ -120,7 +120,7 @@ export class RadioButtonElement
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -149,11 +149,13 @@ export class RadioButtonElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (GjsElementManager.isGjsElementOfKind(parent, RadioGroupElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(parent, RadioGroupElement)
+    ) {
       this.parent = parent;
 
       const widget = (this.widget = Gtk.RadioButton.new_from_widget(
-        parent.radioGroup
+        parent.radioGroup,
       ));
 
       this.isInitialized = true;
@@ -173,12 +175,13 @@ export class RadioButtonElement
             })
             .useUnderline(DataType.Boolean, (v = false) => {
               this.widget.use_underline = v;
-            })
+            }),
       );
 
-      this.handlers = new EventHandlers<Gtk.RadioButton, RadioButtonProps>(
-        this
-      );
+      this.handlers = new EventHandlers<
+        Gtk.RadioButton,
+        RadioButtonProps
+      >(this);
 
       this.handlers.bind("clicked", "onClick");
       this.handlers.bind("activate", "onActivate");
@@ -193,13 +196,13 @@ export class RadioButtonElement
         "enter-notify-event",
         "onMouseEnter",
         parseCrossingEvent,
-        EventPhase.Action
+        EventPhase.Action,
       );
       this.handlers.bind(
         "leave-notify-event",
         "onMouseLeave",
         parseCrossingEvent,
-        EventPhase.Action
+        EventPhase.Action,
       );
 
       this.lifecycle.emitLifecycleEventUpdate(this.unappliedProps);
@@ -237,14 +240,14 @@ export class RadioButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -259,7 +262,7 @@ export class RadioButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

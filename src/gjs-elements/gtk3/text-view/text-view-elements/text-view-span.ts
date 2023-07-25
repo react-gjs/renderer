@@ -24,11 +24,12 @@ import type {
 
 export type TextViewSpanProps = MarkupElementProps;
 
-type TextViewSpanElementMixin = GjsElement<"TEXT_VIEW_SPAN"> & ITextViewElement;
+type TextViewSpanElementMixin = GjsElement<"TEXT_VIEW_SPAN"> &
+  ITextViewElement;
 
 export class TextViewSpanElement implements TextViewSpanElementMixin {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -42,17 +43,18 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
   protected attributes = new MarkupAttributes();
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly propsMapper = new PropertyMapper<TextViewSpanProps>(
-    this.lifecycle,
-    createMarkupPropMapper(this.attributes)
-  );
+  protected readonly propsMapper =
+    new PropertyMapper<TextViewSpanProps>(
+      this.lifecycle,
+      createMarkupPropMapper(this.attributes),
+    );
 
   private isVisible = true;
 
   constructor(
     props: DiffedProps,
     context: HostContext<GjsContext>,
-    beforeFirstUpdate?: (self: any) => void
+    beforeFirstUpdate?: (self: any) => void,
   ) {
     if (beforeFirstUpdate) {
       beforeFirstUpdate(this);
@@ -73,7 +75,7 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
   appendChild(child: GjsElement | TextNode): void {
     if (!isTextViewElement(child)) {
       throw new Error(
-        "TextViewSpan elements can only have other TextView elements or strings as children."
+        "TextViewSpan elements can only have other TextView elements or strings as children.",
       );
     }
 
@@ -84,15 +86,17 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
 
   insertBefore(
     child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void {
     if (!isTextViewElement(child)) {
       throw new Error(
-        "TextViewSpan elements can only have other TextView elements or strings as children."
+        "TextViewSpan elements can only have other TextView elements or strings as children.",
       );
     }
 
-    const beforeChildIndex = this.children.indexOf(beforeChild as any);
+    const beforeChildIndex = this.children.indexOf(
+      beforeChild as any,
+    );
 
     if (beforeChildIndex === -1) {
       throw new Error("The beforeChild element was not found.");
@@ -122,7 +126,7 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
       this.parent = parent;
     } else {
       throw new Error(
-        "TextViewLink elements can only be appended to a TextView element."
+        "TextViewLink elements can only be appended to a TextView element.",
       );
     }
     return true;
@@ -154,7 +158,9 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
   }
 
   getWidget(): Gtk.Widget {
-    throw new Error("TextViewSpan does not have a corresponding widget.");
+    throw new Error(
+      "TextViewSpan does not have a corresponding widget.",
+    );
   }
 
   getParentElement() {
@@ -163,12 +169,12 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {
@@ -181,7 +187,7 @@ export class TextViewSpanElement implements TextViewSpanElementMixin {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

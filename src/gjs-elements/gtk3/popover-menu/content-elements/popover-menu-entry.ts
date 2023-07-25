@@ -45,10 +45,12 @@ type PopoverMenuEntryPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type PopoverMenuEntryEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, PopoverMenuEntryElement>;
+export type PopoverMenuEntryEvent<
+  P extends Record<string, any> = {},
+> = SyntheticEvent<P, PopoverMenuEntryElement>;
 
-export interface PopoverMenuEntryProps extends PopoverMenuEntryPropsMixin {
+export interface PopoverMenuEntryProps
+  extends PopoverMenuEntryPropsMixin {
   label?: string;
   icon?: Rg.IconName;
   centered?: boolean;
@@ -65,7 +67,7 @@ export class PopoverMenuEntryElement
   implements GjsElement<"POPOVER_MENU_ENTRY", Gtk.ModelButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -99,8 +101,10 @@ export class PopoverMenuEntryElement
   ownMenuName: string;
   submenu = PopoverMenuEntryElement.createSubmenu();
 
-  private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
-    null;
+  private parent:
+    | PopoverMenuEntryElement
+    | PopoverMenuContentElement
+    | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly children = new ChildOrderController<
@@ -114,33 +118,37 @@ export class PopoverMenuEntryElement
     Gtk.ModelButton,
     PopoverMenuEntryProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<PopoverMenuEntryProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    createAccelPropMapper(this.widget, "clicked"),
-    (props) =>
-      props
-        .label(DataType.String, (v = "") => {
-          this.widget.text = v;
-        })
-        .icon(DataType.String, (v = "") => {
-          this.widget.icon = Gio.Icon.new_for_string(v)!;
-        })
-        .centered(DataType.Boolean, (v = false) => {
-          this.widget.centered = v;
-        })
-        .inverted(DataType.Boolean, (v = false) => {
-          this.widget.inverted = v;
-        })
-        .submenuBackButtonLabel(DataType.String, (v = "") => {
-          this.submenu.goBackButton.text = v;
-        })
-  );
+  private readonly propsMapper =
+    new PropertyMapper<PopoverMenuEntryProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget, "clicked"),
+      (props) =>
+        props
+          .label(DataType.String, (v = "") => {
+            this.widget.text = v;
+          })
+          .icon(DataType.String, (v = "") => {
+            this.widget.icon = Gio.Icon.new_for_string(v)!;
+          })
+          .centered(DataType.Boolean, (v = false) => {
+            this.widget.centered = v;
+          })
+          .inverted(DataType.Boolean, (v = false) => {
+            this.widget.inverted = v;
+          })
+          .submenuBackButtonLabel(DataType.String, (v = "") => {
+            this.submenu.goBackButton.text = v;
+          }),
+    );
 
-  constructor(props: DiffedProps, private context: HostContext<GjsContext>) {
+  constructor(
+    props: DiffedProps,
+    private context: HostContext<GjsContext>,
+  ) {
     this.ownMenuName = "submenu_" + generateUID(8);
 
     this.handlers.bind("clicked", "onClick");
@@ -150,13 +158,13 @@ export class PopoverMenuEntryElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -214,7 +222,7 @@ export class PopoverMenuEntryElement
       ])
     ) {
       throw new Error(
-        "PopoverMenuEntry can only have PopoverMenuEntry as its children."
+        "PopoverMenuEntry can only have PopoverMenuEntry as its children.",
       );
     }
 
@@ -229,7 +237,10 @@ export class PopoverMenuEntryElement
     this.registerSubmenu();
   }
 
-  insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
+  insertBefore(
+    child: TextNode | GjsElement,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(beforeChild);
 
     if (
@@ -242,7 +253,7 @@ export class PopoverMenuEntryElement
       ])
     ) {
       throw new Error(
-        "PopoverMenuEntry can only have PopoverMenuEntry as its children."
+        "PopoverMenuEntry can only have PopoverMenuEntry as its children.",
       );
     }
 
@@ -283,7 +294,7 @@ export class PopoverMenuEntryElement
       ])
     ) {
       throw new Error(
-        "PopoverMenuEntry can only be appended to a Popover or another PopoverMenuEntry."
+        "PopoverMenuEntry can only be appended to a Popover or another PopoverMenuEntry.",
       );
     }
     this.parent = parent;
@@ -319,14 +330,14 @@ export class PopoverMenuEntryElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -341,7 +352,7 @@ export class PopoverMenuEntryElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }
