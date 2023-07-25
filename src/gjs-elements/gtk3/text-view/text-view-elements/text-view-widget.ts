@@ -1,14 +1,15 @@
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
-import type { GjsElement } from "../../../gjs-element";
-import { diffProps } from "../../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../../gjs-element";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../../utils/ensure-not-string";
+import { mountAction } from "../../../utils/mount-action";
 import type { AlignmentProps } from "../../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -27,7 +28,8 @@ import type {
   TextViewNode,
 } from "../text-view-elem-interface";
 
-type TextViewWidgetPropsMixin = SizeRequestProps &
+type TextViewWidgetPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -42,6 +44,7 @@ type TextViewWidgetElementMixin = GjsElement<
   ITextViewElement;
 
 export class TextViewWidgetElement
+  extends BaseElement
   implements TextViewWidgetElementMixin
 {
   static getContext(
@@ -53,12 +56,12 @@ export class TextViewWidgetElement
   }
 
   readonly kind = "TEXT_VIEW_WIDGET";
-  private widget = new Bin();
+  protected widget = new Bin();
 
   protected parent: TextViewElementContainer | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private handlers = new EventHandlers<Bin, TextViewWidgetProps>(
+  protected handlers = new EventHandlers<Bin, TextViewWidgetProps>(
     this,
   );
   protected readonly propsMapper =
@@ -71,9 +74,10 @@ export class TextViewWidgetElement
       createStylePropMapper(this.widget),
     );
 
-  private child: GjsElement | null = null;
+  protected child: GjsElement | null = null;
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -94,12 +98,12 @@ export class TextViewWidgetElement
 
     ensureNotText(child);
 
-    const shouldAppend = child.notifyWillAppendTo(this);
-
-    if (shouldAppend) {
-      this.child = child;
-      this.widget.add(child.getWidget());
-    }
+    mountAction(this, child, (shouldOmitMount) => {
+      if (!shouldOmitMount) {
+        this.child = child;
+        this.widget.add(child.getWidget());
+      }
+    });
   }
 
   insertBefore(
@@ -112,7 +116,7 @@ export class TextViewWidgetElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
   }
@@ -126,7 +130,7 @@ export class TextViewWidgetElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (isTextViewElementContainer(parent)) {
       this.parent = parent;
     } else {
@@ -137,7 +141,11 @@ export class TextViewWidgetElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement | TextNode) {
+  notifyMountedTo(parent: GjsElement): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement | TextNode) {
     if (this.child === child) {
       this.child = null;
     }
@@ -161,35 +169,6 @@ export class TextViewWidgetElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

@@ -1,12 +1,10 @@
 import { DataType } from "dilswer";
-import type GdkPixbuf from "gi://GdkPixbuf";
 import Gtk from "gi://Gtk";
 import { ButtonType } from "../../../enums/custom";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
-import { diffProps } from "../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -15,6 +13,7 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
 import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import { mountAction } from "../../utils/mount-action";
 import {
   parseColor,
   type ColorString,
@@ -23,6 +22,8 @@ import type { AccelProps } from "../../utils/property-maps-factories/create-acce
 import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -35,7 +36,8 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ColorButtonPropsMixin = SizeRequestProps &
+type ColorButtonPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -64,14 +66,8 @@ export interface ColorButtonProps extends ColorButtonPropsMixin {
   onMouseLeave?: (event: ColorButtonEvent<PointerData>) => void;
 }
 
-const ImageDataType = DataType.OneOf(
-  DataType.String,
-  DataType.Custom(
-    (v): v is GdkPixbuf.Pixbuf => typeof v === "object",
-  ),
-);
-
 export class ColorButtonElement
+  extends BaseElement
   implements GjsElement<"COLOR_BUTTON", Gtk.ColorButton>
 {
   static getContext(
@@ -87,62 +83,72 @@ export class ColorButtonElement
   }
 
   readonly kind = "COLOR_BUTTON";
-  private widget = ColorButtonElement.getNewGtkWidget();
+  protected widget = ColorButtonElement.getNewGtkWidget();
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.Button,
     ColorButtonProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<ColorButtonProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    createAccelPropMapper(this.widget, "clicked"),
-    (props) =>
-      props
-        .label(DataType.String, (v) => {
-          this.widget.label = v ?? null;
-        })
-        .useUnderline(DataType.Boolean, (v = false) => {
-          this.widget.use_underline = v;
-        })
-        .type(DataType.Enum(ButtonType), (v = ButtonType.NORMAL) => {
-          switch (v) {
-            case ButtonType.NORMAL:
-              this.widget.relief = Gtk.ReliefStyle.NORMAL;
-              break;
-            case ButtonType.FLAT:
-              this.widget.relief = Gtk.ReliefStyle.NONE;
-              break;
-          }
-        })
-        .focusOnClick(DataType.Boolean, (v = true) => {
-          this.widget.focus_on_click = v;
-        })
-        .color(DataType.String, (v) => {
-          if (v) {
-            this.widget.rgba = parseColor(v as ColorString).toRgba();
-          }
-        })
-        .showEditor(DataType.Boolean, (v = false) => {
-          this.widget.show_editor = v;
-        })
-        .title(DataType.String, (v) => {
-          this.widget.title = v ?? null;
-        })
-        .useAlpha(DataType.Boolean, (v = true) => {
-          this.widget.use_alpha = v;
-        }),
-  );
+  protected readonly propsMapper =
+    new PropertyMapper<ColorButtonProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget, "clicked"),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
+      (props) =>
+        props
+          .label(DataType.String, (v) => {
+            this.widget.label = v ?? null;
+          })
+          .useUnderline(DataType.Boolean, (v = false) => {
+            this.widget.use_underline = v;
+          })
+          .type(
+            DataType.Enum(ButtonType),
+            (v = ButtonType.NORMAL) => {
+              switch (v) {
+                case ButtonType.NORMAL:
+                  this.widget.relief = Gtk.ReliefStyle.NORMAL;
+                  break;
+                case ButtonType.FLAT:
+                  this.widget.relief = Gtk.ReliefStyle.NONE;
+                  break;
+              }
+            },
+          )
+          .focusOnClick(DataType.Boolean, (v = true) => {
+            this.widget.focus_on_click = v;
+          })
+          .color(DataType.String, (v) => {
+            if (v) {
+              this.widget.rgba = parseColor(
+                v as ColorString,
+              ).toRgba();
+            }
+          })
+          .showEditor(DataType.Boolean, (v = false) => {
+            this.widget.show_editor = v;
+          })
+          .title(DataType.String, (v) => {
+            this.widget.title = v ?? null;
+          })
+          .useAlpha(DataType.Boolean, (v = true) => {
+            this.widget.use_alpha = v;
+          }),
+    );
 
-  private readonly children = new TextChildController(
+  protected readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
@@ -150,6 +156,7 @@ export class ColorButtonElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("activate", "onActivate");
     this.handlers.bind("pressed", "onPressed");
@@ -190,8 +197,9 @@ export class ColorButtonElement
 
   appendChild(child: TextNode | GjsElement): void {
     if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.addChild(child);
+      mountAction(this, child, (shouldOmitMount) => {
+        this.children.addChild(child);
+      });
       return;
     }
 
@@ -203,8 +211,9 @@ export class ColorButtonElement
     beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.insertBefore(child, beforeChild);
+      mountAction(this, child, (shouldOmitMount) => {
+        this.children.insertBefore(child, beforeChild);
+      });
       return;
     }
 
@@ -212,7 +221,7 @@ export class ColorButtonElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -228,12 +237,16 @@ export class ColorButtonElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: TextNode | GjsElement) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: TextNode | GjsElement) {
     this.children.removeChild(child);
   }
 
@@ -255,35 +268,6 @@ export class ColorButtonElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

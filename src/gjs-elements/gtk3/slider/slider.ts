@@ -7,7 +7,7 @@ import type {
 import { PositionType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import {
   compareRecordsShallow,
   diffProps,
@@ -19,6 +19,8 @@ import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -30,7 +32,8 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 
-type SliderPropsMixin = SizeRequestProps &
+type SliderPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -66,6 +69,7 @@ export interface SliderProps extends SliderPropsMixin {
 }
 
 export class SliderElement
+  extends BaseElement
   implements GjsElement<"SLIDER", Gtk.Scale>
 {
   static getContext(
@@ -75,17 +79,17 @@ export class SliderElement
   }
 
   readonly kind = "SLIDER";
-  private widget = new Gtk.Scale();
+  protected widget = new Gtk.Scale();
 
-  private parent: GjsElement | null = null;
-  private adjustment = new Gtk.Adjustment();
+  protected parent: GjsElement | null = null;
+  protected adjustment = new Gtk.Adjustment();
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.Scale,
     SliderProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<SliderProps>(
+  protected readonly propsMapper = new PropertyMapper<SliderProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget, {
@@ -96,6 +100,10 @@ export class SliderElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .max(DataType.Number, (v = 100, allProps) => {
@@ -175,6 +183,7 @@ export class SliderElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.widget.set_adjustment(this.adjustment);
     this.adjustment.set_page_size(0);
 
@@ -187,7 +196,7 @@ export class SliderElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  private updateFillLevel(v: number) {
+  protected updateFillLevel(v: number) {
     const min = this.adjustment.get_lower();
     const max = this.adjustment.get_upper();
 
@@ -216,7 +225,7 @@ export class SliderElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -231,12 +240,16 @@ export class SliderElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount() {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount() {}
 
   // #endregion
 
@@ -256,28 +269,6 @@ export class SliderElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
   }
 
   static SliderDiffers = new Map<

@@ -3,17 +3,17 @@ import Gtk from "gi://Gtk";
 import type { ElementLifecycle } from "../../element-extender";
 
 export class OptionsList {
-  private listStore = new Gtk.ListStore();
-  private textRenderer = new Gtk.CellRendererText();
-  private comboBox: Gtk.ComboBox;
+  protected listStore = new Gtk.ListStore();
+  protected textRenderer = new Gtk.CellRendererText();
+  protected comboBox: Gtk.ComboBox;
 
-  private currentOptions: Array<{
+  protected currentOptions: Array<{
     id: number;
     label: string;
     value: any;
   }> = [];
 
-  constructor(private lifecycle: ElementLifecycle) {
+  constructor(protected lifecycle: ElementLifecycle) {
     this.listStore.set_column_types([
       GObject.TYPE_STRING,
       GObject.TYPE_INT,
@@ -25,7 +25,7 @@ export class OptionsList {
     this.comboBox.pack_start(this.textRenderer, true);
     this.comboBox.add_attribute(this.textRenderer, "text", 0);
 
-    lifecycle.beforeDestroy(() => {
+    lifecycle.onBeforeDestroy(() => {
       this.clear();
     });
   }

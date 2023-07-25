@@ -6,7 +6,7 @@ import { PositionType } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
 import {
   compareRecordsShallow,
@@ -20,10 +20,13 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
 import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import { mountAction } from "../../utils/mount-action";
 import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -36,7 +39,8 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type SliderPopupButtonPropsMixin = SizeRequestProps &
+type SliderPopupButtonPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -89,6 +93,7 @@ const WidgetDataType = DataType.Custom(
 );
 
 export class SliderPopupButtonElement
+  extends BaseElement
   implements GjsElement<"SLIDER_POPUP_BUTTON", Gtk.ScaleButton>
 {
   static getContext(
@@ -100,17 +105,17 @@ export class SliderPopupButtonElement
   }
 
   readonly kind = "SLIDER_POPUP_BUTTON";
-  private widget = new Gtk.ScaleButton();
+  protected widget = new Gtk.ScaleButton();
 
-  private parent: GjsElement | null = null;
-  private adjustment = new Gtk.Adjustment();
+  protected parent: GjsElement | null = null;
+  protected adjustment = new Gtk.Adjustment();
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.ScaleButton,
     SliderPopupButtonProps
   >(this);
-  private readonly propsMapper =
+  protected readonly propsMapper =
     new PropertyMapper<SliderPopupButtonProps>(
       this.lifecycle,
       createSizeRequestPropMapper(this.widget),
@@ -120,6 +125,10 @@ export class SliderPopupButtonElement
       createStylePropMapper(this.widget),
       createTooltipPropMapper(this.widget),
       createAccelPropMapper(this.widget),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
       (props) =>
         props
           .max(DataType.Number, (v = 100, allProps) => {
@@ -221,7 +230,7 @@ export class SliderPopupButtonElement
           ),
     );
 
-  private readonly children = new TextChildController(
+  protected readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
@@ -229,6 +238,7 @@ export class SliderPopupButtonElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.widget.set_adjustment(this.adjustment);
     this.adjustment.set_page_size(0);
 
@@ -270,7 +280,7 @@ export class SliderPopupButtonElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  private get scale(): Gtk.Scale {
+  protected get scale(): Gtk.Scale {
     const popover = this.widget.get_popup() as Gtk.Bin;
     const box = popover.get_child() as Gtk.Box;
 
@@ -279,7 +289,7 @@ export class SliderPopupButtonElement
     return scale as Gtk.Scale;
   }
 
-  private updateFillLevel(v: number) {
+  protected updateFillLevel(v: number) {
     const min = this.adjustment.get_lower();
     const max = this.adjustment.get_upper();
 
@@ -301,8 +311,9 @@ export class SliderPopupButtonElement
 
   appendChild(child: TextNode | GjsElement): void {
     if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.addChild(child);
+      mountAction(this, child, (shouldOmitMount) => {
+        this.children.addChild(child);
+      });
       return;
     }
 
@@ -314,8 +325,9 @@ export class SliderPopupButtonElement
     beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.insertBefore(child, beforeChild);
+      mountAction(this, child, (shouldOmitMount) => {
+        this.children.insertBefore(child, beforeChild);
+      });
       return;
     }
 
@@ -323,7 +335,7 @@ export class SliderPopupButtonElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -339,12 +351,16 @@ export class SliderPopupButtonElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: TextNode | GjsElement) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: TextNode | GjsElement) {
     this.children.removeChild(child);
   }
 
@@ -366,28 +382,6 @@ export class SliderPopupButtonElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
   }
 
   static SliderDiffers = new Map<

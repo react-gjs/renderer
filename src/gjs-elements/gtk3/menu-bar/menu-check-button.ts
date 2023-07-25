@@ -4,9 +4,8 @@ import { MenuCheckButtonType } from "../../../enums/custom";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -16,6 +15,8 @@ import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
 import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -30,7 +31,8 @@ import type { TextNode } from "../text-node";
 import { MenuBarItemElement } from "./menu-bar-item";
 import { MenuEntryElement } from "./menu-entry";
 
-type MenuCheckButtonPropsMixin = SizeRequestProps &
+type MenuCheckButtonPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   MarginProps &
   ExpandProps &
   StyleProps &
@@ -57,6 +59,7 @@ export interface MenuCheckButtonProps
 }
 
 export class MenuCheckButtonElement
+  extends BaseElement
   implements GjsElement<"MENU_CHECK_BUTTON", Gtk.CheckMenuItem>
 {
   static getContext(
@@ -66,17 +69,18 @@ export class MenuCheckButtonElement
   }
 
   readonly kind = "MENU_CHECK_BUTTON";
-  private widget = new Gtk.CheckMenuItem();
+  protected widget = new Gtk.CheckMenuItem();
 
-  private parent: MenuBarItemElement | MenuEntryElement | null = null;
+  protected parent: MenuBarItemElement | MenuEntryElement | null =
+    null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.MenuItem,
     MenuCheckButtonProps
   >(this);
 
-  private readonly propsMapper =
+  protected readonly propsMapper =
     new PropertyMapper<MenuCheckButtonProps>(
       this.lifecycle,
       createSizeRequestPropMapper(this.widget),
@@ -85,6 +89,10 @@ export class MenuCheckButtonElement
       createStylePropMapper(this.widget),
       createTooltipPropMapper(this.widget),
       createAccelPropMapper(this.widget, "activate"),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
       (props) =>
         props
           .label(DataType.String, (v = "") => {
@@ -106,6 +114,7 @@ export class MenuCheckButtonElement
     );
 
   constructor(props: DiffedProps) {
+    super();
     this.handlers.bind("activate", "onToggle", () => {
       return {
         value: this.widget.active,
@@ -149,7 +158,7 @@ export class MenuCheckButtonElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -164,7 +173,7 @@ export class MenuCheckButtonElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       !GjsElementManager.isGjsElementOfKind(parent, [
         MenuBarItemElement,
@@ -180,7 +189,11 @@ export class MenuCheckButtonElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {}
 
   // #endregion
 
@@ -200,35 +213,6 @@ export class MenuCheckButtonElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

@@ -1,9 +1,8 @@
 import type Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
-import type { GjsElement } from "../../../gjs-element";
+import { BaseElement, type GjsElement } from "../../../gjs-element";
 import { GjsElementManager } from "../../../gjs-element-manager";
-import { diffProps } from "../../../utils/diff-props";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
@@ -20,7 +19,7 @@ import { isMarkupElement } from "../utils/is-markup-elements";
 
 export type MSpanProps = MarkupElementProps;
 
-export class MSpanElement {
+export class MSpanElement extends BaseElement {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -39,7 +38,8 @@ export class MSpanElement {
   protected children: Array<TextNode | BaseMarkupElement> = [];
   protected attributes = new MarkupAttributes();
 
-  readonly lifecycle = new ElementLifecycleController();
+  protected readonly lifecycle = new ElementLifecycleController();
+  protected handlers = null;
   protected readonly propsMapper = new PropertyMapper<MSpanProps>(
     this.lifecycle,
     createMarkupPropMapper(this.attributes),
@@ -50,6 +50,7 @@ export class MSpanElement {
     context: HostContext<GjsContext>,
     beforeFirstUpdate?: (self: any) => void,
   ) {
+    super();
     if (beforeFirstUpdate) {
       beforeFirstUpdate(this);
     }
@@ -73,11 +74,10 @@ export class MSpanElement {
       );
     }
 
-    child.notifyWillAppendTo(this);
-
+    child.notifyWillMountTo(this);
     this.children.push(child);
-
     this.render();
+    child.notifyMounted();
   }
 
   insertBefore(
@@ -90,8 +90,7 @@ export class MSpanElement {
       );
     }
 
-    child.notifyWillAppendTo(this);
-
+    child.notifyWillMountTo(this);
     const beforeChildIndex = this.children.indexOf(
       beforeChild as any,
     );
@@ -101,12 +100,12 @@ export class MSpanElement {
     }
 
     this.children.splice(beforeChildIndex, 0, child);
-
     this.render();
+    child.notifyMounted();
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -121,7 +120,7 @@ export class MSpanElement {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       GjsElementManager.isGjsElementOfKind(parent, MarkupElement) ||
       isMarkupElement(parent)
@@ -135,7 +134,11 @@ export class MSpanElement {
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement) {
     const childIndex = this.children.indexOf(child as any);
 
     if (childIndex === -1) {
@@ -167,28 +170,13 @@ export class MSpanElement {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
 
   // #endregion
 

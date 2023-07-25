@@ -2,14 +2,15 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { SyntheticEmitter } from "../../utils/element-extenders/synthetic-emitter";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { mountAction } from "../../utils/mount-action";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { TextNode } from "../text-node";
 import { GridElement } from "./grid";
 
@@ -25,7 +26,10 @@ export type GridItemEvents = {
   itemUpdated: [GridItemElement];
 };
 
-export class GridItemElement implements GjsElement<"GRID_ITEM"> {
+export class GridItemElement
+  extends BaseElement
+  implements GjsElement<"GRID_ITEM">
+{
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -33,21 +37,26 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   }
 
   readonly kind = "GRID_ITEM";
-  private emptyReplacement = new Gtk.Box();
-  private childElement: GjsElement | null = null;
-  private get widget(): Gtk.Widget {
+  protected emptyReplacement = new Gtk.Box();
+  protected childElement: GjsElement | null = null;
+  protected get widget(): Gtk.Widget {
     if (!this.childElement) {
       throw this.emptyReplacement;
     }
     return this.childElement.getWidget();
   }
 
-  private parent: GridElement | null = null;
+  protected parent: GridElement | null = null;
 
-  readonly lifecycle = new ElementLifecycleController();
+  protected readonly lifecycle = new ElementLifecycleController();
+  protected handlers = null;
   emitter = new SyntheticEmitter<GridItemEvents>(this.lifecycle);
-  private readonly propsMapper = new PropertyMapper<GridItemProps>(
+  protected readonly propsMapper = new PropertyMapper<GridItemProps>(
     this.lifecycle,
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .columnSpan(DataType.Number, (v = 1) => {
@@ -59,6 +68,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -83,11 +93,24 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
     if (this.childElement != null) {
       throw new Error("GridItem can only have one child.");
     } else {
-      const shouldAppend = child.notifyWillAppendTo(this);
+      const shouldAppend = child.notifyWillMountTo(this);
       if (shouldAppend) {
-        this.childElement = child;
-        this.emitter.emit("itemUpdated", this);
+        child.notifyMounted();
       }
+
+      mountAction(
+        this,
+        child,
+        (shouldOmitMount) => {
+          if (!shouldOmitMount) {
+            this.childElement = child;
+            this.emitter.emit("itemUpdated", this);
+          }
+        },
+        () => {
+          this.widget.show_all();
+        },
+      );
     }
   }
 
@@ -96,7 +119,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
     this.childElement = null;
@@ -113,7 +136,7 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (!GjsElementManager.isGjsElementOfKind(parent, GridElement)) {
       throw new Error(
         "GridItem can only be appended to the Grid container.",
@@ -123,7 +146,11 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
     return true;
   }
 
-  notifyWillUnmount() {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount() {
     this.childElement = null;
     this.emitter.emit("itemUpdated", this);
   }
@@ -150,28 +177,13 @@ export class GridItemElement implements GjsElement<"GRID_ITEM"> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
 
   // #endregion
 }

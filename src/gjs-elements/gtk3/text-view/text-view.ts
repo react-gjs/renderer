@@ -5,8 +5,7 @@ import { WrapMode } from "../../../enums/custom";
 import type { Justification } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
-import { diffProps } from "../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import {
@@ -17,8 +16,11 @@ import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { MarkupAttributes } from "../../utils/markup-attributes";
 import { microThrottle } from "../../utils/micro-throttle";
+import { mountAction } from "../../utils/mount-action";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -36,7 +38,8 @@ import type {
   TextViewNode,
 } from "./text-view-elem-interface";
 
-type TextViewPropsMixin = SizeRequestProps &
+type TextViewPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -56,6 +59,7 @@ export interface TextViewProps extends TextViewPropsMixin {
 }
 
 export class TextViewElement
+  extends BaseElement
   implements GjsElement<"TEXT_VIEW", Gtk.TextView>
 {
   static getContext(
@@ -65,20 +69,20 @@ export class TextViewElement
   }
 
   readonly kind = "TEXT_VIEW";
-  private textBuffer = new Gtk.TextBuffer();
-  private widget = new Gtk.TextView({
+  protected textBuffer = new Gtk.TextBuffer();
+  protected widget = new Gtk.TextView({
     buffer: this.textBuffer,
   });
 
-  private parent: GjsElement | null = null;
-  private children: Array<ITextViewElement> = [];
+  protected parent: GjsElement | null = null;
+  protected children: Array<ITextViewElement> = [];
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.TextView,
     TextViewProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<TextViewProps>(
+  protected readonly propsMapper = new PropertyMapper<TextViewProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget, { h: Gtk.Align.FILL }),
@@ -90,6 +94,10 @@ export class TextViewElement
         backgroundColor: ThemeVariable.BackgroundColor,
       },
     }),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .wrapMode(
@@ -118,18 +126,19 @@ export class TextViewElement
         }),
   );
 
-  private embeddedLinks: Array<{
+  protected embeddedLinks: Array<{
     start: number;
     end: number;
     href: string;
   }> = [];
 
-  private embeddedWidgets: Array<{
+  protected embeddedWidgets: Array<{
     start: number;
     end: number;
   }> = [];
 
   constructor(props: DiffedProps) {
+    super();
     this.widget.editable = false;
     this.widget.cursor_visible = false;
 
@@ -194,7 +203,7 @@ export class TextViewElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  private setCursor(type: Gdk.CursorType) {
+  protected setCursor(type: Gdk.CursorType) {
     const window = this.widget.get_window(Gtk.TextWindowType.TEXT);
     const currentCursor = window?.get_cursor();
 
@@ -218,8 +227,9 @@ export class TextViewElement
       );
     }
 
-    child.notifyWillAppendTo(this);
-    this.children.push(child);
+    mountAction(this, child, (shouldOmitMount) => {
+      this.children.push(child);
+    });
   }
 
   insertBefore(
@@ -240,19 +250,27 @@ export class TextViewElement
       throw new Error("The beforeChild element was not found.");
     }
 
-    child.notifyWillAppendTo(this);
-    this.children.splice(beforeChildIndex, 0, child);
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.splice(beforeChildIndex, 0, child);
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
     this.widget.destroy();
   }
 
-  private triggerRepaint = microThrottle(() => {
+  protected triggerRepaint = microThrottle(() => {
     this.paint();
     this.widget.show_all();
   });
@@ -265,12 +283,16 @@ export class TextViewElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement) {
     const childIndex = this.children.indexOf(child as any);
 
     if (childIndex === -1) {
@@ -300,42 +322,13 @@ export class TextViewElement
     return this.parent;
   }
 
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
-
   // #endregion
 
   getTextView(): TextViewElement {
     return this;
   }
 
-  private insertNodesToBuffer(
+  protected insertNodesToBuffer(
     nodes: Array<TextViewNode>,
     parent?: {
       tag: string;
@@ -415,7 +408,7 @@ export class TextViewElement
     }
   }
 
-  private paint() {
+  protected paint() {
     const nodes = this.children.map((child) => child.toNode());
 
     this.embeddedLinks = [];

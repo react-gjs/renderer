@@ -5,7 +5,7 @@ import type { GjsElement } from "../../gjs-element";
 class ChildEntry<C extends GjsElement> {
   constructor(
     public element: C,
-    public isNonAttachable: boolean,
+    public shouldOmitMount: boolean,
   ) {}
 }
 
@@ -31,7 +31,9 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
   ) {}
 
   forEach(callback: (child: C) => void) {
-    this.children.forEach((c) => callback(c.element));
+    for (let i = 0; i < this.children.length; i++) {
+      callback(this.children[i].element);
+    }
   }
 
   /**
@@ -48,15 +50,17 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
    * it regardless, otherwise there's a chance for `insertBefore`
    * method to fail in the future)
    */
-  addChild(child: C, isNonAttachable = false) {
-    if (!isNonAttachable) {
+  addChild(child: C, shouldOmitMount = false) {
+    this.removeChild(child);
+
+    if (!shouldOmitMount) {
       this.addChildToContainer(
         child.getWidget() as ReturnType<C["getWidget"]>,
         child,
         this.children.length,
       );
     }
-    this.children.push(new ChildEntry(child, isNonAttachable));
+    this.children.push(new ChildEntry(child, shouldOmitMount));
   }
 
   /**
@@ -65,7 +69,10 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
    * destroying themselves when the reconciler requests so.
    */
   removeChild(child: GjsElement) {
-    this.children = this.children.filter((c) => c.element !== child);
+    const idx = this.children.findIndex((c) => c.element === child);
+    if (idx !== -1) {
+      this.children.splice(idx, 1);
+    }
   }
 
   /**
@@ -78,8 +85,10 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
   insertBefore(
     newChild: C,
     beforeChild: GjsElement,
-    isNonAttachable = false,
+    shouldOmitMount = false,
   ) {
+    this.removeChild(newChild);
+
     const beforeIndex = this.children.findIndex(
       (c) => c.element === beforeChild,
     );
@@ -90,9 +99,10 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
 
     const childrenAfter = this.children.slice(beforeIndex);
 
-    if (!isNonAttachable) {
+    if (!shouldOmitMount) {
       for (let i = 0; i < childrenAfter.length; i++) {
-        if (!childrenAfter[i].isNonAttachable) {
+        if (!childrenAfter[i].shouldOmitMount) {
+          childrenAfter[i].element.notifyWillUnmount();
           this.removeChildFromContainer(
             childrenAfter[i].element.getWidget() as ReturnType<
               C["getWidget"]
@@ -109,7 +119,7 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
       );
 
       for (let i = 0; i < childrenAfter.length; i++) {
-        if (!childrenAfter[i].isNonAttachable) {
+        if (!childrenAfter[i].shouldOmitMount) {
           this.addChildToContainer(
             childrenAfter[i].element.getWidget() as ReturnType<
               C["getWidget"]
@@ -117,6 +127,7 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
             childrenAfter[i].element,
             beforeIndex + i + 1,
           );
+          childrenAfter[i].element.notifyMounted();
         }
       }
     }
@@ -124,7 +135,7 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
     this.children.splice(
       beforeIndex,
       0,
-      new ChildEntry(newChild, isNonAttachable),
+      new ChildEntry(newChild, shouldOmitMount),
     );
   }
 
@@ -139,14 +150,14 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
       return;
     }
 
-    if (entry.isNonAttachable) {
+    if (entry.shouldOmitMount) {
       return;
     }
 
     const childrenAfter = this.children.slice(childIndex);
 
     for (let i = 0; i < childrenAfter.length; i++) {
-      if (!childrenAfter[i].isNonAttachable) {
+      if (!childrenAfter[i].shouldOmitMount) {
         this.removeChildFromContainer(
           childrenAfter[i].element.getWidget() as ReturnType<
             C["getWidget"]
@@ -157,7 +168,7 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
     }
 
     for (let i = 0; i < childrenAfter.length; i++) {
-      if (!childrenAfter[i].isNonAttachable) {
+      if (!childrenAfter[i].shouldOmitMount) {
         this.addChildToContainer(
           childrenAfter[i].element.getWidget() as ReturnType<
             C["getWidget"]
@@ -171,7 +182,7 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
     this.children.splice(
       childIndex,
       0,
-      new ChildEntry(child, entry.isNonAttachable),
+      new ChildEntry(child, entry.shouldOmitMount),
     );
   }
 }

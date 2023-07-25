@@ -3,7 +3,7 @@ import Gtk from "gi://Gtk";
 import type { ControlButton } from "../../../enums/custom";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import {
   compareArraysShallow,
   diffProps,
@@ -14,8 +14,11 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { mountAction } from "../../utils/mount-action";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -26,7 +29,8 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type HeaderBarPropsMixin = SizeRequestProps &
+type HeaderBarPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -43,6 +47,7 @@ export interface HeaderBarProps extends HeaderBarPropsMixin {
 }
 
 export class HeaderBarElement
+  extends BaseElement
   implements GjsElement<"HEADER_BAR", Gtk.HeaderBar>
 {
   static getContext(
@@ -52,26 +57,30 @@ export class HeaderBarElement
   }
 
   readonly kind = "HEADER_BAR";
-  private widget = new Gtk.HeaderBar();
+  protected widget = new Gtk.HeaderBar();
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.HeaderBar,
     HeaderBarProps
   >(this);
-  private readonly children = new ChildOrderController(
+  protected readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget,
   );
-  private readonly propsMapper = new PropertyMapper<HeaderBarProps>(
+  protected readonly propsMapper = new PropertyMapper<HeaderBarProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget, { h: Gtk.Align.FILL }),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .canHaveSubtitle(DataType.Boolean, (v = false) => {
@@ -124,6 +133,7 @@ export class HeaderBarElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -138,24 +148,42 @@ export class HeaderBarElement
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    const shouldAppend = child.notifyWillAppendTo(this);
-    this.children.addChild(child, !shouldAppend);
-    this.widget.show_all();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.addChild(child, shouldOmitMount);
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   insertBefore(
-    newChild: GjsElement | TextNode,
+    child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
-    ensureNotText(newChild);
+    ensureNotText(child);
 
-    const shouldAppend = newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
-    this.widget.show_all();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.insertBefore(
+          child,
+          beforeChild,
+          shouldOmitMount,
+        );
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -170,12 +198,16 @@ export class HeaderBarElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {
     this.children.removeChild(child);
   }
 
@@ -197,28 +229,6 @@ export class HeaderBarElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
   }
 
   static controlBtnDiffers = new Map<

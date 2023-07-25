@@ -3,9 +3,8 @@ import Gtk from "gi://Gtk";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -14,10 +13,13 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
 import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import { mountAction } from "../../utils/mount-action";
 import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -31,7 +33,8 @@ import { createTooltipPropMapper } from "../../utils/property-maps-factories/cre
 import type { TextNode } from "../text-node";
 import { ToolbarElement } from "./toolbar";
 
-type ToolbarButtonPropsMixin = SizeRequestProps &
+type ToolbarButtonPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -55,6 +58,7 @@ export interface ToolbarButtonProps extends ToolbarButtonPropsMixin {
 }
 
 export class ToolbarButtonElement
+  extends BaseElement
   implements GjsElement<"TOOLBAR_BUTTON", Gtk.ToolButton>
 {
   static getContext(
@@ -66,16 +70,16 @@ export class ToolbarButtonElement
   }
 
   readonly kind = "TOOLBAR_BUTTON";
-  private widget = new Gtk.ToolButton();
+  protected widget = new Gtk.ToolButton();
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.ToolButton,
     ToolbarButtonProps
   >(this);
-  private readonly propsMapper =
+  protected readonly propsMapper =
     new PropertyMapper<ToolbarButtonProps>(
       this.lifecycle,
       createSizeRequestPropMapper(this.widget),
@@ -85,6 +89,10 @@ export class ToolbarButtonElement
       createStylePropMapper(this.widget),
       createTooltipPropMapper(this.widget),
       createAccelPropMapper(this.widget),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
       (props) =>
         props
           .label(DataType.String, (v = "") => {
@@ -109,7 +117,7 @@ export class ToolbarButtonElement
           }),
     );
 
-  private readonly children = new TextChildController(
+  protected readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
@@ -117,6 +125,7 @@ export class ToolbarButtonElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind(
       "enter-notify-event",
@@ -144,8 +153,9 @@ export class ToolbarButtonElement
 
   appendChild(child: TextNode | GjsElement): void {
     if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.addChild(child);
+      mountAction(this, child, (shouldOmitMount) => {
+        this.children.addChild(child);
+      });
       return;
     }
 
@@ -157,8 +167,9 @@ export class ToolbarButtonElement
     beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.insertBefore(child, beforeChild);
+      mountAction(this, child, (shouldOmitMount) => {
+        this.children.insertBefore(child, beforeChild);
+      });
       return;
     }
 
@@ -166,7 +177,7 @@ export class ToolbarButtonElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -182,7 +193,7 @@ export class ToolbarButtonElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)
     ) {
@@ -195,7 +206,11 @@ export class ToolbarButtonElement
     return true;
   }
 
-  notifyWillUnmount(child: TextNode | GjsElement) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: TextNode | GjsElement) {
     this.children.removeChild(child);
   }
 
@@ -217,35 +232,6 @@ export class ToolbarButtonElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

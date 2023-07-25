@@ -15,9 +15,16 @@ export type PropsReader<P> = _PropsReader<Required<P>> & {
 };
 
 export type MapperUpdateApi<P> = {
+  propName: string;
   instead(propertyName: KeysOf<P>): void;
   isUpdatedInThisCycle(propertyName: KeysOf<P>): boolean;
 };
+
+export type PropUpdateCallback<T extends AnyDataType, P> = (
+  v: GetDataType<T> | undefined,
+  allProps: PropsReader<P>,
+  mapperUpdateApi: MapperUpdateApi<P>,
+) => void | (() => void);
 
 export type PropCaseCollector<
   K extends string | symbol | number = string,
@@ -26,11 +33,7 @@ export type PropCaseCollector<
   K,
   <T extends AnyDataType>(
     type: T,
-    mapper: (
-      v: GetDataType<T> | undefined,
-      allProps: PropsReader<P>,
-      mapperUpdateApi: MapperUpdateApi<P>,
-    ) => void | (() => void),
+    update: PropUpdateCallback<T, P>,
   ) => PropCaseCollector<K, P>
 >;
 
@@ -47,42 +50,75 @@ type MapEntry<P> = {
   nextCleanup?: () => void;
 };
 
+export type CaseCollectorCallback<P = Record<string, any>> = (
+  caseCollector: PropCaseCollector<KeysOf<P>, P>,
+  api: {
+    lifecycle: ElementLifecycle;
+    props: PropsReader<P>;
+    addCustomCase: (
+      nameMatch: (propName: string) => boolean,
+      update: PropUpdateCallback<AnyDataType, P>,
+    ) => void;
+  },
+) => void;
+
 export const UnsetProp = Symbol("UnsetProp");
 
 export class PropertyMapper<P = Record<string, any>> {
   private properties = {} as Record<string | symbol, any>;
   private map = new OrderedMap<string, MapEntry<P>>();
   private isFirstUpdate = true;
+  private customCases: Array<
+    [
+      (propName: string) => boolean,
+      PropUpdateCallback<AnyDataType, P>,
+    ]
+  > = [];
+  private collectorApi;
 
-  currentProps = new Proxy(this.properties, {
-    get: (target, prop) => target[prop],
-    set: () => {
-      throw new Error("These props are read-only.");
-    },
-  }) as PropsReader<P>;
+  currentProps = this.getPropsReader();
+
+  private addCustomCase = (
+    nameMatch: (propName: string) => boolean,
+    update: PropUpdateCallback<AnyDataType, P>,
+  ) => {
+    this.customCases.push([nameMatch, update]);
+  };
 
   constructor(
     private element: ElementLifecycle,
-    ...getCases: Array<
-      (caseCollector: PropCaseCollector<KeysOf<P>, P>) => void
-    >
+    ...getCases: Array<CaseCollectorCallback<P>>
   ) {
-    this.addCases(...getCases);
+    this.collectorApi = {
+      lifecycle: this.element,
+      props: this.currentProps,
+      addCustomCase: this.addCustomCase,
+    };
+
+    this.addCases.apply(this, getCases);
 
     this.element.onUpdate((props) => {
       this.update(props);
     });
 
-    this.element.beforeDestroy(() => {
+    this.element.onBeforeDestroy(() => {
       this.cleanupAll();
     });
   }
 
-  addCases(
-    ...getCases: Array<
-      (caseCollector: PropCaseCollector<KeysOf<P>, P>) => void
-    >
-  ) {
+  private getPropsReader(): PropsReader<P> {
+    return new Proxy(this.properties, {
+      get: (target, prop) => target[prop],
+      set: () => {
+        throw new Error("These props are read-only.");
+      },
+      ownKeys(target) {
+        return Object.keys(target);
+      },
+    });
+  }
+
+  addCases(...getCases: Array<CaseCollectorCallback<P>>) {
     const caseCollector = new Proxy(
       {},
       {
@@ -106,56 +142,15 @@ export class PropertyMapper<P = Record<string, any>> {
     ) as PropCaseCollector<KeysOf<P>, P>;
 
     for (let i = 0; i < getCases.length; i++) {
-      getCases[i](caseCollector);
+      getCases[i](caseCollector, this.collectorApi);
     }
   }
 
   private update(props: DiffedProps) {
     const updated = new Map<string, [MapEntry<P>, any]>();
 
-    // collect props that need to be updated
-    for (let i = 0; i < props.length; i++) {
-      const [propName, value] = props[i];
-      const entry = this.map.get(propName);
-
-      if (entry) {
-        if (value === UnsetProp) {
-          this.properties[propName] = undefined;
-          updated.set(propName, [entry, undefined]);
-        } else if (entry.validate(value)) {
-          this.properties[propName] = value;
-          updated.set(propName, [entry, value]);
-        } else {
-          console.error(
-            new TypeError(
-              `Invalid prop type. (${propName}) Received value: ${value}`,
-            ),
-          );
-        }
-      } else {
-        this.properties[propName] = value;
-      }
-    }
-
-    try {
-      for (const [entry] of updated.values()) {
-        entry.nextCleanup?.();
-      }
-    } catch (e) {
-      console.error("Property cleanup callback failed.", e);
-    }
-
-    const updateEntry = (entry: MapEntry<P>, value: any) => {
-      try {
-        entry.nextCleanup =
-          entry.callback(value, this.currentProps, mapperUpdateApi) ??
-          undefined;
-      } catch (e) {
-        console.error("Failed to apply a property update.", e);
-      }
-    };
-
     const mapperUpdateApi: MapperUpdateApi<P> = {
+      propName: "",
       instead: (propName) => {
         if (updated.has(propName as string)) {
           // no-op, mapping function was already called this cycle
@@ -169,6 +164,67 @@ export class PropertyMapper<P = Record<string, any>> {
         updated.has(propName as string),
     };
 
+    const updateEntry = (entry: MapEntry<P>, value: any) => {
+      try {
+        mapperUpdateApi.propName = entry.propName;
+        entry.nextCleanup =
+          entry.callback(
+            value,
+            this.collectorApi.props,
+            mapperUpdateApi,
+          ) ?? undefined;
+      } catch (e) {
+        console.error("Failed to apply a property update.", e);
+      }
+    };
+
+    // collect props that need to be updated
+    for (let i = 0; i < props.length; i++) {
+      const [propName, value] = props[i];
+      const entry = this.map.get(propName);
+
+      if (value === UnsetProp) {
+        this.properties[propName] = undefined;
+      } else {
+        this.properties[propName] = value;
+      }
+
+      if (entry) {
+        if (value === UnsetProp) {
+          updated.set(propName, [entry, undefined]);
+        } else if (entry.validate(value)) {
+          updated.set(propName, [entry, value]);
+        } else {
+          console.error(
+            new TypeError(
+              `Invalid prop type. (${propName}) Received value: ${value}`,
+            ),
+          );
+        }
+      } else {
+        for (let i = 0; i < this.customCases.length; i++) {
+          const [matcher, update] = this.customCases[i]!;
+          if (matcher(propName)) {
+            try {
+              mapperUpdateApi.propName = propName;
+              update(value, this.collectorApi.props, mapperUpdateApi);
+            } catch (e) {
+              console.error("Failed to apply a property update.", e);
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    try {
+      for (const [entry] of updated.values()) {
+        entry.nextCleanup?.();
+      }
+    } catch (e) {
+      console.error("Property cleanup callback failed.", e);
+    }
+
     if (this.isFirstUpdate) {
       this.isFirstUpdate = false;
 
@@ -181,9 +237,10 @@ export class PropertyMapper<P = Record<string, any>> {
           entry = this.map.get(propName)!;
           try {
             entry.nextCleanup =
-              entry.callback(undefined, this.currentProps, {
+              entry.callback(undefined, this.collectorApi.props, {
                 instead: () => {},
                 isUpdatedInThisCycle: () => true,
+                propName,
               }) ?? undefined;
           } catch (e) {
             console.error("Failed to apply a property update.", e);

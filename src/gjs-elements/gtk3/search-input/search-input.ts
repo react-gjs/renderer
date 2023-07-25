@@ -5,7 +5,7 @@ import Gtk from "gi://Gtk";
 import type { InputPurpose } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import {
   compareArraysShallow,
   diffProps,
@@ -18,6 +18,8 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { parseEventKey } from "../../utils/gdk-events/key-press-event";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -30,7 +32,8 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { SearchBarElement } from "../search-bar/search-bar";
 
-type SearchInputPropsMixin = SizeRequestProps &
+type SearchInputPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -99,6 +102,7 @@ interface SearchInputInternalProps extends SearchInputProps {
 }
 
 export class SearchInputElement
+  extends BaseElement
   implements GjsElement<"SEARCH_INPUT", Gtk.SearchEntry>
 {
   static getContext(
@@ -108,22 +112,22 @@ export class SearchInputElement
   }
 
   readonly kind = "SEARCH_INPUT";
-  private textBuffer = new Gtk.EntryBuffer();
-  private widget = new Gtk.SearchEntry({
+  protected textBuffer = new Gtk.EntryBuffer();
+  protected widget = new Gtk.SearchEntry({
     buffer: this.textBuffer,
   });
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
-  private suggestionStore = new Gtk.ListStore();
+  protected suggestionStore = new Gtk.ListStore();
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.SearchEntry,
     SearchInputProps
   >(this);
 
-  private readonly propsMapper =
+  protected readonly propsMapper =
     new PropertyMapper<SearchInputInternalProps>(
       this.lifecycle,
       createSizeRequestPropMapper(this.widget),
@@ -132,6 +136,10 @@ export class SearchInputElement
       createExpandPropMapper(this.widget),
       createStylePropMapper(this.widget),
       createTooltipPropMapper(this.widget),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
       (props) =>
         props
           .value(DataType.String, (v = "") => {
@@ -228,6 +236,7 @@ export class SearchInputElement
     );
 
   constructor(props: DiffedProps) {
+    super();
     this.suggestionStore.set_column_types([GObject.TYPE_STRING]);
     const completion = new Gtk.EntryCompletion();
     completion.set_model(this.suggestionStore);
@@ -269,7 +278,7 @@ export class SearchInputElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  private compare(input: string, suggestionValue: string): boolean {
+  protected compare(input: string, suggestionValue: string): boolean {
     const {
       suggestionCaseSensitive = false,
       suggestionMatchAnywhere = true,
@@ -313,7 +322,7 @@ export class SearchInputElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -328,12 +337,16 @@ export class SearchInputElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount() {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount() {}
 
   // #endregion
 
@@ -353,28 +366,6 @@ export class SearchInputElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
   }
 
   static SearchInputPropDiffers = new Map([
