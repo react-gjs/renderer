@@ -51,6 +51,10 @@ export const ButtonGroup = IntrinsicElem("BUTTON_GROUP").component();
  */
 export const CheckButton = IntrinsicElem("CHECK_BUTTON").component();
 /**
+ * Equivalent to the Gtk.ColorButton widget.
+ */
+export const ColorButton = IntrinsicElem("COLOR_BUTTON").component();
+/**
  * Equivalent to the Gtk.Expander widget.
  */
 export const Expander = IntrinsicElem("EXPANDER").component();
@@ -285,7 +289,7 @@ export {
   createStack,
   useStack,
 } from "./gjs-elements/gtk3/stack/use-stack";
-export { PopoverMenu, Popover };
+export { Popover, PopoverMenu };
 
 // region TextView
 

@@ -24,6 +24,10 @@ import type {
   CheckButtonProps,
 } from "../gjs-elements/gtk3/check-button/check-button";
 import type {
+  ColorButtonElement,
+  ColorButtonProps,
+} from "../gjs-elements/gtk3/color-button/color-button";
+import type {
   ExpanderElement,
   ExpanderProps,
 } from "../gjs-elements/gtk3/expander/expander";
@@ -314,6 +318,10 @@ declare global {
       CHECK_BUTTON: Rg.IntrinsicComponent<
         Rg.ComponentWithChild<CheckButtonProps, string>,
         CheckButtonElement
+      >;
+      COLOR_BUTTON: Rg.IntrinsicComponent<
+        Rg.ComponentWithChildren<ColorButtonProps, string>,
+        ColorButtonElement
       >;
       EXPANDER: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<ExpanderProps>,

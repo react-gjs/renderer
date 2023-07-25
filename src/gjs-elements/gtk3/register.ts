@@ -5,6 +5,7 @@ import { ButtonBoxElement } from "./button-box/button-box";
 import { ButtonGroupElement } from "./button-group/button-group";
 import { ButtonElement } from "./button/button";
 import { CheckButtonElement } from "./check-button/check-button";
+import { ColorButtonElement } from "./color-button/color-button";
 import { CustomWidgetElement } from "./custom-widget/custom-widget";
 import { ExpanderElement } from "./expander/expander";
 import { FlowBoxElement } from "./flow-box/flow-box";
@@ -92,6 +93,7 @@ export const registerGtk3Elements = (
   manager.register("BUTTON_GROUP", ButtonGroupElement);
   manager.register("BUTTON", ButtonElement);
   manager.register("CHECK_BUTTON", CheckButtonElement);
+  manager.register("COLOR_BUTTON", ColorButtonElement);
   manager.register("CUSTOM_WIDGET", CustomWidgetElement);
   manager.register("EXPANDER", ExpanderElement);
   manager.register("FLOW_BOX_ENTRY", FlowBoxEntryElement);
