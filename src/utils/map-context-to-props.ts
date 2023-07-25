@@ -1,13 +1,18 @@
 import React from "react";
 
-type ContextMapper<C> = [React.Context<C>, (context: C) => Record<string, any>];
+type ContextMapper<C> = [
+  React.Context<C>,
+  (context: C) => Record<string, any>,
+];
 
 type Middleware = <E extends keyof JSX.IntrinsicElements>(
-  component: React.FC<JSX.IntrinsicElements[E]>
+  component: React.FC<JSX.IntrinsicElements[E]>,
 ) => React.FC<JSX.IntrinsicElements[E]>;
 
-export const mapContextToProps = <E extends keyof JSX.IntrinsicElements>(
-  v: E
+export const mapContextToProps = <
+  E extends keyof JSX.IntrinsicElements,
+>(
+  v: E,
 ) => {
   const maps: ContextMapper<any>[] = [];
   const middleware: Middleware[] = [];
@@ -15,7 +20,7 @@ export const mapContextToProps = <E extends keyof JSX.IntrinsicElements>(
   return {
     mapCtx<C>(
       context: React.Context<C>,
-      map: (context: C) => Record<string, any>
+      map: (context: C) => Record<string, any>,
     ) {
       maps.push([context, map]);
 
@@ -49,7 +54,7 @@ export const mapContextToProps = <E extends keyof JSX.IntrinsicElements>(
           mappedProps.ref = ref;
 
           return React.createElement(v, mappedProps, children);
-        }
+        },
       ) as any;
 
       for (const m of middleware) {

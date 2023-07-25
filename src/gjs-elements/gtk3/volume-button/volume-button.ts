@@ -8,7 +8,10 @@ import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
-import { compareRecordsShallow, diffProps } from "../../utils/diff-props";
+import {
+  compareRecordsShallow,
+  diffProps,
+} from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -66,14 +69,16 @@ export interface VolumeButtonProps extends VolumeButtonPropsMixin {
   onMouseLeave?: (event: VolumeButtonEvent<PointerData>) => void;
   onPopupOpen?: (event: VolumeButtonEvent) => void;
   onPopupClose?: (event: VolumeButtonEvent) => void;
-  onValueChange?: (event: VolumeButtonEvent<{ value: number }>) => void;
+  onValueChange?: (
+    event: VolumeButtonEvent<{ value: number }>,
+  ) => void;
 }
 
 export class VolumeButtonElement
   implements GjsElement<"VOLUME_BUTTON", Gtk.VolumeButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -91,79 +96,89 @@ export class VolumeButtonElement
     Gtk.VolumeButton,
     VolumeButtonProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<VolumeButtonProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    createAccelPropMapper(this.widget),
-    (props) =>
-      props
-        .step(DataType.Number, (v = 0.02) => {
-          this.adjustment!.set_page_increment(v);
-        })
-        .value(DataType.Number, (v = 0) => {
-          this.adjustment!.set_value(v);
-        })
-        .useUnderline(DataType.Boolean, (v = false) => {
-          this.widget.use_underline = v;
-        })
-        .type(DataType.Enum(ButtonType), (v = ButtonType.NORMAL) => {
-          switch (v) {
-            case ButtonType.NORMAL:
-              this.widget.relief = Gtk.ReliefStyle.NORMAL;
-              break;
-            case ButtonType.FLAT:
-              this.widget.relief = Gtk.ReliefStyle.NONE;
-              break;
-          }
-        })
-        .focusOnClick(DataType.Boolean, (v = true) => {
-          this.widget.focus_on_click = v;
-        })
-        .precision(DataType.Number, (v = 2) => {
-          this.scale.set_round_digits(v);
-        })
-        .flip(DataType.Boolean, (v = false) => {
-          this.scale.set_flippable(v);
-        })
-        .invert(DataType.Boolean, (v = true) => {
-          this.scale.set_inverted(v);
-        })
-        .stepSensitivity(
-          DataType.Enum(Gtk.SensitivityType),
-          (v = Gtk.SensitivityType.AUTO) => {
-            const scale = this.scale;
-            scale.set_upper_stepper_sensitivity(v);
-            scale.set_lower_stepper_sensitivity(v);
-          }
-        )
-        .fixedSize(DataType.Boolean, (v = false) => {
-          this.scale.set_slider_size_fixed(v);
-        })
-        .marks(DataType.Dict(DataType.String), (v = {}, allProps) => {
-          const position =
-            (allProps.marksPosition as any as Gtk.PositionType) ??
-            PositionType.TOP;
+  private readonly propsMapper =
+    new PropertyMapper<VolumeButtonProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget),
+      (props) =>
+        props
+          .step(DataType.Number, (v = 0.02) => {
+            this.adjustment!.set_page_increment(v);
+          })
+          .value(DataType.Number, (v = 0) => {
+            this.adjustment!.set_value(v);
+          })
+          .useUnderline(DataType.Boolean, (v = false) => {
+            this.widget.use_underline = v;
+          })
+          .type(
+            DataType.Enum(ButtonType),
+            (v = ButtonType.NORMAL) => {
+              switch (v) {
+                case ButtonType.NORMAL:
+                  this.widget.relief = Gtk.ReliefStyle.NORMAL;
+                  break;
+                case ButtonType.FLAT:
+                  this.widget.relief = Gtk.ReliefStyle.NONE;
+                  break;
+              }
+            },
+          )
+          .focusOnClick(DataType.Boolean, (v = true) => {
+            this.widget.focus_on_click = v;
+          })
+          .precision(DataType.Number, (v = 2) => {
+            this.scale.set_round_digits(v);
+          })
+          .flip(DataType.Boolean, (v = false) => {
+            this.scale.set_flippable(v);
+          })
+          .invert(DataType.Boolean, (v = true) => {
+            this.scale.set_inverted(v);
+          })
+          .stepSensitivity(
+            DataType.Enum(Gtk.SensitivityType),
+            (v = Gtk.SensitivityType.AUTO) => {
+              const scale = this.scale;
+              scale.set_upper_stepper_sensitivity(v);
+              scale.set_lower_stepper_sensitivity(v);
+            },
+          )
+          .fixedSize(DataType.Boolean, (v = false) => {
+            this.scale.set_slider_size_fixed(v);
+          })
+          .marks(
+            DataType.Dict(DataType.String),
+            (v = {}, allProps) => {
+              const position =
+                (allProps.marksPosition as any as Gtk.PositionType) ??
+                PositionType.TOP;
 
-          this.scale.clear_marks();
-          for (const [key, value] of Object.entries(v)) {
-            this.scale.add_mark(Number(key), position, value);
-          }
-        })
-        .marksPosition(DataType.Enum(PositionType), (_, __, { instead }) => {
-          instead("marks");
-        })
-  );
+              this.scale.clear_marks();
+              for (const [key, value] of Object.entries(v)) {
+                this.scale.add_mark(Number(key), position, value);
+              }
+            },
+          )
+          .marksPosition(
+            DataType.Enum(PositionType),
+            (_, __, { instead }) => {
+              instead("marks");
+            },
+          ),
+    );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   constructor(props: DiffedProps) {
@@ -175,17 +190,27 @@ export class VolumeButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
-    this.handlers.bind("popup", "onPopupOpen", undefined, EventPhase.Action);
-    this.handlers.bind("popdown", "onPopupClose", undefined, EventPhase.Action);
+    this.handlers.bind(
+      "popup",
+      "onPopupOpen",
+      undefined,
+      EventPhase.Action,
+    );
+    this.handlers.bind(
+      "popdown",
+      "onPopupClose",
+      undefined,
+      EventPhase.Action,
+    );
     this.handlers.bind("value-changed", "onValueChange", () => ({
       value: this.adjustment!.value,
     }));
@@ -222,7 +247,7 @@ export class VolumeButtonElement
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -281,14 +306,14 @@ export class VolumeButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -308,13 +333,13 @@ export class VolumeButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(
       oldProps,
       newProps,
       true,
-      VolumeButtonElement.SliderDiffers
+      VolumeButtonElement.SliderDiffers,
     );
   }
 

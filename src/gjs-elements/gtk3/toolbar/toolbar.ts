@@ -35,7 +35,7 @@ import { ToolbarToggleButtonElement } from "./toolbar-toggle-button";
 export type GjsToolbarElement<
   K extends
     | keyof Rg.GjsElementTypeRegistry
-    | "APPLICATION" = keyof Rg.GjsElementTypeRegistry
+    | "APPLICATION" = keyof Rg.GjsElementTypeRegistry,
 > = GjsElement<K, Gtk.ToolItem>;
 
 type ToolbarPropsMixin = SizeRequestProps &
@@ -59,9 +59,11 @@ const TOOL_ELEMENTS = [
   ToolbarToggleButtonElement,
 ];
 
-export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
+export class ToolbarElement
+  implements GjsElement<"TOOLBAR", Gtk.Toolbar>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -72,16 +74,18 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Toolbar, ToolbarProps>(
-    this
-  );
-  private readonly children = new ChildOrderController<GjsToolbarElement>(
-    this.lifecycle,
-    this.widget,
-    (child) => {
-      this.widget.insert(child, -1);
-    }
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Toolbar,
+    ToolbarProps
+  >(this);
+  private readonly children =
+    new ChildOrderController<GjsToolbarElement>(
+      this.lifecycle,
+      this.widget,
+      (child) => {
+        this.widget.insert(child, -1);
+      },
+    );
   private readonly propsMapper = new PropertyMapper<ToolbarProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -95,14 +99,17 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
           DataType.Enum(Gtk.Orientation),
           (v = Gtk.Orientation.HORIZONTAL) => {
             this.widget.orientation = v;
-          }
+          },
         )
         .showArrow(DataType.Boolean, (v = true) => {
           this.widget.show_arrow = v;
         })
-        .type(DataType.Enum(Gtk.ToolbarStyle), (v = Gtk.ToolbarStyle.ICONS) => {
-          this.widget.toolbar_style = v;
-        })
+        .type(
+          DataType.Enum(Gtk.ToolbarStyle),
+          (v = Gtk.ToolbarStyle.ICONS) => {
+            this.widget.toolbar_style = v;
+          },
+        )
         .iconSize(DataType.Enum(Gtk.IconSize), (v) => {
           if (v) {
             const defaultSize = this.widget.icon_size;
@@ -111,7 +118,7 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
               this.widget.icon_size = defaultSize;
             };
           }
-        })
+        }),
   );
 
   private radioGroups = new Map<string, Gtk.RadioToolButton>();
@@ -147,10 +154,19 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
     }
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
-    if (GjsElementManager.isGjsElementOfKind(newChild, TOOL_ELEMENTS)) {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
+    if (
+      GjsElementManager.isGjsElementOfKind(newChild, TOOL_ELEMENTS)
+    ) {
       const shouldAppend = newChild.notifyWillAppendTo(this);
-      this.children.insertBefore(newChild, beforeChild, !shouldAppend);
+      this.children.insertBefore(
+        newChild,
+        beforeChild,
+        !shouldAppend,
+      );
       this.widget.show_all();
     } else {
       throw new Error("Invalid child element added to toolbar.");
@@ -204,14 +220,14 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -226,7 +242,7 @@ export class ToolbarElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

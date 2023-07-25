@@ -44,7 +44,7 @@ export class ButtonGroupElement
   implements GjsElement<"BUTTON_GROUP", Gtk.ButtonBox>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -61,7 +61,7 @@ export class ButtonGroupElement
   >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<ButtonGroupProps>(
     this.lifecycle,
@@ -79,20 +79,20 @@ export class ButtonGroupElement
           DataType.Enum(Gtk.BaselinePosition),
           (v = Gtk.BaselinePosition.TOP) => {
             this.widget.baseline_position = v;
-          }
+          },
         )
         .orientation(
           DataType.Enum(Gtk.Orientation),
           (v = Gtk.Orientation.VERTICAL) => {
             this.widget.orientation = v;
-          }
+          },
         )
         .layout(
           DataType.Enum(Gtk.ButtonBoxStyle),
           (v = Gtk.ButtonBoxStyle.EXPAND) => {
             this.widget.layout_style = v;
-          }
-        )
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -115,7 +115,10 @@ export class ButtonGroupElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -170,14 +173,14 @@ export class ButtonGroupElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -192,7 +195,7 @@ export class ButtonGroupElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

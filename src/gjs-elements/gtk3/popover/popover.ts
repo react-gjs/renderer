@@ -46,7 +46,7 @@ export type PopoverInternalProps = {
 
 export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -58,7 +58,9 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Bin, PopoverProps>(this);
+  private readonly handlers = new EventHandlers<Bin, PopoverProps>(
+    this,
+  );
   private readonly propsMapper = new PropertyMapper<
     PopoverProps & PopoverInternalProps
   >(
@@ -81,14 +83,14 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
           DataType.Enum(Gtk.PopoverConstraint),
           (v = Gtk.PopoverConstraint.NONE) => {
             this.popover.set_constrain_to(v);
-          }
+          },
         )
         .position(
           DataType.Enum(Gtk.PositionType),
           (v = Gtk.PositionType.BOTTOM) => {
             this.popover.set_position(v);
-          }
-        )
+          },
+        ),
   );
 
   private hasContentChild = false;
@@ -104,11 +106,13 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   onContentChange() {
-    if (this.targetElement) this.popover.add(this.targetElement.getWidget());
+    if (this.targetElement)
+      this.popover.add(this.targetElement.getWidget());
   }
 
   onTargetChange() {
-    if (this.contentElement) this.widget.add(this.contentElement.getWidget());
+    if (this.contentElement)
+      this.widget.add(this.contentElement.getWidget());
   }
 
   updateProps(props: DiffedProps): void {
@@ -118,7 +122,12 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   // #region This widget direct mutations
 
   appendChild(child: GjsElement | TextNode): void {
-    if (GjsElementManager.isGjsElementOfKind(child, PopoverContentElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(
+        child,
+        PopoverContentElement,
+      )
+    ) {
       if (this.hasContentChild) {
         throw new Error("Popover can only have one child");
       }
@@ -129,7 +138,10 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
         this.contentElement = child;
       }
     } else if (
-      GjsElementManager.isGjsElementOfKind(child, PopoverTargetElement)
+      GjsElementManager.isGjsElementOfKind(
+        child,
+        PopoverTargetElement,
+      )
     ) {
       if (this.hasTarget) {
         throw new Error("Popover can only have one target");
@@ -143,7 +155,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
       }
     } else {
       throw new Error(
-        "Popover can only have one PopoverTarget and one PopoverContent as it's children."
+        "Popover can only have one PopoverTarget and one PopoverContent as it's children.",
       );
     }
   }
@@ -176,11 +188,19 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   notifyWillUnmount(child: GjsElement): void {
-    if (GjsElementManager.isGjsElementOfKind(child, PopoverContentElement)) {
+    if (
+      GjsElementManager.isGjsElementOfKind(
+        child,
+        PopoverContentElement,
+      )
+    ) {
       this.hasContentChild = false;
       this.contentElement = undefined;
     } else if (
-      GjsElementManager.isGjsElementOfKind(child, PopoverTargetElement)
+      GjsElementManager.isGjsElementOfKind(
+        child,
+        PopoverTargetElement,
+      )
     ) {
       this.hasTarget = false;
       this.targetElement = undefined;
@@ -209,14 +229,14 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -231,7 +251,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

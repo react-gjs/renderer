@@ -37,10 +37,8 @@ type ButtonBoxPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type ButtonBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  ButtonBoxElement
->;
+export type ButtonBoxEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, ButtonBoxElement>;
 
 export interface ButtonBoxProps extends ButtonBoxPropsMixin {
   margin?: ElementMargin;
@@ -52,9 +50,11 @@ export interface ButtonBoxProps extends ButtonBoxPropsMixin {
   onMouseLeave?: (event: ButtonBoxEvent<PointerData>) => void;
 }
 
-export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
+export class ButtonBoxElement
+  implements GjsElement<"BUTTON_BOX", Gtk.Button>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: false,
@@ -69,9 +69,10 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Button, ButtonBoxProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Button,
+    ButtonBoxProps
+  >(this);
   private readonly propsMapper = new PropertyMapper<ButtonBoxProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -80,7 +81,7 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
-    createAccelPropMapper(this.widget)
+    createAccelPropMapper(this.widget),
   );
 
   constructor(props: DiffedProps) {
@@ -92,13 +93,13 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -127,7 +128,7 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     throw new Error("Button can only have one child.");
   }
@@ -181,14 +182,14 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -203,7 +204,7 @@ export class ButtonBoxElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

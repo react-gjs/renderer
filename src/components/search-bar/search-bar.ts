@@ -7,8 +7,13 @@ export const SearchBarContext = React.createContext({
 });
 
 export const SearchBar = React.forwardRef(
-  ({ children, ...props }: JSX.IntrinsicElements["SEARCH_BAR"], ref) => {
-    const [elem, setElem] = React.useState<null | SearchBarElement>(null);
+  (
+    { children, ...props }: JSX.IntrinsicElements["SEARCH_BAR"],
+    ref,
+  ) => {
+    const [elem, setElem] = React.useState<null | SearchBarElement>(
+      null,
+    );
 
     return React.createElement(
       SearchBarContext.Provider,
@@ -24,10 +29,10 @@ export const SearchBar = React.forwardRef(
           ref,
           __rg_onMount: setElem,
         },
-        elem ? children : null
-      )
+        elem ? children : null,
+      ),
     );
-  }
+  },
 );
 
 markAsIntrinsic(SearchBar, "SEARCH_BAR");

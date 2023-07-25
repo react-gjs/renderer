@@ -1,7 +1,10 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-import type { InputPurpose, Justification } from "../../../enums/gtk3-index";
+import type {
+  InputPurpose,
+  Justification,
+} from "../../../enums/gtk3-index";
 import { WrapMode } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -41,10 +44,8 @@ type TextAreaPropsMixin = SizeRequestProps &
   ExpandProps &
   StyleProps;
 
-export type TextAreaEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  TextAreaElement
->;
+export type TextAreaEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, TextAreaElement>;
 
 export interface TextAreaProps extends TextAreaPropsMixin {
   value?: string;
@@ -61,18 +62,20 @@ export interface TextAreaProps extends TextAreaPropsMixin {
       selectedText: string;
       selectionStartIndex: number;
       selectionEndIndex: number;
-    }>
+    }>,
   ) => void;
   onChange?: (
-    event: TextAreaEvent<{ text: string; cursorPosition: number }>
+    event: TextAreaEvent<{ text: string; cursorPosition: number }>,
   ) => void;
   onKeyPress?: (event: TextAreaEvent<Rg.KeyPressEventData>) => void;
   onKeyRelease?: (event: TextAreaEvent<Rg.KeyPressEventData>) => void;
 }
 
-export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
+export class TextAreaElement
+  implements GjsElement<"TEXT_AREA", Gtk.TextView>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -132,7 +135,7 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
           DataType.Enum(Gtk.Justification),
           (v = Gtk.Justification.LEFT) => {
             this.widget.set_justification(v);
-          }
+          },
         )
         .monospace(DataType.Boolean, (v = false) => {
           this.widget.set_monospace(v);
@@ -141,17 +144,23 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
           DataType.Enum(Gtk.InputPurpose),
           (v = Gtk.InputPurpose.FREE_FORM) => {
             this.widget.set_input_purpose(v);
-          }
+          },
         )
-        .wrapMode(DataType.Enum(WrapMode), (v = WrapMode.WORD_CHAR) => {
-          this.widget.set_wrap_mode(TO_GTK_WRAP_MODE.get(v)!);
-        })
+        .wrapMode(
+          DataType.Enum(WrapMode),
+          (v = WrapMode.WORD_CHAR) => {
+            this.widget.set_wrap_mode(TO_GTK_WRAP_MODE.get(v)!);
+          },
+        )
         .padding(
-          DataType.OneOf(DataType.Number, DataType.ArrayOf(DataType.Number)),
+          DataType.OneOf(
+            DataType.Number,
+            DataType.ArrayOf(DataType.Number),
+          ),
           (v = 0) => {
             this.applyPadding(v);
-          }
-        )
+          },
+        ),
   );
 
   private previousSelection = {
@@ -179,22 +188,26 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
       "key-press-event",
       "onKeyPress",
       (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_PRESS)
+        parseEventKey(event, Gdk.EventType.KEY_PRESS),
     );
 
     this.viewHandlers.bind(
       "key-release-event",
       "onKeyRelease",
       (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_RELEASE)
+        parseEventKey(event, Gdk.EventType.KEY_RELEASE),
     );
 
-    this.viewHandlers.bind("button-release-event", "onSelectChange", () =>
-      this.getSelectionEventData()
+    this.viewHandlers.bind(
+      "button-release-event",
+      "onSelectChange",
+      () => this.getSelectionEventData(),
     );
 
-    this.bufferHandlers.bind("notify::has-selection", "onSelectChange", () =>
-      this.getSelectionEventData()
+    this.bufferHandlers.bind(
+      "notify::has-selection",
+      "onSelectChange",
+      () => this.getSelectionEventData(),
     );
 
     this.updateProps(props);
@@ -265,7 +278,9 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
   }
 
   setCursorPosition(position: number) {
-    this.textBuffer.place_cursor(this.textBuffer.get_iter_at_offset(position));
+    this.textBuffer.place_cursor(
+      this.textBuffer.get_iter_at_offset(position),
+    );
   }
 
   updateProps(props: DiffedProps): void {
@@ -327,14 +342,14 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.viewHandlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.viewHandlers.removeListener(signal, callback);
   }
@@ -349,7 +364,7 @@ export class TextAreaElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

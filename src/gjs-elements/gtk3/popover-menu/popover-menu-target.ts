@@ -14,7 +14,7 @@ export class PopoverMenuTargetElement
   implements GjsElement<"POPOVER_MENU_TARGET", Gtk.Widget>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -57,7 +57,10 @@ export class PopoverMenuTargetElement
     }
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("PopoverMenuTarget can only have one child.");
   }
 
@@ -80,9 +83,14 @@ export class PopoverMenuTargetElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (!GjsElementManager.isGjsElementOfKind(parent, PopoverMenuElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(
+        parent,
+        PopoverMenuElement,
+      )
+    ) {
       throw new Error(
-        "PopoverContentElement can only be a child of PopoverElement"
+        "PopoverContentElement can only be a child of PopoverElement",
       );
     }
     this.parent = parent;
@@ -116,12 +124,12 @@ export class PopoverMenuTargetElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {}
@@ -130,7 +138,7 @@ export class PopoverMenuTargetElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

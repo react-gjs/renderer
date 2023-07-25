@@ -75,7 +75,9 @@ export class ApplicationElement extends Gtk.Application {
   }
 
   notifyWillAppendTo(parent: GjsElement): void {
-    throw new Error("Application element can't be appended to a container.");
+    throw new Error(
+      "Application element can't be appended to a container.",
+    );
   }
 
   appendChild(child: GjsElement): void {
@@ -83,13 +85,15 @@ export class ApplicationElement extends Gtk.Application {
       this._rootGjsElement = child;
     } else {
       throw new Error(
-        "Only Window element can be a root element of an Application."
+        "Only Window element can be a root element of an Application.",
       );
     }
   }
 
   updateProps(props: DiffedProps): void {
-    throw new Error("Application element can't have it's props updated.");
+    throw new Error(
+      "Application element can't have it's props updated.",
+    );
   }
 
   notifyWillUnmount() {}
@@ -115,7 +119,7 @@ export class ApplicationElement extends Gtk.Application {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

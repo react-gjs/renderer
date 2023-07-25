@@ -45,9 +45,11 @@ export type PopoverInternalProps = {
   popoverWidget: Gtk.PopoverMenu;
 };
 
-export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
+export class PopoverMenuElement
+  implements GjsElement<"POPOVER_MENU", Bin>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -92,14 +94,14 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
           DataType.Enum(Gtk.PopoverConstraint),
           (v = Gtk.PopoverConstraint.NONE) => {
             this.popover.set_constrain_to(v);
-          }
+          },
         )
         .position(
           DataType.Enum(Gtk.PositionType),
           (v = Gtk.PositionType.TOP) => {
             this.popover.set_position(v);
-          }
-        )
+          },
+        ),
   );
 
   private hasContentChild = false;
@@ -132,11 +134,13 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
   }
 
   onContentChange() {
-    if (this.targetElement) this.popover.add(this.targetElement.getWidget());
+    if (this.targetElement)
+      this.popover.add(this.targetElement.getWidget());
   }
 
   onTargetChange() {
-    if (this.contentElement) this.widget.add(this.contentElement.getWidget());
+    if (this.contentElement)
+      this.widget.add(this.contentElement.getWidget());
   }
 
   updateProps(props: DiffedProps): void {
@@ -147,7 +151,10 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
 
   appendChild(child: GjsElement | TextNode): void {
     if (
-      GjsElementManager.isGjsElementOfKind(child, PopoverMenuContentElement)
+      GjsElementManager.isGjsElementOfKind(
+        child,
+        PopoverMenuContentElement,
+      )
     ) {
       if (this.hasContentChild) {
         throw new Error("Popover can only have one child");
@@ -161,7 +168,10 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
         child.setRootMenu(this);
       }
     } else if (
-      GjsElementManager.isGjsElementOfKind(child, PopoverMenuTargetElement)
+      GjsElementManager.isGjsElementOfKind(
+        child,
+        PopoverMenuTargetElement,
+      )
     ) {
       if (this.hasTarget) {
         throw new Error("Popover can only have one target");
@@ -175,7 +185,7 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
       }
     } else {
       throw new Error(
-        "Popover can only have one PopoverTarget and one PopoverContent as it's children."
+        "Popover can only have one PopoverTarget and one PopoverContent as it's children.",
       );
     }
   }
@@ -209,12 +219,18 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
 
   notifyWillUnmount(child: GjsElement): void {
     if (
-      GjsElementManager.isGjsElementOfKind(child, PopoverMenuContentElement)
+      GjsElementManager.isGjsElementOfKind(
+        child,
+        PopoverMenuContentElement,
+      )
     ) {
       this.hasContentChild = false;
       this.contentElement = undefined;
     } else if (
-      GjsElementManager.isGjsElementOfKind(child, PopoverMenuTargetElement)
+      GjsElementManager.isGjsElementOfKind(
+        child,
+        PopoverMenuTargetElement,
+      )
     ) {
       this.hasTarget = false;
       this.targetElement = undefined;
@@ -243,14 +259,14 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -265,7 +281,7 @@ export class PopoverMenuElement implements GjsElement<"POPOVER_MENU", Bin> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

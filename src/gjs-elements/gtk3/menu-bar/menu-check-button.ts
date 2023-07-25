@@ -40,13 +40,16 @@ type MenuCheckButtonPropsMixin = SizeRequestProps &
 export type MenuCheckButtonEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, MenuCheckButtonElement>;
 
-export interface MenuCheckButtonProps extends MenuCheckButtonPropsMixin {
+export interface MenuCheckButtonProps
+  extends MenuCheckButtonPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
   value?: boolean;
   type?: MenuCheckButtonType;
   inconsistent?: boolean;
-  onToggle?: (event: MenuCheckButtonEvent<{ value: boolean }>) => void;
+  onToggle?: (
+    event: MenuCheckButtonEvent<{ value: boolean }>,
+  ) => void;
   onMouseEnter?: (event: MenuCheckButtonEvent<PointerData>) => void;
   onMouseLeave?: (event: MenuCheckButtonEvent<PointerData>) => void;
 }
@@ -55,7 +58,7 @@ export class MenuCheckButtonElement
   implements GjsElement<"MENU_CHECK_BUTTON", Gtk.CheckMenuItem>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -71,32 +74,34 @@ export class MenuCheckButtonElement
     MenuCheckButtonProps
   >(this);
 
-  private readonly propsMapper = new PropertyMapper<MenuCheckButtonProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    createAccelPropMapper(this.widget, "activate"),
-    (props) =>
-      props
-        .label(DataType.String, (v = "") => {
-          this.widget.label = v;
-        })
-        .value(DataType.Boolean, (v = false) => {
-          this.widget.active = v;
-        })
-        .type(
-          DataType.Enum(MenuCheckButtonType),
-          (v = MenuCheckButtonType.CHECK) => {
-            this.widget.draw_as_radio = v === MenuCheckButtonType.RADIO;
-          }
-        )
-        .inconsistent(DataType.Boolean, (v = false) => {
-          this.widget.inconsistent = v;
-        })
-  );
+  private readonly propsMapper =
+    new PropertyMapper<MenuCheckButtonProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget, "activate"),
+      (props) =>
+        props
+          .label(DataType.String, (v = "") => {
+            this.widget.label = v;
+          })
+          .value(DataType.Boolean, (v = false) => {
+            this.widget.active = v;
+          })
+          .type(
+            DataType.Enum(MenuCheckButtonType),
+            (v = MenuCheckButtonType.CHECK) => {
+              this.widget.draw_as_radio =
+                v === MenuCheckButtonType.RADIO;
+            },
+          )
+          .inconsistent(DataType.Boolean, (v = false) => {
+            this.widget.inconsistent = v;
+          }),
+    );
 
   constructor(props: DiffedProps) {
     this.handlers.bind("activate", "onToggle", () => {
@@ -108,13 +113,13 @@ export class MenuCheckButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -134,7 +139,10 @@ export class MenuCheckButtonElement
     throw new Error("MenuCheckButton cannot have children.");
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("MenuCheckButton cannot have children.");
   }
 
@@ -162,7 +170,7 @@ export class MenuCheckButtonElement
       ])
     ) {
       throw new Error(
-        "MenuBarItem can only be a child of a MenuBar or MenuEntry."
+        "MenuBarItem can only be a child of a MenuBar or MenuEntry.",
       );
     }
 
@@ -194,14 +202,14 @@ export class MenuCheckButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -216,7 +224,7 @@ export class MenuCheckButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

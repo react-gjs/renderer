@@ -39,10 +39,8 @@ type MenuEntryPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type MenuEntryEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  MenuEntryElement
->;
+export type MenuEntryEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, MenuEntryElement>;
 
 export interface MenuEntryProps extends MenuEntryPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
@@ -56,7 +54,7 @@ export class MenuEntryElement
   implements GjsElement<"MENU_ENTRY", Gtk.MenuItem>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -71,9 +69,10 @@ export class MenuEntryElement
   private rootBarItem: MenuBarItemElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.MenuItem, MenuEntryProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.MenuItem,
+    MenuEntryProps
+  >(this);
   private readonly children = new ChildOrderController<
     MenuEntryElement | MenuCheckButtonElement | MenuRadioButtonElement
   >(
@@ -91,7 +90,7 @@ export class MenuEntryElement
       if (this.submenu) {
         this.submenu.remove(child);
       }
-    }
+    },
   );
   private readonly propsMapper = new PropertyMapper<MenuEntryProps>(
     this.lifecycle,
@@ -104,7 +103,7 @@ export class MenuEntryElement
     (props) =>
       props.label(DataType.String, (v = "") => {
         this.widget.label = v;
-      })
+      }),
   );
 
   constructor(props: DiffedProps) {
@@ -113,13 +112,13 @@ export class MenuEntryElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -170,7 +169,10 @@ export class MenuEntryElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     if (
@@ -215,7 +217,7 @@ export class MenuEntryElement
       ])
     ) {
       throw new Error(
-        "MenuBarItem can only be a child of a MenuBar or MenuEntry."
+        "MenuBarItem can only be a child of a MenuBar or MenuEntry.",
       );
     }
 
@@ -255,14 +257,14 @@ export class MenuEntryElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -277,7 +279,7 @@ export class MenuEntryElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

@@ -1,7 +1,10 @@
 import Gtk from "gi://Gtk";
 import React from "react";
 import { EventLoop } from "../../utils/event-loop";
-import type { PopoverProps as BaseProps, PopoverElement } from "./popover";
+import type {
+  PopoverProps as BaseProps,
+  PopoverElement,
+} from "./popover";
 
 const PopoverElem = "POPOVER";
 const PopoverTargetElem = "POPOVER_TARGET";
@@ -26,7 +29,7 @@ export type PopoverProps = BaseProps & {
    */
   renderAnchor: (
     showPopover: () => void,
-    hidePopover: () => void
+    hidePopover: () => void,
   ) => React.ReactElement;
 };
 
@@ -59,19 +62,27 @@ const getPopoverWidget = () => {
 
 export const Popover = React.forwardRef(
   (props: PopoverProps, ref: React.ForwardedRef<PopoverElement>) => {
-    const { renderAnchor: children, renderPopover: content, ...rest } = props;
+    const {
+      renderAnchor: children,
+      renderPopover: content,
+      ...rest
+    } = props;
 
     const [popover] = React.useState(getPopoverWidget);
 
     return React.createElement(
       PopoverElem,
       { ...rest, ref, popoverWidget: popover.widget },
-      React.createElement(PopoverContentElem, {}, content(popover.hidePopover)),
+      React.createElement(
+        PopoverContentElem,
+        {},
+        content(popover.hidePopover),
+      ),
       React.createElement(
         PopoverTargetElem,
         {},
-        children(popover.showPopover, popover.hidePopover)
-      )
+        children(popover.showPopover, popover.hidePopover),
+      ),
     );
-  }
+  },
 );

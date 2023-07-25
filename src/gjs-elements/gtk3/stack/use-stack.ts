@@ -1,7 +1,10 @@
 import Gtk from "gi://Gtk";
 import React from "react";
 import type { StackElement, StackProps } from "./stack";
-import type { StackScreenElement, StackScreenProps } from "./stack-screen";
+import type {
+  StackScreenElement,
+  StackScreenProps,
+} from "./stack-screen";
 import type { StackSwitcherProps } from "./stack-switcher";
 
 const StackComponent: Rg.GjsElementTypes = "STACK";
@@ -21,7 +24,10 @@ export const createStack = <R extends string = string>() => {
   };
 
   const Switcher = (
-    props: Rg.IntrinsicComponent<StackSwitcherProps, StackScreenElement>
+    props: Rg.IntrinsicComponent<
+      StackSwitcherProps,
+      StackScreenElement
+    >,
   ) => {
     return React.createElement(StackSwitcherComponent, {
       ...props,
@@ -33,7 +39,7 @@ export const createStack = <R extends string = string>() => {
     props: Rg.IntrinsicComponent<
       Rg.ComponentWithChildren<StackScreenProps<R>>,
       StackScreenElement
-    >
+    >,
   ) => {
     return React.createElement(StackScreen, {
       ...props,

@@ -15,7 +15,7 @@ export type WidgetWithMargin = {
 
 export const applyMargin = (
   widget: WidgetWithMargin,
-  margin: number | number[]
+  margin: number | number[],
 ) => {
   if (typeof margin === "number") {
     widget.margin_top = margin;

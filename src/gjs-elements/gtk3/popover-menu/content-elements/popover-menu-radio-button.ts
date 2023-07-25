@@ -37,8 +37,9 @@ type PopoverMenuRadioButtonPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type PopoverMenuRadioButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, PopoverMenuRadioButtonElement>;
+export type PopoverMenuRadioButtonEvent<
+  P extends Record<string, any> = {},
+> = SyntheticEvent<P, PopoverMenuRadioButtonElement>;
 
 export interface PopoverMenuRadioButtonProps
   extends PopoverMenuRadioButtonPropsMixin {
@@ -48,19 +49,25 @@ export interface PopoverMenuRadioButtonProps
   inverted?: boolean;
   radioGroup: string;
   isDefault?: boolean;
-  onChange?: (e: PopoverMenuRadioButtonEvent<{ isActive: boolean }>) => void;
+  onChange?: (
+    e: PopoverMenuRadioButtonEvent<{ isActive: boolean }>,
+  ) => void;
   onClick?: (e: PopoverMenuRadioButtonEvent) => void;
   onPressed?: (event: PopoverMenuRadioButtonEvent) => void;
   onReleased?: (event: PopoverMenuRadioButtonEvent) => void;
-  onMouseEnter?: (event: PopoverMenuRadioButtonEvent<PointerData>) => void;
-  onMouseLeave?: (event: PopoverMenuRadioButtonEvent<PointerData>) => void;
+  onMouseEnter?: (
+    event: PopoverMenuRadioButtonEvent<PointerData>,
+  ) => void;
+  onMouseLeave?: (
+    event: PopoverMenuRadioButtonEvent<PointerData>,
+  ) => void;
 }
 
 export class PopoverMenuRadioButtonElement
   implements GjsElement<"POPOVER_MENU_RADIO_BUTTON", Gtk.ModelButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -73,8 +80,10 @@ export class PopoverMenuRadioButtonElement
   rootMenu: PopoverMenuElement | null = null;
   radioGroup: RadioGroup | null = null;
 
-  private parent: PopoverMenuEntryElement | PopoverMenuContentElement | null =
-    null;
+  private parent:
+    | PopoverMenuEntryElement
+    | PopoverMenuContentElement
+    | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   private readonly handlers = new EventHandlers<
@@ -108,17 +117,20 @@ export class PopoverMenuRadioButtonElement
               const controller = this.rootMenu.getRadioController();
 
               if (this.radioGroup) {
-                controller.removeFromGroup(this.radioGroup.name, this);
+                controller.removeFromGroup(
+                  this.radioGroup.name,
+                  this,
+                );
               }
 
               this.radioGroup = controller.addToGroup(
                 v,
                 this,
-                allProps.isDefault
+                allProps.isDefault,
               );
               this.widget.active = this.radioGroup.isSelected(this);
             }
-          })
+          }),
     );
 
   constructor(props: DiffedProps) {
@@ -140,13 +152,13 @@ export class PopoverMenuRadioButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.widget.get_child;
@@ -172,7 +184,7 @@ export class PopoverMenuRadioButtonElement
       this.radioGroup = controller.addToGroup(
         this.propsMapper.currentProps.radioGroup,
         this,
-        this.propsMapper.currentProps.isDefault
+        this.propsMapper.currentProps.isDefault,
       );
       this.widget.active = this.radioGroup.isSelected(this);
     }
@@ -188,7 +200,10 @@ export class PopoverMenuRadioButtonElement
     throw new Error("PopoverMenuCheckButton cannot have children.");
   }
 
-  insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
+  insertBefore(
+    child: TextNode | GjsElement,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("PopoverMenuCheckButton cannot have children.");
   }
 
@@ -216,7 +231,7 @@ export class PopoverMenuRadioButtonElement
       ])
     ) {
       throw new Error(
-        "PopoverMenuCheckButton can only be appended to a Popover or another PopoverMenuEntry."
+        "PopoverMenuCheckButton can only be appended to a Popover or another PopoverMenuEntry.",
       );
     }
     this.parent = parent;
@@ -247,14 +262,14 @@ export class PopoverMenuRadioButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -269,7 +284,7 @@ export class PopoverMenuRadioButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

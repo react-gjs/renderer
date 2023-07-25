@@ -10,12 +10,12 @@ export type WidgetWithAccelerators = {
     accel_group: Gtk.AccelGroup,
     accel_key: number,
     accel_mods: Gdk.ModifierType,
-    accel_flags: Gtk.AccelFlags
+    accel_flags: Gtk.AccelFlags,
   ): void;
   remove_accelerator(
     accel_group: Gtk.AccelGroup,
     accel_key: number,
-    accel_mods: Gdk.ModifierType
+    accel_mods: Gdk.ModifierType,
   ): boolean;
 };
 
@@ -41,7 +41,7 @@ export type AccelProps = {
 
 export const createAccelPropMapper = (
   widget: WidgetWithAccelerators,
-  signal = "clicked"
+  signal = "clicked",
 ) => {
   return (mapper: PropCaseCollector<keyof AccelProps, any>) =>
     mapper
@@ -71,11 +71,15 @@ export const createAccelPropMapper = (
                 accelGroup,
                 keyCode,
                 modifier,
-                Gtk.AccelFlags.VISIBLE
+                Gtk.AccelFlags.VISIBLE,
               );
 
               cleanups.push(() => {
-                widget.remove_accelerator(accelGroup, keyCode, modifier);
+                widget.remove_accelerator(
+                  accelGroup,
+                  keyCode,
+                  modifier,
+                );
               });
             }
 

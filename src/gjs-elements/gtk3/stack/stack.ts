@@ -38,7 +38,7 @@ export interface StackProps extends StackPropsMixin {
 
 export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -49,9 +49,14 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Stack, StackProps>(this);
+  private readonly handlers = new EventHandlers<
+    Gtk.Stack,
+    StackProps
+  >(this);
   private readonly children: ChildOrderController<StackScreenElement>;
-  private readonly propsMapper = new PropertyMapper<StackProps>(this.lifecycle);
+  private readonly propsMapper = new PropertyMapper<StackProps>(
+    this.lifecycle,
+  );
 
   constructor(props: DiffedProps) {
     const widget = props.find(([name]) => name === "_widget")?.[1] as
@@ -72,7 +77,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
         const uniqueName = child.uid;
 
         this.widget.add_titled(widget, uniqueName, label);
-      }
+      },
     );
 
     this.propsMapper.addCases(
@@ -95,8 +100,8 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
             DataType.Enum(Gtk.StackTransitionType),
             (v = Gtk.StackTransitionType.CROSSFADE) => {
               this.widget.set_transition_type(v);
-            }
-          )
+            },
+          ),
     );
 
     this.updateProps(props);
@@ -113,8 +118,12 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    if (!GjsElementManager.isGjsElementOfKind(child, StackScreenElement)) {
-      throw new Error("Stack can only have StackItem's as it's children.");
+    if (
+      !GjsElementManager.isGjsElementOfKind(child, StackScreenElement)
+    ) {
+      throw new Error(
+        "Stack can only have StackItem's as it's children.",
+      );
     }
 
     const shouldAppend = child.notifyWillAppendTo(this);
@@ -122,11 +131,21 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
-    if (!GjsElementManager.isGjsElementOfKind(newChild, StackScreenElement)) {
-      throw new Error("Stack can only have StackItem's as it's children.");
+    if (
+      !GjsElementManager.isGjsElementOfKind(
+        newChild,
+        StackScreenElement,
+      )
+    ) {
+      throw new Error(
+        "Stack can only have StackItem's as it's children.",
+      );
     }
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -181,14 +200,14 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -203,7 +222,7 @@ export class StackElement implements GjsElement<"STACK", Gtk.Stack> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

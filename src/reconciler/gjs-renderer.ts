@@ -23,7 +23,11 @@ const performAppendAction = (action: () => void) => {
   try {
     action();
   } catch (e) {
-    if (typeof e === "object" && e !== null && e instanceof DoNotAppend) {
+    if (
+      typeof e === "object" &&
+      e !== null &&
+      e instanceof DoNotAppend
+    ) {
       // do nothing
     } else {
       throw e;
@@ -75,7 +79,7 @@ export const GjsRenderer = Reconciler({
     props: any,
     rootContainer,
     hostContext: HostContext<GjsContext>,
-    internalHandle
+    internalHandle,
   ) {
     const diffedProps = diffProps({}, props, true);
 
@@ -85,7 +89,7 @@ export const GjsRenderer = Reconciler({
     text,
     rootContainer,
     hostContext: HostContext<GjsContext>,
-    internalHandle
+    internalHandle,
   ) {
     if (hostContext.get("isInTextContext") !== true) {
       throw new Error("Text Instances are not supported");
@@ -94,15 +98,24 @@ export const GjsRenderer = Reconciler({
     return new TextNode(text);
   },
   detachDeletedInstance(node) {},
-  finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
+  finalizeInitialChildren(
+    instance,
+    type,
+    props,
+    rootContainer,
+    hostContext,
+  ) {
     return true;
   },
   getChildHostContext(
     parentHostContext: HostContext<GjsContext>,
     type,
-    rootContainer
+    rootContainer,
   ): HostContext<GjsContext> {
-    return GjsElementManager.getContextForKind(type, parentHostContext);
+    return GjsElementManager.getContextForKind(
+      type,
+      parentHostContext,
+    );
   },
   getCurrentEventPriority() {
     return EventPhaseController.getCurrentPhase();
@@ -130,7 +143,7 @@ export const GjsRenderer = Reconciler({
     oldProps,
     newProps,
     rootContainer,
-    hostContext: HostContext<GjsContext>
+    hostContext: HostContext<GjsContext>,
   ) {
     if (GjsElementManager.isGjsElement(instance)) {
       return instance.diffProps(oldProps, newProps);
@@ -148,7 +161,7 @@ export const GjsRenderer = Reconciler({
     type,
     prevProps,
     nextProps,
-    internalHandle
+    internalHandle,
   ) {
     if (
       updatePayload &&
@@ -185,7 +198,9 @@ export const GjsRenderer = Reconciler({
       container.clear();
     } else if (GjsElementManager.isGjsElement(container)) {
       if ((container.getWidget() as Gtk.Box).get_children) {
-        const children = (container.getWidget() as Gtk.Box).get_children()!;
+        const children = (
+          container.getWidget() as Gtk.Box
+        ).get_children()!;
         for (const child of children) {
           child.destroy();
         }

@@ -20,10 +20,8 @@ import type { ApplicationElement } from "../application/application";
 import { HeaderBarElement } from "../headerbar/headerbar";
 import type { TextNode } from "../text-node";
 
-export type WindowEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  WindowElement
->;
+export type WindowEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, WindowElement>;
 
 export type WindowProps = {
   decorate?: boolean;
@@ -48,12 +46,16 @@ export type WindowProps = {
   onDragEnd?: (event: WindowEvent) => void;
   onFocus?: (event: WindowEvent) => void;
   onHide?: (event: WindowEvent) => void;
-  onResize?: (event: WindowEvent<{ width: number; height: number }>) => void;
+  onResize?: (
+    event: WindowEvent<{ width: number; height: number }>,
+  ) => void;
 };
 
-export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
+export class WindowElement
+  implements GjsElement<"WINDOW", Gtk.Window>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -70,7 +72,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
   private readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget,
-    this.addChild.bind(this)
+    this.addChild.bind(this),
   );
   private readonly handlers = new EventHandlers(this);
   private readonly propsMapper = new PropertyMapper<WindowProps>(
@@ -108,7 +110,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
           DataType.Enum(Gdk.WindowTypeHint),
           (v = Gdk.WindowTypeHint.NORMAL) => {
             this.widget.type_hint = v;
-          }
+          },
         )
         .icon(DataType.RecordOf({}), (v) => {
           if (v) {
@@ -119,7 +121,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
           }
 
           this.widget.set_icon(null);
-        })
+        }),
   );
 
   isDisposed = false;
@@ -143,11 +145,26 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
       "drag-begin",
       "onDragBegin",
       undefined,
-      EventPhase.Action
+      EventPhase.Action,
     );
-    this.handlers.bind("drag-end", "onDragEnd", undefined, EventPhase.Action);
-    this.handlers.bind("focus", "onFocus", undefined, EventPhase.Action);
-    this.handlers.bind("hide", "onHide", undefined, EventPhase.Action);
+    this.handlers.bind(
+      "drag-end",
+      "onDragEnd",
+      undefined,
+      EventPhase.Action,
+    );
+    this.handlers.bind(
+      "focus",
+      "onFocus",
+      undefined,
+      EventPhase.Action,
+    );
+    this.handlers.bind(
+      "hide",
+      "onHide",
+      undefined,
+      EventPhase.Action,
+    );
     this.handlers.bind(
       "configure-event",
       "onResize",
@@ -155,7 +172,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
         width: this.widget.get_allocated_width(),
         height: this.widget.get_allocated_height(),
       }),
-      EventPhase.Action
+      EventPhase.Action,
     );
 
     this.updateProps(props);
@@ -169,7 +186,11 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     }
   }
 
-  private addChild(widget: Gtk.Widget, element: GjsElement, index: number) {
+  private addChild(
+    widget: Gtk.Widget,
+    element: GjsElement,
+    index: number,
+  ) {
     if (
       index === 0 &&
       GjsElementManager.isGjsElementOfKind(element, HeaderBarElement)
@@ -182,7 +203,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
   private defaultOnCloseHandler(
     event: WindowEvent,
-    originalHandler?: WindowProps["onClose"]
+    originalHandler?: WindowProps["onClose"],
   ) {
     event.preventDefault();
 
@@ -210,7 +231,9 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     const onclose = props.find(([k]) => k === propName);
 
     if (onclose) {
-      const originalHandler = onclose[1] as undefined | WindowProps["onClose"];
+      const originalHandler = onclose[1] as
+        | undefined
+        | WindowProps["onClose"];
       onclose[1] = (event: WindowEvent) => {
         return this.defaultOnCloseHandler(event, originalHandler);
       };
@@ -235,7 +258,9 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
       throw new Error("Can't update props of a disposed window");
     }
 
-    this.lifecycle.emitLifecycleEventUpdate(this.wrapOnCloseProp(props));
+    this.lifecycle.emitLifecycleEventUpdate(
+      this.wrapOnCloseProp(props),
+    );
   }
 
   // #region This widget direct mutations
@@ -251,7 +276,10 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     this.children.addChild(child, !shouldAppend);
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     if (this.isDisposed) {
       throw new Error("Can't append child to disposed window");
     }
@@ -319,14 +347,14 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -337,7 +365,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
     }
 
     this.lifecycle.emitLifecycleEventUpdate(
-      this.wrapOnCloseProp([[key, value]])
+      this.wrapOnCloseProp([[key, value]]),
     );
   }
 
@@ -347,7 +375,7 @@ export class WindowElement implements GjsElement<"WINDOW", Gtk.Window> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

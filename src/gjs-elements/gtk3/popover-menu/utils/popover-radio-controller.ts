@@ -45,7 +45,7 @@ export class PopoverMenuRadioController {
   addToGroup(
     groupName: string,
     button: PopoverMenuRadioButtonElement,
-    defaultOption = false
+    defaultOption = false,
   ) {
     let group = this.groups.get(groupName);
 
@@ -59,7 +59,10 @@ export class PopoverMenuRadioController {
     return group;
   }
 
-  removeFromGroup(groupName: string, button: PopoverMenuRadioButtonElement) {
+  removeFromGroup(
+    groupName: string,
+    button: PopoverMenuRadioButtonElement,
+  ) {
     const group = this.groups.get(groupName);
     if (!group) return false;
 

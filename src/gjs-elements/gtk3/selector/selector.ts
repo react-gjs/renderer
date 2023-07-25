@@ -33,8 +33,9 @@ type SelectorPropsMixin = SizeRequestProps &
   StyleProps &
   TooltipProps;
 
-export interface SelectorProps<V extends string | number | undefined = any>
-  extends SelectorPropsMixin {
+export interface SelectorProps<
+  V extends string | number | undefined = any,
+> extends SelectorPropsMixin {
   options: Array<{ label: string; value?: V }>;
   selected?: number;
   /** Label to use for the unselected option. */
@@ -45,7 +46,7 @@ export interface SelectorProps<V extends string | number | undefined = any>
       value?: V;
       /** Index of the selected option. is -1 if no option is selected. */
       index: number;
-    }>
+    }>,
   ) => void;
 }
 
@@ -53,12 +54,14 @@ const SelectorOptionDataType = DataType.ArrayOf(
   DataType.RecordOf({
     label: DataType.String,
     value: DataType.OneOf(DataType.String, DataType.Number),
-  })
+  }),
 );
 
-export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
+export class SelectorElement
+  implements GjsElement<"SELECTOR", Gtk.ComboBox>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -70,9 +73,10 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
   readonly lifecycle = new ElementLifecycleController();
   private readonly optionsList = new OptionsList(this.lifecycle);
   private widget = this.optionsList.getComboBox();
-  private readonly handlers = new EventHandlers<Gtk.ComboBox, SelectorProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.ComboBox,
+    SelectorProps
+  >(this);
 
   private readonly propsMapper = new PropertyMapper<SelectorProps>(
     this.lifecycle,
@@ -105,7 +109,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
         .selected(DataType.Number, (v = 0, allProps) => {
           if (allProps.options && allProps.options.length > 0)
             this.widget.set_active(v);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -191,14 +195,14 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -213,7 +217,7 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     const { options, ...rest } = newProps;
     const { options: oldOptions, ...restOldProps } = oldProps;
@@ -222,7 +226,9 @@ export class SelectorElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
       typeof options !== typeof oldOptions ||
       JSON.stringify(options) !== JSON.stringify(oldOptions)
     ) {
-      return diffProps(restOldProps, rest, true).concat([["options", options]]);
+      return diffProps(restOldProps, rest, true).concat([
+        ["options", options],
+      ]);
     }
 
     return diffProps(restOldProps, rest, true).concat([]);

@@ -33,7 +33,7 @@ export const createExpandPropMapper = (
   defaults?: {
     v?: boolean;
     h?: boolean;
-  }
+  },
 ) => {
   return (mapper: PropCaseCollector<keyof ExpandProps, any>) =>
     mapper
@@ -46,18 +46,24 @@ export const createExpandPropMapper = (
           Widget.vexpand = v;
         }
       })
-      .expandHorizontal(DataType.Boolean, (v = defaults?.h, allProps) => {
-        if (v != null) {
-          Widget.hexpand = v;
-        } else if (allProps.expand !== undefined) {
-          Widget.hexpand = allProps.expand;
-        }
-      })
-      .expandVertical(DataType.Boolean, (v = defaults?.v, allProps) => {
-        if (v != null) {
-          Widget.vexpand = v;
-        } else if (allProps.expand !== undefined) {
-          Widget.vexpand = allProps.expand;
-        }
-      });
+      .expandHorizontal(
+        DataType.Boolean,
+        (v = defaults?.h, allProps) => {
+          if (v != null) {
+            Widget.hexpand = v;
+          } else if (allProps.expand !== undefined) {
+            Widget.hexpand = allProps.expand;
+          }
+        },
+      )
+      .expandVertical(
+        DataType.Boolean,
+        (v = defaults?.v, allProps) => {
+          if (v != null) {
+            Widget.vexpand = v;
+          } else if (allProps.expand !== undefined) {
+            Widget.vexpand = allProps.expand;
+          }
+        },
+      );
 };

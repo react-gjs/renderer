@@ -22,7 +22,7 @@ export const createAlignmentPropMapper = (
     halign: Gtk.Align;
     valign: Gtk.Align;
   },
-  defaults?: { h?: Gtk.Align; v?: Gtk.Align }
+  defaults?: { h?: Gtk.Align; v?: Gtk.Align },
 ) => {
   const defaultV = defaults?.v ?? Gtk.Align.START;
   const defaultH = defaults?.h ?? Gtk.Align.CENTER;

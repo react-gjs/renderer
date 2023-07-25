@@ -13,7 +13,7 @@ export type MouseButtonPressEvent = {
 };
 
 export const parseMouseButtonPressEvent = (
-  e: Gdk.Event & Gdk.EventButton
+  e: Gdk.Event & Gdk.EventButton,
 ): MouseButtonPressEvent => {
   const coords = e.get_coords();
   const rootCoords = e.get_root_coords();

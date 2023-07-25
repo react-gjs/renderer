@@ -6,7 +6,10 @@ import type { InputPurpose } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
-import { compareArraysShallow, diffProps } from "../../utils/diff-props";
+import {
+  compareArraysShallow,
+  diffProps,
+} from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -33,8 +36,9 @@ type TextEntryPropsMixin = SizeRequestProps &
   StyleProps &
   TooltipProps;
 
-export type TextEntryElementEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, TextEntryElement>;
+export type TextEntryElementEvent<
+  P extends Record<string, any> = {},
+> = SyntheticEvent<P, TextEntryElement>;
 
 export interface TextEntryProps extends TextEntryPropsMixin {
   value?: string;
@@ -73,13 +77,19 @@ export interface TextEntryProps extends TextEntryPropsMixin {
   suggestionMatchAnywhere?: boolean;
   onChange?: (event: TextEntryElementEvent<{ text: string }>) => void;
   onEnter?: (event: TextEntryElementEvent) => void;
-  onKeyPress?: (event: TextEntryElementEvent<Rg.KeyPressEventData>) => void;
-  onKeyRelease?: (event: TextEntryElementEvent<Rg.KeyPressEventData>) => void;
+  onKeyPress?: (
+    event: TextEntryElementEvent<Rg.KeyPressEventData>,
+  ) => void;
+  onKeyRelease?: (
+    event: TextEntryElementEvent<Rg.KeyPressEventData>,
+  ) => void;
 }
 
-export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
+export class TextEntryElement
+  implements GjsElement<"TEXT_ENTRY", Gtk.Entry>
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -95,9 +105,10 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
   private suggestionStore = new Gtk.ListStore();
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Entry, TextEntryProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.Entry,
+    TextEntryProps
+  >(this);
 
   private readonly propsMapper = new PropertyMapper<TextEntryProps>(
     this.lifecycle,
@@ -120,7 +131,7 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
               this.suggestionStore.set_value(
                 this.suggestionStore.append(),
                 0,
-                suggestion
+                suggestion,
               );
             }
 
@@ -149,7 +160,10 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
         })
         .progress(DataType.Number, (v) => {
           if (v) {
-            this.widget.progress_fraction = Math.min(0, Math.max(v, 1));
+            this.widget.progress_fraction = Math.min(
+              0,
+              Math.max(v, 1),
+            );
           }
         })
         .secondaryIcon(DataType.String, (v) => {
@@ -166,13 +180,16 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
           (v = Gtk.InputPurpose.FREE_FORM) => {
             this.widget.input_purpose = v;
 
-            if (v === Gtk.InputPurpose.PASSWORD || v === Gtk.InputPurpose.PIN) {
+            if (
+              v === Gtk.InputPurpose.PASSWORD ||
+              v === Gtk.InputPurpose.PIN
+            ) {
               this.widget.visibility = false;
             } else {
               this.widget.visibility = true;
             }
-          }
-        )
+          },
+        ),
   );
 
   constructor(props: DiffedProps) {
@@ -182,7 +199,9 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
     completion.set_text_column(0);
     completion.set_match_func((_, __, iter) => {
       const input = this.widget.text;
-      const value = this.suggestionStore.get_value(iter, 0) as string | null;
+      const value = this.suggestionStore.get_value(iter, 0) as
+        | string
+        | null;
       return !!(value && input && this.compare(input, value));
     });
     this.widget.set_completion(completion);
@@ -195,13 +214,13 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
       "key-press-event",
       "onKeyPress",
       (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_PRESS)
+        parseEventKey(event, Gdk.EventType.KEY_PRESS),
     );
     this.handlers.bind(
       "key-release-event",
       "onKeyRelease",
       (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_RELEASE)
+        parseEventKey(event, Gdk.EventType.KEY_RELEASE),
     );
 
     this.updateProps(props);
@@ -219,7 +238,10 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
     let a = input;
     let b = suggestionValue;
 
-    if (suggestionMinInput != null && input.length < suggestionMinInput) {
+    if (
+      suggestionMinInput != null &&
+      input.length < suggestionMinInput
+    ) {
       return false;
     }
 
@@ -294,14 +316,14 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -320,13 +342,13 @@ export class TextEntryElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(
       oldProps,
       newProps,
       true,
-      TextEntryElement.TextEntryPropDiffers
+      TextEntryElement.TextEntryPropDiffers,
     );
   }
 

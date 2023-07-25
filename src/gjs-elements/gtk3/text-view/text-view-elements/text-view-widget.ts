@@ -35,12 +35,17 @@ type TextViewWidgetPropsMixin = SizeRequestProps &
 
 export type TextViewWidgetProps = TextViewWidgetPropsMixin & {};
 
-type TextViewWidgetElementMixin = GjsElement<"TEXT_VIEW_WIDGET", Bin> &
+type TextViewWidgetElementMixin = GjsElement<
+  "TEXT_VIEW_WIDGET",
+  Bin
+> &
   ITextViewElement;
 
-export class TextViewWidgetElement implements TextViewWidgetElementMixin {
+export class TextViewWidgetElement
+  implements TextViewWidgetElementMixin
+{
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: false,
@@ -53,15 +58,18 @@ export class TextViewWidgetElement implements TextViewWidgetElementMixin {
   protected parent: TextViewElementContainer | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private handlers = new EventHandlers<Bin, TextViewWidgetProps>(this);
-  protected readonly propsMapper = new PropertyMapper<TextViewWidgetProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget)
+  private handlers = new EventHandlers<Bin, TextViewWidgetProps>(
+    this,
   );
+  protected readonly propsMapper =
+    new PropertyMapper<TextViewWidgetProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+    );
 
   private child: GjsElement | null = null;
 
@@ -79,7 +87,9 @@ export class TextViewWidgetElement implements TextViewWidgetElementMixin {
 
   appendChild(child: GjsElement | TextNode): void {
     if (this.child) {
-      throw new Error("TextViewWidget cannot have more than one child.");
+      throw new Error(
+        "TextViewWidget cannot have more than one child.",
+      );
     }
 
     ensureNotText(child);
@@ -94,9 +104,11 @@ export class TextViewWidgetElement implements TextViewWidgetElementMixin {
 
   insertBefore(
     child: GjsElement | TextNode,
-    beforeChild: GjsElement | TextNode
+    beforeChild: GjsElement | TextNode,
   ): void {
-    throw new Error("TextViewWidget cannot have more than one child.");
+    throw new Error(
+      "TextViewWidget cannot have more than one child.",
+    );
   }
 
   remove(parent: GjsElement): void {
@@ -119,7 +131,7 @@ export class TextViewWidgetElement implements TextViewWidgetElementMixin {
       this.parent = parent;
     } else {
       throw new Error(
-        "TextViewWidget element can only be appended to a TextView element."
+        "TextViewWidget element can only be appended to a TextView element.",
       );
     }
     return true;
@@ -153,14 +165,14 @@ export class TextViewWidgetElement implements TextViewWidgetElementMixin {
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     this.handlers.removeListener(signal, callback);
   }
@@ -175,7 +187,7 @@ export class TextViewWidgetElement implements TextViewWidgetElementMixin {
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

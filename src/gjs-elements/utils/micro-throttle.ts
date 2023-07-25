@@ -1,7 +1,7 @@
 import { microtask } from "./micortask";
 
 export const microThrottle = <A extends any[]>(
-  callback: (...args: A) => void
+  callback: (...args: A) => void,
 ) => {
   let nextArgs: A | undefined;
   let isScheduledThisCycle = false;

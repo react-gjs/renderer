@@ -39,7 +39,7 @@ export class CustomWidgetElement
   implements GjsElement<"CUSTOM_WIDGET", Gtk.Widget>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -64,7 +64,7 @@ export class CustomWidgetElement
     }
 
     const constructor = constuctorProp as new (
-      props: object
+      props: object,
     ) => ICustomWidget<any>;
 
     this.customWidget = new constructor(this.currentProps);
@@ -93,7 +93,10 @@ export class CustomWidgetElement
     throw new Error("CustomWidgetElement cannot have children.");
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     throw new Error("CustomWidgetElement cannot have children.");
   }
 
@@ -142,12 +145,12 @@ export class CustomWidgetElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {
@@ -160,7 +163,7 @@ export class CustomWidgetElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

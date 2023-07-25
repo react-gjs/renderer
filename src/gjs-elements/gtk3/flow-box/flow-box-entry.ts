@@ -35,10 +35,8 @@ type FlowBoxEntryPropsMixin = SizeRequestProps &
   StyleProps &
   TooltipProps;
 
-export type FlowBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
-  P,
-  FlowBoxEntryElement
->;
+export type FlowBoxEvent<P extends Record<string, any> = {}> =
+  SyntheticEvent<P, FlowBoxEntryElement>;
 
 export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
   isDefault?: boolean;
@@ -49,7 +47,7 @@ export class FlowBoxEntryElement
   implements GjsElement<"FLOW_BOX_ENTRY", Gtk.FlowBoxChild>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -64,37 +62,45 @@ export class FlowBoxEntryElement
     Gtk.FlowBoxChild,
     FlowBoxEntryProps
   >(this);
-  private children = new ChildOrderController(this.lifecycle, this.widget);
+  private children = new ChildOrderController(
+    this.lifecycle,
+    this.widget,
+  );
 
-  emitter = new SyntheticEmitter<{ selected: [boolean] }>(this.lifecycle);
+  emitter = new SyntheticEmitter<{ selected: [boolean] }>(
+    this.lifecycle,
+  );
   isDefault = false;
 
-  private readonly propsMapper = new PropertyMapper<FlowBoxEntryProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    (props) =>
-      props
-        .onSelect(DataType.Function, (callback) => {
-          if (callback) {
-            const listener = this.emitter.on("selected", (isSelected) =>
-              callback({
-                isSelected,
-                target: this.widget,
-                stopPropagation: () => {}, // no-op
-              })
-            );
-            return () => listener.remove();
-          }
-        })
-        .isDefault(DataType.Boolean, (isDefault = false) => {
-          this.isDefault = isDefault;
-        })
-  );
+  private readonly propsMapper =
+    new PropertyMapper<FlowBoxEntryProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      (props) =>
+        props
+          .onSelect(DataType.Function, (callback) => {
+            if (callback) {
+              const listener = this.emitter.on(
+                "selected",
+                (isSelected) =>
+                  callback({
+                    isSelected,
+                    target: this.widget,
+                    stopPropagation: () => {}, // no-op
+                  }),
+              );
+              return () => listener.remove();
+            }
+          })
+          .isDefault(DataType.Boolean, (isDefault = false) => {
+            this.isDefault = isDefault;
+          }),
+    );
 
   constructor(props: DiffedProps) {
     this.updateProps(props);
@@ -116,7 +122,10 @@ export class FlowBoxEntryElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -141,9 +150,11 @@ export class FlowBoxEntryElement
   // #region Element internal signals
 
   notifyWillAppendTo(parent: GjsElement): boolean {
-    if (!GjsElementManager.isGjsElementOfKind(parent, FlowBoxElement)) {
+    if (
+      !GjsElementManager.isGjsElementOfKind(parent, FlowBoxElement)
+    ) {
       throw new Error(
-        "FlowBoxEntry can only be appended to a FlowBox container."
+        "FlowBoxEntry can only be appended to a FlowBox container.",
       );
     }
 
@@ -177,14 +188,14 @@ export class FlowBoxEntryElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -199,7 +210,7 @@ export class FlowBoxEntryElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

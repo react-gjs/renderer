@@ -32,7 +32,7 @@ export type PopoverMenuProps = BaseProps & {
    */
   renderAnchor: (
     showPopover: () => void,
-    hidePopover: () => void
+    hidePopover: () => void,
   ) => React.ReactElement;
 };
 
@@ -67,7 +67,10 @@ const getPopoverMenuWidget = () => {
 };
 
 export const PopoverMenu = React.forwardRef(
-  (props: PopoverMenuProps, ref: React.ForwardedRef<PopoverMenuElement>) => {
+  (
+    props: PopoverMenuProps,
+    ref: React.ForwardedRef<PopoverMenuElement>,
+  ) => {
     const {
       renderAnchor: children,
       renderPopover: content,
@@ -83,13 +86,13 @@ export const PopoverMenu = React.forwardRef(
       React.createElement(
         ContentElem,
         { minWidth },
-        content(popover.hidePopover)
+        content(popover.hidePopover),
       ),
       React.createElement(
         TargetElem,
         {},
-        children(popover.showPopover, popover.hidePopover)
-      )
+        children(popover.showPopover, popover.hidePopover),
+      ),
     );
-  }
+  },
 );

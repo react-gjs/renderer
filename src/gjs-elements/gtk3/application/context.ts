@@ -16,7 +16,7 @@ const ApplicationContext = React.createContext<ApplicationContext>({
 });
 
 export const ApplicationContextProvider = (
-  props: React.PropsWithChildren<{ application: ApplicationElement }>
+  props: React.PropsWithChildren<{ application: ApplicationElement }>,
 ) => {
   const [shouldDismantle, setShouldDismantle] = React.useState(false);
 
@@ -56,7 +56,7 @@ export const ApplicationContextProvider = (
   return React.createElement(
     ApplicationContext.Provider,
     { value: context },
-    props.children
+    props.children,
   );
 };
 

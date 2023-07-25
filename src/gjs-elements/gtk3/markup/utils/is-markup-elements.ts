@@ -3,7 +3,7 @@ import type { TextNode } from "../../text-node";
 import type { BaseMarkupElement } from "../markup-elem";
 
 export const isMarkupElement = (
-  v: string | string[] | TextNode | GjsElement
+  v: string | string[] | TextNode | GjsElement,
 ): v is TextNode | BaseMarkupElement => {
   if (typeof v === "string" || Array.isArray(v)) {
     return false;

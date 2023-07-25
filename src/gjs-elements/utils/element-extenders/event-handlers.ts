@@ -13,7 +13,7 @@ export type BindableProps<R extends Record<string, any>> = keyof {
 
 type EventConnect<K extends string, A extends any[]> = (
   signal: K,
-  callback: (target: any, ...args: A) => boolean
+  callback: (target: any, ...args: A) => boolean,
 ) => number;
 
 type Widget<K extends string> = {
@@ -27,7 +27,7 @@ type SyntheticEventPropsGenerator<A extends any[] = any[]> = (
 
 export type SyntheticEvent<
   A extends Record<string, any> = {},
-  T extends GjsElement = GjsElement
+  T extends GjsElement = GjsElement,
 > = A & {
   stopPropagation(): void;
   preventDefault(): void;
@@ -50,12 +50,12 @@ class EventBind {
     private element: { getWidget(): Widget<any> },
     private signal: string,
     private argGetter: SyntheticEventPropsGenerator<any> = () => ({}),
-    private eventPhase: EventPhase = EventPhase.Input
+    private eventPhase: EventPhase = EventPhase.Input,
   ) {}
 
   private showAsyncWarning = () => {
     console.warn(
-      "Provided an async function as an event handler. It is advised to only use synchronous functions as event handlers."
+      "Provided an async function as an event handler. It is advised to only use synchronous functions as event handlers.",
     );
 
     // only show the warning the first time it's called
@@ -78,17 +78,24 @@ class EventBind {
 
             const a = this.argGetter(...args);
 
-            const syntheticEvent: SyntheticEvent<any> = Object.assign({}, a, {
-              stopPropagation,
-              preventDefault: stopPropagation,
-              originalEvent: args[0],
-              targetWidget: this.element.getWidget(),
-              target: this.element,
-            });
+            const syntheticEvent: SyntheticEvent<any> = Object.assign(
+              {},
+              a,
+              {
+                stopPropagation,
+                preventDefault: stopPropagation,
+                originalEvent: args[0],
+                targetWidget: this.element.getWidget(),
+                target: this.element,
+              },
+            );
 
             const handlerReturn = this.handler(syntheticEvent);
 
-            if (isObject(handlerReturn) && handlerReturn instanceof Promise) {
+            if (
+              isObject(handlerReturn) &&
+              handlerReturn instanceof Promise
+            ) {
               this.showAsyncWarning();
             }
 
@@ -102,7 +109,7 @@ class EventBind {
             console.error(e);
             return false;
           }
-        })
+        }),
       );
 
     this.isConnected = true;
@@ -129,14 +136,17 @@ class EventBind {
 /** A helper class to bind props callbacks to the widget's `connect`. */
 export class EventHandlers<
   W extends Widget<any>,
-  P extends Record<string, any>
+  P extends Record<string, any>,
 > {
   private bindEvents = new Map<string, EventBind>();
   private internalBinds: Array<EventBind> = [];
   private listeners = new Map<string, Map<Function, EventBind>>();
 
   constructor(
-    private element: { getWidget: () => W; lifecycle: ElementLifecycle }
+    private element: {
+      getWidget: () => W;
+      lifecycle: ElementLifecycle;
+    },
   ) {
     this.element.lifecycle.onUpdate((props) => this.update(props));
     this.element.lifecycle.beforeDestroy(() => {
@@ -172,13 +182,13 @@ export class EventHandlers<
     handler: W["connect"] extends EventConnect<K, A>
       ? (event: SyntheticEvent) => void
       : never,
-    eventPhase: EventPhase = EventPhase.Default
+    eventPhase: EventPhase = EventPhase.Default,
   ) {
     const bind = new EventBind(
       this.element,
       signal,
       (...args) => args,
-      eventPhase
+      eventPhase,
     );
     bind.updateHandler(handler);
     this.internalBinds.push(bind);
@@ -200,23 +210,23 @@ export class EventHandlers<
       ? BindableProps<P>
       : never,
     getArgs?: SyntheticEventPropsGenerator<A>,
-    eventPhase?: EventPhase
+    eventPhase?: EventPhase,
   ) {
     this.bindEvents.set(
       propName as string,
-      new EventBind(this.element, signal, getArgs, eventPhase)
+      new EventBind(this.element, signal, getArgs, eventPhase),
     );
   }
 
   addListener(
     signal: string,
-    callback: (widget: W, event?: unknown) => boolean | void
+    callback: (widget: W, event?: unknown) => boolean | void,
   ) {
     const bind = new EventBind(this.element, signal, (e) => e);
     bind.updateHandler((event) => {
       const preventDefault = callback(
         this.element.getWidget(),
-        event.originalEvent
+        event.originalEvent,
       );
       if (preventDefault) {
         event.stopPropagation();
@@ -233,7 +243,7 @@ export class EventHandlers<
 
   removeListener(
     signal: string,
-    callback: (widget: W, event?: unknown) => boolean | void
+    callback: (widget: W, event?: unknown) => boolean | void,
   ) {
     const signalListeners = this.listeners.get(signal);
     if (!signalListeners) return;

@@ -36,7 +36,7 @@ export class ToolbarItemElement
   implements GjsElement<"TOOLBAR_ITEM", Gtk.ToolItem>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext;
   }
@@ -47,12 +47,13 @@ export class ToolbarItemElement
   private parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.ToolItem, ToolbarItemProps>(
-    this
-  );
+  private readonly handlers = new EventHandlers<
+    Gtk.ToolItem,
+    ToolbarItemProps
+  >(this);
   private readonly children = new ChildOrderController(
     this.lifecycle,
-    this.widget
+    this.widget,
   );
   private readonly propsMapper = new PropertyMapper<ToolbarItemProps>(
     this.lifecycle,
@@ -68,7 +69,7 @@ export class ToolbarItemElement
         })
         .expand(DataType.Boolean, (v = false) => {
           this.widget.set_expand(v);
-        })
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -91,7 +92,10 @@ export class ToolbarItemElement
     this.widget.show_all();
   }
 
-  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
+  insertBefore(
+    newChild: GjsElement | TextNode,
+    beforeChild: GjsElement,
+  ): void {
     ensureNotText(newChild);
 
     const shouldAppend = newChild.notifyWillAppendTo(this);
@@ -146,14 +150,14 @@ export class ToolbarItemElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -168,7 +172,7 @@ export class ToolbarItemElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(oldProps, newProps, true);
   }

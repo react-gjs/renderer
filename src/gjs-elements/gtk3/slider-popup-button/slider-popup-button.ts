@@ -8,7 +8,10 @@ import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import type { GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
-import { compareRecordsShallow, diffProps } from "../../utils/diff-props";
+import {
+  compareRecordsShallow,
+  diffProps,
+} from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -41,10 +44,12 @@ type SliderPopupButtonPropsMixin = SizeRequestProps &
   TooltipProps &
   AccelProps;
 
-export type SliderPopupButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, SliderPopupButtonElement>;
+export type SliderPopupButtonEvent<
+  P extends Record<string, any> = {},
+> = SyntheticEvent<P, SliderPopupButtonElement>;
 
-export interface SliderPopupButtonProps extends SliderPopupButtonPropsMixin {
+export interface SliderPopupButtonProps
+  extends SliderPopupButtonPropsMixin {
   type?: ButtonType;
   label?: string;
   image?: Gtk.Widget;
@@ -74,18 +79,20 @@ export interface SliderPopupButtonProps extends SliderPopupButtonPropsMixin {
   onMouseLeave?: (event: SliderPopupButtonEvent<PointerData>) => void;
   onPopupOpen?: (event: SliderPopupButtonEvent) => void;
   onPopupClose?: (event: SliderPopupButtonEvent) => void;
-  onValueChange?: (event: SliderPopupButtonEvent<{ value: number }>) => void;
+  onValueChange?: (
+    event: SliderPopupButtonEvent<{ value: number }>,
+  ) => void;
 }
 
 const WidgetDataType = DataType.Custom(
-  (v: any): v is Gtk.Widget => typeof v === "object"
+  (v: any): v is Gtk.Widget => typeof v === "object",
 );
 
 export class SliderPopupButtonElement
   implements GjsElement<"SLIDER_POPUP_BUTTON", Gtk.ScaleButton>
 {
   static getContext(
-    currentContext: HostContext<GjsContext>
+    currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
     return currentContext.set({
       isInTextContext: true,
@@ -103,110 +110,122 @@ export class SliderPopupButtonElement
     Gtk.ScaleButton,
     SliderPopupButtonProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<SliderPopupButtonProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    createAccelPropMapper(this.widget),
-    (props) =>
-      props
-        .max(DataType.Number, (v = 100, allProps) => {
-          this.adjustment.set_upper(v);
+  private readonly propsMapper =
+    new PropertyMapper<SliderPopupButtonProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget),
+      (props) =>
+        props
+          .max(DataType.Number, (v = 100, allProps) => {
+            this.adjustment.set_upper(v);
 
-          if (allProps.fillLevel) this.updateFillLevel(allProps.fillLevel);
-        })
-        .min(DataType.Number, (v = 0, allProps) => {
-          this.adjustment.set_lower(v);
+            if (allProps.fillLevel)
+              this.updateFillLevel(allProps.fillLevel);
+          })
+          .min(DataType.Number, (v = 0, allProps) => {
+            this.adjustment.set_lower(v);
 
-          if (allProps.fillLevel) this.updateFillLevel(allProps.fillLevel);
-        })
-        .step(DataType.Number, (v = 1) => {
-          this.adjustment.set_page_increment(v);
-        })
-        .value(DataType.Number, (v = 0) => {
-          this.adjustment.set_value(v);
-        })
-        .label(DataType.String, (v = "") => {
-          this.widget.label = v;
-        })
-        .image(WidgetDataType, (v) => {
-          this.widget.set_image(v ?? null);
-        })
-        .imagePosition(
-          DataType.Enum(Gtk.PositionType),
-          (v = Gtk.PositionType.LEFT) => {
-            this.widget.image_position = v;
-          }
-        )
-        .useUnderline(DataType.Boolean, (v = false) => {
-          this.widget.use_underline = v;
-        })
-        .type(DataType.Enum(ButtonType), (v = ButtonType.NORMAL) => {
-          switch (v) {
-            case ButtonType.NORMAL:
-              this.widget.relief = Gtk.ReliefStyle.NORMAL;
-              break;
-            case ButtonType.FLAT:
-              this.widget.relief = Gtk.ReliefStyle.NONE;
-              break;
-          }
-        })
-        .focusOnClick(DataType.Boolean, (v = true) => {
-          this.widget.focus_on_click = v;
-        })
-        .precision(DataType.Number, (v = 0) => {
-          this.scale.set_round_digits(v);
-        })
-        .fillLevel(DataType.Number, (v = 0) => {
-          this.updateFillLevel(v);
-        })
-        .showFillLevel(DataType.Boolean, (v = false) => {
-          this.scale.set_show_fill_level(v);
-        })
-        .restrictToFillLevel(DataType.Boolean, (v = false) => {
-          this.scale.set_restrict_to_fill_level(v);
-        })
-        .flip(DataType.Boolean, (v = false) => {
-          this.scale.set_flippable(v);
-        })
-        .invert(DataType.Boolean, (v = true) => {
-          this.scale.set_inverted(v);
-        })
-        .stepSensitivity(
-          DataType.Enum(Gtk.SensitivityType),
-          (v = Gtk.SensitivityType.AUTO) => {
-            const scale = this.scale;
-            scale.set_upper_stepper_sensitivity(v);
-            scale.set_lower_stepper_sensitivity(v);
-          }
-        )
-        .fixedSize(DataType.Boolean, (v = false) => {
-          this.scale.set_slider_size_fixed(v);
-        })
-        .marks(DataType.Dict(DataType.String), (v = {}, allProps) => {
-          const position =
-            (allProps.marksPosition as any as Gtk.PositionType) ??
-            Gtk.PositionType.TOP;
+            if (allProps.fillLevel)
+              this.updateFillLevel(allProps.fillLevel);
+          })
+          .step(DataType.Number, (v = 1) => {
+            this.adjustment.set_page_increment(v);
+          })
+          .value(DataType.Number, (v = 0) => {
+            this.adjustment.set_value(v);
+          })
+          .label(DataType.String, (v = "") => {
+            this.widget.label = v;
+          })
+          .image(WidgetDataType, (v) => {
+            this.widget.set_image(v ?? null);
+          })
+          .imagePosition(
+            DataType.Enum(Gtk.PositionType),
+            (v = Gtk.PositionType.LEFT) => {
+              this.widget.image_position = v;
+            },
+          )
+          .useUnderline(DataType.Boolean, (v = false) => {
+            this.widget.use_underline = v;
+          })
+          .type(
+            DataType.Enum(ButtonType),
+            (v = ButtonType.NORMAL) => {
+              switch (v) {
+                case ButtonType.NORMAL:
+                  this.widget.relief = Gtk.ReliefStyle.NORMAL;
+                  break;
+                case ButtonType.FLAT:
+                  this.widget.relief = Gtk.ReliefStyle.NONE;
+                  break;
+              }
+            },
+          )
+          .focusOnClick(DataType.Boolean, (v = true) => {
+            this.widget.focus_on_click = v;
+          })
+          .precision(DataType.Number, (v = 0) => {
+            this.scale.set_round_digits(v);
+          })
+          .fillLevel(DataType.Number, (v = 0) => {
+            this.updateFillLevel(v);
+          })
+          .showFillLevel(DataType.Boolean, (v = false) => {
+            this.scale.set_show_fill_level(v);
+          })
+          .restrictToFillLevel(DataType.Boolean, (v = false) => {
+            this.scale.set_restrict_to_fill_level(v);
+          })
+          .flip(DataType.Boolean, (v = false) => {
+            this.scale.set_flippable(v);
+          })
+          .invert(DataType.Boolean, (v = true) => {
+            this.scale.set_inverted(v);
+          })
+          .stepSensitivity(
+            DataType.Enum(Gtk.SensitivityType),
+            (v = Gtk.SensitivityType.AUTO) => {
+              const scale = this.scale;
+              scale.set_upper_stepper_sensitivity(v);
+              scale.set_lower_stepper_sensitivity(v);
+            },
+          )
+          .fixedSize(DataType.Boolean, (v = false) => {
+            this.scale.set_slider_size_fixed(v);
+          })
+          .marks(
+            DataType.Dict(DataType.String),
+            (v = {}, allProps) => {
+              const position =
+                (allProps.marksPosition as any as Gtk.PositionType) ??
+                Gtk.PositionType.TOP;
 
-          this.scale.clear_marks();
-          for (const [key, value] of Object.entries(v)) {
-            this.scale.add_mark(Number(key), position, value);
-          }
-        })
-        .marksPosition(DataType.Enum(PositionType), (_, __, { instead }) => {
-          instead("marks");
-        })
-  );
+              this.scale.clear_marks();
+              for (const [key, value] of Object.entries(v)) {
+                this.scale.add_mark(Number(key), position, value);
+              }
+            },
+          )
+          .marksPosition(
+            DataType.Enum(PositionType),
+            (_, __, { instead }) => {
+              instead("marks");
+            },
+          ),
+    );
 
   private readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
-    }
+    },
   );
 
   constructor(props: DiffedProps) {
@@ -221,17 +240,27 @@ export class SliderPopupButtonElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action
+      EventPhase.Action,
     );
 
-    this.handlers.bind("popup", "onPopupOpen", undefined, EventPhase.Action);
-    this.handlers.bind("popdown", "onPopupClose", undefined, EventPhase.Action);
+    this.handlers.bind(
+      "popup",
+      "onPopupOpen",
+      undefined,
+      EventPhase.Action,
+    );
+    this.handlers.bind(
+      "popdown",
+      "onPopupClose",
+      undefined,
+      EventPhase.Action,
+    );
     this.handlers.bind("value-changed", "onValueChange", () => ({
       value: this.adjustment.value,
     }));
@@ -256,7 +285,10 @@ export class SliderPopupButtonElement
 
     const acceptableRange = max - min;
 
-    const fillAmount = Math.max(min, Math.min(max, min + v * acceptableRange));
+    const fillAmount = Math.max(
+      min,
+      Math.min(max, min + v * acceptableRange),
+    );
 
     this.scale.set_fill_level(fillAmount);
   }
@@ -279,7 +311,7 @@ export class SliderPopupButtonElement
 
   insertBefore(
     child: TextNode | GjsElement,
-    beforeChild: TextNode | GjsElement
+    beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
       child.notifyWillAppendTo(this);
@@ -338,14 +370,14 @@ export class SliderPopupButtonElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.addListener(signal, callback);
   }
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback
+    callback: Rg.GjsElementEvenTListenerCallback,
   ): void {
     return this.handlers.removeListener(signal, callback);
   }
@@ -365,13 +397,13 @@ export class SliderPopupButtonElement
 
   diffProps(
     oldProps: Record<string, any>,
-    newProps: Record<string, any>
+    newProps: Record<string, any>,
   ): DiffedProps {
     return diffProps(
       oldProps,
       newProps,
       true,
-      SliderPopupButtonElement.SliderDiffers
+      SliderPopupButtonElement.SliderDiffers,
     );
   }
 
