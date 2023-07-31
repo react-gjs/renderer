@@ -35,7 +35,7 @@
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.1.0",
     "eslint": "^8.46.0",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-prettier": "^8.9.0",
     "eslint-plugin-prettier": "^4.2.1",
     "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
     "gjs-esm-types": "^0.0.4",
