@@ -32,7 +32,7 @@
   "devDependencies": {
     "@reactgjs/gest": "^0.4.1",
     "@types/react-reconciler": "^0.28.2",
-    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.1.0",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.9.0",
