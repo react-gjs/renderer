@@ -34,7 +34,7 @@
     "@types/react-reconciler": "^0.28.2",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.1.0",
-    "eslint": "^8.45.0",
+    "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
