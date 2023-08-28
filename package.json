@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@reactgjs/gest": "^0.4.1",
-    "@types/react-reconciler": "^0.28.2",
+    "@types/react-reconciler": "^0.28.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
     "eslint": "^8.48.0",
