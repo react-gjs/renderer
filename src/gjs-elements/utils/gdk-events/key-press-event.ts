@@ -1,4 +1,4 @@
-import type Gdk from "gi://Gdk";
+import Gdk from "gi://Gdk";
 import { KeyPressModifiers } from "../../../enums/custom";
 
 declare global {
@@ -19,24 +19,41 @@ declare global {
 export const mapKeypressEventState = (
   event: Gdk.Event & Gdk.EventKey,
 ) => {
-  switch (event.get_state()[1]) {
-    case 17:
-      return KeyPressModifiers.SHIFT;
-    case 20:
-      return KeyPressModifiers.CTRL;
-    case 21:
-      return KeyPressModifiers.CTRL_SHIFT;
-    case 24:
-      return KeyPressModifiers.ALT;
-    case 25:
-      return KeyPressModifiers.ALT_SHIFT;
-    case 28:
-      return KeyPressModifiers.CTR_ALT;
-    case 29:
-      return KeyPressModifiers.CTR_ALT_SHIFT;
-    default:
-      return KeyPressModifiers.NONE;
+  const state = event.get_state()[1];
+
+  const isShift = (state | Gdk.ModifierType.SHIFT_MASK) === state;
+  const isCtrl = (state | Gdk.ModifierType.CONTROL_MASK) === state;
+  const isAlt = (state | Gdk.ModifierType.MOD1_MASK) === state;
+
+  if (isShift && isCtrl && isAlt) {
+    return KeyPressModifiers.SHIFT_CTR_ALT;
   }
+
+  if (isShift && isCtrl) {
+    return KeyPressModifiers.SHIFT_CTRL;
+  }
+
+  if (isShift && isAlt) {
+    return KeyPressModifiers.SHIFT_ALT;
+  }
+
+  if (isCtrl && isAlt) {
+    return KeyPressModifiers.CTR_ALT;
+  }
+
+  if (isShift) {
+    return KeyPressModifiers.SHIFT;
+  }
+
+  if (isCtrl) {
+    return KeyPressModifiers.CTRL;
+  }
+
+  if (isAlt) {
+    return KeyPressModifiers.ALT;
+  }
+
+  return KeyPressModifiers.NONE;
 };
 
 export const mapKeyCode = (event: Gdk.Event & Gdk.EventKey) => {

@@ -47,7 +47,7 @@ export enum KeyPressModifiers {
   CTRL = "CTRL",
   ALT = "ALT",
   CTR_ALT = "CTRL_ALT",
-  ALT_SHIFT = "ALT_SHIFT",
-  CTRL_SHIFT = "CTRL_SHIFT",
-  CTR_ALT_SHIFT = "CTRL_ALT_SHIFT",
+  SHIFT_ALT = "SHIFT_ALT",
+  SHIFT_CTRL = "SHIFT_CTRL",
+  SHIFT_CTR_ALT = "SHIFT_CTR_ALT",
 }
