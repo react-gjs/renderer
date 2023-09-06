@@ -8,23 +8,24 @@ export const resizePixbuff = (
 ) => {
   const currentWidth = pixbuff.get_width();
   const currentHeight = pixbuff.get_height();
+  const orgAspectRatio = currentWidth / currentHeight;
 
-  let targetWidth = width ?? currentWidth;
-  let targetHeight = height ?? currentHeight;
+  let targetWidth = width;
+  let targetHeight = height;
 
-  if (preserveAspectRatio) {
-    const aspectRatio = currentWidth / currentHeight;
+  if (targetHeight != null && targetWidth == null) {
+    targetWidth = targetHeight * orgAspectRatio;
+  } else if (targetWidth != null && targetHeight == null) {
+    targetHeight = targetWidth / orgAspectRatio;
+  } else if (preserveAspectRatio) {
+    const targetRatio = targetWidth! / targetHeight!;
 
-    if (width && height) {
-      if (width / height > aspectRatio) {
-        targetWidth = height * aspectRatio;
+    if (orgAspectRatio !== targetRatio) {
+      if (targetRatio > orgAspectRatio) {
+        targetWidth = targetHeight! * orgAspectRatio;
       } else {
-        targetHeight = width / aspectRatio;
+        targetHeight = targetWidth! / orgAspectRatio;
       }
-    } else if (width && !height) {
-      targetHeight = width / aspectRatio;
-    } else if (height && !width) {
-      targetWidth = height * aspectRatio;
     }
   }
 
@@ -36,8 +37,8 @@ export const resizePixbuff = (
   }
 
   return pixbuff.scale_simple(
-    targetWidth,
-    targetHeight,
+    Math.round(targetWidth!),
+    Math.round(targetHeight!),
     GdkPixbuf.InterpType.BILINEAR,
   )!;
 };
