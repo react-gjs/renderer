@@ -92,11 +92,9 @@ export class PopoverMenuItemElement
     mountAction(
       this,
       child,
-      (shouldOmitMount) => {
-        if (!shouldOmitMount) {
-          this.child = child;
-          this.widget.add(child.getWidget());
-        }
+      () => {
+        this.child = child;
+        this.widget.add(child.getWidget());
       },
       () => {
         this.widget.show_all();
@@ -108,11 +106,7 @@ export class PopoverMenuItemElement
     child: TextNode | GjsElement,
     beforeChild: GjsElement,
   ): void {
-    mountAction(this, child, (shouldOmitMount) => {
-      if (!shouldOmitMount) {
-        throw new Error("PopoverMenuItem can only have one child.");
-      }
-    });
+    throw new Error("PopoverMenuItem can only have one child.");
   }
 
   remove(parent: GjsElement): void {
