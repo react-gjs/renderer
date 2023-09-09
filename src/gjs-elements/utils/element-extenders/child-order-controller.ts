@@ -41,7 +41,13 @@ export class ChildOrderController<C extends GjsElement = GjsElement> {
    * level elements that are not directly added to the container.
    */
   count() {
-    return this.children.length;
+    let count = 0;
+    for (let i = 0; i < this.children.length; i++) {
+      if (!this.children[i].shouldOmitMount) {
+        count++;
+      }
+    }
+    return count;
   }
 
   /**

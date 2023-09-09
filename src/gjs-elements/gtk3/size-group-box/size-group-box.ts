@@ -125,7 +125,7 @@ export class SizeGroupBoxElement
       this,
       child,
       (shouldOmitMount) => {
-        if (shouldOmitMount) {
+        if (!shouldOmitMount) {
           this.sizeGroup.add_widget(child.getWidget());
         }
         this.children.addChild(child, shouldOmitMount);
@@ -146,7 +146,7 @@ export class SizeGroupBoxElement
       this,
       child,
       (shouldOmitMount) => {
-        if (shouldOmitMount) {
+        if (!shouldOmitMount) {
           this.sizeGroup.add_widget(child.getWidget());
         }
         this.children.insertBefore(

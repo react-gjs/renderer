@@ -54,11 +54,9 @@ export class PopoverTargetElement
     if (this.childElement != null) {
       throw new Error("PopoverTarget can only have one child.");
     } else {
-      mountAction(this, child, (shouldOmitMount) => {
-        if (!shouldOmitMount) {
-          this.childElement = child;
-          this.parent?.onTargetChange();
-        }
+      mountAction(this, child, () => {
+        this.childElement = child;
+        this.parent?.onTargetChange();
       });
     }
   }

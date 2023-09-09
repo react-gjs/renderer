@@ -51,10 +51,8 @@ export class PopoverContentElement
       throw new Error("PopoverContent can only have one child.");
     } else {
       mountAction(this, child, (shouldOmitMount) => {
-        if (!shouldOmitMount) {
-          this.childElement = child;
-          this.parent?.onContentChange();
-        }
+        this.childElement = child;
+        this.parent?.onContentChange();
       });
     }
   }

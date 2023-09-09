@@ -55,11 +55,9 @@ export class PopoverMenuTargetElement
     if (this.childElement != null) {
       throw new Error("PopoverMenuTarget can only have one child.");
     } else {
-      mountAction(this, child, (shouldOmitMount) => {
-        if (!shouldOmitMount) {
-          this.childElement = child;
-          this.parent?.onTargetChange();
-        }
+      mountAction(this, child, () => {
+        this.childElement = child;
+        this.parent?.onTargetChange();
       });
     }
   }
@@ -68,11 +66,7 @@ export class PopoverMenuTargetElement
     child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
-    mountAction(this, child, (shouldOmitMount) => {
-      if (!shouldOmitMount) {
-        throw new Error("PopoverMenuTarget can only have one child.");
-      }
-    });
+    throw new Error("PopoverMenuTarget can only have one child.");
   }
 
   remove(parent: GjsElement): void {

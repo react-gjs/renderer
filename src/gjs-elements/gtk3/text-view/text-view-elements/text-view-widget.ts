@@ -99,10 +99,8 @@ export class TextViewWidgetElement
     ensureNotText(child);
 
     mountAction(this, child, (shouldOmitMount) => {
-      if (!shouldOmitMount) {
-        this.child = child;
-        this.widget.add(child.getWidget());
-      }
+      this.child = child;
+      this.widget.add(child.getWidget());
     });
   }
 

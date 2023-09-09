@@ -349,11 +349,26 @@ export class ScrollBoxElement
     child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
-    mountAction(this, child, (shouldOmitMount) => {
-      if (!shouldOmitMount) {
-        throw new Error("ScrollBox can only have one child.");
-      }
-    });
+    ensureNotText(child);
+
+    if (this.children.count() > 0) {
+      throw new Error("ScrollBox can only have one child.");
+    }
+
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.insertBefore(
+          child,
+          beforeChild,
+          shouldOmitMount,
+        );
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   remove(parent: GjsElement): void {
