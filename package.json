@@ -30,7 +30,7 @@
     "react-reconciler": "^0.29.0"
   },
   "devDependencies": {
-    "@reactgjs/gest": "^0.4.1",
+    "@reactgjs/gest": "^0.5.0",
     "@types/react-reconciler": "^0.28.4",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
@@ -41,7 +41,7 @@
     "gjs-esm-types": "^0.0.4",
     "husky": "^8.0.3",
     "prettier": "^3.0.3",
-    "prettier-plugin-jsdoc": "^1.0.1",
+    "prettier-plugin-jsdoc": "^1.0.2",
     "react": "^18.2.0",
     "typescript": "5.2.2"
   },
