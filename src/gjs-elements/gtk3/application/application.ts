@@ -29,11 +29,11 @@ const getResourceBasePath = (appId: string) => {
 export class ApplicationElement extends Gtk.Application {
   readonly kind = "APPLICATION";
 
-  private _isAppActive = false;
+  protected _isAppActive = false;
 
-  private _rootGjsElement: GjsElement | null = null;
+  protected _rootGjsElement: GjsElement | null = null;
 
-  private _windowList: WindowElement[] = [];
+  protected _windowList: WindowElement[] = [];
 
   reactContext?: ApplicationContext;
 
@@ -96,7 +96,7 @@ export class ApplicationElement extends Gtk.Application {
     );
   }
 
-  notifyWillUnmount() {}
+  notifyChildWillUnmount() {}
 
   /**
    * Alias to `ApplicationElement.quit()` inherited from

@@ -1,15 +1,15 @@
 export class GridMatrix {
-  private matrix: Array<Array<boolean>> = [];
-  private lastUsedCoordinates = { x: -1, y: -1 };
-  private currentRow = 0;
-  private newRowTemplate: Array<boolean>;
+  protected matrix: Array<Array<boolean>> = [];
+  protected lastUsedCoordinates = { x: -1, y: -1 };
+  protected currentRow = 0;
+  protected newRowTemplate: Array<boolean>;
 
-  constructor(private width: number) {
+  constructor(protected width: number) {
     this.newRowTemplate = new Array(this.width).fill(false);
     this.addNextRow();
   }
 
-  private addNextRow() {
+  protected addNextRow() {
     this.matrix.push(this.newRowTemplate.slice());
   }
 
@@ -18,7 +18,7 @@ export class GridMatrix {
    * returns the index of the first of those cells, if theres is no N
    * free cells in the row, returns null.
    */
-  private getFirstNFreeCellsInRow(
+  protected getFirstNFreeCellsInRow(
     y: number,
     n: number,
     onlyAfterIndex = -1,
@@ -39,7 +39,7 @@ export class GridMatrix {
     return null;
   }
 
-  private markCellsAsUsed(
+  protected markCellsAsUsed(
     x: number,
     y: number,
     colSpan: number,
@@ -67,7 +67,7 @@ export class GridMatrix {
     this.lastUsedCoordinates = { x, y };
   }
 
-  private findNextAvailableCellForElement(colSpan: number) {
+  protected findNextAvailableCellForElement(colSpan: number) {
     const lastCords = { ...this.lastUsedCoordinates };
 
     if (colSpan > this.width) {

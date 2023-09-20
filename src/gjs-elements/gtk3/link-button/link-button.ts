@@ -3,9 +3,8 @@ import Gtk from "gi://Gtk";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
-import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -14,10 +13,13 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { TextChildController } from "../../utils/element-extenders/text-child-controller";
 import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
+import { mountAction } from "../../utils/mount-action";
 import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -30,7 +32,8 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type LinkButtonPropsMixin = SizeRequestProps &
+type LinkButtonPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -54,6 +57,7 @@ export interface LinkButtonProps extends LinkButtonPropsMixin {
 }
 
 export class LinkButtonElement
+  extends BaseElement
   implements GjsElement<"LINK_BUTTON", Gtk.LinkButton>
 {
   static getContext(
@@ -65,36 +69,41 @@ export class LinkButtonElement
   }
 
   readonly kind = "LINK_BUTTON";
-  private widget = new Gtk.LinkButton();
+  protected widget = new Gtk.LinkButton();
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.Button,
     LinkButtonProps
   >(this);
 
-  private readonly propsMapper = new PropertyMapper<LinkButtonProps>(
-    this.lifecycle,
-    createSizeRequestPropMapper(this.widget),
-    createAlignmentPropMapper(this.widget),
-    createMarginPropMapper(this.widget),
-    createExpandPropMapper(this.widget),
-    createStylePropMapper(this.widget),
-    createTooltipPropMapper(this.widget),
-    createAccelPropMapper(this.widget),
-    (props) =>
-      props
-        .label(DataType.String, (v = "") => {
-          this.widget.label = v;
-        })
-        .useUnderline(DataType.Boolean, (v = false) => {
-          this.widget.use_underline = v;
-        }),
-  );
+  protected readonly propsMapper =
+    new PropertyMapper<LinkButtonProps>(
+      this.lifecycle,
+      createSizeRequestPropMapper(this.widget),
+      createAlignmentPropMapper(this.widget),
+      createMarginPropMapper(this.widget),
+      createExpandPropMapper(this.widget),
+      createStylePropMapper(this.widget),
+      createTooltipPropMapper(this.widget),
+      createAccelPropMapper(this.widget),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
+      (props) =>
+        props
+          .label(DataType.String, (v = "") => {
+            this.widget.label = v;
+          })
+          .useUnderline(DataType.Boolean, (v = false) => {
+            this.widget.use_underline = v;
+          }),
+    );
 
-  private readonly children = new TextChildController(
+  protected readonly children = new TextChildController(
     this.lifecycle,
     (text) => {
       this.widget.label = text;
@@ -102,6 +111,7 @@ export class LinkButtonElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("activate", "onActivate");
     this.handlers.bind("pressed", "onPressed");
@@ -136,8 +146,9 @@ export class LinkButtonElement
 
   appendChild(child: TextNode | GjsElement): void {
     if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.addChild(child);
+      mountAction(this, child, (shouldOmitMount) => {
+        this.children.addChild(child);
+      });
       return;
     }
 
@@ -149,8 +160,9 @@ export class LinkButtonElement
     beforeChild: TextNode | GjsElement,
   ): void {
     if (child.kind === "TEXT_NODE") {
-      child.notifyWillAppendTo(this);
-      this.children.insertBefore(child, beforeChild);
+      mountAction(this, child, (shouldOmitMount) => {
+        this.children.insertBefore(child, beforeChild);
+      });
       return;
     }
 
@@ -158,7 +170,7 @@ export class LinkButtonElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -174,12 +186,16 @@ export class LinkButtonElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement | TextNode) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement | TextNode) {
     this.children.removeChild(child);
   }
 
@@ -201,35 +217,6 @@ export class LinkButtonElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

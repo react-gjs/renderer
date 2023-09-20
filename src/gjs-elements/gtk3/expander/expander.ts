@@ -2,16 +2,18 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
-import { diffProps } from "../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { mountAction } from "../../utils/mount-action";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -24,7 +26,8 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ExpanderPropsMixin = SizeRequestProps &
+type ExpanderPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -40,6 +43,7 @@ export interface ExpanderProps extends ExpanderPropsMixin {
 }
 
 export class ExpanderElement
+  extends BaseElement
   implements GjsElement<"EXPANDER", Gtk.Expander>
 {
   static getContext(
@@ -49,20 +53,20 @@ export class ExpanderElement
   }
 
   readonly kind = "EXPANDER";
-  private widget = new Gtk.Expander();
+  protected widget = new Gtk.Expander();
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.Expander,
     ExpanderProps
   >(this);
-  private readonly children = new ChildOrderController(
+  protected readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget,
   );
-  private readonly propsMapper = new PropertyMapper<ExpanderProps>(
+  protected readonly propsMapper = new PropertyMapper<ExpanderProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
@@ -70,6 +74,10 @@ export class ExpanderElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .expanded(DataType.Boolean, (v = false) => {
@@ -90,6 +98,7 @@ export class ExpanderElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -108,9 +117,16 @@ export class ExpanderElement
       throw new Error("Expander can only have one child.");
     }
 
-    const shouldAppend = child.notifyWillAppendTo(this);
-    this.children.addChild(child, !shouldAppend);
-    this.widget.show_all();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.addChild(child, shouldOmitMount);
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   insertBefore(
@@ -121,7 +137,7 @@ export class ExpanderElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -136,12 +152,16 @@ export class ExpanderElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {
     this.children.removeChild(child);
   }
 
@@ -163,35 +183,6 @@ export class ExpanderElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

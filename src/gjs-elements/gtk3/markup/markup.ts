@@ -8,9 +8,8 @@ import type {
 } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
-import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -19,6 +18,8 @@ import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { microThrottle } from "../../utils/micro-throttle";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -32,7 +33,8 @@ import type { TextNode } from "../text-node";
 import type { BaseMarkupElement } from "./markup-elem";
 import { isMarkupElement } from "./utils/is-markup-elements";
 
-type MarkupPropsMixin = SizeRequestProps &
+type MarkupPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -52,6 +54,7 @@ export interface MarkupProps extends MarkupPropsMixin {
 }
 
 export class MarkupElement
+  extends BaseElement
   implements GjsElement<"MARKUP", Gtk.Label>
 {
   static getContext(
@@ -61,23 +64,27 @@ export class MarkupElement
   }
 
   readonly kind = "MARKUP";
-  private widget = new Gtk.Label();
+  protected widget = new Gtk.Label();
 
-  private parent: GjsElement | null = null;
-  private children: Array<BaseMarkupElement> = [];
+  protected parent: GjsElement | null = null;
+  protected children: Array<BaseMarkupElement> = [];
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.Label,
     MarkupProps
   >(this);
-  private readonly propsMapper = new PropertyMapper<MarkupProps>(
+  protected readonly propsMapper = new PropertyMapper<MarkupProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .selectable(DataType.Boolean, (v = false) => {
@@ -108,6 +115,7 @@ export class MarkupElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.handlers.bind("activate-link", "onAnchorClick", (e) => {
       return { href: e };
     });
@@ -130,8 +138,9 @@ export class MarkupElement
       );
     }
 
-    child.notifyWillAppendTo(this);
+    child.notifyWillMountTo(this);
     this.children.push(child);
+    child.notifyMounted();
   }
 
   insertBefore(
@@ -152,19 +161,20 @@ export class MarkupElement
       throw new Error("The beforeChild element was not found.");
     }
 
-    child.notifyWillAppendTo(this);
+    child.notifyWillMountTo(this);
     this.children.splice(beforeChildIndex, 0, child);
+    child.notifyMounted();
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
     this.widget.destroy();
   }
 
-  private triggerRepaint = microThrottle(() => {
+  protected triggerRepaint = microThrottle(() => {
     this.paint();
     this.widget.show_all();
   });
@@ -177,12 +187,16 @@ export class MarkupElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement) {
     const childIndex = this.children.indexOf(child as any);
 
     if (childIndex === -1) {
@@ -212,42 +226,13 @@ export class MarkupElement
     return this.parent;
   }
 
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
-
   // #endregion
 
   getMarkupRoot(): MarkupElement {
     return this;
   }
 
-  private paint() {
+  protected paint() {
     const content = this.children
       .map((child) => {
         return child.stringify();

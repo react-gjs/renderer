@@ -2,15 +2,15 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { mountAction } from "../../utils/mount-action";
 import type { TextNode } from "../text-node";
 import { PopoverMenuCheckButtonElement } from "./content-elements/popover-menu-check-button";
 import { PopoverMenuEntryElement } from "./content-elements/popover-menu-entry";
@@ -25,6 +25,7 @@ export interface PopoverMenuContentProps {
 }
 
 export class PopoverMenuContentElement
+  extends BaseElement
   implements GjsElement<"POPOVER_MENU_CONTENT", Gtk.ScrolledWindow>
 {
   static getContext(
@@ -42,11 +43,11 @@ export class PopoverMenuContentElement
     return scrollBox;
   }
 
-  private scrollBox = new Gtk.ScrolledWindow();
-  private box = new Gtk.Box();
+  protected scrollBox = new Gtk.ScrolledWindow();
+  protected box = new Gtk.Box();
 
   readonly kind = "POPOVER_MENU_CONTENT";
-  private widget = PopoverMenuContentElement.createWidget(
+  protected widget = PopoverMenuContentElement.createWidget(
     this.scrollBox,
     this.box,
   );
@@ -54,21 +55,21 @@ export class PopoverMenuContentElement
   parentMenu: string | null = null;
   rootMenu: PopoverMenuElement | null = null;
 
-  private parent: PopoverMenuElement | null = null;
+  protected parent: PopoverMenuElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.ScrolledWindow,
     PopoverMenuContentProps
   >(this);
-  private readonly children = new ChildOrderController<
+  protected readonly children = new ChildOrderController<
     | PopoverMenuItemElement
     | PopoverMenuEntryElement
     | PopoverMenuCheckButtonElement
     | PopoverMenuRadioButtonElement
     | PopoverMenuSeparatorElement
   >(this.lifecycle, this.box);
-  private readonly propsMapper =
+  protected readonly propsMapper =
     new PropertyMapper<PopoverMenuContentProps>(
       this.lifecycle,
       (props) =>
@@ -78,6 +79,7 @@ export class PopoverMenuContentElement
     );
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -120,28 +122,34 @@ export class PopoverMenuContentElement
       );
     }
 
-    const shouldAppend = child.notifyWillAppendTo(this);
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        if (this.parentMenu) {
+          child.setParentMenu(this.parentMenu);
+        }
 
-    if (this.parentMenu) {
-      child.setParentMenu(this.parentMenu);
-    }
+        if (this.rootMenu) {
+          child.setRootMenu(this.rootMenu);
+        }
 
-    if (this.rootMenu) {
-      child.setRootMenu(this.rootMenu);
-    }
-
-    this.children.addChild(child, !shouldAppend);
-    this.widget.show_all();
+        this.children.addChild(child, shouldOmitMount);
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   insertBefore(
-    newChild: GjsElement | TextNode,
+    child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
-    ensureNotText(newChild);
+    ensureNotText(child);
 
     if (
-      !GjsElementManager.isGjsElementOfKind(newChild, [
+      !GjsElementManager.isGjsElementOfKind(child, [
         PopoverMenuItemElement,
         PopoverMenuEntryElement,
         PopoverMenuCheckButtonElement,
@@ -154,22 +162,32 @@ export class PopoverMenuContentElement
       );
     }
 
-    const shouldAppend = newChild.notifyWillAppendTo(this);
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        if (this.parentMenu) {
+          child.setParentMenu(this.parentMenu);
+        }
 
-    if (this.parentMenu) {
-      newChild.setParentMenu(this.parentMenu);
-    }
+        if (this.rootMenu) {
+          child.setRootMenu(this.rootMenu);
+        }
 
-    if (this.rootMenu) {
-      newChild.setRootMenu(this.rootMenu);
-    }
-
-    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
-    this.widget.show_all();
+        this.children.insertBefore(
+          child,
+          beforeChild,
+          shouldOmitMount,
+        );
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -184,7 +202,7 @@ export class PopoverMenuContentElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       !GjsElementManager.isGjsElementOfKind(
         parent,
@@ -199,7 +217,11 @@ export class PopoverMenuContentElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {
     this.children.removeChild(child);
   }
 
@@ -221,35 +243,6 @@ export class PopoverMenuContentElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

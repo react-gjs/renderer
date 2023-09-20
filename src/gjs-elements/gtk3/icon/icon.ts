@@ -3,14 +3,15 @@ import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
-import { diffProps } from "../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -21,7 +22,8 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type IconPropsMixin = SizeRequestProps &
+type IconPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -32,7 +34,10 @@ export type IconProps = IconPropsMixin & {
   pixelSize?: number;
 };
 
-export class IconElement implements GjsElement<"ICON", Gtk.Image> {
+export class IconElement
+  extends BaseElement
+  implements GjsElement<"ICON", Gtk.Image>
+{
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -40,21 +45,26 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
   }
 
   readonly kind = "ICON";
-  private widget = new Gtk.Image();
+  protected widget = new Gtk.Image();
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Gtk.Image, IconProps>(
-    this,
-  );
-  private readonly propsMapper = new PropertyMapper<IconProps>(
+  protected readonly handlers = new EventHandlers<
+    Gtk.Image,
+    IconProps
+  >(this);
+  protected readonly propsMapper = new PropertyMapper<IconProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .iconName(DataType.String, (v, allProps) => {
@@ -73,6 +83,7 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -93,7 +104,7 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -108,12 +119,16 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount() {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount() {}
 
   // #endregion
 
@@ -133,35 +148,6 @@ export class IconElement implements GjsElement<"ICON", Gtk.Image> {
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

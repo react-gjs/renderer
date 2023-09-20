@@ -1,16 +1,17 @@
 import type Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
+import { mountAction } from "../../utils/mount-action";
 import { Bin } from "../../utils/widgets/bin";
 import type { TextNode } from "../text-node";
 import { PopoverMenuElement } from "./popover-menu";
 
 export class PopoverMenuTargetElement
+  extends BaseElement
   implements GjsElement<"POPOVER_MENU_TARGET", Gtk.Widget>
 {
   static getContext(
@@ -20,9 +21,9 @@ export class PopoverMenuTargetElement
   }
 
   readonly kind = "POPOVER_MENU_TARGET";
-  private emptyReplacement = new Bin();
-  private childElement: GjsElement | null = null;
-  private get widget(): Gtk.Widget {
+  protected emptyReplacement = new Bin();
+  protected childElement: GjsElement | null = null;
+  protected get widget(): Gtk.Widget {
     if (!this.childElement) {
       throw this.emptyReplacement;
     }
@@ -33,9 +34,14 @@ export class PopoverMenuTargetElement
     return this.childElement != null;
   }
 
-  private parent: PopoverMenuElement | null = null;
+  protected parent: PopoverMenuElement | null = null;
+
+  protected readonly lifecycle = null;
+  protected readonly handlers = null;
+  protected readonly propsMapper = null;
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
   }
 
@@ -49,23 +55,22 @@ export class PopoverMenuTargetElement
     if (this.childElement != null) {
       throw new Error("PopoverMenuTarget can only have one child.");
     } else {
-      const shouldAppend = child.notifyWillAppendTo(this);
-      if (shouldAppend) {
+      mountAction(this, child, () => {
         this.childElement = child;
         this.parent?.onTargetChange();
-      }
+      });
     }
   }
 
   insertBefore(
-    newChild: GjsElement | TextNode,
+    child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
     throw new Error("PopoverMenuTarget can only have one child.");
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.childElement = null;
 
@@ -82,7 +87,7 @@ export class PopoverMenuTargetElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       !GjsElementManager.isGjsElementOfKind(
         parent,
@@ -97,7 +102,9 @@ export class PopoverMenuTargetElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {}
+
+  notifyChildWillUnmount(child: GjsElement): void {
     this.childElement = null;
     this.parent?.onTargetChange();
   }
@@ -124,24 +131,17 @@ export class PopoverMenuTargetElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   setProperty(key: string, value: any) {}
 
   getProperty(key: string) {}
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
 
   // #endregion
 }

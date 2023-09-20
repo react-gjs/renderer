@@ -7,16 +7,18 @@ import type {
 } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
+import { mountAction } from "../../utils/mount-action";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -38,7 +40,8 @@ export type GjsToolbarElement<
     | "APPLICATION" = keyof Rg.GjsElementTypeRegistry,
 > = GjsElement<K, Gtk.ToolItem>;
 
-type ToolbarPropsMixin = SizeRequestProps &
+type ToolbarPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -60,6 +63,7 @@ const TOOL_ELEMENTS = [
 ];
 
 export class ToolbarElement
+  extends BaseElement
   implements GjsElement<"TOOLBAR", Gtk.Toolbar>
 {
   static getContext(
@@ -69,16 +73,16 @@ export class ToolbarElement
   }
 
   readonly kind = "TOOLBAR";
-  private widget = new Gtk.Toolbar();
+  protected widget = new Gtk.Toolbar();
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.Toolbar,
     ToolbarProps
   >(this);
-  private readonly children =
+  protected readonly children =
     new ChildOrderController<GjsToolbarElement>(
       this.lifecycle,
       this.widget,
@@ -86,13 +90,17 @@ export class ToolbarElement
         this.widget.insert(child, -1);
       },
     );
-  private readonly propsMapper = new PropertyMapper<ToolbarProps>(
+  protected readonly propsMapper = new PropertyMapper<ToolbarProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .orientation(
@@ -121,9 +129,10 @@ export class ToolbarElement
         }),
   );
 
-  private radioGroups = new Map<string, Gtk.RadioToolButton>();
+  protected radioGroups = new Map<string, Gtk.RadioToolButton>();
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -146,35 +155,47 @@ export class ToolbarElement
 
   appendChild(child: GjsElement | TextNode): void {
     if (GjsElementManager.isGjsElementOfKind(child, TOOL_ELEMENTS)) {
-      const shouldAppend = child.notifyWillAppendTo(this);
-      this.children.addChild(child, !shouldAppend);
-      this.widget.show_all();
+      mountAction(
+        this,
+        child,
+        (shouldOmitMount) => {
+          this.children.addChild(child, shouldOmitMount);
+        },
+        () => {
+          this.widget.show_all();
+        },
+      );
     } else {
       throw new Error("Invalid child element added to toolbar.");
     }
   }
 
   insertBefore(
-    newChild: GjsElement | TextNode,
+    child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
-    if (
-      GjsElementManager.isGjsElementOfKind(newChild, TOOL_ELEMENTS)
-    ) {
-      const shouldAppend = newChild.notifyWillAppendTo(this);
-      this.children.insertBefore(
-        newChild,
-        beforeChild,
-        !shouldAppend,
+    if (GjsElementManager.isGjsElementOfKind(child, TOOL_ELEMENTS)) {
+      mountAction(
+        this,
+        child,
+        (shouldOmitMount) => {
+          this.children.insertBefore(
+            child,
+            beforeChild,
+            shouldOmitMount,
+          );
+        },
+        () => {
+          this.widget.show_all();
+        },
       );
-      this.widget.show_all();
     } else {
       throw new Error("Invalid child element added to toolbar.");
     }
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -189,12 +210,16 @@ export class ToolbarElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {
     this.children.removeChild(child as GjsToolbarElement);
   }
 
@@ -216,35 +241,6 @@ export class ToolbarElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion
