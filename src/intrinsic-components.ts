@@ -88,6 +88,10 @@ export const HeaderBar = IntrinsicElem("HEADER_BAR").component();
  */
 export const Label = IntrinsicElem("LABEL").component();
 /**
+ * Equivalent to the Gtk.LevelBar widget.
+ */
+export const LevelBar = IntrinsicElem("LEVEL_BAR").component();
+/**
  * Equivalent to the Gtk.LinkButton widget.
  */
 export const LinkButton = IntrinsicElem("LINK_BUTTON").component();

@@ -68,6 +68,10 @@ import type {
   LabelProps,
 } from "../gjs-elements/gtk3/label/label";
 import type {
+  LevelBarElement,
+  LevelBarProps,
+} from "../gjs-elements/gtk3/level-bar/level-bar";
+import type {
   LinkButtonElement,
   LinkButtonProps,
 } from "../gjs-elements/gtk3/link-button/link-button";
@@ -359,6 +363,10 @@ declare global {
       LABEL: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<LabelProps, string>,
         LabelElement
+      >;
+      LEVEL_BAR: Rg.IntrinsicComponent<
+        LevelBarProps,
+        LevelBarElement
       >;
       LINK_BUTTON: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<LinkButtonProps, string>,

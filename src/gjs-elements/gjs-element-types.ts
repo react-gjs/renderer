@@ -19,6 +19,7 @@ declare global {
       ICON: "ICON";
       IMAGE: "IMAGE";
       LABEL: "LABEL";
+      LEVEL_BAR: "LEVEL_BAR";
       LINK_BUTTON: "LINK_BUTTON";
       M_ANCHOR: "M_ANCHOR";
       M_BIG: "M_BIG";
