@@ -151,7 +151,7 @@ export class EventHandlers<
     },
   ) {
     this.element.lifecycle.onUpdate((props) => this.update(props));
-    this.element.lifecycle.beforeDestroy(() => {
+    this.element.lifecycle.onBeforeDestroy(() => {
       this.unbindAll();
     });
   }

@@ -2,9 +2,8 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
-import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -14,6 +13,8 @@ import type { AccelProps } from "../../utils/property-maps-factories/create-acce
 import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -25,7 +26,8 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 
-type SwitchPropsMixin = SizeRequestProps &
+type SwitchPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -43,6 +45,7 @@ export interface SwitchProps extends SwitchPropsMixin {
 }
 
 export class SwitchElement
+  extends BaseElement
   implements GjsElement<"SWITCH", Gtk.Switch>
 {
   static getContext(
@@ -52,17 +55,17 @@ export class SwitchElement
   }
 
   readonly kind = "SWITCH";
-  private widget = new Gtk.Switch();
+  protected widget = new Gtk.Switch();
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.Switch,
     SwitchProps
   >(this);
 
-  private readonly propsMapper = new PropertyMapper<SwitchProps>(
+  protected readonly propsMapper = new PropertyMapper<SwitchProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
@@ -71,6 +74,10 @@ export class SwitchElement
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
     createAccelPropMapper(this.widget, "activate"),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props.value(DataType.Boolean, (v = false) => {
         this.widget.state = v;
@@ -79,6 +86,7 @@ export class SwitchElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.handlers.bind("state-set", "onToggle", (state) => {
       return {
         state,
@@ -105,7 +113,7 @@ export class SwitchElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -120,12 +128,16 @@ export class SwitchElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount() {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount() {}
 
   // #endregion
 
@@ -145,35 +157,6 @@ export class SwitchElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

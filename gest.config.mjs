@@ -8,6 +8,10 @@ const getConfig = () => {
     testDir: "./__tests__",
     srcDir: "./src",
     setup: "./__tests__/main.setup.mjs",
+    introspectedLibVersion: {
+      gtk: "3.0",
+      gdk: "3.0",
+    },
   };
 };
 

@@ -2,7 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
@@ -14,6 +14,8 @@ import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -26,7 +28,8 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { OptionsList } from "./options-list";
 
-type SelectorPropsMixin = SizeRequestProps &
+type SelectorPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -64,6 +67,7 @@ const SelectorOptionDataType = DataType.ArrayOf(
 );
 
 export class SelectorElement
+  extends BaseElement
   implements GjsElement<"SELECTOR", Gtk.ComboBox>
 {
   static getContext(
@@ -74,17 +78,17 @@ export class SelectorElement
 
   readonly kind = "SELECTOR";
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly optionsList = new OptionsList(this.lifecycle);
-  private widget = this.optionsList.getComboBox();
-  private readonly handlers = new EventHandlers<
+  protected readonly optionsList = new OptionsList(this.lifecycle);
+  protected widget = this.optionsList.getComboBox();
+  protected readonly handlers = new EventHandlers<
     Gtk.ComboBox,
     SelectorProps
   >(this);
 
-  private readonly propsMapper = new PropertyMapper<SelectorProps>(
+  protected readonly propsMapper = new PropertyMapper<SelectorProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget, { v: Gtk.Align.START }),
@@ -92,6 +96,10 @@ export class SelectorElement
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
     createTooltipPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .options(SelectorOptionDataType, (v = []) => {
@@ -119,6 +127,7 @@ export class SelectorElement
   );
 
   constructor(props: DiffedProps) {
+    super();
     this.handlers.bind("changed", "onChange", () => {
       const option = this.getCurrentActiveOption();
 
@@ -132,7 +141,7 @@ export class SelectorElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  private getCurrentActiveOption(): { index: number; value?: any } {
+  protected getCurrentActiveOption(): { index: number; value?: any } {
     const [success, iter] = this.widget.get_active_iter();
     if (success) {
       const value = this.optionsList.getOptionForIter(iter!);
@@ -157,7 +166,7 @@ export class SelectorElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -172,12 +181,16 @@ export class SelectorElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount() {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount() {}
 
   // #endregion
 
@@ -197,28 +210,6 @@ export class SelectorElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
   }
 
   diffProps(

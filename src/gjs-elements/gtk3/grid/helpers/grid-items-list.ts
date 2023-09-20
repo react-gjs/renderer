@@ -5,6 +5,7 @@ import type { GridItemElement } from "../grid-item";
 
 export type ChildrenInfo = {
   element: GridItemElement;
+  shouldOmit: boolean;
   columnSpan: number;
   rowSpan: number;
 };
@@ -12,6 +13,7 @@ export type ChildrenInfo = {
 type ItemEntry = {
   id: symbol;
   element: GridItemElement;
+  shouldOmit: boolean;
   columnSpan: number;
   rowSpan: number;
   listeners: Array<{ remove: () => void }>;
@@ -19,17 +21,25 @@ type ItemEntry = {
 };
 
 export class GridItemsList {
-  private items: Array<ItemEntry> = [];
+  protected items: Array<ItemEntry> = [];
 
   constructor(
-    private lifecycle: ElementLifecycle,
-    private onChildChangeInterface: {
+    protected lifecycle: ElementLifecycle,
+    protected onChildChangeInterface: {
       onChildChange(params: ChildrenInfo): void;
       onChildAdded(params: ChildrenInfo): void;
       onChildRemoved(params: GridItemElement): void;
     },
   ) {
-    lifecycle.beforeDestroy(() => this.cleanup());
+    lifecycle.onBeforeDestroy(() => this.cleanup());
+  }
+
+  count(): number {
+    return this.items.length;
+  }
+
+  get(index: number): ChildrenInfo {
+    return this.items[index];
   }
 
   getAll(): ChildrenInfo[] {
@@ -42,7 +52,11 @@ export class GridItemsList {
     );
   }
 
-  add(child: GridItemElement, atIndex?: number) {
+  add(
+    child: GridItemElement,
+    shouldOmitMount: boolean,
+    atIndex?: number,
+  ) {
     const id = Symbol();
 
     const { colSpan, rowSpan } = child.getSpans();
@@ -50,6 +64,7 @@ export class GridItemsList {
     const childEntry: ItemEntry = {
       id,
       element: child,
+      shouldOmit: shouldOmitMount,
       columnSpan: colSpan,
       rowSpan: rowSpan,
       listeners: [],
@@ -92,7 +107,7 @@ export class GridItemsList {
     this.onChildChangeInterface.onChildAdded(childEntry);
   }
 
-  private cleanup() {
+  protected cleanup() {
     this.items.forEach((item) => {
       item.listeners.forEach((listener) => listener.remove());
       item.dispatcher.cancelPreviousDispatch();

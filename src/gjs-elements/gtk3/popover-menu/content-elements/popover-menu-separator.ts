@@ -1,14 +1,15 @@
 import Gtk from "gi://Gtk";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
-import type { GjsElement } from "../../../gjs-element";
+import { BaseElement, type GjsElement } from "../../../gjs-element";
 import { GjsElementManager } from "../../../gjs-element-manager";
-import { diffProps } from "../../../utils/diff-props";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
+import type { ChildPropertiesProps } from "../../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../../utils/property-maps-factories/create-child-props-mapper";
 import type { MarginProps } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import { createMarginPropMapper } from "../../../utils/property-maps-factories/create-margin-prop-mapper";
 import type { SizeRequestProps } from "../../../utils/property-maps-factories/create-size-request-prop-mapper";
@@ -20,7 +21,8 @@ import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuSeparatorPropsMixin = SizeRequestProps &
+type PopoverMenuSeparatorPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   MarginProps &
   StyleProps;
 
@@ -32,6 +34,7 @@ export type PopoverMenuSeparatorProps =
   PopoverMenuSeparatorPropsMixin;
 
 export class PopoverMenuSeparatorElement
+  extends BaseElement
   implements GjsElement<"POPOVER_MENU_SEPARATOR", Gtk.Separator>
 {
   static getContext(
@@ -41,27 +44,32 @@ export class PopoverMenuSeparatorElement
   }
 
   readonly kind = "POPOVER_MENU_SEPARATOR";
-  private widget = new Gtk.Separator();
+  protected widget = new Gtk.Separator();
 
-  private parent:
+  protected parent:
     | PopoverMenuEntryElement
     | PopoverMenuContentElement
     | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.Separator,
     PopoverMenuSeparatorProps
   >(this);
-  private readonly propsMapper =
+  protected readonly propsMapper =
     new PropertyMapper<PopoverMenuSeparatorProps>(
       this.lifecycle,
       createSizeRequestPropMapper(this.widget),
       createMarginPropMapper(this.widget),
       createStylePropMapper(this.widget),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
     );
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -89,7 +97,7 @@ export class PopoverMenuSeparatorElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -104,7 +112,7 @@ export class PopoverMenuSeparatorElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (
       !GjsElementManager.isGjsElementOfKind(parent, [
         PopoverMenuEntryElement,
@@ -119,7 +127,11 @@ export class PopoverMenuSeparatorElement
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement) {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement) {}
 
   // #endregion
 
@@ -139,35 +151,6 @@ export class PopoverMenuSeparatorElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

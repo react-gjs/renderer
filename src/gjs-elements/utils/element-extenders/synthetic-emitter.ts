@@ -7,7 +7,7 @@ export class SyntheticEmitter<E extends Record<string, any[]>> {
   >();
 
   constructor(private element: ElementLifecycle) {
-    element.beforeDestroy(() => {
+    element.onBeforeDestroy(() => {
       this.clear();
     });
   }

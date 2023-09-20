@@ -8,25 +8,37 @@ export interface ElementLifecycle {
   /**
    * Hooks into the `create` lifecycle event. This event is emitted
    * only once, when the element is created.
-   *
-   * Hooks, after being added, are managed internally only, and cannot
-   * be removed manually.
    */
-  afterCreate(hook: () => void): void;
+  onAfterCreate(cb: () => void): void;
   /**
    * Hooks into the `destroy` lifecycle event. This event is emitted
    * only once, before the element is destroyed.
-   *
-   * Hooks, after being added, are managed internally only, and cannot
-   * be removed manually.
    */
-  beforeDestroy(hook: () => void): void;
+  onBeforeDestroy(cb: () => void): void;
   /**
    * Hooks into the `propsUpdated` lifecycle event. This event is
    * emitted whenever the element's props change.
-   *
-   * Hooks, after being added, are managed internally only, and cannot
-   * be removed manually.
    */
-  onUpdate(hook: (props: DiffedProps) => void): void;
+  onUpdate(cb: (props: DiffedProps) => void): void;
+  /**
+   * Hooks into the `mounted` lifecycle event. This event is emitted
+   * after the element is mounted into a parent.
+   */
+  onMounted(cb: () => void): void;
+  /**
+   * Removes the callback from the `create` lifecycle event.
+   */
+  offAfterCreate(cb: () => void): void;
+  /**
+   * Removes the callback from the `destroy` lifecycle event.
+   */
+  offBeforeDestroy(cb: () => void): void;
+  /**
+   * Removes the callback from the `propsUpdated` lifecycle event.
+   */
+  offUpdate(cb: (props: DiffedProps) => void): void;
+  /**
+   * Removes the callback from the `mounted` lifecycle event.
+   */
+  offMounted(cb: () => void): void;
 }

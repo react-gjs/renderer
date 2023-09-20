@@ -6,15 +6,17 @@ import type {
 } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
+import { mountAction } from "../../utils/mount-action";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -28,7 +30,8 @@ import type { TextNode } from "../text-node";
 import { PopoverContentElement } from "./popover-content";
 import { PopoverTargetElement } from "./popover-target";
 
-type PopoverPropsMixin = SizeRequestProps &
+type PopoverPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -44,7 +47,10 @@ export type PopoverInternalProps = {
   popoverWidget: Gtk.Popover;
 };
 
-export class PopoverElement implements GjsElement<"POPOVER", Bin> {
+export class PopoverElement
+  extends BaseElement
+  implements GjsElement<"POPOVER", Bin>
+{
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -52,16 +58,16 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   readonly kind = "POPOVER";
-  private widget = new Bin();
-  private popover!: Gtk.Popover;
+  protected widget = new Bin();
+  protected popover!: Gtk.Popover;
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<Bin, PopoverProps>(
+  protected readonly handlers = new EventHandlers<Bin, PopoverProps>(
     this,
   );
-  private readonly propsMapper = new PropertyMapper<
+  protected readonly propsMapper = new PropertyMapper<
     PopoverProps & PopoverInternalProps
   >(
     this.lifecycle,
@@ -70,6 +76,10 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .popoverWidget(DataType.Unknown, (popoverWidget) => {
@@ -93,12 +103,13 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
         ),
   );
 
-  private hasContentChild = false;
-  private contentElement?: PopoverContentElement;
-  private hasTarget = false;
-  private targetElement?: PopoverTargetElement;
+  protected hasContentChild = false;
+  protected contentElement?: PopoverContentElement;
+  protected hasTarget = false;
+  protected targetElement?: PopoverTargetElement;
 
   constructor(props: DiffedProps) {
+    super();
     this.propsMapper.skipDefaults();
     this.updateProps(props);
 
@@ -131,12 +142,13 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
       if (this.hasContentChild) {
         throw new Error("Popover can only have one child");
       }
-      const shouldAppend = child.notifyWillAppendTo(this);
-      if (shouldAppend) {
-        this.popover.add(child.getWidget());
-        this.hasContentChild = true;
-        this.contentElement = child;
-      }
+      mountAction(this, child, (shouldOmitMount) => {
+        if (!shouldOmitMount) {
+          this.popover.add(child.getWidget());
+          this.hasContentChild = true;
+          this.contentElement = child;
+        }
+      });
     } else if (
       GjsElementManager.isGjsElementOfKind(
         child,
@@ -146,13 +158,14 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
       if (this.hasTarget) {
         throw new Error("Popover can only have one target");
       }
-      const shouldAppend = child.notifyWillAppendTo(this);
-      if (shouldAppend) {
-        this.widget.add(child.getWidget());
-        this.hasTarget = true;
-        this.targetElement = child;
-        this.popover.relative_to = child.getWidget();
-      }
+      mountAction(this, child, (shouldOmitMount) => {
+        if (!shouldOmitMount) {
+          this.widget.add(child.getWidget());
+          this.hasTarget = true;
+          this.targetElement = child;
+          this.popover.relative_to = child.getWidget();
+        }
+      });
     } else {
       throw new Error(
         "Popover can only have one PopoverTarget and one PopoverContent as it's children.",
@@ -166,7 +179,7 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -182,12 +195,16 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {
     if (
       GjsElementManager.isGjsElementOfKind(
         child,
@@ -225,35 +242,6 @@ export class PopoverElement implements GjsElement<"POPOVER", Bin> {
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

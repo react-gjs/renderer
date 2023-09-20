@@ -3,8 +3,7 @@ import GdkPixbuf from "gi://GdkPixbuf";
 import type Gtk from "gi://Gtk?version=3.0";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
-import type { GjsElement } from "../../../gjs-element";
-import { diffProps } from "../../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../../gjs-element";
 import { ElementLifecycleController } from "../../../utils/element-extenders/element-lifecycle-controller";
 import type { DiffedProps } from "../../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../../utils/element-extenders/map-properties";
@@ -30,6 +29,7 @@ type TextViewImageElementMixin = GjsElement<"TEXT_VIEW_IMAGE"> &
   ITextViewElement;
 
 export class TextViewImageElement
+  extends BaseElement
   implements TextViewImageElementMixin
 {
   static getContext(
@@ -41,11 +41,12 @@ export class TextViewImageElement
   }
 
   readonly kind = "TEXT_VIEW_IMAGE";
-  private pixbuf!: GdkPixbuf.Pixbuf;
+  protected pixbuf!: GdkPixbuf.Pixbuf;
 
   protected parent: TextViewElementContainer | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
+  protected handlers = null;
   protected readonly propsMapper =
     new PropertyMapper<TextViewImageProps>(this.lifecycle, (props) =>
       props
@@ -70,13 +71,14 @@ export class TextViewImageElement
         ),
     );
 
-  private isVisible = true;
+  protected isVisible = true;
 
   constructor(
     props: DiffedProps,
     context: HostContext<GjsContext>,
     beforeFirstUpdate?: (self: any) => void,
   ) {
+    super();
     if (beforeFirstUpdate) {
       beforeFirstUpdate(this);
     }
@@ -86,7 +88,7 @@ export class TextViewImageElement
     this.lifecycle.emitLifecycleEventAfterCreate();
   }
 
-  private resizeImage() {
+  protected resizeImage() {
     const width: number | undefined =
       this.propsMapper.get("resizeToWidth");
     const height: number | undefined =
@@ -127,7 +129,7 @@ export class TextViewImageElement
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
   }
@@ -140,7 +142,7 @@ export class TextViewImageElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     if (isTextViewElementContainer(parent)) {
       this.parent = parent;
     } else {
@@ -151,7 +153,11 @@ export class TextViewImageElement
     return true;
   }
 
-  notifyWillUnmount() {}
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount() {}
 
   // #endregion
 
@@ -179,28 +185,13 @@ export class TextViewImageElement
 
   addEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
 
   removeEventListener(
     signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
+    callback: Rg.GjsElementEventListenerCallback,
   ): void {}
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
-  }
 
   // #endregion
 

@@ -5,8 +5,7 @@ import Gtk from "gi://Gtk?version=3.0";
 import { KeyPressModifiers } from "../../../enums/custom";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
-import { diffProps } from "../../utils/diff-props";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
@@ -19,12 +18,15 @@ import {
   parseEventKey,
 } from "../../utils/gdk-events/key-press-event";
 import { isKeyboardSymbol } from "../../utils/is-keyboard-symbol-unicode";
+import { mountAction } from "../../utils/mount-action";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 import type { WindowElement } from "../window/window";
 
-export type SearchBarPropsMixin = StyleProps;
+type SearchBarPropsMixin = ChildPropertiesProps & StyleProps;
 
 export type SearchBarEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, SearchBarElement>;
@@ -61,6 +63,7 @@ interface SearchBarInternalProps extends SearchBarProps {
 }
 
 export class SearchBarElement
+  extends BaseElement
   implements GjsElement<"SEARCH_BAR", Gtk.SearchBar>
 {
   static getContext(
@@ -70,24 +73,28 @@ export class SearchBarElement
   }
 
   readonly kind = "SEARCH_BAR";
-  private widget = new Gtk.SearchBar();
+  protected widget = new Gtk.SearchBar();
 
-  private parent: GjsElement | null = null;
-  private searchEntry: Gtk.SearchEntry | null = null;
+  protected parent: GjsElement | null = null;
+  protected searchEntry: Gtk.SearchEntry | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private readonly handlers = new EventHandlers<
+  protected readonly handlers = new EventHandlers<
     Gtk.SearchBar,
     SearchBarProps
   >(this);
-  private readonly children = new ChildOrderController(
+  protected readonly children = new ChildOrderController(
     this.lifecycle,
     this.widget,
   );
-  private readonly propsMapper =
+  protected readonly propsMapper =
     new PropertyMapper<SearchBarInternalProps>(
       this.lifecycle,
       createStylePropMapper(this.widget),
+      createChildPropsMapper(
+        () => this.widget,
+        () => this.parent,
+      ),
       (props) =>
         props
           .showCloseButton(DataType.Boolean, (v = false) => {
@@ -99,6 +106,7 @@ export class SearchBarElement
     );
 
   constructor(props: DiffedProps) {
+    super();
     this.updateProps(props);
 
     this.handlers.bindInternal("notify::search-mode-enabled", () => {
@@ -118,7 +126,7 @@ export class SearchBarElement
     }
   }
 
-  private onWindowKeyPress = (w: Gtk.Widget, e: any) => {
+  protected onWindowKeyPress = (w: Gtk.Widget, e: any) => {
     const window = w as Gtk.Window;
     const event = e as Gdk.Event & Gdk.EventKey;
 
@@ -272,24 +280,42 @@ export class SearchBarElement
   appendChild(child: GjsElement | TextNode): void {
     ensureNotText(child);
 
-    const shouldAppend = child.notifyWillAppendTo(this);
-    this.children.addChild(child, !shouldAppend);
-    this.widget.show_all();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.addChild(child, shouldOmitMount);
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   insertBefore(
-    newChild: GjsElement | TextNode,
+    child: GjsElement | TextNode,
     beforeChild: GjsElement,
   ): void {
-    ensureNotText(newChild);
+    ensureNotText(child);
 
-    const shouldAppend = newChild.notifyWillAppendTo(this);
-    this.children.insertBefore(newChild, beforeChild, !shouldAppend);
-    this.widget.show_all();
+    mountAction(
+      this,
+      child,
+      (shouldOmitMount) => {
+        this.children.insertBefore(
+          child,
+          beforeChild,
+          shouldOmitMount,
+        );
+      },
+      () => {
+        this.widget.show_all();
+      },
+    );
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -304,12 +330,16 @@ export class SearchBarElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement): void {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement): void {
     this.children.removeChild(child);
   }
 
@@ -331,35 +361,6 @@ export class SearchBarElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion

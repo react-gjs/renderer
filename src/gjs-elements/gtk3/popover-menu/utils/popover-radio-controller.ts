@@ -1,8 +1,11 @@
 import type { PopoverMenuRadioButtonElement } from "../content-elements/popover-menu-radio-button";
 
 class RadioGroup {
-  private buttons = new Map<symbol, PopoverMenuRadioButtonElement>();
-  private selected?: symbol;
+  protected buttons = new Map<
+    symbol,
+    PopoverMenuRadioButtonElement
+  >();
+  protected selected?: symbol;
 
   constructor(public readonly name: string) {}
 
@@ -40,7 +43,7 @@ class RadioGroup {
 }
 
 export class PopoverMenuRadioController {
-  private groups = new Map<string, RadioGroup>();
+  protected groups = new Map<string, RadioGroup>();
 
   addToGroup(
     groupName: string,

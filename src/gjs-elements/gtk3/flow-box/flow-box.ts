@@ -4,15 +4,17 @@ import type { Orientation } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
-import type { GjsElement } from "../../gjs-element";
+import { BaseElement, type GjsElement } from "../../gjs-element";
 import { GjsElementManager } from "../../gjs-element-manager";
-import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
+import { mountAction } from "../../utils/mount-action";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
 import { createAlignmentPropMapper } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
+import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
+import { createChildPropsMapper } from "../../utils/property-maps-factories/create-child-props-mapper";
 import type { ExpandProps } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import { createExpandPropMapper } from "../../utils/property-maps-factories/create-expand-prop-mapper";
 import type { MarginProps } from "../../utils/property-maps-factories/create-margin-prop-mapper";
@@ -24,7 +26,8 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TextNode } from "../text-node";
 import { FlowBoxEntryElement } from "./flow-box-entry";
 
-type FlowBoxPropsMixin = SizeRequestProps &
+type FlowBoxPropsMixin = ChildPropertiesProps &
+  SizeRequestProps &
   AlignmentProps &
   MarginProps &
   ExpandProps &
@@ -42,6 +45,7 @@ export interface FlowBoxProps extends FlowBoxPropsMixin {
 }
 
 export class FlowBoxElement
+  extends BaseElement
   implements GjsElement<"FLOW_BOX", Gtk.FlowBox>
 {
   static getContext(
@@ -51,26 +55,30 @@ export class FlowBoxElement
   }
 
   readonly kind = "FLOW_BOX";
-  private widget = new Gtk.FlowBox();
+  protected widget = new Gtk.FlowBox();
 
-  private children: Array<{
+  protected children: Array<{
     element: FlowBoxEntryElement;
     isSelected: boolean;
   }> = [];
 
-  private parent: GjsElement | null = null;
+  protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  private handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(
+  protected handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(
     this,
   );
-  private readonly propsMapper = new PropertyMapper<FlowBoxProps>(
+  protected readonly propsMapper = new PropertyMapper<FlowBoxProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
     createAlignmentPropMapper(this.widget),
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget),
     createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
     (props) =>
       props
         .orientation(
@@ -108,9 +116,10 @@ export class FlowBoxElement
         }),
   );
 
-  private isAnyChildSelected = false;
+  protected isAnyChildSelected = false;
 
   constructor(props: DiffedProps) {
+    super();
     this.handlers.bindInternal(
       "selected-children-changed",
       () => {
@@ -167,18 +176,25 @@ export class FlowBoxElement
         )
       ) {
         // TODO: handle should append logic
-        child.notifyWillAppendTo(this);
-        this.widget.add(child.getWidget());
-        const entry = {
-          element: child,
-          isSelected: false,
-        };
-        this.children.push(entry);
-        if (child.isDefault && !this.isAnyChildSelected) {
-          this.widget.select_child(child.getWidget());
-          entry.isSelected = true;
-        }
-        this.widget.show_all();
+        mountAction(
+          this,
+          child,
+          (shouldOmitMount) => {
+            this.widget.add(child.getWidget());
+            const entry = {
+              element: child,
+              isSelected: false,
+            };
+            this.children.push(entry);
+            if (child.isDefault && !this.isAnyChildSelected) {
+              this.widget.select_child(child.getWidget());
+              entry.isSelected = true;
+            }
+          },
+          () => {
+            this.widget.show_all();
+          },
+        );
       } else {
         throw new Error(
           "FlowBox can only have FlexBoxEntry as it's children.",
@@ -187,46 +203,50 @@ export class FlowBoxElement
     }
   }
 
-  insertBefore(newChild: GjsElement, beforeChild: GjsElement): void {
+  insertBefore(child: GjsElement, beforeChild: GjsElement): void {
     if (
-      GjsElementManager.isGjsElementOfKind(
-        newChild,
-        FlowBoxEntryElement,
-      )
+      GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)
     ) {
       // TODO: handle should append logic
-      newChild.notifyWillAppendTo(this);
+      mountAction(
+        this,
+        child,
+        (shouldOmitMount) => {
+          const beforeIndex = this.children.findIndex(
+            (c) => c.element === beforeChild,
+          );
 
-      const beforeIndex = this.children.findIndex(
-        (c) => c.element === beforeChild,
+          const childrenAfter = this.children.slice(beforeIndex);
+          const tmpContainer = new Gtk.FlowBox();
+
+          for (let i = 0; i < childrenAfter.length; i++) {
+            tmpContainer.add(childrenAfter[i].element.getWidget());
+            this.widget.remove(childrenAfter[i].element.getWidget());
+          }
+
+          this.widget.add(child.getWidget());
+
+          for (let i = 0; i < childrenAfter.length; i++) {
+            this.widget.add(childrenAfter[i].element.getWidget());
+            tmpContainer.remove(childrenAfter[i].element.getWidget());
+          }
+
+          tmpContainer.destroy();
+
+          this.children.splice(beforeIndex, 0, {
+            element: child,
+            isSelected: false,
+          });
+        },
+        () => {
+          this.widget.show_all();
+        },
       );
-
-      const childrenAfter = this.children.slice(beforeIndex);
-      const tmpContainer = new Gtk.FlowBox();
-
-      for (let i = 0; i < childrenAfter.length; i++) {
-        tmpContainer.add(childrenAfter[i].element.getWidget());
-        this.widget.remove(childrenAfter[i].element.getWidget());
-      }
-
-      this.widget.add(newChild.getWidget());
-
-      for (let i = 0; i < childrenAfter.length; i++) {
-        this.widget.add(childrenAfter[i].element.getWidget());
-        tmpContainer.remove(childrenAfter[i].element.getWidget());
-      }
-
-      tmpContainer.destroy();
-
-      this.children.splice(beforeIndex, 0, {
-        element: newChild,
-        isSelected: false,
-      });
     }
   }
 
   remove(parent: GjsElement): void {
-    parent.notifyWillUnmount(this);
+    parent.notifyChildWillUnmount(this);
 
     this.lifecycle.emitLifecycleEventBeforeDestroy();
 
@@ -241,12 +261,16 @@ export class FlowBoxElement
 
   // #region Element internal signals
 
-  notifyWillAppendTo(parent: GjsElement): boolean {
+  notifyWillMountTo(parent: GjsElement): boolean {
     this.parent = parent;
     return true;
   }
 
-  notifyWillUnmount(child: GjsElement) {
+  notifyMounted(): void {
+    this.lifecycle.emitMountedEvent();
+  }
+
+  notifyChildWillUnmount(child: GjsElement) {
     this.children = this.children.filter((c) => c.element !== child);
   }
 
@@ -268,35 +292,6 @@ export class FlowBoxElement
 
   getParentElement() {
     return this.parent;
-  }
-
-  addEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.addListener(signal, callback);
-  }
-
-  removeEventListener(
-    signal: string,
-    callback: Rg.GjsElementEvenTListenerCallback,
-  ): void {
-    return this.handlers.removeListener(signal, callback);
-  }
-
-  setProperty(key: string, value: any) {
-    this.lifecycle.emitLifecycleEventUpdate([[key, value]]);
-  }
-
-  getProperty(key: string) {
-    return this.propsMapper.get(key);
-  }
-
-  diffProps(
-    oldProps: Record<string, any>,
-    newProps: Record<string, any>,
-  ): DiffedProps {
-    return diffProps(oldProps, newProps, true);
   }
 
   // #endregion
