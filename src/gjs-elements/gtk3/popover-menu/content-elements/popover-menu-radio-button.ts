@@ -51,6 +51,7 @@ export interface PopoverMenuRadioButtonProps
   inverted?: boolean;
   radioGroup: string;
   isDefault?: boolean;
+  selected?: boolean;
   onChange?: (
     e: PopoverMenuRadioButtonEvent<{ isActive: boolean }>,
   ) => void;
@@ -136,6 +137,13 @@ export class PopoverMenuRadioButtonElement
                 allProps.isDefault,
               );
               this.widget.active = this.radioGroup.isSelected(this);
+            }
+          })
+          .selected(DataType.Boolean, (v, allProps) => {
+            if (this.radioGroup) {
+              if (v === true) {
+                this.radioGroup.select(this);
+              }
             }
           }),
     );
