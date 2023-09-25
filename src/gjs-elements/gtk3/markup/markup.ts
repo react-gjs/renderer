@@ -50,6 +50,10 @@ export interface MarkupProps extends MarkupPropsMixin {
   lines?: number;
   selectable?: boolean;
   margin?: ElementMargin;
+  xAlign?: number;
+  yAlign?: number;
+  xPad?: number;
+  yPad?: number;
   onAnchorClick?: (event: MarkupEvent<{ href: string }>) => void;
 }
 
@@ -111,7 +115,19 @@ export class MarkupElement
           (v = Gtk.Justification.CENTER) => {
             this.widget.justify = v;
           },
-        ),
+        )
+        .xAlign(DataType.Number, (v = 0) => {
+          this.widget.set_xalign(v);
+        })
+        .yAlign(DataType.Number, (v = 0) => {
+          this.widget.set_yalign(v);
+        })
+        .xPad(DataType.Number, (v = 0) => {
+          this.widget.xpad = v;
+        })
+        .yPad(DataType.Number, (v = 0) => {
+          this.widget.ypad = v;
+        }),
   );
 
   constructor(props: DiffedProps) {
