@@ -349,12 +349,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-reconciler@npm:^0.28.4":
-  version: 0.28.4
-  resolution: "@types/react-reconciler@npm:0.28.4"
+"@types/react-reconciler@npm:^0.28.5":
+  version: 0.28.5
+  resolution: "@types/react-reconciler@npm:0.28.5"
   dependencies:
     "@types/react": "*"
-  checksum: 6db23e54f5a1e97628ee71df13cc33868e7b0d83adeb0d5d57b1f9d70b6c4291bc06011596245dd0be36aa295fb42bf1ef8fdb940b54520c5b12aed52079367e
+  checksum: 189c0c34260258d0f59d6efe52d776c1a99667bfb191a973665a8590897c88d262794dca6caad0342a26c7b12abad1b6b66c62b25bdd3f014390ed114ed7628e
   languageName: node
   linkType: hard
 
@@ -2109,7 +2109,7 @@ clify.js@ncpa0cpl/clify.js:
   resolution: "react-gjs-renderer@workspace:."
   dependencies:
     "@reactgjs/gest": ^0.5.0
-    "@types/react-reconciler": ^0.28.4
+    "@types/react-reconciler": ^0.28.5
     "@typescript-eslint/eslint-plugin": ^6.7.0
     "@typescript-eslint/parser": ^6.7.0
     dilswer: ^2.1.1
