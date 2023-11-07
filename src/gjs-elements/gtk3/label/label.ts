@@ -46,8 +46,6 @@ export interface LabelProps extends LabelPropsMixin {
   selectable?: boolean;
   xAlign?: number;
   yAlign?: number;
-  xPad?: number;
-  yPad?: number;
   margin?: ElementMargin;
 }
 
@@ -113,12 +111,6 @@ export class LabelElement
         })
         .yAlign(DataType.Number, (v = 0) => {
           this.widget.set_yalign(v);
-        })
-        .xPad(DataType.Number, (v = 0) => {
-          this.widget.xpad = v;
-        })
-        .yPad(DataType.Number, (v = 0) => {
-          this.widget.ypad = v;
         }),
   );
 

@@ -29,7 +29,6 @@ import type { SizeRequestProps } from "../../utils/property-maps-factories/creat
 import { createSizeRequestPropMapper } from "../../utils/property-maps-factories/create-size-request-prop-mapper";
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
-import { ThemeVariable } from "../../utils/theme-vars";
 import { TO_GTK_WRAP_MODE } from "../../utils/wrap-mode";
 import type { TextNode } from "../text-node";
 import { isTextViewElement } from "./is-text-view-element";
@@ -53,7 +52,7 @@ export interface TextViewProps extends TextViewPropsMixin {
   lineTopMargin?: number;
   lineBottomMargin?: number;
   monospace?: boolean;
-  jusification?: Justification;
+  justification?: Justification;
   indent?: number;
   onLinkClick?: (event: TextViewEvent<{ href: string }>) => void;
 }
@@ -69,10 +68,8 @@ export class TextViewElement
   }
 
   readonly kind = "TEXT_VIEW";
-  protected textBuffer = new Gtk.TextBuffer();
-  protected widget = new Gtk.TextView({
-    buffer: this.textBuffer,
-  });
+  protected widget = new Gtk.TextView();
+  protected textBuffer = this.widget.buffer;
 
   protected parent: GjsElement | null = null;
   protected children: Array<ITextViewElement> = [];
@@ -89,10 +86,10 @@ export class TextViewElement
     createMarginPropMapper(this.widget),
     createExpandPropMapper(this.widget, { h: true }),
     createStylePropMapper(this.widget, {
-      backgroundColor: ThemeVariable.BackgroundColor,
-      ":child(text)": {
-        backgroundColor: ThemeVariable.BackgroundColor,
-      },
+      // backgroundColor: ThemeVariable.BackgroundColor,
+      // ":child(text)": {
+      //   backgroundColor: ThemeVariable.BackgroundColor,
+      // },
     }),
     createChildPropsMapper(
       () => this.widget,
@@ -109,7 +106,7 @@ export class TextViewElement
         .indent(DataType.Number, (v = 0) => {
           this.widget.indent = v;
         })
-        .jusification(
+        .justification(
           DataType.Enum(Gtk.Justification),
           (v = Gtk.Justification.LEFT) => {
             this.widget.justification = v;
@@ -139,8 +136,10 @@ export class TextViewElement
 
   constructor(props: DiffedProps) {
     super();
-    this.widget.editable = false;
-    this.widget.cursor_visible = false;
+    this.widget.set_editable(false);
+    this.widget.set_cursor_visible(false);
+    this.widget.set_input_hints(Gtk.InputHints.NONE);
+    this.widget.set_input_purpose(Gtk.InputPurpose.FREE_FORM);
 
     this.handlers.bind("button-release-event", "onLinkClick", () => {
       if (!this.textBuffer.has_selection) {
@@ -329,6 +328,7 @@ export class TextViewElement
   }
 
   protected insertNodesToBuffer(
+    textBuffer: Gtk.TextBuffer,
     nodes: Array<TextViewNode>,
     parent?: {
       tag: string;
@@ -349,8 +349,8 @@ export class TextViewElement
             : (text: string) => `<span>${text}</span>`;
 
           for (const nodeTextEntry of node.children) {
-            this.textBuffer.insert_markup(
-              this.textBuffer.get_end_iter(),
+            textBuffer.insert_markup(
+              textBuffer.get_end_iter(),
               asMarkup(nodeTextEntry),
               -1,
             );
@@ -359,29 +359,28 @@ export class TextViewElement
         }
         case "IMAGE": {
           for (const nodeImageEntry of node.children) {
-            this.textBuffer.insert_pixbuf(
-              this.textBuffer.get_end_iter(),
+            textBuffer.insert_pixbuf(
+              textBuffer.get_end_iter(),
               nodeImageEntry,
             );
           }
           break;
         }
         case "LINK": {
-          const start = this.textBuffer.get_end_iter()!.get_offset();
-          this.insertNodesToBuffer(node.children, {
+          const start = textBuffer.get_end_iter()!.get_offset();
+          this.insertNodesToBuffer(textBuffer, node.children, {
             tag: "span",
             attributes: parent
               ? parent.attributes.merge(node.attributes)
               : node.attributes,
           });
-          const end =
-            this.textBuffer.get_end_iter()!.get_offset() + 1;
+          const end = textBuffer.get_end_iter()!.get_offset() + 1;
 
           this.embeddedLinks.push({ start, end, href: node.href });
           break;
         }
         case "SPAN": {
-          this.insertNodesToBuffer(node.children, {
+          this.insertNodesToBuffer(textBuffer, node.children, {
             tag: "span",
             attributes: parent
               ? parent.attributes.merge(node.attributes)
@@ -417,6 +416,6 @@ export class TextViewElement
       this.textBuffer.get_end_iter(),
     );
 
-    this.insertNodesToBuffer(nodes);
+    this.insertNodesToBuffer(this.textBuffer, nodes);
   }
 }

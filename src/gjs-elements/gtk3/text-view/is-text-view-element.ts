@@ -7,6 +7,7 @@ import type {
   TextViewElementContainer,
 } from "./text-view-elem-interface";
 import { TextViewLinkElement } from "./text-view-elements/text-view-link";
+import { TextViewSpanElement } from "./text-view-elements/text-view-span";
 
 export const isTextViewElement = (
   element: GjsElement | TextNode,
@@ -25,7 +26,7 @@ export const isTextViewElementContainer = (
 ): element is TextViewElementContainer => {
   return GjsElementManager.isGjsElementOfKind(element, [
     TextViewElement,
-    TextViewLinkElement,
+    TextViewSpanElement,
     TextViewLinkElement,
   ]);
 };

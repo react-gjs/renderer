@@ -145,7 +145,7 @@ export class TextViewSpanElement
       this.parent = parent;
     } else {
       throw new Error(
-        "TextViewLink elements can only be appended to a TextView element.",
+        "TextViewSpan elements can only be appended to a TextView, TextLink or another TextViewSpan element.",
       );
     }
     return true;
