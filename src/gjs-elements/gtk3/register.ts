@@ -17,6 +17,7 @@ import { HeaderBarElement } from "./headerbar/headerbar";
 import { IconElement } from "./icon/icon";
 import { ImageElement } from "./image/image";
 import { LabelElement } from "./label/label";
+import { LevelBarElement } from "./level-bar/level-bar";
 import { LinkButtonElement } from "./link-button/link-button";
 import { MarkupElement } from "./markup/markup";
 import { MAnchorElement } from "./markup/markup-elements/a";
@@ -105,6 +106,7 @@ export const registerGtk3Elements = (
   manager.register("ICON", IconElement);
   manager.register("IMAGE", ImageElement);
   manager.register("LABEL", LabelElement);
+  manager.register("LEVEL_BAR", LevelBarElement);
   manager.register("LINK_BUTTON", LinkButtonElement);
   manager.register("M_ANCHOR", MAnchorElement);
   manager.register("M_BIG", MBigElement);
