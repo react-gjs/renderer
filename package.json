@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "./dist/index.js",
   "scripts": {
-    "repo-sync": "./scripts/repo-sync.sh",
     "fix:lint": "eslint --fix .",
     "fix:prettier": "prettier -w ./src",
     "test:unit": "gest",
@@ -51,5 +50,5 @@
   "resolutions": {
     "json5": "2.2.3"
   },
-  "packageManager": "yarn@3.2.4"
+  "packageManager": "yarn@1.22.19"
 }
