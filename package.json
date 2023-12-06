@@ -12,7 +12,8 @@
     "test:format:md": "prettier -c ./**/*.md --parser markdown",
     "test:format": "yarn test:format:tests && yarn test:format:ts && yarn test:format:md",
     "test:tsc": "tsc --noEmit",
-    "build": "rm -rf ./dist && tsc"
+    "build": "rm -rf ./dist && tsc",
+    "prepare": "husky install"
   },
   "keywords": [],
   "repository": {
