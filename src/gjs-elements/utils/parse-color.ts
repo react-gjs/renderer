@@ -9,21 +9,13 @@ export type ColorString =
 
 export class Color {
   constructor(
-    /**
-     * Red value (0-255).
-     */
+    /** Red value (0-255). */
     public r: number,
-    /**
-     * Green value (0-255).
-     */
+    /** Green value (0-255). */
     public g: number,
-    /**
-     * Blue value (0-255).
-     */
+    /** Blue value (0-255). */
     public b: number,
-    /**
-     * Alpha value (0-1).
-     */
+    /** Alpha value (0-1). */
     public a: number = 1,
   ) {}
 

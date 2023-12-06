@@ -33,9 +33,7 @@ export class GjsElementManager {
     this.elementsReverseMap.set(element, kind);
   }
 
-  /**
-   * @internal
-   */
+  /** @internal */
   static create(
     kind: string,
     props: DiffedProps,
@@ -59,16 +57,12 @@ export class GjsElementManager {
     return element.getContext(currentContext);
   }
 
-  /**
-   * @internal
-   */
+  /** @internal */
   static isValidKind(kind: string) {
     return this.elements.has(kind);
   }
 
-  /**
-   * @internal
-   */
+  /** @internal */
   static isGjsElement(element: any): element is GjsElement {
     return (
       typeof element === "object" &&
@@ -78,9 +72,7 @@ export class GjsElementManager {
     );
   }
 
-  /**
-   * @internal
-   */
+  /** @internal */
   static isGjsElementOfKind<E extends GjsElementConstructor<any>>(
     element: any,
     constructor: E | Array<E>,

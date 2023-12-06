@@ -9,17 +9,11 @@ import Gtk from "gi://Gtk?version=3.0";
  */
 // @ts-expect-error
 declare enum ToolbarStyle {
-  /**
-   * Buttons display only icons in the toolbar.
-   */
+  /** Buttons display only icons in the toolbar. */
   ICONS = 0,
-  /**
-   * Buttons display only text labels in the toolbar.
-   */
+  /** Buttons display only text labels in the toolbar. */
   TEXT = 1,
-  /**
-   * Buttons display text and icons in the toolbar.
-   */
+  /** Buttons display text and icons in the toolbar. */
   BOTH = 2,
   /**
    * Buttons display icons and text alongside each other, rather than

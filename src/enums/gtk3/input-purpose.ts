@@ -22,49 +22,27 @@ import Gtk from "gi://Gtk?version=3.0";
  */
 // @ts-expect-error
 declare enum InputPurpose {
-  /**
-   * Allow any character
-   */
+  /** Allow any character */
   FREE_FORM = 0,
-  /**
-   * Allow only alphabetic characters
-   */
+  /** Allow only alphabetic characters */
   ALPHA = 1,
-  /**
-   * Allow only digits
-   */
+  /** Allow only digits */
   DIGITS = 2,
-  /**
-   * Edited field expects numbers
-   */
+  /** Edited field expects numbers */
   NUMBER = 3,
-  /**
-   * Edited field expects phone number
-   */
+  /** Edited field expects phone number */
   PHONE = 4,
-  /**
-   * Edited field expects URL
-   */
+  /** Edited field expects URL */
   URL = 5,
-  /**
-   * Edited field expects email address
-   */
+  /** Edited field expects email address */
   EMAIL = 6,
-  /**
-   * Edited field expects the name of a person
-   */
+  /** Edited field expects the name of a person */
   NAME = 7,
-  /**
-   * Like `GTK_INPUT_PURPOSE_FREE_FORM,` but characters are hidden
-   */
+  /** Like `GTK_INPUT_PURPOSE_FREE_FORM,` but characters are hidden */
   PASSWORD = 8,
-  /**
-   * Like `GTK_INPUT_PURPOSE_DIGITS,` but characters are hidden
-   */
+  /** Like `GTK_INPUT_PURPOSE_DIGITS,` but characters are hidden */
   PIN = 9,
-  /**
-   * Allow any character, in addition to control codes
-   */
+  /** Allow any character, in addition to control codes */
   TERMINAL = 10,
 }
 

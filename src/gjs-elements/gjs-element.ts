@@ -18,9 +18,7 @@ export interface GjsElement<
    * different GjsElement classes.
    */
   readonly kind: K;
-  /**
-   * The Gtk Widget that is used to render the element.
-   */
+  /** The Gtk Widget that is used to render the element. */
   getWidget(): W;
   /**
    * This function is called by it's parent element before it is
@@ -71,25 +69,19 @@ export interface GjsElement<
    * given value.
    */
   setProperty(key: string, value: any): void;
-  /**
-   * Returns the value of element's property whose name is `key`.
-   */
+  /** Returns the value of element's property whose name is `key`. */
   getProperty(key: string): any;
   /**
    * Returns the element's parent element or `null` if the element has
    * no parent.
    */
   getParentElement(): GjsElement | null;
-  /**
-   * Attaches a listener to the element Widget for a given signal.
-   */
+  /** Attaches a listener to the element Widget for a given signal. */
   addEventListener(
     signal: string,
     callback: Rg.GjsElementEventListenerCallback,
   ): void;
-  /**
-   * Detaches a listener from the element Widget for a given signal.
-   */
+  /** Detaches listener from the element Widget for a given signal. */
   removeEventListener(
     signal: string,
     callback: Rg.GjsElementEventListenerCallback,
@@ -175,24 +167,18 @@ export abstract class BaseElement {
   setProperty(key: string, value: any) {
     this.lifecycle?.emitLifecycleEventUpdate([[key, value]]);
   }
-  /**
-   * Returns the value of element's property whose name is `key`.
-   */
+  /** Returns the value of element's property whose name is `key`. */
   getProperty(key: string) {
     return this.propsMapper?.get(key);
   }
-  /**
-   * Attaches a listener to the element Widget for a given signal.
-   */
+  /** Attaches a listener to the element Widget for a given signal. */
   addEventListener(
     signal: string,
     callback: Rg.GjsElementEventListenerCallback,
   ): void {
     return this.handlers?.addListener(signal, callback);
   }
-  /**
-   * Detaches a listener from the element Widget for a given signal.
-   */
+  /** Detaches listener from the element Widget for a given signal. */
   removeEventListener(
     signal: string,
     callback: Rg.GjsElementEventListenerCallback,

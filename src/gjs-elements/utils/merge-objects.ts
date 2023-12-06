@@ -1,6 +1,4 @@
-/**
- * Merges two objects deeply.
- */
+/** Merges two objects deeply. */
 export const mergeObjects = <T extends object>(a: T, b: T) => {
   const result = { ...a };
   for (const key in b) {

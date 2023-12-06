@@ -10,17 +10,11 @@ import Gtk from "gi://Gtk?version=3.0";
  */
 // @ts-expect-error
 declare enum BaselinePosition {
-  /**
-   * Align the baseline at the top
-   */
+  /** Align the baseline at the top */
   TOP = 0,
-  /**
-   * Center the baseline
-   */
+  /** Center the baseline */
   CENTER = 1,
-  /**
-   * Align the baseline at the bottom
-   */
+  /** Align the baseline at the bottom */
   BOTTOM = 2,
 }
 

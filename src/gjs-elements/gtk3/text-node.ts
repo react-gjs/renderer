@@ -5,9 +5,7 @@ import { BaseElement, type GjsElement } from "../gjs-element";
 import type { DiffedProps } from "../utils/element-extenders/map-properties";
 
 export class TextNode extends BaseElement {
-  /**
-   * @internal
-   */
+  /** @internal */
   static isTextNode(element: any): element is TextNode {
     return (
       typeof element === "object" &&

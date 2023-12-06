@@ -6,21 +6,13 @@ import Gtk from "gi://Gtk?version=3.0";
  */
 // @ts-expect-error
 declare enum SizeGroupMode {
-  /**
-   * Group has no effect
-   */
+  /** Group has no effect */
   NONE = 0,
-  /**
-   * Group affects horizontal requisition
-   */
+  /** Group affects horizontal requisition */
   HORIZONTAL = 1,
-  /**
-   * Group affects vertical requisition
-   */
+  /** Group affects vertical requisition */
   VERTICAL = 2,
-  /**
-   * Group affects both horizontal and vertical requisition
-   */
+  /** Group affects both horizontal and vertical requisition */
   BOTH = 3,
 }
 

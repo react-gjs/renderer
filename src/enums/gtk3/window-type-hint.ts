@@ -12,64 +12,42 @@ import Gdk from "gi://Gdk";
  */
 // @ts-expect-error
 declare enum WindowTypeHint {
-  /**
-   * Normal toplevel window.
-   */
+  /** Normal toplevel window. */
   NORMAL = 0,
-  /**
-   * Dialog window.
-   */
+  /** Dialog window. */
   DIALOG = 1,
   /**
    * Window used to implement a menu; GTK+ uses this hint only for
    * torn-off menus, see #GtkTearoffMenuItem.
    */
   MENU = 2,
-  /**
-   * Window used to implement toolbars.
-   */
+  /** Window used to implement toolbars. */
   TOOLBAR = 3,
   /**
    * Window used to display a splash screen during application
    * startup.
    */
   SPLASHSCREEN = 4,
-  /**
-   * Utility windows which are not detached toolbars or dialogs.
-   */
+  /** Utility windows which are not detached toolbars or dialogs. */
   UTILITY = 5,
-  /**
-   * Used for creating dock or panel windows.
-   */
+  /** Used for creating dock or panel windows. */
   DOCK = 6,
-  /**
-   * Used for creating the desktop background window.
-   */
+  /** Used for creating the desktop background window. */
   DESKTOP = 7,
-  /**
-   * A menu that belongs to a menubar.
-   */
+  /** A menu that belongs to a menubar. */
   DROPDOWN_MENU = 8,
-  /**
-   * A menu that does not belong to a menubar, e.g. a context menu.
-   */
+  /** A menu that does not belong to a menubar, e.g. a context menu. */
   POPUP_MENU = 9,
-  /**
-   * A tooltip.
-   */
+  /** A tooltip. */
   TOOLTIP = 10,
   /**
    * A notification - typically a “bubble” that belongs to a status
    * icon.
    */
   NOTIFICATION = 11,
-  /**
-   * A popup from a combo box.
-   */
+  /** A popup from a combo box. */
   COMBO = 12,
-  /**
-   * A window that is used to implement a DND cursor.
-   */
+  /** A window that is used to implement a DND cursor. */
   DND = 13,
 }
 

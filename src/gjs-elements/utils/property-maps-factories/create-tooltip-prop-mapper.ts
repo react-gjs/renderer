@@ -6,9 +6,7 @@ export type WidgetWithTooltip = {
 };
 
 export type TooltipProps = {
-  /**
-   * The text to display in the tooltip.
-   */
+  /** The text to display in the tooltip. */
   tooltip?: string;
 };
 

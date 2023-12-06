@@ -6,9 +6,7 @@ import { useIsMounted } from "../../is-mounted";
 declare global {
   namespace Rg {
     type FileChooserDialogParams = {
-      /**
-       * The label of the accept button.
-       */
+      /** The label of the accept button. */
       acceptLabel?: string;
       /**
        * Whether the user should be able to create a new directory
@@ -20,13 +18,9 @@ declare global {
        * prevented while the `FileChooserDialog` is open.
        */
       blockParentWindow?: boolean;
-      /**
-       * The label of the cancel button.
-       */
+      /** The label of the cancel button. */
       cancelLabel?: string;
-      /**
-       * The default file name to use when saving.
-       */
+      /** The default file name to use when saving. */
       defaultFileName?: string;
       /**
        * The label of the filters dropdown. If not provided, no label
@@ -39,13 +33,9 @@ declare global {
        * dialog.
        */
       filters?: Array<{
-        /**
-         * Whether this filter should be selected by default.
-         */
+        /** Whether this filter should be selected by default. */
         isDefault?: boolean;
-        /**
-         * The label of the filter.
-         */
+        /** The label of the filter. */
         label: string;
         /**
          * A list of glob patterns, if a file matches any of these
@@ -75,9 +65,7 @@ declare global {
        * @default false
        */
       showHiddenFiles?: boolean;
-      /**
-       * The title of the dialog.
-       */
+      /** The title of the dialog. */
       title?: string;
       /**
        * A list of directory paths that should be displayed along user
@@ -94,9 +82,7 @@ type FileChooserApi<F> = {
    * user cancelled the dialog, this will remain as it was.
    */
   file: F | undefined;
-  /**
-   * The filter that were active when the user selected a file(s).
-   */
+  /** The filter that were active when the user selected a file(s). */
   filter:
     | {
         isDefault?: boolean | undefined;

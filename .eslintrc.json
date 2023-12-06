@@ -27,7 +27,8 @@
         "ignoreUrls": true,
         "ignoreStrings": true,
         "ignoreRegExpLiterals": true,
-        "ignoreTemplateLiterals": true
+        "ignoreTemplateLiterals": true,
+        "ignoreComments": true
       }
     ],
     "linebreak-style": [

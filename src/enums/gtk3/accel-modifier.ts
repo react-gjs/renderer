@@ -2,18 +2,14 @@ import Gdk from "gi://Gdk?version=3.0";
 
 // @ts-expect-error
 declare enum AccelModifier {
-  /**
-   * The Shift key.
-   */
+  /** The Shift key. */
   SHIFT_MASK = 1,
   /**
    * A Lock key (depending on the modifier mapping of the X server
    * this may either be CapsLock or ShiftLock).
    */
   LOCK_MASK = 2,
-  /**
-   * The Control key.
-   */
+  /** The Control key. */
   CONTROL_MASK = 4,
   /**
    * The fourth modifier key (it depends on the modifier mapping of
@@ -41,46 +37,28 @@ declare enum AccelModifier {
    * the X server which key is interpreted as this modifier).
    */
   MOD5_MASK = 128,
-  /**
-   * The first mouse button.
-   */
+  /** The first mouse button. */
   BUTTON1_MASK = 256,
-  /**
-   * The second mouse button.
-   */
+  /** The second mouse button. */
   BUTTON2_MASK = 512,
-  /**
-   * The third mouse button.
-   */
+  /** The third mouse button. */
   BUTTON3_MASK = 1024,
-  /**
-   * The fourth mouse button.
-   */
+  /** The fourth mouse button. */
   BUTTON4_MASK = 2048,
-  /**
-   * The fifth mouse button.
-   */
+  /** The fifth mouse button. */
   BUTTON5_MASK = 4096,
-  /**
-   * The Super modifier. Since 2.10
-   */
+  /** The Super modifier. Since 2.10 */
   SUPER_MASK = 67108864,
-  /**
-   * The Hyper modifier. Since 2.10
-   */
+  /** The Hyper modifier. Since 2.10 */
   HYPER_MASK = 134217728,
-  /**
-   * The Meta modifier. Since 2.10
-   */
+  /** The Meta modifier. Since 2.10 */
   META_MASK = 268435456,
   /**
    * Not used in GDK itself. GTK+ uses it to differentiate between
    * (keyval, modifiers) pairs from key press and release events.
    */
   RELEASE_MASK = 1073741824,
-  /**
-   * A mask covering all modifier types.
-   */
+  /** A mask covering all modifier types. */
   MODIFIER_MASK = 1543512063,
 }
 

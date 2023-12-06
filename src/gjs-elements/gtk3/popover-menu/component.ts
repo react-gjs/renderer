@@ -11,9 +11,7 @@ const TargetElem: Rg.GjsElementTypes = "POPOVER_MENU_TARGET";
 const ContentElem: Rg.GjsElementTypes = "POPOVER_MENU_CONTENT";
 
 export type PopoverMenuProps = BaseProps & {
-  /**
-   * The minimum width of the Popover Menu.
-   */
+  /** The minimum width of the Popover Menu. */
   minWidth?: number;
   /**
    * A function that should return the contents of the Popover Menu.

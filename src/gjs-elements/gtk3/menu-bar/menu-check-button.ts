@@ -44,9 +44,7 @@ export type MenuCheckButtonEvent<P extends Record<string, any> = {}> =
 
 export interface MenuCheckButtonProps
   extends MenuCheckButtonPropsMixin {
-  /**
-   * Main text of the menu entry, displayed on the left side.
-   */
+  /** Main text of the menu entry, displayed on the left side. */
   label?: string;
   value?: boolean;
   type?: MenuCheckButtonType;

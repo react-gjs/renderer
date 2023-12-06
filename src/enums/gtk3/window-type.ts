@@ -18,13 +18,9 @@ import Gtk from "gi://Gtk?version=3.0";
  */
 // @ts-expect-error
 declare enum WindowType {
-  /**
-   * A regular window, such as a dialog.
-   */
+  /** A regular window, such as a dialog. */
   TOPLEVEL = 0,
-  /**
-   * A special window such as a tooltip.
-   */
+  /** A special window such as a tooltip. */
   POPUP = 1,
 }
 

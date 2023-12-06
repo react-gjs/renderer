@@ -41,19 +41,13 @@ export interface SelectorProps<
 > extends SelectorPropsMixin {
   options: Array<{ label: string; value?: V }>;
   selected?: number;
-  /**
-   * Label to use for the unselected option.
-   */
+  /** Label to use for the unselected option. */
   noSelect?: string;
   onChange?: (
     event: SyntheticEvent<{
-      /**
-       * Value of the selected option.
-       */
+      /** Value of the selected option. */
       value?: V;
-      /**
-       * Index of the selected option. is -1 if no option is selected.
-       */
+      /** Index of the selected option. is -1 if no option is selected. */
       index: number;
     }>,
   ) => void;

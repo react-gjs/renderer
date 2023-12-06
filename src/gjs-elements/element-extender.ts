@@ -25,20 +25,12 @@ export interface ElementLifecycle {
    * after the element is mounted into a parent.
    */
   onMounted(cb: () => void): void;
-  /**
-   * Removes the callback from the `create` lifecycle event.
-   */
+  /** Removes the callback from the `create` lifecycle event. */
   offAfterCreate(cb: () => void): void;
-  /**
-   * Removes the callback from the `destroy` lifecycle event.
-   */
+  /** Removes the callback from the `destroy` lifecycle event. */
   offBeforeDestroy(cb: () => void): void;
-  /**
-   * Removes the callback from the `propsUpdated` lifecycle event.
-   */
+  /** Removes the callback from the `propsUpdated` lifecycle event. */
   offUpdate(cb: (props: DiffedProps) => void): void;
-  /**
-   * Removes the callback from the `mounted` lifecycle event.
-   */
+  /** Removes the callback from the `mounted` lifecycle event. */
   offMounted(cb: () => void): void;
 }

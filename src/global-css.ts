@@ -53,9 +53,7 @@ class ApplicationCss {
     }
   }
 
-  /**
-   * @internal
-   */
+  /** @internal */
   install() {
     const screen = Gdk.Screen.get_default();
 

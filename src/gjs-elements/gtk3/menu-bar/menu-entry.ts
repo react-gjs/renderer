@@ -46,9 +46,7 @@ export type MenuEntryEvent<P extends Record<string, any> = {}> =
   SyntheticEvent<P, MenuEntryElement>;
 
 export interface MenuEntryProps extends MenuEntryPropsMixin {
-  /**
-   * Main text of the menu entry, displayed on the left side.
-   */
+  /** Main text of the menu entry, displayed on the left side. */
   label?: string;
   onActivate?: (event: MenuEntryEvent) => void;
   onMouseEnter?: (event: MenuEntryEvent<PointerData>) => void;
