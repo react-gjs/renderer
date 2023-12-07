@@ -60,22 +60,41 @@ _This is still a work in progress, bugs and missing features are expected._
 
 ## Usage
 
-Since GJS environment doesn't support importing packages from node_modules, applications using this renderer need to bundle it into a single `.js` file. This usually is done using a tool like [webpack](https://webpack.js.org/), [esbuild](https://esbuild.github.io/), or [rollup](https://rollupjs.org/guide/en/).
+Since GJS environment doesn't support importing packages from node_modules, applications using this renderer need to either define each import as a relative path to the correct file (e.x. `import * as renderer from "../node_modules/react-gjs-renderer/dist/index.js"`) or bundle it into a single `.js` file. This usually is done using a tool like [webpack](https://webpack.js.org/), [esbuild](https://esbuild.github.io/), or [rollup](https://rollupjs.org/guide/en/).
 
-To use this render simply import the `render` method and call it with the root component as the argument:
+Example esbuild setup:
+
+```sh
+esbuild ./App.tsx --bundle '--external:gi://*' --external:system  --format=esm --outfile=./out.js
+```
 
 ```tsx
-import { render, exit, Window, Box, Label } from "react-gjs-renderer";
+// App.tsx
+import Gtk from "gi://Gtk?version=3.0";
+import * as React from "react";
+import { Box, Label, render, Window } from "react-gjs-renderer";
 
-const App = () => (
-  <Window onDestroy={exit}>
-    <Box>
-      <Label>Hello World!</Label>
-    </Box>
-  </Window>
-);
+Gtk.init(null);
 
-render(<App />);
+const App = () => {
+  return (
+    <Window
+      quitAppOnClose
+      minWidth={200}
+      minHeight={200}
+    >
+      <Box>
+        <Label>Hello World</Label>
+      </Box>
+    </Window>
+  );
+};
+
+render(<App />, {
+  appId: "com.example.app",
+});
+
+imports.mainloop.run();
 ```
 
 ## Help needed
