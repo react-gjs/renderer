@@ -40,7 +40,7 @@
     "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
     "gjs-esm-types": "^0.0.4",
     "husky": "^8.0.3",
-    "prettier": "^3.0.3",
+    "prettier": "^3.2.2",
     "prettier-plugin-jsdoc": "^1.0.2",
     "react": "^18.2.0",
     "typescript": "5.2.2"
