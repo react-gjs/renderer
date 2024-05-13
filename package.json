@@ -1,7 +1,33 @@
 {
-  "name": "react-gjs-renderer",
-  "version": "1.0.0",
+  "name": "@reactgjs/renderer",
+  "version": "0.0.1-beta.1",
   "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "repository": {
+    "url": "https://github.com/react-gjs/renderer"
+  },
+  "description": "A React renderer for the Gnome JS. It provides components and methods allowing to use React to build native Gnome GTK applications.",
+  "license": "MIT",
+  "author": {
+    "name": "ncpa0cpl (Szymon Bretner)",
+    "email": "szymonb21@gmail.com"
+  },
+  "keywords": [
+    "react",
+    "gjs",
+    "react-gjs",
+    "react-gjs-renderer",
+    "gnome",
+    "gtk",
+    "linux",
+    "desktop",
+    "reconciler"
+  ],
   "scripts": {
     "fix:lint": "oxlint --fix ./src",
     "fix:fmt": "dprint fmt \"./src/**/*\" && dprint fmt \"./__tests__/**/*\"",
@@ -13,16 +39,6 @@
     "build:src": " node ./scripts/build.mjs",
     "build": "yarn build:types && yarn build:src",
     "prepare": "husky install"
-  },
-  "keywords": [],
-  "repository": {
-    "url": ""
-  },
-  "description": "",
-  "license": "MIT",
-  "author": {
-    "name": "",
-    "email": ""
   },
   "dependencies": {
     "dilswer": "^2.1.1",
