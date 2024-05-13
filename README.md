@@ -2,6 +2,8 @@
 
 A React renderer for the [Gnome JS](https://gjs.guide/about/). It provides components and methods allowing to use React to build native Gnome GTK applications.
 
+This is the renderer used by the [React Gnome](https://github.com/react-gjs/react-gnome), which is the recommended way of bundling applications using this renderer.
+
 _This is still a work in progress, bugs and missing features are expected._
 
 ## Elements of Gtk3
@@ -71,7 +73,7 @@ List of all GTK3 Widgets provided as JSX Components by this renderer:
 
 ## Usage
 
-Since GJS environment doesn't support importing packages from node_modules, applications using this renderer need to either define each import as a relative path to the correct file (e.x. `import * as renderer from "../node_modules/react-gjs-renderer/dist/index.js"`) or bundle it into a single `.js` file. This usually is done using a tool like [webpack](https://webpack.js.org/), [esbuild](https://esbuild.github.io/), or [rollup](https://rollupjs.org/guide/en/).
+To use the renderer standalone, applications need to either define each import as a relative path to the correct file (e.x. `import { Renderer } from "../node_modules/react-gjs-renderer/dist/index.js"`) or bundle it into a single `.js` file (this is due to GJS not supporting importing packages from node_modules.) This usually is done using a tool like [webpack](https://webpack.js.org/), [esbuild](https://esbuild.github.io/), [rollup](https://rollupjs.org/guide/en/), etc.
 
 Example esbuild setup:
 
