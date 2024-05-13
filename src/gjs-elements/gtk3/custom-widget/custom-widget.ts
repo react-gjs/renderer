@@ -31,13 +31,10 @@ export interface ICustomWidget<P extends object> {
 }
 
 export type CustomWidgetProps<P extends object> = P & {
-  widget: new (props: P) => ICustomWidget<P>;
+  widget: new(props: P) => ICustomWidget<P>;
 };
 
-export class CustomWidgetElement
-  extends BaseElement
-  implements GjsElement<"CUSTOM_WIDGET", Gtk.Widget>
-{
+export class CustomWidgetElement extends BaseElement implements GjsElement<"CUSTOM_WIDGET", Gtk.Widget> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -65,7 +62,7 @@ export class CustomWidgetElement
       throw new Error("'widget' prop is not defined!");
     }
 
-    const constructor = constuctorProp as new (
+    const constructor = constuctorProp as new(
       props: object,
     ) => ICustomWidget<any>;
 

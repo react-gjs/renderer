@@ -1,8 +1,4 @@
-import {
-  ContinuousEventPriority,
-  DefaultEventPriority,
-  DiscreteEventPriority,
-} from "react-reconciler/constants";
+import { ContinuousEventPriority, DefaultEventPriority, DiscreteEventPriority } from "react-reconciler/constants";
 
 export enum EventPhase {
   /**

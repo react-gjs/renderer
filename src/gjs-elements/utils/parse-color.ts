@@ -51,10 +51,9 @@ export const parseColor = (color: ColorString): Color => {
   } else if (color.startsWith("#") && color.length >= 6) {
     const rgb = color.slice(1).split("");
 
-    const alpha =
-      rgb.length >= 8
-        ? Math.floor(hexToNum(rgb[6]!) + hexToNum(rgb[7]!) / 255)
-        : undefined;
+    const alpha = rgb.length >= 8
+      ? Math.floor(hexToNum(rgb[6]!) + hexToNum(rgb[7]!) / 255)
+      : undefined;
 
     return new Color(
       hexToNum(rgb[0]!) + hexToNum(rgb[1]!),

@@ -26,13 +26,14 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ExpanderPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps;
+type ExpanderPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps;
 
 export interface ExpanderProps extends ExpanderPropsMixin {
   expanded?: boolean;
@@ -42,10 +43,7 @@ export interface ExpanderProps extends ExpanderPropsMixin {
   resizeParent?: boolean;
 }
 
-export class ExpanderElement
-  extends BaseElement
-  implements GjsElement<"EXPANDER", Gtk.Expander>
-{
+export class ExpanderElement extends BaseElement implements GjsElement<"EXPANDER", Gtk.Expander> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

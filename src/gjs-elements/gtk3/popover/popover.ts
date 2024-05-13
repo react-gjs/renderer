@@ -1,9 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  PopoverConstraint,
-  PositionType,
-} from "../../../enums/gtk3-index";
+import type { PopoverConstraint, PositionType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -30,12 +27,13 @@ import type { TextNode } from "../text-node";
 import { PopoverContentElement } from "./popover-content";
 import { PopoverTargetElement } from "./popover-target";
 
-type PopoverPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type PopoverPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface PopoverProps extends PopoverPropsMixin {
   isModal?: boolean;
@@ -47,10 +45,7 @@ export type PopoverInternalProps = {
   popoverWidget: Gtk.Popover;
 };
 
-export class PopoverElement
-  extends BaseElement
-  implements GjsElement<"POPOVER", Bin>
-{
+export class PopoverElement extends BaseElement implements GjsElement<"POPOVER", Bin> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -117,13 +112,15 @@ export class PopoverElement
   }
 
   onContentChange() {
-    if (this.targetElement)
+    if (this.targetElement) {
       this.popover.add(this.targetElement.getWidget());
+    }
   }
 
   onTargetChange() {
-    if (this.contentElement)
+    if (this.contentElement) {
       this.widget.add(this.contentElement.getWidget());
+    }
   }
 
   updateProps(props: DiffedProps): void {

@@ -33,17 +33,17 @@ import { createTooltipPropMapper } from "../../utils/property-maps-factories/cre
 import type { TextNode } from "../text-node";
 import { RadioGroupElement } from "./radio-group";
 
-type RadioButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type RadioButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type RadioButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, RadioButtonElement>;
+export type RadioButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, RadioButtonElement>;
 
 export interface RadioButtonProps extends RadioButtonPropsMixin {
   label?: string;
@@ -57,10 +57,7 @@ export interface RadioButtonProps extends RadioButtonPropsMixin {
   onMouseLeave?: (event: RadioButtonEvent<PointerData>) => void;
 }
 
-export class RadioButtonElement
-  extends BaseElement
-  implements GjsElement<"RADIO_BUTTON", Gtk.RadioButton>
-{
+export class RadioButtonElement extends BaseElement implements GjsElement<"RADIO_BUTTON", Gtk.RadioButton> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -76,12 +73,11 @@ export class RadioButtonElement
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected declare handlers: EventHandlers<
+  declare protected handlers: EventHandlers<
     Gtk.RadioButton,
     RadioButtonProps
   >;
-  protected readonly propsMapper =
-    new PropertyMapper<RadioButtonProps>(this.lifecycle);
+  protected readonly propsMapper = new PropertyMapper<RadioButtonProps>(this.lifecycle);
 
   protected readonly children = new TextChildController(
     this.lifecycle,

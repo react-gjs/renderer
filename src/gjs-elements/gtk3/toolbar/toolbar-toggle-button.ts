@@ -33,21 +33,21 @@ import { createTooltipPropMapper } from "../../utils/property-maps-factories/cre
 import type { TextNode } from "../text-node";
 import { ToolbarElement } from "./toolbar";
 
-type ToolbarToggleButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type ToolbarToggleButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
 export type ToolbarToggleButtonEvent<
   P extends Record<string, any> = {},
 > = SyntheticEvent<P, ToolbarToggleButtonElement>;
 
-export interface ToolbarToggleButtonProps
-  extends ToolbarToggleButtonPropsMixin {
+export interface ToolbarToggleButtonProps extends ToolbarToggleButtonPropsMixin {
   label?: string;
   icon?: Rg.IconName;
   useUnderline?: boolean;
@@ -66,10 +66,8 @@ export interface ToolbarToggleButtonProps
   ) => void;
 }
 
-export class ToolbarToggleButtonElement
-  extends BaseElement
-  implements
-    GjsElement<"TOOLBAR_TOGGLE_BUTTON", Gtk.ToggleToolButton>
+export class ToolbarToggleButtonElement extends BaseElement
+  implements GjsElement<"TOOLBAR_TOGGLE_BUTTON", Gtk.ToggleToolButton>
 {
   static getContext(
     currentContext: HostContext<GjsContext>,
@@ -89,43 +87,42 @@ export class ToolbarToggleButtonElement
     Gtk.ToggleToolButton,
     ToolbarToggleButtonProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<ToolbarToggleButtonProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createAccelPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(DataType.String, (v = "") => {
-            this.widget.label = v;
-          })
-          .useUnderline(DataType.Boolean, (v = false) => {
-            this.widget.use_underline = v;
-          })
-          .focusOnClick(DataType.Boolean, (v = true) => {
-            this.widget.focus_on_click = v;
-          })
-          .icon(DataType.String, (v) => {
-            if (v) {
-              this.widget.icon_name = v;
-            }
-          })
-          .sameSize(DataType.Boolean, (v = true) => {
-            this.widget.set_homogeneous(v);
-          })
-          .expand(DataType.Boolean, (v = false) => {
-            this.widget.set_expand(v);
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<ToolbarToggleButtonProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(DataType.String, (v = "") => {
+          this.widget.label = v;
+        })
+        .useUnderline(DataType.Boolean, (v = false) => {
+          this.widget.use_underline = v;
+        })
+        .focusOnClick(DataType.Boolean, (v = true) => {
+          this.widget.focus_on_click = v;
+        })
+        .icon(DataType.String, (v) => {
+          if (v) {
+            this.widget.icon_name = v;
+          }
+        })
+        .sameSize(DataType.Boolean, (v = true) => {
+          this.widget.set_homogeneous(v);
+        })
+        .expand(DataType.Boolean, (v = false) => {
+          this.widget.set_expand(v);
+        }),
+  );
 
   protected readonly children = new TextChildController(
     this.lifecycle,

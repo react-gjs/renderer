@@ -1,11 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  CornerType,
-  PolicyType,
-  PositionType,
-  ShadowType,
-} from "../../../enums/gtk3-index";
+import type { CornerType, PolicyType, PositionType, ShadowType } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -13,10 +8,7 @@ import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
-import {
-  EventHandlers,
-  EventNoop,
-} from "../../utils/element-extenders/event-handlers";
+import { EventHandlers, EventNoop } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
@@ -36,12 +28,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ScrollBoxPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type ScrollBoxPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 type DefaultEventData = {
   currentContentHeight: number;
@@ -50,8 +43,7 @@ type DefaultEventData = {
   currentHPosition: number;
 };
 
-export type ScrollBoxEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P & DefaultEventData, ScrollBoxElement>;
+export type ScrollBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<P & DefaultEventData, ScrollBoxElement>;
 
 export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   maxWidth?: number;
@@ -72,10 +64,7 @@ export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   onContentSizeChange?: (event: ScrollBoxEvent) => void;
 }
 
-export class ScrollBoxElement
-  extends BaseElement
-  implements GjsElement<"SCROLL_BOX", Gtk.ScrolledWindow>
-{
+export class ScrollBoxElement extends BaseElement implements GjsElement<"SCROLL_BOX", Gtk.ScrolledWindow> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -307,15 +296,15 @@ export class ScrollBoxElement
         return this.vAdjustment!.get_value();
       case "bottom":
         return (
-          this.vAdjustment!.get_upper() -
-          this.vAdjustment!.get_value()
+          this.vAdjustment!.get_upper()
+          - this.vAdjustment!.get_value()
         );
       case "left":
         return this.hAdjustment!.get_value();
       case "right":
         return (
-          this.hAdjustment!.get_upper() -
-          this.hAdjustment!.get_value()
+          this.hAdjustment!.get_upper()
+          - this.hAdjustment!.get_value()
         );
     }
   }

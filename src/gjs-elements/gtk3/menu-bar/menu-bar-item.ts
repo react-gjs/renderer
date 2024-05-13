@@ -33,15 +33,15 @@ import type { MenuItemElementType } from "./menu-elements";
 import { MENU_ELEMENTS } from "./menu-elements";
 import type { MenuRadioButtonElement } from "./menu-radio-button";
 
-type MenuBarItemPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps;
+type MenuBarItemPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps;
 
-export type MenuBarItemEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, MenuBarItemElement>;
+export type MenuBarItemEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, MenuBarItemElement>;
 
 export interface MenuBarItemProps extends MenuBarItemPropsMixin {
   label?: string;
@@ -49,10 +49,7 @@ export interface MenuBarItemProps extends MenuBarItemPropsMixin {
   onMouseLeave?: (event: MenuBarItemEvent<PointerData>) => void;
 }
 
-export class MenuBarItemElement
-  extends BaseElement
-  implements GjsElement<"MENU_BAR_ITEM", Gtk.MenuItem>
-{
+export class MenuBarItemElement extends BaseElement implements GjsElement<"MENU_BAR_ITEM", Gtk.MenuItem> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -70,34 +67,32 @@ export class MenuBarItemElement
     Gtk.MenuItem,
     MenuBarItemProps
   >(this);
-  protected readonly children =
-    new ChildOrderController<MenuItemElementType>(
-      this.lifecycle,
-      this.widget,
-      (child) => {
-        this.submenu.append(child);
-      },
-      (child) => {
-        this.submenu.remove(child);
-      },
-    );
-  protected readonly propsMapper =
-    new PropertyMapper<MenuBarItemProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props.label(DataType.String, (v = "") => {
-          this.widget.label = v;
-        }),
-    );
+  protected readonly children = new ChildOrderController<MenuItemElementType>(
+    this.lifecycle,
+    this.widget,
+    (child) => {
+      this.submenu.append(child);
+    },
+    (child) => {
+      this.submenu.remove(child);
+    },
+  );
+  protected readonly propsMapper = new PropertyMapper<MenuBarItemProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props.label(DataType.String, (v = "") => {
+        this.widget.label = v;
+      }),
+  );
 
   protected radioGroups = new Map<string, Gtk.RadioMenuItem>();
 

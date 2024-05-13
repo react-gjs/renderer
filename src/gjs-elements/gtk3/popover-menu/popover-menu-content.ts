@@ -24,8 +24,7 @@ export interface PopoverMenuContentProps {
   minWidth?: number;
 }
 
-export class PopoverMenuContentElement
-  extends BaseElement
+export class PopoverMenuContentElement extends BaseElement
   implements GjsElement<"POPOVER_MENU_CONTENT", Gtk.ScrolledWindow>
 {
   static getContext(
@@ -69,14 +68,13 @@ export class PopoverMenuContentElement
     | PopoverMenuRadioButtonElement
     | PopoverMenuSeparatorElement
   >(this.lifecycle, this.box);
-  protected readonly propsMapper =
-    new PropertyMapper<PopoverMenuContentProps>(
-      this.lifecycle,
-      (props) =>
-        props.minWidth(DataType.Number, (v = -1) => {
-          this.scrollBox.min_content_width = v;
-        }),
-    );
+  protected readonly propsMapper = new PropertyMapper<PopoverMenuContentProps>(
+    this.lifecycle,
+    (props) =>
+      props.minWidth(DataType.Number, (v = -1) => {
+        this.scrollBox.min_content_width = v;
+      }),
+  );
 
   constructor(props: DiffedProps) {
     super();

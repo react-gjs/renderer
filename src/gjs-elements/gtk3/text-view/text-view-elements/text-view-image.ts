@@ -12,11 +12,7 @@ import { resizePixbuff } from "../../../utils/resize-pixbuff";
 import type { TextNode } from "../../text-node";
 import { isTextViewElementContainer } from "../is-text-view-element";
 import type { TextViewElement } from "../text-view";
-import type {
-  ITextViewElement,
-  TextViewElementContainer,
-  TextViewNode,
-} from "../text-view-elem-interface";
+import type { ITextViewElement, TextViewElementContainer, TextViewNode } from "../text-view-elem-interface";
 
 export type TextViewImageProps = {
   src: string | GdkPixbuf.Pixbuf;
@@ -25,13 +21,11 @@ export type TextViewImageProps = {
   preserveAspectRatio?: boolean;
 };
 
-type TextViewImageElementMixin = GjsElement<"TEXT_VIEW_IMAGE"> &
-  ITextViewElement;
+type TextViewImageElementMixin =
+  & GjsElement<"TEXT_VIEW_IMAGE">
+  & ITextViewElement;
 
-export class TextViewImageElement
-  extends BaseElement
-  implements TextViewImageElementMixin
-{
+export class TextViewImageElement extends BaseElement implements TextViewImageElementMixin {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -47,29 +41,23 @@ export class TextViewImageElement
 
   readonly lifecycle = new ElementLifecycleController();
   protected handlers = null;
-  protected readonly propsMapper =
-    new PropertyMapper<TextViewImageProps>(this.lifecycle, (props) =>
-      props
-        .src(
-          DataType.OneOf(DataType.String, DataType.RecordOf({})),
-          (v) => {
-            if (typeof v === "string") {
-              this.pixbuf = GdkPixbuf.Pixbuf.new_from_file(v)!;
-            } else {
-              this.pixbuf = v as any as GdkPixbuf.Pixbuf;
-            }
-          },
-        )
-        .resizeToHeight(DataType.Number, () => {
-          this.resizeImage();
-        })
-        .resizeToWidth(DataType.Number, (_, __, { instead }) =>
-          instead("resizeToHeight"),
-        )
-        .preserveAspectRatio(DataType.Boolean, (_, __, { instead }) =>
-          instead("resizeToHeight"),
-        ),
-    );
+  protected readonly propsMapper = new PropertyMapper<TextViewImageProps>(this.lifecycle, (props) =>
+    props
+      .src(
+        DataType.OneOf(DataType.String, DataType.RecordOf({})),
+        (v) => {
+          if (typeof v === "string") {
+            this.pixbuf = GdkPixbuf.Pixbuf.new_from_file(v)!;
+          } else {
+            this.pixbuf = v as any as GdkPixbuf.Pixbuf;
+          }
+        },
+      )
+      .resizeToHeight(DataType.Number, () => {
+        this.resizeImage();
+      })
+      .resizeToWidth(DataType.Number, (_, __, { instead }) => instead("resizeToHeight"))
+      .preserveAspectRatio(DataType.Boolean, (_, __, { instead }) => instead("resizeToHeight")));
 
   protected isVisible = true;
 
@@ -89,12 +77,9 @@ export class TextViewImageElement
   }
 
   protected resizeImage() {
-    const width: number | undefined =
-      this.propsMapper.get("resizeToWidth");
-    const height: number | undefined =
-      this.propsMapper.get("resizeToHeight");
-    const preserveAspectRatio: boolean =
-      this.propsMapper.get("preserveAspectRatio") ?? true;
+    const width: number | undefined = this.propsMapper.get("resizeToWidth");
+    const height: number | undefined = this.propsMapper.get("resizeToHeight");
+    const preserveAspectRatio: boolean = this.propsMapper.get("preserveAspectRatio") ?? true;
 
     const pixbuff = this.pixbuf;
 

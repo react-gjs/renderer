@@ -27,12 +27,13 @@ import { GridItemElement } from "./grid-item";
 import { GridItemsList } from "./helpers/grid-items-list";
 import { GridMatrix } from "./helpers/grid-matrix";
 
-type GridPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type GridPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface GridProps extends GridPropsMixin {
   columns: number;
@@ -52,10 +53,7 @@ export interface GridProps extends GridPropsMixin {
   sameColumnWidth?: boolean;
 }
 
-export class GridElement
-  extends BaseElement
-  implements GjsElement<"GRID", Gtk.Grid>
-{
+export class GridElement extends BaseElement implements GjsElement<"GRID", Gtk.Grid> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

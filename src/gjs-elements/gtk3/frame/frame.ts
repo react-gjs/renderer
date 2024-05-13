@@ -25,12 +25,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type FramePropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type FramePropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface FrameProps extends FramePropsMixin {
   label?: string;
@@ -39,10 +40,7 @@ export interface FrameProps extends FramePropsMixin {
   shadowType?: ShadowType;
 }
 
-export class FrameElement
-  extends BaseElement
-  implements GjsElement<"FRAME", Gtk.Frame>
-{
+export class FrameElement extends BaseElement implements GjsElement<"FRAME", Gtk.Frame> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

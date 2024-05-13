@@ -11,7 +11,7 @@ export const render = (
   options: ApplicationOptions,
 ) => {
   Object.assign(globalThis, {
-    getApp: function () {
+    getApp: function() {
       return Gio.Application.get_default();
     },
   });

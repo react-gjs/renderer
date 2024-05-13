@@ -31,19 +31,19 @@ import { PopoverMenuContentElement } from "../popover-menu-content";
 import { popoverMenuModelButton } from "../utils/popover-menu-model-button";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuCheckButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type PopoverMenuCheckButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
 export type PopoverMenuCheckButtonEvent<
   P extends Record<string, any> = {},
 > = SyntheticEvent<P, PopoverMenuCheckButtonElement>;
 
-export interface PopoverMenuCheckButtonProps
-  extends PopoverMenuCheckButtonPropsMixin {
+export interface PopoverMenuCheckButtonProps extends PopoverMenuCheckButtonPropsMixin {
   label?: string;
   icon?: Rg.IconName;
   centered?: boolean;
@@ -62,8 +62,7 @@ export interface PopoverMenuCheckButtonProps
   ) => void;
 }
 
-export class PopoverMenuCheckButtonElement
-  extends BaseElement
+export class PopoverMenuCheckButtonElement extends BaseElement
   implements GjsElement<"POPOVER_MENU_CHECK_BUTTON", Gtk.ModelButton>
 {
   static getContext(
@@ -85,36 +84,35 @@ export class PopoverMenuCheckButtonElement
     Gtk.ModelButton,
     PopoverMenuCheckButtonProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<PopoverMenuCheckButtonProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createAccelPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(DataType.String, (v = "") => {
-            this.widget.text = v;
-          })
-          .icon(DataType.String, (v = "") => {
-            this.widget.icon = Gio.Icon.new_for_string(v)!;
-          })
-          .centered(DataType.Boolean, (v = false) => {
-            this.widget.centered = v;
-          })
-          .inverted(DataType.Boolean, (v = false) => {
-            this.widget.inverted = v;
-          })
-          .active(DataType.Boolean, (v = false) => {
-            this.widget.active = v;
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<PopoverMenuCheckButtonProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(DataType.String, (v = "") => {
+          this.widget.text = v;
+        })
+        .icon(DataType.String, (v = "") => {
+          this.widget.icon = Gio.Icon.new_for_string(v)!;
+        })
+        .centered(DataType.Boolean, (v = false) => {
+          this.widget.centered = v;
+        })
+        .inverted(DataType.Boolean, (v = false) => {
+          this.widget.inverted = v;
+        })
+        .active(DataType.Boolean, (v = false) => {
+          this.widget.active = v;
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();

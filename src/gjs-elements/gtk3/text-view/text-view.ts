@@ -8,10 +8,7 @@ import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
-import {
-  EventHandlers,
-  EventNoop,
-} from "../../utils/element-extenders/event-handlers";
+import { EventHandlers, EventNoop } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { MarkupAttributes } from "../../utils/markup-attributes";
@@ -33,20 +30,17 @@ import { ThemeVariable } from "../../utils/theme-vars";
 import { TO_GTK_WRAP_MODE } from "../../utils/wrap-mode";
 import type { TextNode } from "../text-node";
 import { isTextViewElement } from "./is-text-view-element";
-import type {
-  ITextViewElement,
-  TextViewNode,
-} from "./text-view-elem-interface";
+import type { ITextViewElement, TextViewNode } from "./text-view-elem-interface";
 
-type TextViewPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type TextViewPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
-export type TextViewEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, TextViewElement>;
+export type TextViewEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, TextViewElement>;
 
 export interface TextViewProps extends TextViewPropsMixin {
   wrapMode?: WrapMode;
@@ -58,10 +52,7 @@ export interface TextViewProps extends TextViewPropsMixin {
   onLinkClick?: (event: TextViewEvent<{ href: string }>) => void;
 }
 
-export class TextViewElement
-  extends BaseElement
-  implements GjsElement<"TEXT_VIEW", Gtk.TextView>
-{
+export class TextViewElement extends BaseElement implements GjsElement<"TEXT_VIEW", Gtk.TextView> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -145,8 +136,7 @@ export class TextViewElement
     this.handlers.bind("button-release-event", "onLinkClick", () => {
       if (!this.textBuffer.has_selection) {
         const cursorPosition = this.textBuffer.cursor_position;
-        const iter =
-          this.textBuffer.get_iter_at_offset(cursorPosition);
+        const iter = this.textBuffer.get_iter_at_offset(cursorPosition);
         for (const link of this.embeddedLinks) {
           const startIter = this.textBuffer.get_iter_at_offset(
             link.start,
@@ -340,12 +330,7 @@ export class TextViewElement
       switch (node.type) {
         case "TEXT": {
           const asMarkup = parent
-            ? (text: string) =>
-                `<${
-                  parent.tag
-                } ${parent.attributes.stringify()}>${text}</${
-                  parent.tag
-                }>`
+            ? (text: string) => `<${parent.tag} ${parent.attributes.stringify()}>${text}</${parent.tag}>`
             : (text: string) => `<span>${text}</span>`;
 
           for (const nodeTextEntry of node.children) {
@@ -374,8 +359,7 @@ export class TextViewElement
               ? parent.attributes.merge(node.attributes)
               : node.attributes,
           });
-          const end =
-            this.textBuffer.get_end_iter()!.get_offset() + 1;
+          const end = this.textBuffer.get_end_iter()!.get_offset() + 1;
 
           this.embeddedLinks.push({ start, end, href: node.href });
           break;
@@ -399,8 +383,7 @@ export class TextViewElement
             );
             this.widget.add_child_at_anchor(widget, anchor);
           }
-          const end =
-            this.textBuffer.get_end_iter()!.get_offset() + 1;
+          const end = this.textBuffer.get_end_iter()!.get_offset() + 1;
           this.embeddedWidgets.push({ start, end });
           break;
         }

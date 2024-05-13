@@ -34,16 +34,16 @@ import { MenuBarItemElement } from "./menu-bar-item";
 import { MenuCheckButtonElement } from "./menu-check-button";
 import { MenuRadioButtonElement } from "./menu-radio-button";
 
-type MenuEntryPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type MenuEntryPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type MenuEntryEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, MenuEntryElement>;
+export type MenuEntryEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, MenuEntryElement>;
 
 export interface MenuEntryProps extends MenuEntryPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
@@ -53,10 +53,7 @@ export interface MenuEntryProps extends MenuEntryPropsMixin {
   onMouseLeave?: (event: MenuEntryEvent<PointerData>) => void;
 }
 
-export class MenuEntryElement
-  extends BaseElement
-  implements GjsElement<"MENU_ENTRY", Gtk.MenuItem>
-{
+export class MenuEntryElement extends BaseElement implements GjsElement<"MENU_ENTRY", Gtk.MenuItem> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -69,8 +66,7 @@ export class MenuEntryElement
   submenu?: Gtk.Menu;
   labelContainer = new Gtk.Box();
 
-  protected parent: MenuBarItemElement | MenuEntryElement | null =
-    null;
+  protected parent: MenuBarItemElement | MenuEntryElement | null = null;
   protected rootBarItem: MenuBarItemElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();

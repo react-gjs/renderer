@@ -1,8 +1,8 @@
 import { DataType } from "dilswer";
+import cairo from "gi://cairo";
 import GdkPixbuf from "gi://GdkPixbuf";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
-import cairo from "gi://cairo";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -29,29 +29,30 @@ import type { TextNode } from "../text-node";
 
 type ImageSrc =
   | {
-      src:
-        | string
-        | GdkPixbuf.Pixbuf
-        | GdkPixbuf.PixbufAnimation
-        | cairo.Surface;
-      resizeToWidth?: number;
-      resizeToHeight?: number;
-      preserveAspectRatio?: boolean;
-    }
+    src:
+      | string
+      | GdkPixbuf.Pixbuf
+      | GdkPixbuf.PixbufAnimation
+      | cairo.Surface;
+    resizeToWidth?: number;
+    resizeToHeight?: number;
+    preserveAspectRatio?: boolean;
+  }
   | {
-      icon: string | Gio.Icon;
-      iconSize?: number;
-      useIconFallback?: boolean;
-    };
+    icon: string | Gio.Icon;
+    iconSize?: number;
+    useIconFallback?: boolean;
+  };
 
-type ImagePropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  ImageSrc &
-  TooltipProps;
+type ImagePropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & ImageSrc
+  & TooltipProps;
 
 export type ImageProps = ImagePropsMixin & {
   pixelSize?: number;
@@ -68,10 +69,7 @@ const IconDataType = DataType.OneOf(
 
 const DEFAULT_ICON_SIZE = Gtk.IconSize.BUTTON;
 
-export class ImageElement
-  extends BaseElement
-  implements GjsElement<"IMAGE", Gtk.Image>
-{
+export class ImageElement extends BaseElement implements GjsElement<"IMAGE", Gtk.Image> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -105,12 +103,8 @@ export class ImageElement
         .resizeToHeight(DataType.Number, () => {
           this.resizeImage();
         })
-        .resizeToWidth(DataType.Number, (_, __, { instead }) =>
-          instead("resizeToHeight"),
-        )
-        .preserveAspectRatio(DataType.Boolean, (_, __, { instead }) =>
-          instead("resizeToHeight"),
-        )
+        .resizeToWidth(DataType.Number, (_, __, { instead }) => instead("resizeToHeight"))
+        .preserveAspectRatio(DataType.Boolean, (_, __, { instead }) => instead("resizeToHeight"))
         .src(SrcDataType, (src, allProps) => {
           if (src && allProps?.icon) {
             throw new Error(
@@ -129,8 +123,8 @@ export class ImageElement
           }
 
           if (
-            allProps.resizeToWidth != null ||
-            allProps.resizeToHeight != null
+            allProps.resizeToWidth != null
+            || allProps.resizeToHeight != null
           ) {
             this.resizeImage();
           }
@@ -175,12 +169,9 @@ export class ImageElement
   }
 
   protected resizeImage() {
-    const width: number | undefined =
-      this.propsMapper.get("resizeToWidth");
-    const height: number | undefined =
-      this.propsMapper.get("resizeToHeight");
-    const preserveAspectRatio: boolean =
-      this.propsMapper.get("preserveAspectRatio") ?? true;
+    const width: number | undefined = this.propsMapper.get("resizeToWidth");
+    const height: number | undefined = this.propsMapper.get("resizeToHeight");
+    const preserveAspectRatio: boolean = this.propsMapper.get("preserveAspectRatio") ?? true;
 
     const pixbuff = this.widget.get_pixbuf()!;
 

@@ -3,10 +3,7 @@ import GdkPixbuf from "gi://GdkPixbuf";
 import type Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import { ButtonType } from "../../../enums/custom";
-import type {
-  ButtonRole,
-  PositionType,
-} from "../../../enums/gtk3-index";
+import type { ButtonRole, PositionType } from "../../../enums/gtk3-index";
 import { EventPhase } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
@@ -40,17 +37,17 @@ import { createTooltipPropMapper } from "../../utils/property-maps-factories/cre
 import { resizePixbuff } from "../../utils/resize-pixbuff";
 import type { TextNode } from "../text-node";
 
-type ModelButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type ModelButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type ModelButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, ModelButtonElement>;
+export type ModelButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, ModelButtonElement>;
 
 export interface ModelButtonProps extends ModelButtonPropsMixin {
   type?: ButtonType;
@@ -85,10 +82,7 @@ const ImageDataType = DataType.OneOf(
   ),
 );
 
-export class ModelButtonElement
-  extends BaseElement
-  implements GjsElement<"MODEL_BUTTON", Gtk.ModelButton>
-{
+export class ModelButtonElement extends BaseElement implements GjsElement<"MODEL_BUTTON", Gtk.ModelButton> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -107,149 +101,148 @@ export class ModelButtonElement
     Gtk.ModelButton,
     ModelButtonProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<ModelButtonProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createAccelPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(DataType.String, (v) => {
-            this.widget.text = v ?? "";
-          })
-          .alwaysShowImage(DataType.Boolean, (v = false) => {
-            this.widget.always_show_image = v;
-          })
-          .image(ImageDataType, (v, allProps) => {
-            if (v) {
-              if (allProps.icon) {
-                throw new Error("Cannot set both image and icon");
-              }
-
-              this.setImage(
-                v,
-                allProps.imageWidth,
-                allProps.imageHeight,
-                allProps.imagePreserveAspectRatio,
-              );
-
-              return () => this.widget.set_image(null);
-            }
-          })
-          .imageWidth(DataType.Number, (v, allProps, mapperApi) => {
-            if (allProps.image && !allProps.icon) {
-              if (!mapperApi.isUpdatedInThisCycle("image")) {
-                this.resizeCurrentImage(
-                  v,
-                  allProps.imageHeight,
-                  allProps.imagePreserveAspectRatio,
-                );
-              }
-            }
-          })
-          .imageHeight(DataType.Number, (v, allProps, mapperApi) => {
-            if (allProps.image && !allProps.icon) {
-              if (
-                !mapperApi.isUpdatedInThisCycle("image") &&
-                !mapperApi.isUpdatedInThisCycle("imageWidth")
-              ) {
-                this.resizeCurrentImage(
-                  allProps.imageWidth,
-                  v,
-                  allProps.imagePreserveAspectRatio,
-                );
-              }
-            }
-          })
-          .imagePreserveAspectRatio(
-            DataType.Boolean,
-            (v, allProps, mapperApi) => {
-              if (allProps.image && !allProps.icon) {
-                if (
-                  !mapperApi.isUpdatedInThisCycle("image") &&
-                  !mapperApi.isUpdatedInThisCycle("imageWidth") &&
-                  !mapperApi.isUpdatedInThisCycle("imageHeight")
-                ) {
-                  this.resizeCurrentImage(
-                    allProps.imageWidth,
-                    allProps.imageHeight,
-                    v,
-                  );
-                }
-              }
-            },
-          )
-          .imagePosition(
-            DataType.Enum(Gtk.PositionType),
-            (v = Gtk.PositionType.LEFT) => {
-              this.widget.image_position = v;
-            },
-          )
-          .icon(DataType.String, (v, allProps) => {
-            if (allProps.image) {
+  protected readonly propsMapper = new PropertyMapper<ModelButtonProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(DataType.String, (v) => {
+          this.widget.text = v ?? "";
+        })
+        .alwaysShowImage(DataType.Boolean, (v = false) => {
+          this.widget.always_show_image = v;
+        })
+        .image(ImageDataType, (v, allProps) => {
+          if (v) {
+            if (allProps.icon) {
               throw new Error("Cannot set both image and icon");
             }
 
-            if (v) {
-              this.setImageIcon(v, allProps.iconPixelSize);
-              return () => this.widget.set_image(null);
+            this.setImage(
+              v,
+              allProps.imageWidth,
+              allProps.imageHeight,
+              allProps.imagePreserveAspectRatio,
+            );
+
+            return () => this.widget.set_image(null);
+          }
+        })
+        .imageWidth(DataType.Number, (v, allProps, mapperApi) => {
+          if (allProps.image && !allProps.icon) {
+            if (!mapperApi.isUpdatedInThisCycle("image")) {
+              this.resizeCurrentImage(
+                v,
+                allProps.imageHeight,
+                allProps.imagePreserveAspectRatio,
+              );
             }
-          })
-          .iconPixelSize(
-            DataType.Number,
-            (v = 16, allProps, mapperApi) => {
+          }
+        })
+        .imageHeight(DataType.Number, (v, allProps, mapperApi) => {
+          if (allProps.image && !allProps.icon) {
+            if (
+              !mapperApi.isUpdatedInThisCycle("image")
+              && !mapperApi.isUpdatedInThisCycle("imageWidth")
+            ) {
+              this.resizeCurrentImage(
+                allProps.imageWidth,
+                v,
+                allProps.imagePreserveAspectRatio,
+              );
+            }
+          }
+        })
+        .imagePreserveAspectRatio(
+          DataType.Boolean,
+          (v, allProps, mapperApi) => {
+            if (allProps.image && !allProps.icon) {
               if (
-                allProps.icon != null &&
-                !mapperApi.isUpdatedInThisCycle("icon")
+                !mapperApi.isUpdatedInThisCycle("image")
+                && !mapperApi.isUpdatedInThisCycle("imageWidth")
+                && !mapperApi.isUpdatedInThisCycle("imageHeight")
               ) {
-                this.setImageIcon(allProps.icon, v);
+                this.resizeCurrentImage(
+                  allProps.imageWidth,
+                  allProps.imageHeight,
+                  v,
+                );
               }
-            },
-          )
-          .useUnderline(DataType.Boolean, (v = false) => {
-            this.widget.use_underline = v;
-          })
-          .type(
-            DataType.Enum(ButtonType),
-            (v = ButtonType.NORMAL) => {
-              switch (v) {
-                case ButtonType.NORMAL:
-                  this.widget.relief = Gtk.ReliefStyle.NORMAL;
-                  break;
-                case ButtonType.FLAT:
-                  this.widget.relief = Gtk.ReliefStyle.NONE;
-                  break;
-              }
-            },
-          )
-          .focusOnClick(DataType.Boolean, (v = true) => {
-            this.widget.focus_on_click = v;
-          })
-          .active(DataType.Boolean, (v = false) => {
-            this.widget.active = v;
-          })
-          .centered(DataType.Boolean, (v = false) => {
-            this.widget.centered = v;
-          })
-          .inverted(DataType.Boolean, (v = false) => {
-            this.widget.inverted = v;
-          })
-          .role(
-            DataType.Enum(Gtk.ButtonRole),
-            (v = Gtk.ButtonRole.NORMAL) => {
-              this.widget.role = v;
-            },
-          ),
-    );
+            }
+          },
+        )
+        .imagePosition(
+          DataType.Enum(Gtk.PositionType),
+          (v = Gtk.PositionType.LEFT) => {
+            this.widget.image_position = v;
+          },
+        )
+        .icon(DataType.String, (v, allProps) => {
+          if (allProps.image) {
+            throw new Error("Cannot set both image and icon");
+          }
+
+          if (v) {
+            this.setImageIcon(v, allProps.iconPixelSize);
+            return () => this.widget.set_image(null);
+          }
+        })
+        .iconPixelSize(
+          DataType.Number,
+          (v = 16, allProps, mapperApi) => {
+            if (
+              allProps.icon != null
+              && !mapperApi.isUpdatedInThisCycle("icon")
+            ) {
+              this.setImageIcon(allProps.icon, v);
+            }
+          },
+        )
+        .useUnderline(DataType.Boolean, (v = false) => {
+          this.widget.use_underline = v;
+        })
+        .type(
+          DataType.Enum(ButtonType),
+          (v = ButtonType.NORMAL) => {
+            switch (v) {
+              case ButtonType.NORMAL:
+                this.widget.relief = Gtk.ReliefStyle.NORMAL;
+                break;
+              case ButtonType.FLAT:
+                this.widget.relief = Gtk.ReliefStyle.NONE;
+                break;
+            }
+          },
+        )
+        .focusOnClick(DataType.Boolean, (v = true) => {
+          this.widget.focus_on_click = v;
+        })
+        .active(DataType.Boolean, (v = false) => {
+          this.widget.active = v;
+        })
+        .centered(DataType.Boolean, (v = false) => {
+          this.widget.centered = v;
+        })
+        .inverted(DataType.Boolean, (v = false) => {
+          this.widget.inverted = v;
+        })
+        .role(
+          DataType.Enum(Gtk.ButtonRole),
+          (v = Gtk.ButtonRole.NORMAL) => {
+            this.widget.role = v;
+          },
+        ),
+  );
 
   protected readonly children = new TextChildController(
     this.lifecycle,
@@ -337,10 +330,9 @@ export class ModelButtonElement
     icon: string | Gio.Icon,
     pixelSize?: number,
   ) {
-    const iconWidget =
-      typeof icon === "string"
-        ? Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
-        : Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON);
+    const iconWidget = typeof icon === "string"
+      ? Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
+      : Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON);
 
     if (pixelSize != null) {
       iconWidget.set_pixel_size(pixelSize);

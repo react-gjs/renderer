@@ -24,12 +24,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type PanedPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type PanedPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface PanedProps extends PanedPropsMixin {
   orientation?: Orientation;
@@ -38,10 +39,7 @@ export interface PanedProps extends PanedPropsMixin {
   shrinkChildren?: boolean;
 }
 
-export class PanedElement
-  extends BaseElement
-  implements GjsElement<"PANED", Gtk.Paned>
-{
+export class PanedElement extends BaseElement implements GjsElement<"PANED", Gtk.Paned> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -166,14 +164,14 @@ export class PanedElement
       (shouldOmitMount) => {
         if (!shouldOmitMount) {
           if (
-            this.children[1] === beforeChild &&
-            this.children[0] == null
+            this.children[1] === beforeChild
+            && this.children[0] == null
           ) {
             this.children[0] = child;
             this.widget.add1(child.getWidget());
           } else if (
-            this.children[0] === beforeChild &&
-            this.children[1] == null
+            this.children[0] === beforeChild
+            && this.children[1] == null
           ) {
             this.widget.remove(this.children[0].getWidget());
             this.children[1] = this.children[0];
@@ -181,8 +179,8 @@ export class PanedElement
             this.widget.add1(this.children[0].getWidget());
             this.widget.add2(this.children[1].getWidget());
           } else if (
-            this.children[0] === beforeChild &&
-            this.children[1] === child
+            this.children[0] === beforeChild
+            && this.children[1] === child
           ) {
             this.widget.remove(this.children[0].getWidget());
             this.widget.remove(this.children[1].getWidget());

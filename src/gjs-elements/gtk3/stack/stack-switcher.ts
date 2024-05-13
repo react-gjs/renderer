@@ -21,21 +21,19 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type StackSwitcherPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type StackSwitcherPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface StackSwitcherProps extends StackSwitcherPropsMixin {
   iconSize?: number;
 }
 
-export class StackSwitcherElement
-  extends BaseElement
-  implements GjsElement<"STACK_SWITCHER", Gtk.StackSwitcher>
-{
+export class StackSwitcherElement extends BaseElement implements GjsElement<"STACK_SWITCHER", Gtk.StackSwitcher> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -52,8 +50,7 @@ export class StackSwitcherElement
     Gtk.StackSwitcher,
     StackSwitcherProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<StackSwitcherProps>(this.lifecycle);
+  protected readonly propsMapper = new PropertyMapper<StackSwitcherProps>(this.lifecycle);
 
   constructor(props: DiffedProps) {
     super();

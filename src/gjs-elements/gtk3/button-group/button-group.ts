@@ -1,10 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  BaselinePosition,
-  ButtonBoxStyle,
-  Orientation,
-} from "../../../enums/gtk3-index";
+import type { BaselinePosition, ButtonBoxStyle, Orientation } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -29,12 +25,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ButtonGroupPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type ButtonGroupPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface ButtonGroupProps extends ButtonGroupPropsMixin {
   spacing?: number;
@@ -43,10 +40,7 @@ export interface ButtonGroupProps extends ButtonGroupPropsMixin {
   layout?: ButtonBoxStyle;
 }
 
-export class ButtonGroupElement
-  extends BaseElement
-  implements GjsElement<"BUTTON_GROUP", Gtk.ButtonBox>
-{
+export class ButtonGroupElement extends BaseElement implements GjsElement<"BUTTON_GROUP", Gtk.ButtonBox> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -67,42 +61,41 @@ export class ButtonGroupElement
     this.lifecycle,
     this.widget,
   );
-  protected readonly propsMapper =
-    new PropertyMapper<ButtonGroupProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .spacing(DataType.Number, (v = 0) => {
-            this.widget.spacing = v;
-          })
-          .baselinePosition(
-            DataType.Enum(Gtk.BaselinePosition),
-            (v = Gtk.BaselinePosition.TOP) => {
-              this.widget.baseline_position = v;
-            },
-          )
-          .orientation(
-            DataType.Enum(Gtk.Orientation),
-            (v = Gtk.Orientation.VERTICAL) => {
-              this.widget.orientation = v;
-            },
-          )
-          .layout(
-            DataType.Enum(Gtk.ButtonBoxStyle),
-            (v = Gtk.ButtonBoxStyle.EXPAND) => {
-              this.widget.layout_style = v;
-            },
-          ),
-    );
+  protected readonly propsMapper = new PropertyMapper<ButtonGroupProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .spacing(DataType.Number, (v = 0) => {
+          this.widget.spacing = v;
+        })
+        .baselinePosition(
+          DataType.Enum(Gtk.BaselinePosition),
+          (v = Gtk.BaselinePosition.TOP) => {
+            this.widget.baseline_position = v;
+          },
+        )
+        .orientation(
+          DataType.Enum(Gtk.Orientation),
+          (v = Gtk.Orientation.VERTICAL) => {
+            this.widget.orientation = v;
+          },
+        )
+        .layout(
+          DataType.Enum(Gtk.ButtonBoxStyle),
+          (v = Gtk.ButtonBoxStyle.EXPAND) => {
+            this.widget.layout_style = v;
+          },
+        ),
+  );
 
   constructor(props: DiffedProps) {
     super();

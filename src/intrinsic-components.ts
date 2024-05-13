@@ -1,10 +1,7 @@
 import React from "react";
 import { SearchBarContext } from "./components/search-bar/search-bar";
 import { WindowContext } from "./components/window/window";
-import type {
-  CustomWidgetElement,
-  CustomWidgetProps,
-} from "./gjs-elements/gtk3/custom-widget/custom-widget";
+import type { CustomWidgetElement, CustomWidgetProps } from "./gjs-elements/gtk3/custom-widget/custom-widget";
 import { PopoverMenu } from "./gjs-elements/gtk3/popover-menu/component";
 import { Popover } from "./gjs-elements/gtk3/popover/component";
 import { markAsIntrinsic } from "./utils/intrinsic-marker";
@@ -49,8 +46,7 @@ export const Expander = IntrinsicElem("EXPANDER").component();
 /** Equivalent to the Gtk.FlexBox widget. */
 export const FlowBox = IntrinsicElem("FLOW_BOX").component();
 /** Equivalent to the Gtk.FlexBoxChild widget. */
-export const FlowBoxEntry =
-  IntrinsicElem("FLOW_BOX_ENTRY").component();
+export const FlowBoxEntry = IntrinsicElem("FLOW_BOX_ENTRY").component();
 /** Equivalent to the Gtk.Frame widget. */
 export const Frame = IntrinsicElem("FRAME").component();
 /** Equivalent to the Gtk.Grid widget. */
@@ -80,8 +76,7 @@ export const MenuRadioButton = IntrinsicElem(
   "MENU_RADIO_BUTTON",
 ).component();
 /** Equivalent to the Gtk.SeparatorMenuItem widget. */
-export const MenuSeparator =
-  IntrinsicElem("MENU_SEPARATOR").component();
+export const MenuSeparator = IntrinsicElem("MENU_SEPARATOR").component();
 /** Equivalent to the Gtk.ModelButton widget. */
 export const ModelButton = IntrinsicElem("MODEL_BUTTON").component();
 /** Equivalent to the Gtk.SpinButton widget. */
@@ -134,8 +129,7 @@ export const Separator = IntrinsicElem("SEPARATOR").component();
 /** Equivalent to the Gtk.Spinner widget. */
 export const Spinner = IntrinsicElem("SPINNER").component();
 /** Built on top of Gtk.Box and Gtk.SizeGroup. */
-export const SizeGroupBox =
-  IntrinsicElem("SIZE_GROUP_BOX").component();
+export const SizeGroupBox = IntrinsicElem("SIZE_GROUP_BOX").component();
 /** Equivalent to the Gtk.ScaleButton widget. */
 export const SliderPopupButton = IntrinsicElem(
   "SLIDER_POPUP_BUTTON",
@@ -156,8 +150,7 @@ export const TextInput = IntrinsicElem("TEXT_ENTRY").component();
 /** Equivalent to the Gtk.Toolbar widget. */
 export const Toolbar = IntrinsicElem("TOOLBAR").component();
 /** Equivalent to the Gtk.ToolButton widget. */
-export const ToolbarButton =
-  IntrinsicElem("TOOLBAR_BUTTON").component();
+export const ToolbarButton = IntrinsicElem("TOOLBAR_BUTTON").component();
 /** Equivalent to the Gtk.ToolItem widget. */
 export const ToolbarItem = IntrinsicElem("TOOLBAR_ITEM").component();
 /** Equivalent to the Gtk.RadioToolButton widget. */
@@ -173,8 +166,7 @@ export const ToolbarSeparator = IntrinsicElem(
   "TOOLBAR_SEPARATOR",
 ).component();
 /** Equivalent to the Gtk.VolumeButton widget. */
-export const VolumeButton =
-  IntrinsicElem("VOLUME_BUTTON").component();
+export const VolumeButton = IntrinsicElem("VOLUME_BUTTON").component();
 
 export const SearchInput = IntrinsicElem("SEARCH_INPUT")
   .mapCtx(SearchBarContext, (b) => ({
@@ -185,10 +177,7 @@ export const SearchInput = IntrinsicElem("SEARCH_INPUT")
 markAsIntrinsic(Popover, "POPOVER");
 markAsIntrinsic(PopoverMenu, "POPOVER_MENU");
 
-export {
-  createStack,
-  useStack,
-} from "./gjs-elements/gtk3/stack/use-stack";
+export { createStack, useStack } from "./gjs-elements/gtk3/stack/use-stack";
 export { Popover, PopoverMenu };
 
 // region TextView
@@ -196,14 +185,11 @@ export { Popover, PopoverMenu };
 /** Equivalent to the Gtk.TextView widget. */
 export const TextView = IntrinsicElem("TEXT_VIEW").component();
 /** A TextView Element, must be used inside a `<TextView />`. */
-export const TextViewImage =
-  IntrinsicElem("TEXT_VIEW_IMAGE").component();
+export const TextViewImage = IntrinsicElem("TEXT_VIEW_IMAGE").component();
 /** A TextView Element, must be used inside a `<TextView />`. */
-export const TextViewLink =
-  IntrinsicElem("TEXT_VIEW_LINK").component();
+export const TextViewLink = IntrinsicElem("TEXT_VIEW_LINK").component();
 /** A TextView Element, must be used inside a `<TextView />`. */
-export const TextViewSpan =
-  IntrinsicElem("TEXT_VIEW_SPAN").component();
+export const TextViewSpan = IntrinsicElem("TEXT_VIEW_SPAN").component();
 /** A TextView Element, must be used inside a `<TextView />`. */
 export const TextViewWidget = IntrinsicElem(
   "TEXT_VIEW_WIDGET",

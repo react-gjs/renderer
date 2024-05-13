@@ -1,10 +1,7 @@
 import Gtk from "gi://Gtk";
 import React from "react";
 import { EventLoop } from "../../utils/event-loop";
-import type {
-  PopoverMenuProps as BaseProps,
-  PopoverMenuElement,
-} from "./popover-menu";
+import type { PopoverMenuElement, PopoverMenuProps as BaseProps } from "./popover-menu";
 
 const PopoverElem: Rg.GjsElementTypes = "POPOVER_MENU";
 const TargetElem: Rg.GjsElementTypes = "POPOVER_MENU_TARGET";

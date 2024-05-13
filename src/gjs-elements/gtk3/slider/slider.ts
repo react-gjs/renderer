@@ -1,17 +1,11 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  Orientation,
-  SensitivityType,
-} from "../../../enums/gtk3-index";
+import type { Orientation, SensitivityType } from "../../../enums/gtk3-index";
 import { PositionType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
-import {
-  compareRecordsShallow,
-  diffProps,
-} from "../../utils/diff-props";
+import { compareRecordsShallow, diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -32,16 +26,16 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 
-type SliderPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps;
+type SliderPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps;
 
-export type SliderEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, SliderElement>;
+export type SliderEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, SliderElement>;
 
 export interface SliderProps extends SliderPropsMixin {
   orientation?: Orientation;
@@ -68,10 +62,7 @@ export interface SliderProps extends SliderPropsMixin {
   onValueChange?: (event: SliderEvent<{ value: number }>) => void;
 }
 
-export class SliderElement
-  extends BaseElement
-  implements GjsElement<"SLIDER", Gtk.Scale>
-{
+export class SliderElement extends BaseElement implements GjsElement<"SLIDER", Gtk.Scale> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -109,14 +100,16 @@ export class SliderElement
         .max(DataType.Number, (v = 100, allProps) => {
           this.adjustment.set_upper(v);
 
-          if (allProps.fillLevel)
+          if (allProps.fillLevel) {
             this.updateFillLevel(allProps.fillLevel);
+          }
         })
         .min(DataType.Number, (v = 0, allProps) => {
           this.adjustment.set_lower(v);
 
-          if (allProps.fillLevel)
+          if (allProps.fillLevel) {
             this.updateFillLevel(allProps.fillLevel);
+          }
         })
         .step(DataType.Number, (v = 1) => {
           this.adjustment.set_page_increment(v);
@@ -165,9 +158,8 @@ export class SliderElement
           this.widget.set_slider_size_fixed(v);
         })
         .marks(DataType.Dict(DataType.String), (v = {}, allProps) => {
-          const position =
-            (allProps.marksPosition as any as Gtk.PositionType) ??
-            PositionType.TOP;
+          const position = (allProps.marksPosition as any as Gtk.PositionType)
+            ?? PositionType.TOP;
 
           this.widget.clear_marks();
           for (const [key, value] of Object.entries(v)) {

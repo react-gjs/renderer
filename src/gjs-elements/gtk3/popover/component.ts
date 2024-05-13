@@ -1,10 +1,7 @@
 import Gtk from "gi://Gtk";
 import React from "react";
 import { EventLoop } from "../../utils/event-loop";
-import type {
-  PopoverProps as BaseProps,
-  PopoverElement,
-} from "./popover";
+import type { PopoverElement, PopoverProps as BaseProps } from "./popover";
 
 const PopoverElem = "POPOVER";
 const PopoverTargetElem = "POPOVER_TARGET";

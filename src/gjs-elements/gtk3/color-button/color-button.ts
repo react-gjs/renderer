@@ -14,10 +14,7 @@ import { TextChildController } from "../../utils/element-extenders/text-child-co
 import type { PointerData } from "../../utils/gdk-events/pointer-event";
 import { parseCrossingEvent } from "../../utils/gdk-events/pointer-event";
 import { mountAction } from "../../utils/mount-action";
-import {
-  parseColor,
-  type ColorString,
-} from "../../utils/parse-color";
+import { type ColorString, parseColor } from "../../utils/parse-color";
 import type { AccelProps } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import { createAccelPropMapper } from "../../utils/property-maps-factories/create-accel-prop-mapper";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -36,17 +33,17 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ColorButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type ColorButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type ColorButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, ColorButtonElement>;
+export type ColorButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, ColorButtonElement>;
 
 export interface ColorButtonProps extends ColorButtonPropsMixin {
   type?: ButtonType;
@@ -66,10 +63,7 @@ export interface ColorButtonProps extends ColorButtonPropsMixin {
   onMouseLeave?: (event: ColorButtonEvent<PointerData>) => void;
 }
 
-export class ColorButtonElement
-  extends BaseElement
-  implements GjsElement<"COLOR_BUTTON", Gtk.ColorButton>
-{
+export class ColorButtonElement extends BaseElement implements GjsElement<"COLOR_BUTTON", Gtk.ColorButton> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -92,61 +86,60 @@ export class ColorButtonElement
     Gtk.Button,
     ColorButtonProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<ColorButtonProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createAccelPropMapper(this.widget, "clicked"),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(DataType.String, (v) => {
-            this.widget.label = v ?? null;
-          })
-          .useUnderline(DataType.Boolean, (v = false) => {
-            this.widget.use_underline = v;
-          })
-          .type(
-            DataType.Enum(ButtonType),
-            (v = ButtonType.NORMAL) => {
-              switch (v) {
-                case ButtonType.NORMAL:
-                  this.widget.relief = Gtk.ReliefStyle.NORMAL;
-                  break;
-                case ButtonType.FLAT:
-                  this.widget.relief = Gtk.ReliefStyle.NONE;
-                  break;
-              }
-            },
-          )
-          .focusOnClick(DataType.Boolean, (v = true) => {
-            this.widget.focus_on_click = v;
-          })
-          .color(DataType.String, (v) => {
-            if (v) {
-              this.widget.rgba = parseColor(
-                v as ColorString,
-              ).toRgba();
+  protected readonly propsMapper = new PropertyMapper<ColorButtonProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget, "clicked"),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(DataType.String, (v) => {
+          this.widget.label = v ?? null;
+        })
+        .useUnderline(DataType.Boolean, (v = false) => {
+          this.widget.use_underline = v;
+        })
+        .type(
+          DataType.Enum(ButtonType),
+          (v = ButtonType.NORMAL) => {
+            switch (v) {
+              case ButtonType.NORMAL:
+                this.widget.relief = Gtk.ReliefStyle.NORMAL;
+                break;
+              case ButtonType.FLAT:
+                this.widget.relief = Gtk.ReliefStyle.NONE;
+                break;
             }
-          })
-          .showEditor(DataType.Boolean, (v = false) => {
-            this.widget.show_editor = v;
-          })
-          .title(DataType.String, (v) => {
-            this.widget.title = v ?? null;
-          })
-          .useAlpha(DataType.Boolean, (v = true) => {
-            this.widget.use_alpha = v;
-          }),
-    );
+          },
+        )
+        .focusOnClick(DataType.Boolean, (v = true) => {
+          this.widget.focus_on_click = v;
+        })
+        .color(DataType.String, (v) => {
+          if (v) {
+            this.widget.rgba = parseColor(
+              v as ColorString,
+            ).toRgba();
+          }
+        })
+        .showEditor(DataType.Boolean, (v = false) => {
+          this.widget.show_editor = v;
+        })
+        .title(DataType.String, (v) => {
+          this.widget.title = v ?? null;
+        })
+        .useAlpha(DataType.Boolean, (v = true) => {
+          this.widget.use_alpha = v;
+        }),
+  );
 
   protected readonly children = new TextChildController(
     this.lifecycle,

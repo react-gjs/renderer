@@ -1,10 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  BaselinePosition,
-  Orientation,
-  PackType,
-} from "../../../enums/gtk3-index";
+import type { BaselinePosition, Orientation, PackType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -29,12 +25,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type BoxPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type BoxPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface BoxProps extends BoxPropsMixin {
   spacing?: number;
@@ -43,10 +40,7 @@ export interface BoxProps extends BoxPropsMixin {
   defaultPackType?: PackType;
 }
 
-export class BoxElement
-  extends BaseElement
-  implements GjsElement<"BOX", Gtk.Box>
-{
+export class BoxElement extends BaseElement implements GjsElement<"BOX", Gtk.Box> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -112,8 +106,8 @@ export class BoxElement
     const packType = this.propsMapper.currentProps.defaultPackType;
 
     if (
-      child.getProperty("cpt:pack-type") !== undefined ||
-      packType === undefined
+      child.getProperty("cpt:pack-type") !== undefined
+      || packType === undefined
     ) {
       return;
     }

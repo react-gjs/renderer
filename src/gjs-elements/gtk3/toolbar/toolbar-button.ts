@@ -33,17 +33,17 @@ import { createTooltipPropMapper } from "../../utils/property-maps-factories/cre
 import type { TextNode } from "../text-node";
 import { ToolbarElement } from "./toolbar";
 
-type ToolbarButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type ToolbarButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type ToolbarButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, ToolbarButtonElement>;
+export type ToolbarButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, ToolbarButtonElement>;
 
 export interface ToolbarButtonProps extends ToolbarButtonPropsMixin {
   label?: string;
@@ -57,10 +57,7 @@ export interface ToolbarButtonProps extends ToolbarButtonPropsMixin {
   onMouseLeave?: (event: ToolbarButtonEvent<PointerData>) => void;
 }
 
-export class ToolbarButtonElement
-  extends BaseElement
-  implements GjsElement<"TOOLBAR_BUTTON", Gtk.ToolButton>
-{
+export class ToolbarButtonElement extends BaseElement implements GjsElement<"TOOLBAR_BUTTON", Gtk.ToolButton> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -79,43 +76,42 @@ export class ToolbarButtonElement
     Gtk.ToolButton,
     ToolbarButtonProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<ToolbarButtonProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createAccelPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(DataType.String, (v = "") => {
-            this.widget.label = v;
-          })
-          .useUnderline(DataType.Boolean, (v = false) => {
-            this.widget.use_underline = v;
-          })
-          .focusOnClick(DataType.Boolean, (v = true) => {
-            this.widget.focus_on_click = v;
-          })
-          .icon(DataType.String, (v) => {
-            if (v) {
-              this.widget.icon_name = v;
-            }
-          })
-          .sameSize(DataType.Boolean, (v = true) => {
-            this.widget.set_homogeneous(v);
-          })
-          .expand(DataType.Boolean, (v = false) => {
-            this.widget.set_expand(v);
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<ToolbarButtonProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(DataType.String, (v = "") => {
+          this.widget.label = v;
+        })
+        .useUnderline(DataType.Boolean, (v = false) => {
+          this.widget.use_underline = v;
+        })
+        .focusOnClick(DataType.Boolean, (v = true) => {
+          this.widget.focus_on_click = v;
+        })
+        .icon(DataType.String, (v) => {
+          if (v) {
+            this.widget.icon_name = v;
+          }
+        })
+        .sameSize(DataType.Boolean, (v = true) => {
+          this.widget.set_homogeneous(v);
+        })
+        .expand(DataType.Boolean, (v = false) => {
+          this.widget.set_expand(v);
+        }),
+  );
 
   protected readonly children = new TextChildController(
     this.lifecycle,

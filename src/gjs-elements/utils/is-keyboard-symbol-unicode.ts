@@ -42,12 +42,12 @@ const SPECIAL_KEYBOARD_SYMBOLS_UNICODE = [
 export const isKeyboardSymbol = (char: number) => {
   return (
     // A-Z
-    (char >= 65 && char <= 90) ||
+    (char >= 65 && char <= 90)
     // a-z
-    (char >= 97 && char <= 122) ||
+    || (char >= 97 && char <= 122)
     // 0-9
-    (char >= 48 && char <= 57) ||
+    || (char >= 48 && char <= 57)
     // Special Symbols
-    SPECIAL_KEYBOARD_SYMBOLS_UNICODE.includes(char)
+    || SPECIAL_KEYBOARD_SYMBOLS_UNICODE.includes(char)
   );
 };

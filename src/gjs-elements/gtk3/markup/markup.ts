@@ -2,10 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 import { WrapMode } from "../../../enums/custom";
-import type {
-  EllipsizeMode,
-  Justification,
-} from "../../../enums/gtk3-index";
+import type { EllipsizeMode, Justification } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -33,15 +30,15 @@ import type { TextNode } from "../text-node";
 import type { BaseMarkupElement } from "./markup-elem";
 import { isMarkupElement } from "./utils/is-markup-elements";
 
-type MarkupPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type MarkupPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
-export type MarkupEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, MarkupElement>;
+export type MarkupEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, MarkupElement>;
 
 export interface MarkupProps extends MarkupPropsMixin {
   wrapMode?: WrapMode;
@@ -57,10 +54,7 @@ export interface MarkupProps extends MarkupPropsMixin {
   onAnchorClick?: (event: MarkupEvent<{ href: string }>) => void;
 }
 
-export class MarkupElement
-  extends BaseElement
-  implements GjsElement<"MARKUP", Gtk.Label>
-{
+export class MarkupElement extends BaseElement implements GjsElement<"MARKUP", Gtk.Label> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

@@ -22,18 +22,16 @@ import type { TextNode } from "../../text-node";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuItemPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  StyleProps &
-  TooltipProps;
+type PopoverMenuItemPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & StyleProps
+  & TooltipProps;
 
 export type PopoverMenuItemProps = PopoverMenuItemPropsMixin;
 
-export class PopoverMenuItemElement
-  extends BaseElement
-  implements GjsElement<"POPOVER_MENU_ITEM", Bin>
-{
+export class PopoverMenuItemElement extends BaseElement implements GjsElement<"POPOVER_MENU_ITEM", Bin> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -50,18 +48,17 @@ export class PopoverMenuItemElement
 
   protected readonly lifecycle = new ElementLifecycleController();
   protected handlers = null;
-  protected readonly propsMapper =
-    new PropertyMapper<PopoverMenuItemProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-    );
+  protected readonly propsMapper = new PropertyMapper<PopoverMenuItemProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+  );
 
   protected child: GjsElement | null = null;
 

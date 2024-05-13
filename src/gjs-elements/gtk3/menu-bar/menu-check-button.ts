@@ -31,19 +31,18 @@ import type { TextNode } from "../text-node";
 import { MenuBarItemElement } from "./menu-bar-item";
 import { MenuEntryElement } from "./menu-entry";
 
-type MenuCheckButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type MenuCheckButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type MenuCheckButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, MenuCheckButtonElement>;
+export type MenuCheckButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, MenuCheckButtonElement>;
 
-export interface MenuCheckButtonProps
-  extends MenuCheckButtonPropsMixin {
+export interface MenuCheckButtonProps extends MenuCheckButtonPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
   value?: boolean;
@@ -56,10 +55,7 @@ export interface MenuCheckButtonProps
   onMouseLeave?: (event: MenuCheckButtonEvent<PointerData>) => void;
 }
 
-export class MenuCheckButtonElement
-  extends BaseElement
-  implements GjsElement<"MENU_CHECK_BUTTON", Gtk.CheckMenuItem>
-{
+export class MenuCheckButtonElement extends BaseElement implements GjsElement<"MENU_CHECK_BUTTON", Gtk.CheckMenuItem> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -69,8 +65,7 @@ export class MenuCheckButtonElement
   readonly kind = "MENU_CHECK_BUTTON";
   protected widget = new Gtk.CheckMenuItem();
 
-  protected parent: MenuBarItemElement | MenuEntryElement | null =
-    null;
+  protected parent: MenuBarItemElement | MenuEntryElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   protected readonly handlers = new EventHandlers<
@@ -78,38 +73,36 @@ export class MenuCheckButtonElement
     MenuCheckButtonProps
   >(this);
 
-  protected readonly propsMapper =
-    new PropertyMapper<MenuCheckButtonProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createAccelPropMapper(this.widget, "activate"),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(DataType.String, (v = "") => {
-            this.widget.label = v;
-          })
-          .value(DataType.Boolean, (v = false) => {
-            this.widget.active = v;
-          })
-          .type(
-            DataType.Enum(MenuCheckButtonType),
-            (v = MenuCheckButtonType.CHECK) => {
-              this.widget.draw_as_radio =
-                v === MenuCheckButtonType.RADIO;
-            },
-          )
-          .inconsistent(DataType.Boolean, (v = false) => {
-            this.widget.inconsistent = v;
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<MenuCheckButtonProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget, "activate"),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(DataType.String, (v = "") => {
+          this.widget.label = v;
+        })
+        .value(DataType.Boolean, (v = false) => {
+          this.widget.active = v;
+        })
+        .type(
+          DataType.Enum(MenuCheckButtonType),
+          (v = MenuCheckButtonType.CHECK) => {
+            this.widget.draw_as_radio = v === MenuCheckButtonType.RADIO;
+          },
+        )
+        .inconsistent(DataType.Boolean, (v = false) => {
+          this.widget.inconsistent = v;
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();

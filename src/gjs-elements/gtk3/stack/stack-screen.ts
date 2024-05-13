@@ -1,9 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  BaselinePosition,
-  Orientation,
-} from "../../../enums/gtk3-index";
+import type { BaselinePosition, Orientation } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -29,15 +26,15 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type StackScreenPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type StackScreenPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
-export interface StackScreenProps<R extends string = string>
-  extends StackScreenPropsMixin {
+export interface StackScreenProps<R extends string = string> extends StackScreenPropsMixin {
   label: string;
   spacing?: number;
   baselinePosition?: BaselinePosition;
@@ -45,10 +42,7 @@ export interface StackScreenProps<R extends string = string>
   uid?: R;
 }
 
-export class StackScreenElement
-  extends BaseElement
-  implements GjsElement<"STACK_SCREEN", Gtk.Box>
-{
+export class StackScreenElement extends BaseElement implements GjsElement<"STACK_SCREEN", Gtk.Box> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -73,52 +67,51 @@ export class StackScreenElement
     this.lifecycle,
     this.widget,
   );
-  protected readonly propsMapper =
-    new PropertyMapper<StackScreenProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(DataType.String, (v = "") => {
-            this.label = v;
-          })
-          .spacing(DataType.Number, (v = 0) => {
-            this.widget.spacing = v;
-          })
-          .baselinePosition(
-            DataType.Enum(Gtk.BaselinePosition),
-            (v = Gtk.BaselinePosition.TOP) => {
-              this.widget.baseline_position = v;
-            },
-          )
-          .orientation(
-            DataType.Enum(Gtk.Orientation),
-            (v = Gtk.Orientation.VERTICAL) => {
-              this.widget.orientation = v;
-            },
-          )
-          .uid(DataType.String, (v) => {
-            if (this.uid) {
-              console.error(
-                new Error("StackItem uid cannot be changed."),
-              );
-            }
+  protected readonly propsMapper = new PropertyMapper<StackScreenProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(DataType.String, (v = "") => {
+          this.label = v;
+        })
+        .spacing(DataType.Number, (v = 0) => {
+          this.widget.spacing = v;
+        })
+        .baselinePosition(
+          DataType.Enum(Gtk.BaselinePosition),
+          (v = Gtk.BaselinePosition.TOP) => {
+            this.widget.baseline_position = v;
+          },
+        )
+        .orientation(
+          DataType.Enum(Gtk.Orientation),
+          (v = Gtk.Orientation.VERTICAL) => {
+            this.widget.orientation = v;
+          },
+        )
+        .uid(DataType.String, (v) => {
+          if (this.uid) {
+            console.error(
+              new Error("StackItem uid cannot be changed."),
+            );
+          }
 
-            if (v) {
-              this.uid = v;
-            } else {
-              this.uid = generateUID(16);
-            }
-          }),
-    );
+          if (v) {
+            this.uid = v;
+          } else {
+            this.uid = generateUID(16);
+          }
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();

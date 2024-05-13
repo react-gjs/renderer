@@ -26,10 +26,7 @@ export type GridItemEvents = {
   itemUpdated: [GridItemElement];
 };
 
-export class GridItemElement
-  extends BaseElement
-  implements GjsElement<"GRID_ITEM">
-{
+export class GridItemElement extends BaseElement implements GjsElement<"GRID_ITEM"> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

@@ -12,28 +12,19 @@ import type { MarkupElementProps } from "../../markup/markup-elem";
 import { createMarkupPropMapper } from "../../markup/utils/create-markup-prop-mapper";
 import { escapeHtml } from "../../markup/utils/escape-html";
 import type { TextNode } from "../../text-node";
-import {
-  isTextViewElement,
-  isTextViewElementContainer,
-} from "../is-text-view-element";
+import { isTextViewElement, isTextViewElementContainer } from "../is-text-view-element";
 import type { TextViewElement } from "../text-view";
-import type {
-  ITextViewElement,
-  TextViewElementContainer,
-  TextViewNode,
-} from "../text-view-elem-interface";
+import type { ITextViewElement, TextViewElementContainer, TextViewNode } from "../text-view-elem-interface";
 
 export interface TextViewLinkProps extends MarkupElementProps {
   href?: string;
 }
 
-type TextViewLinkElementMixin = GjsElement<"TEXT_VIEW_LINK"> &
-  ITextViewElement;
+type TextViewLinkElementMixin =
+  & GjsElement<"TEXT_VIEW_LINK">
+  & ITextViewElement;
 
-export class TextViewLinkElement
-  extends BaseElement
-  implements TextViewLinkElementMixin
-{
+export class TextViewLinkElement extends BaseElement implements TextViewLinkElementMixin {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -50,18 +41,17 @@ export class TextViewLinkElement
 
   readonly lifecycle = new ElementLifecycleController();
   protected handlers = null;
-  protected readonly propsMapper =
-    new PropertyMapper<TextViewLinkProps>(
-      this.lifecycle,
-      createMarkupPropMapper(this.attributes, {
-        color: "#297ad2",
-        underline: "single",
+  protected readonly propsMapper = new PropertyMapper<TextViewLinkProps>(
+    this.lifecycle,
+    createMarkupPropMapper(this.attributes, {
+      color: "#297ad2",
+      underline: "single",
+    }),
+    (props) =>
+      props.href(DataType.String, (href = "") => {
+        this.linkHref = href;
       }),
-      (props) =>
-        props.href(DataType.String, (href = "") => {
-          this.linkHref = href;
-        }),
-    );
+  );
 
   protected linkHref = "";
   protected isVisible = true;

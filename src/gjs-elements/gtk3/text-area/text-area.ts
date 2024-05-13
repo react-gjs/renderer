@@ -1,20 +1,14 @@
 import { DataType } from "dilswer";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-import type {
-  InputPurpose,
-  Justification,
-} from "../../../enums/gtk3-index";
+import type { InputPurpose, Justification } from "../../../enums/gtk3-index";
 import { WrapMode } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
-import {
-  EventHandlers,
-  EventNoop,
-} from "../../utils/element-extenders/event-handlers";
+import { EventHandlers, EventNoop } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { parseEventKey } from "../../utils/gdk-events/key-press-event";
@@ -39,15 +33,15 @@ type TextAreaPadding =
   | [number, number, number]
   | [number, number, number, number];
 
-type TextAreaPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type TextAreaPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
-export type TextAreaEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, TextAreaElement>;
+export type TextAreaEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, TextAreaElement>;
 
 export interface TextAreaProps extends TextAreaPropsMixin {
   value?: string;
@@ -73,10 +67,7 @@ export interface TextAreaProps extends TextAreaPropsMixin {
   onKeyRelease?: (event: TextAreaEvent<Rg.KeyPressEventData>) => void;
 }
 
-export class TextAreaElement
-  extends BaseElement
-  implements GjsElement<"TEXT_AREA", Gtk.TextView>
-{
+export class TextAreaElement extends BaseElement implements GjsElement<"TEXT_AREA", Gtk.TextView> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -196,15 +187,13 @@ export class TextAreaElement
     this.viewHandlers.bind(
       "key-press-event",
       "onKeyPress",
-      (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_PRESS),
+      (event: Gdk.Event & Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_PRESS),
     );
 
     this.viewHandlers.bind(
       "key-release-event",
       "onKeyRelease",
-      (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_RELEASE),
+      (event: Gdk.Event & Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_RELEASE),
     );
 
     this.viewHandlers.bind(
@@ -235,9 +224,9 @@ export class TextAreaElement
     const selectionEndIndex = end!.get_offset();
 
     if (
-      this.previousSelection.start === selectionStartIndex &&
-      this.previousSelection.end === selectionEndIndex &&
-      this.previousSelection.text === selectedText
+      this.previousSelection.start === selectionStartIndex
+      && this.previousSelection.end === selectionEndIndex
+      && this.previousSelection.text === selectedText
     ) {
       throw new EventNoop();
     }

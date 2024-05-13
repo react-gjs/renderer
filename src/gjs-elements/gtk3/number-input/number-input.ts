@@ -8,10 +8,7 @@ import { BaseElement, type GjsElement } from "../../gjs-element";
 import type { ElementMargin } from "../../utils/apply-margin";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
-import {
-  EventHandlers,
-  EventNoop,
-} from "../../utils/element-extenders/event-handlers";
+import { EventHandlers, EventNoop } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { parseEventKey } from "../../utils/gdk-events/key-press-event";
@@ -30,16 +27,16 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 
-type NumberInputPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps;
+type NumberInputPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps;
 
-export type NumberInputEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, NumberInputElement>;
+export type NumberInputEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, NumberInputElement>;
 
 export interface NumberInputProps extends NumberInputPropsMixin {
   defaultValue?: number;
@@ -63,10 +60,7 @@ export interface NumberInputProps extends NumberInputPropsMixin {
   ) => void;
 }
 
-export class NumberInputElement
-  extends BaseElement
-  implements GjsElement<"NUMBER_INPUT", Gtk.SpinButton>
-{
+export class NumberInputElement extends BaseElement implements GjsElement<"NUMBER_INPUT", Gtk.SpinButton> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -84,96 +78,93 @@ export class NumberInputElement
   >(this);
 
   protected isFirstRender = true;
-  protected readonly propsMapper =
-    new PropertyMapper<NumberInputProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .value(DataType.Number, (v, allProps) => {
-            const defaultValue = allProps.defaultValue ?? 0;
-            const newValue = v ?? defaultValue;
-            if (newValue != null) {
-              if (this.isFirstRender) {
-                this.isFirstRender = false;
-                const timeout = setTimeout(() => {
-                  this.widget.set_value(newValue);
-                }, 0);
-                return () => clearTimeout(timeout);
-              } else {
+  protected readonly propsMapper = new PropertyMapper<NumberInputProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .value(DataType.Number, (v, allProps) => {
+          const defaultValue = allProps.defaultValue ?? 0;
+          const newValue = v ?? defaultValue;
+          if (newValue != null) {
+            if (this.isFirstRender) {
+              this.isFirstRender = false;
+              const timeout = setTimeout(() => {
                 this.widget.set_value(newValue);
-              }
+              }, 0);
+              return () => clearTimeout(timeout);
+            } else {
+              this.widget.set_value(newValue);
             }
-          })
-          .updatePolicy(
-            DataType.Enum(Gtk.SpinButtonUpdatePolicy),
-            (v = Gtk.SpinButtonUpdatePolicy.ALWAYS) => {
-              this.widget.set_update_policy(v);
-            },
-          )
-          .precision(DataType.Int, (v = 0) => {
-            this.widget.set_digits(v);
-          })
-          .max(
-            DataType.Number,
-            (v = Number.MAX_SAFE_INTEGER, allProps) => {
-              this.widget.set_range(
-                allProps.min ?? Number.MIN_SAFE_INTEGER,
-                v,
-              );
-            },
-          )
-          .min(
-            DataType.Number,
-            (v = Number.MIN_SAFE_INTEGER, allProps) => {
-              this.widget.set_range(
-                v,
-                allProps.max ?? Number.MAX_SAFE_INTEGER,
-              );
-            },
-          )
-          .increments(DataType.Number, (v = 1, allProps) => {
-            this.widget.set_increments(
+          }
+        })
+        .updatePolicy(
+          DataType.Enum(Gtk.SpinButtonUpdatePolicy),
+          (v = Gtk.SpinButtonUpdatePolicy.ALWAYS) => {
+            this.widget.set_update_policy(v);
+          },
+        )
+        .precision(DataType.Int, (v = 0) => {
+          this.widget.set_digits(v);
+        })
+        .max(
+          DataType.Number,
+          (v = Number.MAX_SAFE_INTEGER, allProps) => {
+            this.widget.set_range(
+              allProps.min ?? Number.MIN_SAFE_INTEGER,
               v,
-              allProps.rmbIncrements ?? 1,
             );
-          })
-          .rmbIncrements(DataType.Number, (v = 1, allProps) => {
-            this.widget.set_increments(allProps.increments ?? 1, v);
-          })
-          .numericOnly(DataType.Boolean, (v = true) => {
-            this.widget.set_numeric(v);
-          })
-          .snapToTicks(DataType.Boolean, (v = false) => {
-            this.widget.set_snap_to_ticks(v);
-          })
-          .wrapOnBounds(DataType.Boolean, (v = false) => {
-            this.widget.set_wrap(v);
-          }),
-    );
+          },
+        )
+        .min(
+          DataType.Number,
+          (v = Number.MIN_SAFE_INTEGER, allProps) => {
+            this.widget.set_range(
+              v,
+              allProps.max ?? Number.MAX_SAFE_INTEGER,
+            );
+          },
+        )
+        .increments(DataType.Number, (v = 1, allProps) => {
+          this.widget.set_increments(
+            v,
+            allProps.rmbIncrements ?? 1,
+          );
+        })
+        .rmbIncrements(DataType.Number, (v = 1, allProps) => {
+          this.widget.set_increments(allProps.increments ?? 1, v);
+        })
+        .numericOnly(DataType.Boolean, (v = true) => {
+          this.widget.set_numeric(v);
+        })
+        .snapToTicks(DataType.Boolean, (v = false) => {
+          this.widget.set_snap_to_ticks(v);
+        })
+        .wrapOnBounds(DataType.Boolean, (v = false) => {
+          this.widget.set_wrap(v);
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();
     this.handlers.bind(
       "key-press-event",
       "onKeyPress",
-      (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_PRESS),
+      (event: Gdk.Event & Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_PRESS),
     );
     this.handlers.bind(
       "key-release-event",
       "onKeyRelease",
-      (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_RELEASE),
+      (event: Gdk.Event & Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_RELEASE),
     );
 
     let previousValue = 0;

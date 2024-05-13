@@ -31,17 +31,17 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ButtonBoxPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type ButtonBoxPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type ButtonBoxEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, ButtonBoxElement>;
+export type ButtonBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, ButtonBoxElement>;
 
 export interface ButtonBoxProps extends ButtonBoxPropsMixin {
   margin?: ElementMargin;
@@ -53,10 +53,7 @@ export interface ButtonBoxProps extends ButtonBoxPropsMixin {
   onMouseLeave?: (event: ButtonBoxEvent<PointerData>) => void;
 }
 
-export class ButtonBoxElement
-  extends BaseElement
-  implements GjsElement<"BUTTON_BOX", Gtk.Button>
-{
+export class ButtonBoxElement extends BaseElement implements GjsElement<"BUTTON_BOX", Gtk.Button> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

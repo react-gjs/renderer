@@ -30,8 +30,8 @@ export const resizePixbuff = (
   }
 
   if (
-    targetWidth === currentWidth &&
-    targetHeight === currentHeight
+    targetWidth === currentWidth
+    && targetHeight === currentHeight
   ) {
     return pixbuff;
   }

@@ -81,20 +81,14 @@ export class GridItemsList {
     childEntry.listeners.push(
       child.emitter.on("columnSpanChanged", (newColSpan) => {
         childEntry.columnSpan = newColSpan;
-        childEntry.dispatcher.dispatch(() =>
-          this.onChildChangeInterface.onChildChange(childEntry),
-        );
+        childEntry.dispatcher.dispatch(() => this.onChildChangeInterface.onChildChange(childEntry));
       }),
       child.emitter.on("rowSpanChanged", (newRowSpan) => {
         childEntry.rowSpan = newRowSpan;
-        childEntry.dispatcher.dispatch(() =>
-          this.onChildChangeInterface.onChildChange(childEntry),
-        );
+        childEntry.dispatcher.dispatch(() => this.onChildChangeInterface.onChildChange(childEntry));
       }),
       child.emitter.on("itemUpdated", () => {
-        childEntry.dispatcher.dispatch(() =>
-          this.onChildChangeInterface.onChildChange(childEntry),
-        );
+        childEntry.dispatcher.dispatch(() => this.onChildChangeInterface.onChildChange(childEntry));
       }),
       child.emitter.on("itemDestroyed", () => {
         this.items = this.items.filter((item) => item.id !== id);

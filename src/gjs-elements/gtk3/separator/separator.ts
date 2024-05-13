@@ -21,21 +21,19 @@ import { createSizeRequestPropMapper } from "../../utils/property-maps-factories
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 
-type SeparatorPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type SeparatorPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface SeparatorProps extends SeparatorPropsMixin {
   orientation?: Orientation;
 }
 
-export class SeparatorElement
-  extends BaseElement
-  implements GjsElement<"SEPARATOR", Gtk.Separator>
-{
+export class SeparatorElement extends BaseElement implements GjsElement<"SEPARATOR", Gtk.Separator> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

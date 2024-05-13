@@ -20,8 +20,7 @@ import type { ApplicationElement } from "../application/application";
 import { HeaderBarElement } from "../headerbar/headerbar";
 import type { TextNode } from "../text-node";
 
-export type WindowEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, WindowElement>;
+export type WindowEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, WindowElement>;
 
 export type WindowProps = {
   decorate?: boolean;
@@ -51,10 +50,7 @@ export type WindowProps = {
   ) => void;
 };
 
-export class WindowElement
-  extends BaseElement
-  implements GjsElement<"WINDOW", Gtk.Window>
-{
+export class WindowElement extends BaseElement implements GjsElement<"WINDOW", Gtk.Window> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -194,8 +190,8 @@ export class WindowElement
     index: number,
   ) {
     if (
-      index === 0 &&
-      GjsElementManager.isGjsElementOfKind(element, HeaderBarElement)
+      index === 0
+      && GjsElementManager.isGjsElementOfKind(element, HeaderBarElement)
     ) {
       this.widget.set_titlebar(widget);
     } else {

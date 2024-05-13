@@ -120,9 +120,9 @@ export const compareStyles = (
 
     if (oldStyle[key] !== newStyle![key]) {
       if (
-        key.startsWith(":") &&
-        isObject(oldStyle[key]) &&
-        isObject(newStyle![key])
+        key.startsWith(":")
+        && isObject(oldStyle[key])
+        && isObject(newStyle![key])
       ) {
         if (compareStyles(oldStyle[key], newStyle![key])) {
           return true;

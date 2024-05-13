@@ -7,21 +7,21 @@ import { useWindow } from "../use-window/use-window";
 type AcceleratorKey =
   | string
   | {
-      key: string;
-      /**
-       * The modifier keys that must be held down for this accelerator
-       * to trigger.
-       *
-       * Can be an `AccelModifier` or a bitwise combination of
-       * multiple `AccelModifier`s, for example for a combination
-       * Ctrl+Shift:
-       *
-       * @example
-       *   const accelModifier =
-       *     AccelModifier.CONTROL_MASK | AccelModifier.SHIFT_MASK;
-       */
-      modifier?: number;
-    };
+    key: string;
+    /**
+     * The modifier keys that must be held down for this accelerator
+     * to trigger.
+     *
+     * Can be an `AccelModifier` or a bitwise combination of
+     * multiple `AccelModifier`s, for example for a combination
+     * Ctrl+Shift:
+     *
+     * @example
+     *   const accelModifier =
+     *     AccelModifier.CONTROL_MASK | AccelModifier.SHIFT_MASK;
+     */
+    modifier?: number;
+  };
 
 export const useAccelerator = (
   key: AcceleratorKey,

@@ -37,17 +37,17 @@ import { createTooltipPropMapper } from "../../utils/property-maps-factories/cre
 import { resizePixbuff } from "../../utils/resize-pixbuff";
 import type { TextNode } from "../text-node";
 
-type ButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type ButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type ButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, ButtonElement>;
+export type ButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, ButtonElement>;
 
 export interface ButtonProps extends ButtonPropsMixin {
   type?: ButtonType;
@@ -78,10 +78,7 @@ const ImageDataType = DataType.OneOf(
   ),
 );
 
-export class ButtonElement
-  extends BaseElement
-  implements GjsElement<"BUTTON", Gtk.Button>
-{
+export class ButtonElement extends BaseElement implements GjsElement<"BUTTON", Gtk.Button> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -151,8 +148,8 @@ export class ButtonElement
         .imageHeight(DataType.Number, (v, allProps, mapperApi) => {
           if (allProps.image && !allProps.icon) {
             if (
-              !mapperApi.isUpdatedInThisCycle("image") &&
-              !mapperApi.isUpdatedInThisCycle("imageWidth")
+              !mapperApi.isUpdatedInThisCycle("image")
+              && !mapperApi.isUpdatedInThisCycle("imageWidth")
             ) {
               this.resizeCurrentImage(
                 allProps.imageWidth,
@@ -167,9 +164,9 @@ export class ButtonElement
           (v, allProps, mapperApi) => {
             if (allProps.image && !allProps.icon) {
               if (
-                !mapperApi.isUpdatedInThisCycle("image") &&
-                !mapperApi.isUpdatedInThisCycle("imageWidth") &&
-                !mapperApi.isUpdatedInThisCycle("imageHeight")
+                !mapperApi.isUpdatedInThisCycle("image")
+                && !mapperApi.isUpdatedInThisCycle("imageWidth")
+                && !mapperApi.isUpdatedInThisCycle("imageHeight")
               ) {
                 this.resizeCurrentImage(
                   allProps.imageWidth,
@@ -200,8 +197,8 @@ export class ButtonElement
           DataType.Number,
           (v = 16, allProps, mapperApi) => {
             if (
-              allProps.icon != null &&
-              !mapperApi.isUpdatedInThisCycle("icon")
+              allProps.icon != null
+              && !mapperApi.isUpdatedInThisCycle("icon")
             ) {
               this.setImageIcon(allProps.icon, v);
             }
@@ -311,10 +308,9 @@ export class ButtonElement
     icon: string | Gio.Icon,
     pixelSize?: number,
   ) {
-    const iconWidget =
-      typeof icon === "string"
-        ? Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
-        : Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON);
+    const iconWidget = typeof icon === "string"
+      ? Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
+      : Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON);
 
     if (pixelSize != null) {
       iconWidget.set_pixel_size(pixelSize);

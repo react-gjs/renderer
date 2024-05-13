@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
-import GObject from "gi://GObject";
 import Gdk from "gi://Gdk";
+import GObject from "gi://GObject";
 import Gtk from "gi://Gtk?version=3.0";
 import { KeyPressModifiers } from "../../../enums/custom";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
@@ -13,10 +13,7 @@ import { EventHandlers } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import { ensureNotText } from "../../utils/ensure-not-string";
-import {
-  mapKeypressEventState,
-  parseEventKey,
-} from "../../utils/gdk-events/key-press-event";
+import { mapKeypressEventState, parseEventKey } from "../../utils/gdk-events/key-press-event";
 import { isKeyboardSymbol } from "../../utils/is-keyboard-symbol-unicode";
 import { mountAction } from "../../utils/mount-action";
 import type { ChildPropertiesProps } from "../../utils/property-maps-factories/create-child-props-mapper";
@@ -28,8 +25,7 @@ import type { WindowElement } from "../window/window";
 
 type SearchBarPropsMixin = ChildPropertiesProps & StyleProps;
 
-export type SearchBarEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, SearchBarElement>;
+export type SearchBarEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, SearchBarElement>;
 
 export interface SearchBarProps extends SearchBarPropsMixin {
   isVisible?: boolean;
@@ -43,9 +39,9 @@ export interface SearchBarProps extends SearchBarPropsMixin {
   showOnKeypress?:
     | boolean
     | ((
-        window: Gtk.Window,
-        event: SearchBarEvent<Rg.KeyPressEventData>,
-      ) => boolean);
+      window: Gtk.Window,
+      event: SearchBarEvent<Rg.KeyPressEventData>,
+    ) => boolean);
   /**
    * When a keyboard symbol is pressed and no other input is in focus,
    * this event will be fired. If the `isVisible` property of the
@@ -62,10 +58,7 @@ interface SearchBarInternalProps extends SearchBarProps {
   __rg_onMount?: (elem: SearchBarElement) => void;
 }
 
-export class SearchBarElement
-  extends BaseElement
-  implements GjsElement<"SEARCH_BAR", Gtk.SearchBar>
-{
+export class SearchBarElement extends BaseElement implements GjsElement<"SEARCH_BAR", Gtk.SearchBar> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -87,23 +80,22 @@ export class SearchBarElement
     this.lifecycle,
     this.widget,
   );
-  protected readonly propsMapper =
-    new PropertyMapper<SearchBarInternalProps>(
-      this.lifecycle,
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .showCloseButton(DataType.Boolean, (v = false) => {
-            this.widget.set_show_close_button(v);
-          })
-          .isVisible(DataType.Boolean, (v = false) => {
-            this.widget.set_search_mode(v);
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<SearchBarInternalProps>(
+    this.lifecycle,
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .showCloseButton(DataType.Boolean, (v = false) => {
+          this.widget.set_show_close_button(v);
+        })
+        .isVisible(DataType.Boolean, (v = false) => {
+          this.widget.set_search_mode(v);
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();
@@ -112,8 +104,8 @@ export class SearchBarElement
     this.handlers.bindInternal("notify::search-mode-enabled", () => {
       const { isVisible } = this.propsMapper.currentProps;
       if (
-        isVisible != null &&
-        this.widget.get_search_mode() !== isVisible
+        isVisible != null
+        && this.widget.get_search_mode() !== isVisible
       ) {
         this.widget.set_search_mode(isVisible);
       }
@@ -133,8 +125,7 @@ export class SearchBarElement
     const isSearchMode = this.widget.get_search_mode();
     const keyval = event.get_keyval()[1]!;
     const keypressMod = mapKeypressEventState(event);
-    const isControlled =
-      this.propsMapper.currentProps.isVisible != null;
+    const isControlled = this.propsMapper.currentProps.isVisible != null;
     const keyUnicode = Gdk.keyval_to_unicode(keyval);
 
     if (isSearchMode && keyval === Gdk.KEY_Escape) {
@@ -174,9 +165,9 @@ export class SearchBarElement
           );
 
           if (
-            widgetName === "GtkEntry" ||
-            widgetName === "GtkSearchEntry" ||
-            widgetName === "GtkTextView"
+            widgetName === "GtkEntry"
+            || widgetName === "GtkSearchEntry"
+            || widgetName === "GtkTextView"
           ) {
             return;
           }
@@ -184,18 +175,17 @@ export class SearchBarElement
       }
 
       if (
-        typeof this.propsMapper.currentProps.showOnKeypress ===
-        "function"
+        typeof this.propsMapper.currentProps.showOnKeypress
+          === "function"
       ) {
-        const shouldShow =
-          this.propsMapper.currentProps.showOnKeypress(window, {
-            ...parseEventKey(event),
-            originalEvent: event,
-            target: this,
-            targetWidget: this.widget,
-            preventDefault: () => {},
-            stopPropagation: () => {},
-          });
+        const shouldShow = this.propsMapper.currentProps.showOnKeypress(window, {
+          ...parseEventKey(event),
+          originalEvent: event,
+          target: this,
+          targetWidget: this.widget,
+          preventDefault: () => {},
+          stopPropagation: () => {},
+        });
 
         if (!shouldShow) {
           return;
@@ -221,8 +211,8 @@ export class SearchBarElement
       }
 
       if (
-        isKeyboardSymbol(keyUnicode) &&
-        keypressMod === KeyPressModifiers.NONE
+        isKeyboardSymbol(keyUnicode)
+        && keypressMod === KeyPressModifiers.NONE
       ) {
         const { onVisibilityChange } = this.propsMapper.currentProps;
         if (onVisibilityChange) {

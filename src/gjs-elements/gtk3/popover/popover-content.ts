@@ -9,10 +9,7 @@ import { mountAction } from "../../utils/mount-action";
 import type { TextNode } from "../text-node";
 import { PopoverElement } from "./popover";
 
-export class PopoverContentElement
-  extends BaseElement
-  implements GjsElement<"POPOVER_CONTENT", Gtk.Widget>
-{
+export class PopoverContentElement extends BaseElement implements GjsElement<"POPOVER_CONTENT", Gtk.Widget> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

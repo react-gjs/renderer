@@ -1,4 +1,4 @@
-import { Type, compileFastValidator } from "dilswer";
+import { compileFastValidator, Type } from "dilswer";
 import type Gtk from "gi://Gtk";
 import type { PackType } from "../../../enums/gtk3-index";
 import type { GjsElement } from "../../gjs-element";

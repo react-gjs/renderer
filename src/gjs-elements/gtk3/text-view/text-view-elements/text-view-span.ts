@@ -11,26 +11,17 @@ import type { MarkupElementProps } from "../../markup/markup-elem";
 import { createMarkupPropMapper } from "../../markup/utils/create-markup-prop-mapper";
 import { escapeHtml } from "../../markup/utils/escape-html";
 import type { TextNode } from "../../text-node";
-import {
-  isTextViewElement,
-  isTextViewElementContainer,
-} from "../is-text-view-element";
+import { isTextViewElement, isTextViewElementContainer } from "../is-text-view-element";
 import type { TextViewElement } from "../text-view";
-import type {
-  ITextViewElement,
-  TextViewElementContainer,
-  TextViewNode,
-} from "../text-view-elem-interface";
+import type { ITextViewElement, TextViewElementContainer, TextViewNode } from "../text-view-elem-interface";
 
 export type TextViewSpanProps = MarkupElementProps;
 
-type TextViewSpanElementMixin = GjsElement<"TEXT_VIEW_SPAN"> &
-  ITextViewElement;
+type TextViewSpanElementMixin =
+  & GjsElement<"TEXT_VIEW_SPAN">
+  & ITextViewElement;
 
-export class TextViewSpanElement
-  extends BaseElement
-  implements TextViewSpanElementMixin
-{
+export class TextViewSpanElement extends BaseElement implements TextViewSpanElementMixin {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -47,11 +38,10 @@ export class TextViewSpanElement
 
   readonly lifecycle = new ElementLifecycleController();
   protected handlers = null;
-  protected readonly propsMapper =
-    new PropertyMapper<TextViewSpanProps>(
-      this.lifecycle,
-      createMarkupPropMapper(this.attributes),
-    );
+  protected readonly propsMapper = new PropertyMapper<TextViewSpanProps>(
+    this.lifecycle,
+    createMarkupPropMapper(this.attributes),
+  );
 
   protected isVisible = true;
 

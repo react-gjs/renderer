@@ -22,22 +22,20 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type IconPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type IconPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export type IconProps = IconPropsMixin & {
   iconName: Rg.IconName;
   pixelSize?: number;
 };
 
-export class IconElement
-  extends BaseElement
-  implements GjsElement<"ICON", Gtk.Image>
-{
+export class IconElement extends BaseElement implements GjsElement<"ICON", Gtk.Image> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

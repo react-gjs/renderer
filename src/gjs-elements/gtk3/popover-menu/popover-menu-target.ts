@@ -10,10 +10,7 @@ import { Bin } from "../../utils/widgets/bin";
 import type { TextNode } from "../text-node";
 import { PopoverMenuElement } from "./popover-menu";
 
-export class PopoverMenuTargetElement
-  extends BaseElement
-  implements GjsElement<"POPOVER_MENU_TARGET", Gtk.Widget>
-{
+export class PopoverMenuTargetElement extends BaseElement implements GjsElement<"POPOVER_MENU_TARGET", Gtk.Widget> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

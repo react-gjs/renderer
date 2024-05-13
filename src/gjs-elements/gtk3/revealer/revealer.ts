@@ -24,22 +24,20 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type RevealerPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type RevealerPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 export interface RevealerProps extends RevealerPropsMixin {
   visible?: boolean;
   transitionDuration?: number;
   transitionType?: Gtk.RevealerTransitionType;
 }
 
-export class RevealerElement
-  extends BaseElement
-  implements GjsElement<"REVEALER", Gtk.Revealer>
-{
+export class RevealerElement extends BaseElement implements GjsElement<"REVEALER", Gtk.Revealer> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

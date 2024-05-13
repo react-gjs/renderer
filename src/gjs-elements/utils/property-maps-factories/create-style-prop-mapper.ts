@@ -97,24 +97,23 @@ function parseCssValue(value: CssPropertyValue) {
 function parseCssRulesToString(styles: CssRules) {
   return Object.entries(styles)
     .map(
-      ([name, value]) =>
-        `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`,
+      ([name, value]) => `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`,
     )
     .join("\n");
 }
 
 function parseToCss(styles: StyleSheet, className: string) {
   const mainRule = `.${className} {
-    ${Object.entries(styles)
+    ${
+    Object.entries(styles)
       .filter(
-        (entry): entry is [string, string | number] =>
-          !entry[0].startsWith(":"),
+        (entry): entry is [string, string | number] => !entry[0].startsWith(":"),
       )
       .map(
-        ([name, value]) =>
-          `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`,
+        ([name, value]) => `${pascalCaseToKebabCase(name)}: ${parseCssValue(value)};`,
       )
-      .join("\n")}
+      .join("\n")
+  }
 }`;
 
   const rules = [mainRule];
@@ -200,9 +199,7 @@ function parseToCss(styles: StyleSheet, className: string) {
     );
   }
 
-  const childRules = Object.entries(styles).filter(([entry]) =>
-    entry.startsWith(":child("),
-  );
+  const childRules = Object.entries(styles).filter(([entry]) => entry.startsWith(":child("));
 
   for (const [name, cRules] of childRules) {
     const selector = name.slice(7, -1);
@@ -225,20 +222,23 @@ export type CssPropertyValue = string | number;
 
 type ChildSelector = `:child(${string})`;
 
-export type StyleSheet = CssRules & {
-  ":hover"?: CssRules;
-  ":active"?: CssRules;
-  ":focus"?: CssRules;
-  ":disabled"?: CssRules;
-  ":selected"?: CssRules;
-  ":checked"?: CssRules;
-  ":indeterminate"?: CssRules;
-  ":backdrop"?: CssRules;
-  ":link"?: CssRules;
-  ":visited"?: CssRules;
-} & {
-  [key in ChildSelector]?: CssRules;
-};
+export type StyleSheet =
+  & CssRules
+  & {
+    ":hover"?: CssRules;
+    ":active"?: CssRules;
+    ":focus"?: CssRules;
+    ":disabled"?: CssRules;
+    ":selected"?: CssRules;
+    ":checked"?: CssRules;
+    ":indeterminate"?: CssRules;
+    ":backdrop"?: CssRules;
+    ":link"?: CssRules;
+    ":visited"?: CssRules;
+  }
+  & {
+    [key in ChildSelector]?: CssRules;
+  };
 
 export type StyleProps = {
   style?: StyleSheet;

@@ -32,19 +32,19 @@ import { popoverMenuModelButton } from "../utils/popover-menu-model-button";
 import type { RadioGroup } from "../utils/popover-radio-controller";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuRadioButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type PopoverMenuRadioButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
 export type PopoverMenuRadioButtonEvent<
   P extends Record<string, any> = {},
 > = SyntheticEvent<P, PopoverMenuRadioButtonElement>;
 
-export interface PopoverMenuRadioButtonProps
-  extends PopoverMenuRadioButtonPropsMixin {
+export interface PopoverMenuRadioButtonProps extends PopoverMenuRadioButtonPropsMixin {
   label?: string;
   icon?: Rg.IconName;
   centered?: boolean;
@@ -66,8 +66,7 @@ export interface PopoverMenuRadioButtonProps
   ) => void;
 }
 
-export class PopoverMenuRadioButtonElement
-  extends BaseElement
+export class PopoverMenuRadioButtonElement extends BaseElement
   implements GjsElement<"POPOVER_MENU_RADIO_BUTTON", Gtk.ModelButton>
 {
   static getContext(
@@ -94,59 +93,58 @@ export class PopoverMenuRadioButtonElement
     Gtk.ModelButton,
     PopoverMenuRadioButtonProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<PopoverMenuRadioButtonProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createAccelPropMapper(this.widget, "clicked"),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(DataType.String, (v = "") => {
-            this.widget.text = v;
-          })
-          .icon(DataType.String, (v = "") => {
-            this.widget.icon = Gio.Icon.new_for_string(v)!;
-          })
-          .centered(DataType.Boolean, (v = false) => {
-            this.widget.centered = v;
-          })
-          .inverted(DataType.Boolean, (v = false) => {
-            this.widget.inverted = v;
-          })
-          .radioGroup(DataType.String, (v = "main", allProps) => {
-            if (this.rootMenu) {
-              const controller = this.rootMenu.getRadioController();
+  protected readonly propsMapper = new PropertyMapper<PopoverMenuRadioButtonProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget, "clicked"),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(DataType.String, (v = "") => {
+          this.widget.text = v;
+        })
+        .icon(DataType.String, (v = "") => {
+          this.widget.icon = Gio.Icon.new_for_string(v)!;
+        })
+        .centered(DataType.Boolean, (v = false) => {
+          this.widget.centered = v;
+        })
+        .inverted(DataType.Boolean, (v = false) => {
+          this.widget.inverted = v;
+        })
+        .radioGroup(DataType.String, (v = "main", allProps) => {
+          if (this.rootMenu) {
+            const controller = this.rootMenu.getRadioController();
 
-              if (this.radioGroup) {
-                controller.removeFromGroup(
-                  this.radioGroup.name,
-                  this,
-                );
-              }
-
-              this.radioGroup = controller.addToGroup(
-                v,
-                this,
-                allProps.isDefault,
-              );
-              this.widget.active = this.radioGroup.isSelected(this);
-            }
-          })
-          .selected(DataType.Boolean, (v, allProps) => {
             if (this.radioGroup) {
-              if (v === true) {
-                this.radioGroup.select(this);
-              }
+              controller.removeFromGroup(
+                this.radioGroup.name,
+                this,
+              );
             }
-          }),
-    );
+
+            this.radioGroup = controller.addToGroup(
+              v,
+              this,
+              allProps.isDefault,
+            );
+            this.widget.active = this.radioGroup.isSelected(this);
+          }
+        })
+        .selected(DataType.Boolean, (v, allProps) => {
+          if (this.radioGroup) {
+            if (v === true) {
+              this.radioGroup.select(this);
+            }
+          }
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();

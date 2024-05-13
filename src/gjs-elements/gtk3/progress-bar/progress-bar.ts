@@ -23,12 +23,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ProgressBarPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type ProgressBarPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface ProgressBarProps extends ProgressBarPropsMixin {
   label?: string;
@@ -39,10 +40,7 @@ export interface ProgressBarProps extends ProgressBarPropsMixin {
   step?: number;
 }
 
-export class ProgressBarElement
-  extends BaseElement
-  implements GjsElement<"PROGRESS_BAR", Gtk.ProgressBar>
-{
+export class ProgressBarElement extends BaseElement implements GjsElement<"PROGRESS_BAR", Gtk.ProgressBar> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -59,44 +57,43 @@ export class ProgressBarElement
     Gtk.ProgressBar,
     ProgressBarProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<ProgressBarProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .label(Type.String, (v) => {
-            this.widget.set_text(v ?? null);
-          })
-          .ellipsizeLabel(
-            Type.Enum(Pango.EllipsizeMode),
-            (v = Pango.EllipsizeMode.NONE) => {
-              this.widget.set_ellipsize(v);
-            },
-          )
-          .invert(Type.Boolean, (v = false) => {
-            this.widget.set_inverted(v);
-          })
-          .progress(Type.Number, (v = 0) => {
-            v = Math.max(0, Math.min(1, v));
-            this.widget.set_fraction(v);
-          })
-          .showText(Type.Boolean, (v = false) => {
-            this.widget.set_show_text(v);
-          })
-          .step(Type.Number, (v = 0) => {
-            v = Math.max(0, Math.min(1, v));
-            this.widget.set_pulse_step(v);
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<ProgressBarProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .label(Type.String, (v) => {
+          this.widget.set_text(v ?? null);
+        })
+        .ellipsizeLabel(
+          Type.Enum(Pango.EllipsizeMode),
+          (v = Pango.EllipsizeMode.NONE) => {
+            this.widget.set_ellipsize(v);
+          },
+        )
+        .invert(Type.Boolean, (v = false) => {
+          this.widget.set_inverted(v);
+        })
+        .progress(Type.Number, (v = 0) => {
+          v = Math.max(0, Math.min(1, v));
+          this.widget.set_fraction(v);
+        })
+        .showText(Type.Boolean, (v = false) => {
+          this.widget.set_show_text(v);
+        })
+        .step(Type.Number, (v = 0) => {
+          v = Math.max(0, Math.min(1, v));
+          this.widget.set_pulse_step(v);
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();

@@ -230,7 +230,7 @@ export const getKeyCodeFromName = (keyName: string) => {
     case "COLON_SIGN":
     case "COLONSIGN":
       return Gdk.KEY_colon;
-    case '"':
+    case "\"":
     case "DOUBLE_QUOTE":
     case "DOUBLEQUOTE":
       return Gdk.KEY_quotedbl;

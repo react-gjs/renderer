@@ -4,10 +4,10 @@ export const isInstrinsic = (
   v: string | React.JSXElementConstructor<any>,
 ): v is React.FC => {
   return !!(
-    (typeof v === "function" || typeof v === "object") &&
-    v != null &&
+    (typeof v === "function" || typeof v === "object")
+    && v != null
     // @ts-expect-error
-    v[InstinsicElementSymbol]
+    && v[InstinsicElementSymbol]
   );
 };
 

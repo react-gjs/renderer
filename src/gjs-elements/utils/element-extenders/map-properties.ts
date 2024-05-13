@@ -160,19 +160,17 @@ export class PropertyMapper<P = Record<string, any>> {
         entry.nextCleanup?.();
         updateEntry(entry, this.properties[propName as string]);
       },
-      isUpdatedInThisCycle: (propName) =>
-        updated.has(propName as string),
+      isUpdatedInThisCycle: (propName) => updated.has(propName as string),
     };
 
     const updateEntry = (entry: MapEntry<P>, value: any) => {
       try {
         mapperUpdateApi.propName = entry.propName;
-        entry.nextCleanup =
-          entry.callback(
-            value,
-            this.collectorApi.props,
-            mapperUpdateApi,
-          ) ?? undefined;
+        entry.nextCleanup = entry.callback(
+          value,
+          this.collectorApi.props,
+          mapperUpdateApi,
+        ) ?? undefined;
       } catch (e) {
         console.error("Failed to apply a property update.", e);
       }
@@ -236,12 +234,11 @@ export class PropertyMapper<P = Record<string, any>> {
         } else {
           entry = this.map.get(propName)!;
           try {
-            entry.nextCleanup =
-              entry.callback(undefined, this.collectorApi.props, {
-                instead: () => {},
-                isUpdatedInThisCycle: () => true,
-                propName,
-              }) ?? undefined;
+            entry.nextCleanup = entry.callback(undefined, this.collectorApi.props, {
+              instead: () => {},
+              isUpdatedInThisCycle: () => true,
+              propName,
+            }) ?? undefined;
           } catch (e) {
             console.error("Failed to apply a property update.", e);
           }

@@ -26,12 +26,13 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TextNode } from "../text-node";
 import { FlowBoxEntryElement } from "./flow-box-entry";
 
-type FlowBoxPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type FlowBoxPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface FlowBoxProps extends FlowBoxPropsMixin {
   orientation?: Orientation;
@@ -44,10 +45,7 @@ export interface FlowBoxProps extends FlowBoxPropsMixin {
   sameSizeChildren?: boolean;
 }
 
-export class FlowBoxElement
-  extends BaseElement
-  implements GjsElement<"FLOW_BOX", Gtk.FlowBox>
-{
+export class FlowBoxElement extends BaseElement implements GjsElement<"FLOW_BOX", Gtk.FlowBox> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -84,10 +82,9 @@ export class FlowBoxElement
         .orientation(
           DataType.Enum(Gtk.Orientation),
           (v = Gtk.Orientation.HORIZONTAL) => {
-            this.widget.orientation =
-              v === Gtk.Orientation.HORIZONTAL
-                ? Gtk.Orientation.VERTICAL
-                : Gtk.Orientation.HORIZONTAL;
+            this.widget.orientation = v === Gtk.Orientation.HORIZONTAL
+              ? Gtk.Orientation.VERTICAL
+              : Gtk.Orientation.HORIZONTAL;
           },
         )
         .selectionMode(

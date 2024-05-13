@@ -85,10 +85,10 @@ type FileChooserApi<F> = {
   /** The filter that were active when the user selected a file(s). */
   filter:
     | {
-        isDefault?: boolean | undefined;
-        label: string;
-        patterns: string[];
-      }
+      isDefault?: boolean | undefined;
+      label: string;
+      patterns: string[];
+    }
     | undefined;
   /**
    * Opens the FileChooserDialog and returns a promise that resolves
@@ -206,10 +206,9 @@ export function useFileChooser(
 ): any {
   const isMounted = useIsMounted();
   const [file, setFile] = React.useState<Gio.File | Gio.File[]>();
-  const [filter, setFilter] =
-    React.useState<
-      Required<Rg.FileChooserDialogParams>["filters"][number]
-    >();
+  const [filter, setFilter] = React.useState<
+    Required<Rg.FileChooserDialogParams>["filters"][number]
+  >();
   const dialogWidget = React.useRef<Gtk.FileChooserNative>();
 
   const openDialog = React.useCallback(
@@ -226,8 +225,7 @@ export function useFileChooser(
             const dialog = new Gtk.FileChooserNative();
             dialogWidget.current = dialog;
 
-            const app =
-              Gio.Application.get_default() as Gtk.Application;
+            const app = Gio.Application.get_default() as Gtk.Application;
 
             dialog.set_transient_for(app.active_window);
             dialog.set_action(action);
@@ -257,8 +255,8 @@ export function useFileChooser(
             }
 
             if (
-              action === Gtk.FileChooserAction.CREATE_FOLDER ||
-              action === Gtk.FileChooserAction.SAVE
+              action === Gtk.FileChooserAction.CREATE_FOLDER
+              || action === Gtk.FileChooserAction.SAVE
             ) {
               if (params.defaultFileName) {
                 dialog.set_current_name(params.defaultFileName);

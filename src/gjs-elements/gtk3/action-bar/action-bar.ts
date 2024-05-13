@@ -23,19 +23,17 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ActionBarPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type ActionBarPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export type ActionBarProps = ActionBarPropsMixin;
 
-export class ActionBarElement
-  extends BaseElement
-  implements GjsElement<"ACTION_BAR", Gtk.ActionBar>
-{
+export class ActionBarElement extends BaseElement implements GjsElement<"ACTION_BAR", Gtk.ActionBar> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

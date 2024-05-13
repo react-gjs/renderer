@@ -4,10 +4,9 @@ import { isKeyboardSymbol } from "../../../src/gjs-elements/utils/is-keyboard-sy
 
 export default describe("isKeyboardSymbol", () => {
   it("should return true for keyboard symbols", () => {
-    const letters =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
-        "",
-      );
+    const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+      "",
+    );
     const numbers = "0123456789".split("");
     const symbols = "!@#$%^&*()_+=-[];',./?><:\"}{|`".split("");
 

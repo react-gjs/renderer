@@ -24,9 +24,9 @@ const performAppendAction = (action: () => void) => {
     action();
   } catch (e) {
     if (
-      typeof e === "object" &&
-      e !== null &&
-      e instanceof DoNotAppend
+      typeof e === "object"
+      && e !== null
+      && e instanceof DoNotAppend
     ) {
       // do nothing
     } else {
@@ -45,8 +45,8 @@ export const GjsRenderer = Reconciler({
   appendChildToContainer(container: any, child: any) {
     performAppendAction(() => {
       if (
-        isGjsElementOrText(child) &&
-        GjsElementManager.isGjsElement(container)
+        isGjsElementOrText(child)
+        && GjsElementManager.isGjsElement(container)
       ) {
         container.appendChild(child);
       }
@@ -55,8 +55,8 @@ export const GjsRenderer = Reconciler({
   appendInitialChild(parentInstance: any, child: any) {
     performAppendAction(() => {
       if (
-        isGjsElementOrText(child) &&
-        GjsElementManager.isGjsElement(parentInstance)
+        isGjsElementOrText(child)
+        && GjsElementManager.isGjsElement(parentInstance)
       ) {
         parentInstance.appendChild(child);
       }
@@ -65,8 +65,8 @@ export const GjsRenderer = Reconciler({
   appendChild(parentInstance: any, child: any) {
     performAppendAction(() => {
       if (
-        isGjsElementOrText(child) &&
-        GjsElementManager.isGjsElement(parentInstance)
+        isGjsElementOrText(child)
+        && GjsElementManager.isGjsElement(parentInstance)
       ) {
         parentInstance.appendChild(child);
       }
@@ -164,9 +164,9 @@ export const GjsRenderer = Reconciler({
     internalHandle,
   ) {
     if (
-      updatePayload &&
-      updatePayload.length > 0 &&
-      GjsElementManager.isGjsElement(instance)
+      updatePayload
+      && updatePayload.length > 0
+      && GjsElementManager.isGjsElement(instance)
     ) {
       instance.updateProps(updatePayload);
     }
@@ -211,9 +211,9 @@ export const GjsRenderer = Reconciler({
   insertBefore(parentInstance, child, beforeChild) {
     performAppendAction(() => {
       if (
-        GjsElementManager.isGjsElement(parentInstance) &&
-        isGjsElementOrText(child) &&
-        isGjsElementOrText(beforeChild)
+        GjsElementManager.isGjsElement(parentInstance)
+        && isGjsElementOrText(child)
+        && isGjsElementOrText(beforeChild)
       ) {
         parentInstance.insertBefore(child, beforeChild);
       }
@@ -222,9 +222,9 @@ export const GjsRenderer = Reconciler({
   insertInContainerBefore(container, child, beforeChild) {
     performAppendAction(() => {
       if (
-        GjsElementManager.isGjsElement(container) &&
-        isGjsElementOrText(child) &&
-        isGjsElementOrText(beforeChild)
+        GjsElementManager.isGjsElement(container)
+        && isGjsElementOrText(child)
+        && isGjsElementOrText(beforeChild)
       ) {
         container.insertBefore(child, beforeChild);
         // container.render();

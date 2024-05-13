@@ -20,21 +20,19 @@ import { createSizeRequestPropMapper } from "../../utils/property-maps-factories
 import type { StyleProps } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 
-type SpinnerPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type SpinnerPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface SpinnerProps extends SpinnerPropsMixin {
   visible?: boolean;
 }
 
-export class SpinnerElement
-  extends BaseElement
-  implements GjsElement<"SPINNER", Gtk.Spinner>
-{
+export class SpinnerElement extends BaseElement implements GjsElement<"SPINNER", Gtk.Spinner> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

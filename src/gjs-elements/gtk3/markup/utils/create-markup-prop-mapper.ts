@@ -72,12 +72,12 @@ export const createMarkupPropMapper = <A extends MarkupAttributes>(
       .fontSize(
         Type.OneOf(Type.Number, Type.String),
         (v = defaults.fontSize) => {
-          if (v)
+          if (v) {
             attributes.set(
               "size",
               typeof v === "number" ? `${v}pt` : v,
             );
-          else attributes.delete("size");
+          } else attributes.delete("size");
         },
       )
       .fontStretch(Type.String, (v = defaults.fontStretch) => {

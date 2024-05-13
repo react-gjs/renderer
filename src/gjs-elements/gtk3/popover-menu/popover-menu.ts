@@ -1,9 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  PopoverConstraint,
-  PositionType,
-} from "../../../enums/gtk3-index";
+import type { PopoverConstraint, PositionType } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -31,12 +28,13 @@ import { PopoverMenuContentElement } from "./popover-menu-content";
 import { PopoverMenuTargetElement } from "./popover-menu-target";
 import { PopoverMenuRadioController } from "./utils/popover-radio-controller";
 
-type PopoverMenuPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type PopoverMenuPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface PopoverMenuProps extends PopoverMenuPropsMixin {
   isModal?: boolean;
@@ -48,10 +46,7 @@ export type PopoverInternalProps = {
   popoverWidget: Gtk.PopoverMenu;
 };
 
-export class PopoverMenuElement
-  extends BaseElement
-  implements GjsElement<"POPOVER_MENU", Bin>
-{
+export class PopoverMenuElement extends BaseElement implements GjsElement<"POPOVER_MENU", Bin> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -143,13 +138,15 @@ export class PopoverMenuElement
   }
 
   onContentChange() {
-    if (this.targetElement)
+    if (this.targetElement) {
       this.popover.add(this.targetElement.getWidget());
+    }
   }
 
   onTargetChange() {
-    if (this.contentElement)
+    if (this.contentElement) {
       this.widget.add(this.contentElement.getWidget());
+    }
   }
 
   updateProps(props: DiffedProps): void {

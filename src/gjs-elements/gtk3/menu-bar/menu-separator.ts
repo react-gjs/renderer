@@ -19,18 +19,16 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TextNode } from "../text-node";
 import type { MenuBarItemElement } from "./menu-bar-item";
 
-type MenuSeparatorPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type MenuSeparatorPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export type MenuSeparatorProps = MenuSeparatorPropsMixin;
 
-export class MenuSeparatorElement
-  extends BaseElement
-  implements GjsElement<"MENU_SEPARATOR", Gtk.SeparatorMenuItem>
-{
+export class MenuSeparatorElement extends BaseElement implements GjsElement<"MENU_SEPARATOR", Gtk.SeparatorMenuItem> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -47,18 +45,17 @@ export class MenuSeparatorElement
     Gtk.SeparatorMenuItem,
     MenuSeparatorProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<MenuSeparatorProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-    );
+  protected readonly propsMapper = new PropertyMapper<MenuSeparatorProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+  );
 
   constructor(props: DiffedProps) {
     super();

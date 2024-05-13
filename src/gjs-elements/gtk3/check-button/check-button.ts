@@ -31,17 +31,17 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type CheckButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type CheckButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type CheckButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, CheckButtonElement>;
+export type CheckButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, CheckButtonElement>;
 
 export interface CheckButtonProps extends CheckButtonPropsMixin {
   label?: string;
@@ -56,10 +56,7 @@ export interface CheckButtonProps extends CheckButtonPropsMixin {
   onMouseLeave?: (event: CheckButtonEvent<PointerData>) => void;
 }
 
-export class CheckButtonElement
-  extends BaseElement
-  implements GjsElement<"CHECK_BUTTON", Gtk.CheckButton>
-{
+export class CheckButtonElement extends BaseElement implements GjsElement<"CHECK_BUTTON", Gtk.CheckButton> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -78,32 +75,31 @@ export class CheckButtonElement
     Gtk.CheckButton,
     CheckButtonProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<CheckButtonProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createAccelPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .active(DataType.Boolean, (v = false) => {
-            this.widget.active = v;
-          })
-          .label(DataType.String, (v = "") => {
-            this.widget.label = v;
-          })
-          .useUnderline(DataType.Boolean, (v = false) => {
-            this.widget.use_underline = v;
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<CheckButtonProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createAccelPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .active(DataType.Boolean, (v = false) => {
+          this.widget.active = v;
+        })
+        .label(DataType.String, (v = "") => {
+          this.widget.label = v;
+        })
+        .useUnderline(DataType.Boolean, (v = false) => {
+          this.widget.use_underline = v;
+        }),
+  );
 
   protected readonly children = new TextChildController(
     this.lifecycle,

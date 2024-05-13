@@ -25,11 +25,12 @@ import { createSizeRequestPropMapper } from "../../utils/property-maps-factories
 import type { TextNode } from "../text-node";
 import { StackScreenElement } from "./stack-screen";
 
-type StackPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps;
+type StackPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps;
 
 export interface StackProps extends StackPropsMixin {
   transitionDuration?: number;
@@ -39,10 +40,7 @@ export interface StackProps extends StackPropsMixin {
   children?: React.ReactElement | React.ReactElement[];
 }
 
-export class StackElement
-  extends BaseElement
-  implements GjsElement<"STACK", Gtk.Stack>
-{
+export class StackElement extends BaseElement implements GjsElement<"STACK", Gtk.Stack> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -60,7 +58,7 @@ export class StackElement
     StackProps
   >(this);
   // eslint-disable-next-line max-len
-  protected declare readonly children: ChildOrderController<StackScreenElement>;
+  declare protected readonly children: ChildOrderController<StackScreenElement>;
   protected readonly propsMapper = new PropertyMapper<StackProps>(
     this.lifecycle,
   );

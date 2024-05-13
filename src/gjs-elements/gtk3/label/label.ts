@@ -2,10 +2,7 @@ import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
 import { WrapMode } from "../../../enums/custom";
-import type {
-  EllipsizeMode,
-  Justification,
-} from "../../../enums/gtk3-index";
+import type { EllipsizeMode, Justification } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -31,12 +28,13 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import { TO_PANGO_WRAP_MODE } from "../../utils/wrap-mode";
 import type { TextNode } from "../text-node";
 
-type LabelPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type LabelPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface LabelProps extends LabelPropsMixin {
   wrapMode?: WrapMode;
@@ -51,10 +49,7 @@ export interface LabelProps extends LabelPropsMixin {
   margin?: ElementMargin;
 }
 
-export class LabelElement
-  extends BaseElement
-  implements GjsElement<"LABEL", Gtk.Label>
-{
+export class LabelElement extends BaseElement implements GjsElement<"LABEL", Gtk.Label> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

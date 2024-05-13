@@ -6,7 +6,7 @@ import type { DiffedProps } from "./utils/element-extenders/map-properties";
 export interface GjsElementConstructor<
   K extends Rg.GjsElementTypes | "APPLICATION",
 > {
-  new (
+  new(
     props: DiffedProps,
     context: HostContext<GjsContext>,
   ): GjsElement<K>;
@@ -65,10 +65,10 @@ export class GjsElementManager {
   /** @internal */
   static isGjsElement(element: any): element is GjsElement {
     return (
-      typeof element === "object" &&
-      element !== null &&
-      "kind" in element &&
-      this.elementKinds.includes(element.kind)
+      typeof element === "object"
+      && element !== null
+      && "kind" in element
+      && this.elementKinds.includes(element.kind)
     );
   }
 

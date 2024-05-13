@@ -33,16 +33,16 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type PressablePropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps;
+type PressablePropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps;
 
-export type PressableEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, PressableElement>;
+export type PressableEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, PressableElement>;
 
 export interface PressableProps extends PressablePropsMixin {
   onPress?: (event: PressableEvent<MouseButtonPressEvent>) => void;
@@ -65,10 +65,7 @@ export interface PressableProps extends PressablePropsMixin {
   draw?: boolean;
 }
 
-export class PressableElement
-  extends BaseElement
-  implements GjsElement<"PRESSABLE", Gtk.EventBox>
-{
+export class PressableElement extends BaseElement implements GjsElement<"PRESSABLE", Gtk.EventBox> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -116,14 +113,12 @@ export class PressableElement
     this.handlers.bind(
       "button-press-event",
       "onPress",
-      (e: Gdk.Event & Gdk.EventButton) =>
-        parseMouseButtonPressEvent(e),
+      (e: Gdk.Event & Gdk.EventButton) => parseMouseButtonPressEvent(e),
     );
     this.handlers.bind(
       "button-release-event",
       "onRelease",
-      (e: Gdk.Event & Gdk.EventButton) =>
-        parseMouseButtonPressEvent(e),
+      (e: Gdk.Event & Gdk.EventButton) => parseMouseButtonPressEvent(e),
     );
     this.handlers.bind(
       "enter-notify-event",

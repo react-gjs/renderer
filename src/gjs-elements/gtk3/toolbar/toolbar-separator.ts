@@ -22,22 +22,21 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import { ToolbarElement } from "./toolbar";
 
-type ToolbarSeparatorPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type ToolbarSeparatorPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
-export interface ToolbarSeparatorProps
-  extends ToolbarSeparatorPropsMixin {
+export interface ToolbarSeparatorProps extends ToolbarSeparatorPropsMixin {
   sameSize?: boolean;
   expand?: boolean;
   show?: boolean;
 }
 
-export class ToolbarSeparatorElement
-  extends BaseElement
+export class ToolbarSeparatorElement extends BaseElement
   implements GjsElement<"TOOLBAR_SEPARATOR", Gtk.SeparatorToolItem>
 {
   static getContext(
@@ -56,30 +55,29 @@ export class ToolbarSeparatorElement
     Gtk.SeparatorToolItem,
     ToolbarSeparatorProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<ToolbarSeparatorProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .sameSize(DataType.Boolean, (v = true) => {
-            this.widget.set_homogeneous(v);
-          })
-          .expand(DataType.Boolean, (v = false) => {
-            this.widget.set_expand(v);
-          })
-          .show(DataType.Boolean, (v = true) => {
-            this.widget.set_draw(v);
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<ToolbarSeparatorProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .sameSize(DataType.Boolean, (v = true) => {
+          this.widget.set_homogeneous(v);
+        })
+        .expand(DataType.Boolean, (v = false) => {
+          this.widget.set_expand(v);
+        })
+        .show(DataType.Boolean, (v = true) => {
+          this.widget.set_draw(v);
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();

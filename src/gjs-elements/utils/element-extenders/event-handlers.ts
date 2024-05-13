@@ -1,7 +1,4 @@
-import {
-  EventPhase,
-  EventPhaseController,
-} from "../../../reconciler/event-phase";
+import { EventPhase, EventPhaseController } from "../../../reconciler/event-phase";
 import type { ElementLifecycle } from "../../element-extender";
 import type { GjsElement } from "../../gjs-element";
 import type { DiffedProps } from "./map-properties";
@@ -36,8 +33,7 @@ export type SyntheticEvent<
   targetWidget: ReturnType<T["getWidget"]>;
 };
 
-const isObject = (value: any): value is object =>
-  typeof value === "object" && value != null;
+const isObject = (value: any): value is object => typeof value === "object" && value != null;
 
 const noop = () => {};
 
@@ -67,49 +63,51 @@ class EventBind {
 
     this.id = this.element
       .getWidget()
-      .connect(this.signal, (targetWidget: any, ...args: any[]) =>
-        EventPhaseController.startPhase(this.eventPhase, () => {
-          try {
-            let propagate = true;
+      .connect(
+        this.signal,
+        (targetWidget: any, ...args: any[]) =>
+          EventPhaseController.startPhase(this.eventPhase, () => {
+            try {
+              let propagate = true;
 
-            const stopPropagation = () => {
-              propagate = false;
-            };
+              const stopPropagation = () => {
+                propagate = false;
+              };
 
-            const a = this.argGetter(...args);
+              const a = this.argGetter(...args);
 
-            const syntheticEvent: SyntheticEvent<any> = Object.assign(
-              {},
-              a,
-              {
-                stopPropagation,
-                preventDefault: stopPropagation,
-                originalEvent: args[0],
-                targetWidget: this.element.getWidget(),
-                target: this.element,
-              },
-            );
+              const syntheticEvent: SyntheticEvent<any> = Object.assign(
+                {},
+                a,
+                {
+                  stopPropagation,
+                  preventDefault: stopPropagation,
+                  originalEvent: args[0],
+                  targetWidget: this.element.getWidget(),
+                  target: this.element,
+                },
+              );
 
-            const handlerReturn = this.handler(syntheticEvent);
+              const handlerReturn = this.handler(syntheticEvent);
 
-            if (
-              isObject(handlerReturn) &&
-              handlerReturn instanceof Promise
-            ) {
-              this.showAsyncWarning();
-            }
+              if (
+                isObject(handlerReturn)
+                && handlerReturn instanceof Promise
+              ) {
+                this.showAsyncWarning();
+              }
 
-            return !propagate;
-          } catch (e) {
-            // if argGetter throws it's a no-op
-            if (isObject(e) && e instanceof EventNoop) {
+              return !propagate;
+            } catch (e) {
+              // if argGetter throws it's a no-op
+              if (isObject(e) && e instanceof EventNoop) {
+                return false;
+              }
+
+              console.error(e);
               return false;
             }
-
-            console.error(e);
-            return false;
-          }
-        }),
+          }),
       );
 
     this.isConnected = true;
@@ -179,8 +177,7 @@ export class EventHandlers<
 
   bindInternal<K extends string, A extends any[]>(
     signal: K,
-    handler: W["connect"] extends EventConnect<K, A>
-      ? (event: SyntheticEvent) => void
+    handler: W["connect"] extends EventConnect<K, A> ? (event: SyntheticEvent) => void
       : never,
     eventPhase: EventPhase = EventPhase.Default,
   ) {
@@ -206,8 +203,7 @@ export class EventHandlers<
    */
   bind<K extends string, A extends any[]>(
     signal: K,
-    propName: W["connect"] extends EventConnect<K, A>
-      ? BindableProps<P>
+    propName: W["connect"] extends EventConnect<K, A> ? BindableProps<P>
       : never,
     getArgs?: SyntheticEventPropsGenerator<A>,
     eventPhase?: EventPhase,

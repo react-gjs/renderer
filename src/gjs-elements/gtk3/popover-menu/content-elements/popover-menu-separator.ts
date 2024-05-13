@@ -21,20 +21,19 @@ import type { PopoverMenuElement } from "../popover-menu";
 import { PopoverMenuContentElement } from "../popover-menu-content";
 import { PopoverMenuEntryElement } from "./popover-menu-entry";
 
-type PopoverMenuSeparatorPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  StyleProps;
+type PopoverMenuSeparatorPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & StyleProps;
 
 export type PopoverMenuSeparatorEvent<
   P extends Record<string, any> = {},
 > = SyntheticEvent<P, PopoverMenuSeparatorElement>;
 
-export type PopoverMenuSeparatorProps =
-  PopoverMenuSeparatorPropsMixin;
+export type PopoverMenuSeparatorProps = PopoverMenuSeparatorPropsMixin;
 
-export class PopoverMenuSeparatorElement
-  extends BaseElement
+export class PopoverMenuSeparatorElement extends BaseElement
   implements GjsElement<"POPOVER_MENU_SEPARATOR", Gtk.Separator>
 {
   static getContext(
@@ -56,17 +55,16 @@ export class PopoverMenuSeparatorElement
     Gtk.Separator,
     PopoverMenuSeparatorProps
   >(this);
-  protected readonly propsMapper =
-    new PropertyMapper<PopoverMenuSeparatorProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-    );
+  protected readonly propsMapper = new PropertyMapper<PopoverMenuSeparatorProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+  );
 
   constructor(props: DiffedProps) {
     super();

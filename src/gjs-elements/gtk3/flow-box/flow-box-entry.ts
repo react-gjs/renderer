@@ -30,26 +30,23 @@ import { createTooltipPropMapper } from "../../utils/property-maps-factories/cre
 import { FlowBoxElement } from "../flow-box/flow-box";
 import type { TextNode } from "../text-node";
 
-type FlowBoxEntryPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps;
+type FlowBoxEntryPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps;
 
-export type FlowBoxEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, FlowBoxEntryElement>;
+export type FlowBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, FlowBoxEntryElement>;
 
 export interface FlowBoxEntryProps extends FlowBoxEntryPropsMixin {
   isDefault?: boolean;
   onSelect?: (event: FlowBoxEvent<{ isSelected: boolean }>) => void;
 }
 
-export class FlowBoxEntryElement
-  extends BaseElement
-  implements GjsElement<"FLOW_BOX_ENTRY", Gtk.FlowBoxChild>
-{
+export class FlowBoxEntryElement extends BaseElement implements GjsElement<"FLOW_BOX_ENTRY", Gtk.FlowBoxChild> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -76,39 +73,38 @@ export class FlowBoxEntryElement
   );
   isDefault = false;
 
-  protected readonly propsMapper =
-    new PropertyMapper<FlowBoxEntryProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createTooltipPropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .onSelect(DataType.Function, (callback) => {
-            if (callback) {
-              const listener = this.emitter.on(
-                "selected",
-                (isSelected) =>
-                  callback({
-                    isSelected,
-                    target: this.widget,
-                    stopPropagation: () => {}, // no-op
-                  }),
-              );
-              return () => listener.remove();
-            }
-          })
-          .isDefault(DataType.Boolean, (isDefault = false) => {
-            this.isDefault = isDefault;
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<FlowBoxEntryProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createTooltipPropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .onSelect(DataType.Function, (callback) => {
+          if (callback) {
+            const listener = this.emitter.on(
+              "selected",
+              (isSelected) =>
+                callback({
+                  isSelected,
+                  target: this.widget,
+                  stopPropagation: () => {}, // no-op
+                }),
+            );
+            return () => listener.remove();
+          }
+        })
+        .isDefault(DataType.Boolean, (isDefault = false) => {
+          this.isDefault = isDefault;
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();

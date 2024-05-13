@@ -23,12 +23,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type LevelBarPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type LevelBarPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface LevelBarProps extends LevelBarPropsMixin {
   inverted?: boolean;
@@ -39,10 +40,7 @@ export interface LevelBarProps extends LevelBarPropsMixin {
   offsets?: [string, number][];
 }
 
-export class LevelBarElement
-  extends BaseElement
-  implements GjsElement<"LEVEL_BAR", Gtk.LevelBar>
-{
+export class LevelBarElement extends BaseElement implements GjsElement<"LEVEL_BAR", Gtk.LevelBar> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -210,8 +208,7 @@ export class LevelBarElement
   static customDiffers = new Map([
     [
       "offsets",
-      (prevList: any, newList: any) =>
-        LevelBarElement.compareOffsets(prevList, newList),
+      (prevList: any, newList: any) => LevelBarElement.compareOffsets(prevList, newList),
     ],
   ]);
 

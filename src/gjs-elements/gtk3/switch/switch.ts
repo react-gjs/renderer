@@ -26,17 +26,17 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 
-type SwitchPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type SwitchPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type SwitchEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, SwitchElement>;
+export type SwitchEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, SwitchElement>;
 
 export interface SwitchProps extends SwitchPropsMixin {
   margin?: ElementMargin;
@@ -44,10 +44,7 @@ export interface SwitchProps extends SwitchPropsMixin {
   onToggle?: (event: SwitchEvent<{ state: boolean }>) => void;
 }
 
-export class SwitchElement
-  extends BaseElement
-  implements GjsElement<"SWITCH", Gtk.Switch>
-{
+export class SwitchElement extends BaseElement implements GjsElement<"SWITCH", Gtk.Switch> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

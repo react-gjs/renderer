@@ -4,10 +4,7 @@ import type { ControlButton } from "../../../enums/custom";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
-import {
-  compareArraysShallow,
-  diffProps,
-} from "../../utils/diff-props";
+import { compareArraysShallow, diffProps } from "../../utils/diff-props";
 import { ChildOrderController } from "../../utils/element-extenders/child-order-controller";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -29,12 +26,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type HeaderBarPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type HeaderBarPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface HeaderBarProps extends HeaderBarPropsMixin {
   spacing?: number;
@@ -46,10 +44,7 @@ export interface HeaderBarProps extends HeaderBarPropsMixin {
   leftControlButtons?: Array<ControlButton>;
 }
 
-export class HeaderBarElement
-  extends BaseElement
-  implements GjsElement<"HEADER_BAR", Gtk.HeaderBar>
-{
+export class HeaderBarElement extends BaseElement implements GjsElement<"HEADER_BAR", Gtk.HeaderBar> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {

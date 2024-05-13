@@ -1,10 +1,7 @@
 import Gtk from "gi://Gtk";
 import React from "react";
 import type { StackElement, StackProps } from "./stack";
-import type {
-  StackScreenElement,
-  StackScreenProps,
-} from "./stack-screen";
+import type { StackScreenElement, StackScreenProps } from "./stack-screen";
 import type { StackSwitcherProps } from "./stack-switcher";
 
 const StackComponent: Rg.GjsElementTypes = "STACK";

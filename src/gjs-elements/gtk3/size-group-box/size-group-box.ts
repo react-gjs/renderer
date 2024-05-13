@@ -1,10 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  BaselinePosition,
-  Orientation,
-  SizeGroupMode,
-} from "../../../enums/gtk3-index";
+import type { BaselinePosition, Orientation, SizeGroupMode } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -29,12 +25,13 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type SizeGroupBoxPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type SizeGroupBoxPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface SizeGroupBoxProps extends SizeGroupBoxPropsMixin {
   spacing?: number;
@@ -43,10 +40,7 @@ export interface SizeGroupBoxProps extends SizeGroupBoxPropsMixin {
   mode?: SizeGroupMode;
 }
 
-export class SizeGroupBoxElement
-  extends BaseElement
-  implements GjsElement<"SIZE_GROUP_BOX", Gtk.Box>
-{
+export class SizeGroupBoxElement extends BaseElement implements GjsElement<"SIZE_GROUP_BOX", Gtk.Box> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -68,42 +62,41 @@ export class SizeGroupBoxElement
     this.lifecycle,
     this.widget,
   );
-  protected readonly propsMapper =
-    new PropertyMapper<SizeGroupBoxProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .spacing(DataType.Number, (v = 0) => {
-            this.widget.spacing = v;
-          })
-          .baselinePosition(
-            DataType.Enum(Gtk.BaselinePosition),
-            (v = Gtk.BaselinePosition.TOP) => {
-              this.widget.baseline_position = v;
-            },
-          )
-          .orientation(
-            DataType.Enum(Gtk.Orientation),
-            (v = Gtk.Orientation.VERTICAL) => {
-              this.widget.orientation = v;
-            },
-          )
-          .mode(
-            DataType.Enum(Gtk.SizeGroupMode),
-            (v = Gtk.SizeGroupMode.BOTH) => {
-              this.sizeGroup.mode = v;
-            },
-          ),
-    );
+  protected readonly propsMapper = new PropertyMapper<SizeGroupBoxProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .spacing(DataType.Number, (v = 0) => {
+          this.widget.spacing = v;
+        })
+        .baselinePosition(
+          DataType.Enum(Gtk.BaselinePosition),
+          (v = Gtk.BaselinePosition.TOP) => {
+            this.widget.baseline_position = v;
+          },
+        )
+        .orientation(
+          DataType.Enum(Gtk.Orientation),
+          (v = Gtk.Orientation.VERTICAL) => {
+            this.widget.orientation = v;
+          },
+        )
+        .mode(
+          DataType.Enum(Gtk.SizeGroupMode),
+          (v = Gtk.SizeGroupMode.BOTH) => {
+            this.sizeGroup.mode = v;
+          },
+        ),
+  );
 
   constructor(props: DiffedProps) {
     super();

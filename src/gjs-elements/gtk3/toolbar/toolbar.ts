@@ -1,10 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import type {
-  IconSize,
-  Orientation,
-  ToolbarStyle,
-} from "../../../enums/gtk3-index";
+import type { IconSize, Orientation, ToolbarStyle } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -40,12 +36,13 @@ export type GjsToolbarElement<
     | "APPLICATION" = keyof Rg.GjsElementTypeRegistry,
 > = GjsElement<K, Gtk.ToolItem>;
 
-type ToolbarPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type ToolbarPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface ToolbarProps extends ToolbarPropsMixin {
   orientation?: Orientation;
@@ -62,10 +59,7 @@ const TOOL_ELEMENTS = [
   ToolbarToggleButtonElement,
 ];
 
-export class ToolbarElement
-  extends BaseElement
-  implements GjsElement<"TOOLBAR", Gtk.Toolbar>
-{
+export class ToolbarElement extends BaseElement implements GjsElement<"TOOLBAR", Gtk.Toolbar> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -82,14 +76,13 @@ export class ToolbarElement
     Gtk.Toolbar,
     ToolbarProps
   >(this);
-  protected readonly children =
-    new ChildOrderController<GjsToolbarElement>(
-      this.lifecycle,
-      this.widget,
-      (child) => {
-        this.widget.insert(child, -1);
-      },
-    );
+  protected readonly children = new ChildOrderController<GjsToolbarElement>(
+    this.lifecycle,
+    this.widget,
+    (child) => {
+      this.widget.insert(child, -1);
+    },
+  );
   protected readonly propsMapper = new PropertyMapper<ToolbarProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),

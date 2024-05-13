@@ -1,15 +1,12 @@
 import { DataType } from "dilswer";
-import GObject from "gi://GObject";
 import Gdk from "gi://Gdk?version=3.0";
+import GObject from "gi://GObject";
 import Gtk from "gi://Gtk";
 import type { InputPurpose } from "../../../enums/gtk3-index";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
-import {
-  compareArraysShallow,
-  diffProps,
-} from "../../utils/diff-props";
+import { compareArraysShallow, diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
 import { EventHandlers } from "../../utils/element-extenders/event-handlers";
@@ -31,13 +28,14 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TooltipProps } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 
-type TextEntryPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps;
+type TextEntryPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps;
 
 export type TextEntryElementEvent<
   P extends Record<string, any> = {},
@@ -88,10 +86,7 @@ export interface TextEntryProps extends TextEntryPropsMixin {
   ) => void;
 }
 
-export class TextEntryElement
-  extends BaseElement
-  implements GjsElement<"TEXT_ENTRY", Gtk.Entry>
-{
+export class TextEntryElement extends BaseElement implements GjsElement<"TEXT_ENTRY", Gtk.Entry> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -169,8 +164,8 @@ export class TextEntryElement
         .progress(DataType.Number, (v) => {
           if (v) {
             this.widget.progress_fraction = Math.min(
-              0,
-              Math.max(v, 1),
+              1,
+              Math.max(v, 0),
             );
           }
         })
@@ -189,8 +184,8 @@ export class TextEntryElement
             this.widget.input_purpose = v;
 
             if (
-              v === Gtk.InputPurpose.PASSWORD ||
-              v === Gtk.InputPurpose.PIN
+              v === Gtk.InputPurpose.PASSWORD
+              || v === Gtk.InputPurpose.PIN
             ) {
               this.widget.visibility = false;
             } else {
@@ -222,14 +217,12 @@ export class TextEntryElement
     this.handlers.bind(
       "key-press-event",
       "onKeyPress",
-      (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_PRESS),
+      (event: Gdk.Event & Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_PRESS),
     );
     this.handlers.bind(
       "key-release-event",
       "onKeyRelease",
-      (event: Gdk.Event & Gdk.EventKey) =>
-        parseEventKey(event, Gdk.EventType.KEY_RELEASE),
+      (event: Gdk.Event & Gdk.EventKey) => parseEventKey(event, Gdk.EventType.KEY_RELEASE),
     );
 
     this.updateProps(props);
@@ -248,8 +241,8 @@ export class TextEntryElement
     let b = suggestionValue;
 
     if (
-      suggestionMinInput != null &&
-      input.length < suggestionMinInput
+      suggestionMinInput != null
+      && input.length < suggestionMinInput
     ) {
       return false;
     }

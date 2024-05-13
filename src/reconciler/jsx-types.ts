@@ -1,88 +1,25 @@
 import type React from "react";
-import type {
-  ActionBarElement,
-  ActionBarProps,
-} from "../gjs-elements/gtk3/action-bar/action-bar";
-import type {
-  BoxElement,
-  BoxProps,
-} from "../gjs-elements/gtk3/box/box";
-import type {
-  ButtonBoxElement,
-  ButtonBoxProps,
-} from "../gjs-elements/gtk3/button-box/button-box";
-import type {
-  ButtonGroupElement,
-  ButtonGroupProps,
-} from "../gjs-elements/gtk3/button-group/button-group";
-import type {
-  ButtonElement,
-  ButtonProps,
-} from "../gjs-elements/gtk3/button/button";
-import type {
-  CheckButtonElement,
-  CheckButtonProps,
-} from "../gjs-elements/gtk3/check-button/check-button";
-import type {
-  ColorButtonElement,
-  ColorButtonProps,
-} from "../gjs-elements/gtk3/color-button/color-button";
-import type {
-  ExpanderElement,
-  ExpanderProps,
-} from "../gjs-elements/gtk3/expander/expander";
-import type {
-  FlowBoxElement,
-  FlowBoxProps,
-} from "../gjs-elements/gtk3/flow-box/flow-box";
-import type {
-  FlowBoxEntryElement,
-  FlowBoxEntryProps,
-} from "../gjs-elements/gtk3/flow-box/flow-box-entry";
-import type {
-  FrameElement,
-  FrameProps,
-} from "../gjs-elements/gtk3/frame/frame";
-import type {
-  GridElement,
-  GridProps,
-} from "../gjs-elements/gtk3/grid/grid";
-import type {
-  GridItemElement,
-  GridItemProps,
-} from "../gjs-elements/gtk3/grid/grid-item";
-import type {
-  HeaderBarElement,
-  HeaderBarProps,
-} from "../gjs-elements/gtk3/headerbar/headerbar";
-import type {
-  IconElement,
-  IconProps,
-} from "../gjs-elements/gtk3/icon/icon";
-import type {
-  ImageElement,
-  ImageProps,
-} from "../gjs-elements/gtk3/image/image";
-import type {
-  LabelElement,
-  LabelProps,
-} from "../gjs-elements/gtk3/label/label";
-import type {
-  LevelBarElement,
-  LevelBarProps,
-} from "../gjs-elements/gtk3/level-bar/level-bar";
-import type {
-  LinkButtonElement,
-  LinkButtonProps,
-} from "../gjs-elements/gtk3/link-button/link-button";
-import type {
-  MarkupElement,
-  MarkupProps,
-} from "../gjs-elements/gtk3/markup/markup";
-import type {
-  MAnchorElement,
-  MAnchorProps,
-} from "../gjs-elements/gtk3/markup/markup-elements/a";
+import type { ActionBarElement, ActionBarProps } from "../gjs-elements/gtk3/action-bar/action-bar";
+import type { BoxElement, BoxProps } from "../gjs-elements/gtk3/box/box";
+import type { ButtonBoxElement, ButtonBoxProps } from "../gjs-elements/gtk3/button-box/button-box";
+import type { ButtonGroupElement, ButtonGroupProps } from "../gjs-elements/gtk3/button-group/button-group";
+import type { ButtonElement, ButtonProps } from "../gjs-elements/gtk3/button/button";
+import type { CheckButtonElement, CheckButtonProps } from "../gjs-elements/gtk3/check-button/check-button";
+import type { ColorButtonElement, ColorButtonProps } from "../gjs-elements/gtk3/color-button/color-button";
+import type { ExpanderElement, ExpanderProps } from "../gjs-elements/gtk3/expander/expander";
+import type { FlowBoxElement, FlowBoxProps } from "../gjs-elements/gtk3/flow-box/flow-box";
+import type { FlowBoxEntryElement, FlowBoxEntryProps } from "../gjs-elements/gtk3/flow-box/flow-box-entry";
+import type { FrameElement, FrameProps } from "../gjs-elements/gtk3/frame/frame";
+import type { GridElement, GridProps } from "../gjs-elements/gtk3/grid/grid";
+import type { GridItemElement, GridItemProps } from "../gjs-elements/gtk3/grid/grid-item";
+import type { HeaderBarElement, HeaderBarProps } from "../gjs-elements/gtk3/headerbar/headerbar";
+import type { IconElement, IconProps } from "../gjs-elements/gtk3/icon/icon";
+import type { ImageElement, ImageProps } from "../gjs-elements/gtk3/image/image";
+import type { LabelElement, LabelProps } from "../gjs-elements/gtk3/label/label";
+import type { LevelBarElement, LevelBarProps } from "../gjs-elements/gtk3/level-bar/level-bar";
+import type { LinkButtonElement, LinkButtonProps } from "../gjs-elements/gtk3/link-button/link-button";
+import type { MarkupElement, MarkupProps } from "../gjs-elements/gtk3/markup/markup";
+import type { MAnchorElement, MAnchorProps } from "../gjs-elements/gtk3/markup/markup-elements/a";
 import type { MBoldProps } from "../gjs-elements/gtk3/markup/markup-elements/b";
 import type { MBigProps } from "../gjs-elements/gtk3/markup/markup-elements/big";
 import type { MItalicProps } from "../gjs-elements/gtk3/markup/markup-elements/i";
@@ -93,42 +30,15 @@ import type { MSubProps } from "../gjs-elements/gtk3/markup/markup-elements/sub"
 import type { MSupProps } from "../gjs-elements/gtk3/markup/markup-elements/sup";
 import type { MMonospaceProps } from "../gjs-elements/gtk3/markup/markup-elements/tt";
 import type { MUnderlineProps } from "../gjs-elements/gtk3/markup/markup-elements/u";
-import type {
-  MenuBarElement,
-  MenuBarProps,
-} from "../gjs-elements/gtk3/menu-bar/menu-bar";
-import type {
-  MenuBarItemElement,
-  MenuBarItemProps,
-} from "../gjs-elements/gtk3/menu-bar/menu-bar-item";
-import type {
-  MenuCheckButtonElement,
-  MenuCheckButtonProps,
-} from "../gjs-elements/gtk3/menu-bar/menu-check-button";
-import type {
-  MenuEntryElement,
-  MenuEntryProps,
-} from "../gjs-elements/gtk3/menu-bar/menu-entry";
-import type {
-  MenuRadioButtonElement,
-  MenuRadioButtonProps,
-} from "../gjs-elements/gtk3/menu-bar/menu-radio-button";
-import type {
-  MenuSeparatorElement,
-  MenuSeparatorProps,
-} from "../gjs-elements/gtk3/menu-bar/menu-separator";
-import type {
-  ModelButtonElement,
-  ModelButtonProps,
-} from "../gjs-elements/gtk3/model-button/model-button";
-import type {
-  NumberInputElement,
-  NumberInputProps,
-} from "../gjs-elements/gtk3/number-input/number-input";
-import type {
-  PanedElement,
-  PanedProps,
-} from "../gjs-elements/gtk3/paned/paned";
+import type { MenuBarElement, MenuBarProps } from "../gjs-elements/gtk3/menu-bar/menu-bar";
+import type { MenuBarItemElement, MenuBarItemProps } from "../gjs-elements/gtk3/menu-bar/menu-bar-item";
+import type { MenuCheckButtonElement, MenuCheckButtonProps } from "../gjs-elements/gtk3/menu-bar/menu-check-button";
+import type { MenuEntryElement, MenuEntryProps } from "../gjs-elements/gtk3/menu-bar/menu-entry";
+import type { MenuRadioButtonElement, MenuRadioButtonProps } from "../gjs-elements/gtk3/menu-bar/menu-radio-button";
+import type { MenuSeparatorElement, MenuSeparatorProps } from "../gjs-elements/gtk3/menu-bar/menu-separator";
+import type { ModelButtonElement, ModelButtonProps } from "../gjs-elements/gtk3/model-button/model-button";
+import type { NumberInputElement, NumberInputProps } from "../gjs-elements/gtk3/number-input/number-input";
+import type { PanedElement, PanedProps } from "../gjs-elements/gtk3/paned/paned";
 import type {
   PopoverMenuCheckButtonElement,
   PopoverMenuCheckButtonProps,
@@ -149,82 +59,28 @@ import type {
   PopoverMenuSeparatorElement,
   PopoverMenuSeparatorProps,
 } from "../gjs-elements/gtk3/popover-menu/content-elements/popover-menu-separator";
-import type {
-  PressableElement,
-  PressableProps,
-} from "../gjs-elements/gtk3/pressable/pressable";
-import type {
-  ProgressBarElement,
-  ProgressBarProps,
-} from "../gjs-elements/gtk3/progress-bar/progress-bar";
-import type {
-  RadioButtonElement,
-  RadioButtonProps,
-} from "../gjs-elements/gtk3/radio/radio-button";
-import type {
-  RadioGroupElement,
-  RadioGroupProps,
-} from "../gjs-elements/gtk3/radio/radio-group";
-import type {
-  RevealerElement,
-  RevealerProps,
-} from "../gjs-elements/gtk3/revealer/revealer";
-import type {
-  ScrollBoxElement,
-  ScrollBoxProps,
-} from "../gjs-elements/gtk3/scroll-box/scroll-box";
-import type {
-  SearchBarElement,
-  SearchBarProps,
-} from "../gjs-elements/gtk3/search-bar/search-bar";
-import type {
-  SearchInputElement,
-  SearchInputProps,
-} from "../gjs-elements/gtk3/search-input/search-input";
-import type {
-  SelectorElement,
-  SelectorProps,
-} from "../gjs-elements/gtk3/selector/selector";
-import type {
-  SeparatorElement,
-  SeparatorProps,
-} from "../gjs-elements/gtk3/separator/separator";
-import type {
-  SizeGroupBoxElement,
-  SizeGroupBoxProps,
-} from "../gjs-elements/gtk3/size-group-box/size-group-box";
+import type { PressableElement, PressableProps } from "../gjs-elements/gtk3/pressable/pressable";
+import type { ProgressBarElement, ProgressBarProps } from "../gjs-elements/gtk3/progress-bar/progress-bar";
+import type { RadioButtonElement, RadioButtonProps } from "../gjs-elements/gtk3/radio/radio-button";
+import type { RadioGroupElement, RadioGroupProps } from "../gjs-elements/gtk3/radio/radio-group";
+import type { RevealerElement, RevealerProps } from "../gjs-elements/gtk3/revealer/revealer";
+import type { ScrollBoxElement, ScrollBoxProps } from "../gjs-elements/gtk3/scroll-box/scroll-box";
+import type { SearchBarElement, SearchBarProps } from "../gjs-elements/gtk3/search-bar/search-bar";
+import type { SearchInputElement, SearchInputProps } from "../gjs-elements/gtk3/search-input/search-input";
+import type { SelectorElement, SelectorProps } from "../gjs-elements/gtk3/selector/selector";
+import type { SeparatorElement, SeparatorProps } from "../gjs-elements/gtk3/separator/separator";
+import type { SizeGroupBoxElement, SizeGroupBoxProps } from "../gjs-elements/gtk3/size-group-box/size-group-box";
 import type {
   SliderPopupButtonElement,
   SliderPopupButtonProps,
 } from "../gjs-elements/gtk3/slider-popup-button/slider-popup-button";
-import type {
-  SliderElement,
-  SliderProps,
-} from "../gjs-elements/gtk3/slider/slider";
-import type {
-  SpinnerElement,
-  SpinnerProps,
-} from "../gjs-elements/gtk3/spinner/spinner";
-import type {
-  StackScreenElement,
-  StackScreenProps,
-} from "../gjs-elements/gtk3/stack/stack-screen";
-import type {
-  SwitchElement,
-  SwitchProps,
-} from "../gjs-elements/gtk3/switch/switch";
-import type {
-  TextAreaElement,
-  TextAreaProps,
-} from "../gjs-elements/gtk3/text-area/text-area";
-import type {
-  TextEntryElement,
-  TextEntryProps,
-} from "../gjs-elements/gtk3/text-entry/text-entry";
-import type {
-  TextViewElement,
-  TextViewProps,
-} from "../gjs-elements/gtk3/text-view/text-view";
+import type { SliderElement, SliderProps } from "../gjs-elements/gtk3/slider/slider";
+import type { SpinnerElement, SpinnerProps } from "../gjs-elements/gtk3/spinner/spinner";
+import type { StackScreenElement, StackScreenProps } from "../gjs-elements/gtk3/stack/stack-screen";
+import type { SwitchElement, SwitchProps } from "../gjs-elements/gtk3/switch/switch";
+import type { TextAreaElement, TextAreaProps } from "../gjs-elements/gtk3/text-area/text-area";
+import type { TextEntryElement, TextEntryProps } from "../gjs-elements/gtk3/text-entry/text-entry";
+import type { TextViewElement, TextViewProps } from "../gjs-elements/gtk3/text-view/text-view";
 import type {
   TextViewImageElement,
   TextViewImageProps,
@@ -241,34 +97,19 @@ import type {
   TextViewWidgetElement,
   TextViewWidgetProps,
 } from "../gjs-elements/gtk3/text-view/text-view-elements/text-view-widget";
-import type {
-  ToolbarElement,
-  ToolbarProps,
-} from "../gjs-elements/gtk3/toolbar/toolbar";
-import type {
-  ToolbarButtonElement,
-  ToolbarButtonProps,
-} from "../gjs-elements/gtk3/toolbar/toolbar-button";
-import type {
-  ToolbarItemElement,
-  ToolbarItemProps,
-} from "../gjs-elements/gtk3/toolbar/toolbar-item";
+import type { ToolbarElement, ToolbarProps } from "../gjs-elements/gtk3/toolbar/toolbar";
+import type { ToolbarButtonElement, ToolbarButtonProps } from "../gjs-elements/gtk3/toolbar/toolbar-button";
+import type { ToolbarItemElement, ToolbarItemProps } from "../gjs-elements/gtk3/toolbar/toolbar-item";
 import type {
   ToolbarRadioButtonElement,
   ToolbarRadioButtonProps,
 } from "../gjs-elements/gtk3/toolbar/toolbar-radio-button";
-import type {
-  ToolbarSeparatorElement,
-  ToolbarSeparatorProps,
-} from "../gjs-elements/gtk3/toolbar/toolbar-separator";
+import type { ToolbarSeparatorElement, ToolbarSeparatorProps } from "../gjs-elements/gtk3/toolbar/toolbar-separator";
 import type {
   ToolbarToggleButtonElement,
   ToolbarToggleButtonProps,
 } from "../gjs-elements/gtk3/toolbar/toolbar-toggle-button";
-import type {
-  VolumeButtonElement,
-  VolumeButtonProps,
-} from "../gjs-elements/gtk3/volume-button/volume-button";
+import type { VolumeButtonElement, VolumeButtonProps } from "../gjs-elements/gtk3/volume-button/volume-button";
 import type { WindowProps } from "../gjs-elements/gtk3/window/window";
 import type { WindowElement } from "../gjs-elements/rg-types";
 
@@ -291,8 +132,8 @@ declare global {
     type IntrinsicComponent<P, W> = {
       ref?:
         | {
-            current: W | null;
-          }
+          current: W | null;
+        }
         | ((ref: W | null) => void);
     } & P;
   }

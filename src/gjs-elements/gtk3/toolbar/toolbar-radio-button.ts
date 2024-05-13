@@ -33,21 +33,21 @@ import { createTooltipPropMapper } from "../../utils/property-maps-factories/cre
 import type { TextNode } from "../text-node";
 import { ToolbarElement } from "./toolbar";
 
-type ToolbarRadioButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type ToolbarRadioButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
 export type ToolbarRadioButtonEvent<
   P extends Record<string, any> = {},
 > = SyntheticEvent<P, ToolbarRadioButtonElement>;
 
-export interface ToolbarRadioButtonProps
-  extends ToolbarRadioButtonPropsMixin {
+export interface ToolbarRadioButtonProps extends ToolbarRadioButtonPropsMixin {
   radioGroup: string;
   label?: string;
   icon?: Rg.IconName;
@@ -68,8 +68,7 @@ export interface ToolbarRadioButtonProps
   ) => void;
 }
 
-export class ToolbarRadioButtonElement
-  extends BaseElement
+export class ToolbarRadioButtonElement extends BaseElement
   implements GjsElement<"TOOLBAR_RADIO_BUTTON", Gtk.RadioToolButton>
 {
   static getContext(
@@ -86,12 +85,11 @@ export class ToolbarRadioButtonElement
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected declare handlers: EventHandlers<
+  declare protected handlers: EventHandlers<
     Gtk.ToggleToolButton,
     ToolbarRadioButtonProps
   >;
-  protected readonly propsMapper =
-    new PropertyMapper<ToolbarRadioButtonProps>(this.lifecycle);
+  protected readonly propsMapper = new PropertyMapper<ToolbarRadioButtonProps>(this.lifecycle);
 
   protected readonly children = new TextChildController(
     this.lifecycle,

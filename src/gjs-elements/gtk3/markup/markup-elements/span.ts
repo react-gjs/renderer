@@ -9,10 +9,7 @@ import { PropertyMapper } from "../../../utils/element-extenders/map-properties"
 import { MarkupAttributes } from "../../../utils/markup-attributes";
 import type { TextNode } from "../../text-node";
 import { MarkupElement } from "../markup";
-import type {
-  BaseMarkupElement,
-  MarkupElementProps,
-} from "../markup-elem";
+import type { BaseMarkupElement, MarkupElementProps } from "../markup-elem";
 import { createMarkupPropMapper } from "../utils/create-markup-prop-mapper";
 import { escapeHtml } from "../utils/escape-html";
 import { isMarkupElement } from "../utils/is-markup-elements";
@@ -122,8 +119,8 @@ export class MSpanElement extends BaseElement {
 
   notifyWillMountTo(parent: GjsElement): boolean {
     if (
-      GjsElementManager.isGjsElementOfKind(parent, MarkupElement) ||
-      isMarkupElement(parent)
+      GjsElementManager.isGjsElementOfKind(parent, MarkupElement)
+      || isMarkupElement(parent)
     ) {
       this.parent = parent;
     } else {

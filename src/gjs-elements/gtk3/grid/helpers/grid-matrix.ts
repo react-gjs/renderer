@@ -5,7 +5,7 @@ export class GridMatrix {
   protected newRowTemplate: Array<boolean>;
 
   constructor(protected width: number) {
-    this.newRowTemplate = new Array(this.width).fill(false);
+    this.newRowTemplate = Array.from({ length: this.width }, () => false);
     this.addNextRow();
   }
 

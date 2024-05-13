@@ -6,10 +6,7 @@ import { BaseElement, type GjsElement } from "../../gjs-element";
 import { diffProps } from "../../utils/diff-props";
 import { ElementLifecycleController } from "../../utils/element-extenders/element-lifecycle-controller";
 import type { SyntheticEvent } from "../../utils/element-extenders/event-handlers";
-import {
-  EventHandlers,
-  EventNoop,
-} from "../../utils/element-extenders/event-handlers";
+import { EventHandlers, EventNoop } from "../../utils/element-extenders/event-handlers";
 import type { DiffedProps } from "../../utils/element-extenders/map-properties";
 import { PropertyMapper } from "../../utils/element-extenders/map-properties";
 import type { AlignmentProps } from "../../utils/property-maps-factories/create-alignment-prop-mapper";
@@ -28,13 +25,14 @@ import type { TooltipProps } from "../../utils/property-maps-factories/create-to
 import { createTooltipPropMapper } from "../../utils/property-maps-factories/create-tooltip-prop-mapper";
 import { OptionsList } from "./options-list";
 
-type SelectorPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps;
+type SelectorPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps;
 
 export interface SelectorProps<
   V extends string | number | undefined = any,
@@ -60,10 +58,7 @@ const SelectorOptionDataType = DataType.ArrayOf(
   }),
 );
 
-export class SelectorElement
-  extends BaseElement
-  implements GjsElement<"SELECTOR", Gtk.ComboBox>
-{
+export class SelectorElement extends BaseElement implements GjsElement<"SELECTOR", Gtk.ComboBox> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -115,8 +110,9 @@ export class SelectorElement
           }
         })
         .selected(DataType.Number, (v = 0, allProps) => {
-          if (allProps.options && allProps.options.length > 0)
+          if (allProps.options && allProps.options.length > 0) {
             this.widget.set_active(v);
+          }
         }),
   );
 
@@ -214,8 +210,8 @@ export class SelectorElement
     const { options: oldOptions, ...restOldProps } = oldProps;
 
     if (
-      typeof options !== typeof oldOptions ||
-      JSON.stringify(options) !== JSON.stringify(oldOptions)
+      typeof options !== typeof oldOptions
+      || JSON.stringify(options) !== JSON.stringify(oldOptions)
     ) {
       return diffProps(restOldProps, rest, true).concat([
         ["options", options],

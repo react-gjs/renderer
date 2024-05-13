@@ -72,9 +72,11 @@ class ApplicationCss {
       } catch (e) {
         console.error(
           new Error(
-            `Failed to install a stylesheet due to an error: \n${String(
-              e,
-            )}`,
+            `Failed to install a stylesheet due to an error: \n${
+              String(
+                e,
+              )
+            }`,
           ),
         );
       }

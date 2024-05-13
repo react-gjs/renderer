@@ -22,31 +22,26 @@ import { Bin } from "../../../utils/widgets/bin";
 import type { TextNode } from "../../text-node";
 import { isTextViewElementContainer } from "../is-text-view-element";
 import type { TextViewElement } from "../text-view";
-import type {
-  ITextViewElement,
-  TextViewElementContainer,
-  TextViewNode,
-} from "../text-view-elem-interface";
+import type { ITextViewElement, TextViewElementContainer, TextViewNode } from "../text-view-elem-interface";
 
-type TextViewWidgetPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type TextViewWidgetPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export type TextViewWidgetProps = TextViewWidgetPropsMixin & {};
 
-type TextViewWidgetElementMixin = GjsElement<
-  "TEXT_VIEW_WIDGET",
-  Bin
-> &
-  ITextViewElement;
+type TextViewWidgetElementMixin =
+  & GjsElement<
+    "TEXT_VIEW_WIDGET",
+    Bin
+  >
+  & ITextViewElement;
 
-export class TextViewWidgetElement
-  extends BaseElement
-  implements TextViewWidgetElementMixin
-{
+export class TextViewWidgetElement extends BaseElement implements TextViewWidgetElementMixin {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -64,15 +59,14 @@ export class TextViewWidgetElement
   protected handlers = new EventHandlers<Bin, TextViewWidgetProps>(
     this,
   );
-  protected readonly propsMapper =
-    new PropertyMapper<TextViewWidgetProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-    );
+  protected readonly propsMapper = new PropertyMapper<TextViewWidgetProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+  );
 
   protected child: GjsElement | null = null;
 

@@ -5,19 +5,19 @@
   "hooks": {
     "pre-push": [
       {
-        "name": "TypeScript",
+        "name": "Type Check",
         "script": "test:tsc"
       },
       {
-        "name": "ESLint",
+        "name": "Lint",
         "script": "test:lint"
       },
       {
-        "name": "Prettier",
-        "script": "test:format"
+        "name": "Formatting",
+        "script": "test:fmt"
       },
       {
-        "name": "Gest",
+        "name": "Unit Tests",
         "script": "test:unit"
       }
     ],

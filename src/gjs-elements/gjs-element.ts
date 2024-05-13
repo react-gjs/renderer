@@ -3,10 +3,7 @@ import type { TextNode } from "./gtk3/text-node";
 import { diffProps } from "./utils/diff-props";
 import type { ElementLifecycleController } from "./utils/element-extenders/element-lifecycle-controller";
 import type { EventHandlers } from "./utils/element-extenders/event-handlers";
-import type {
-  DiffedProps,
-  PropertyMapper,
-} from "./utils/element-extenders/map-properties";
+import type { DiffedProps, PropertyMapper } from "./utils/element-extenders/map-properties";
 import type { SyntheticEmitter } from "./utils/element-extenders/synthetic-emitter";
 
 export interface GjsElement<

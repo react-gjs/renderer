@@ -24,21 +24,19 @@ import type { StyleProps } from "../../utils/property-maps-factories/create-styl
 import { createStylePropMapper } from "../../utils/property-maps-factories/create-style-prop-mapper";
 import type { TextNode } from "../text-node";
 
-type ToolbarItemPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type ToolbarItemPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface ToolbarItemProps extends ToolbarItemPropsMixin {
   sameSize?: boolean;
 }
 
-export class ToolbarItemElement
-  extends BaseElement
-  implements GjsElement<"TOOLBAR_ITEM", Gtk.ToolItem>
-{
+export class ToolbarItemElement extends BaseElement implements GjsElement<"TOOLBAR_ITEM", Gtk.ToolItem> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -59,27 +57,26 @@ export class ToolbarItemElement
     this.lifecycle,
     this.widget,
   );
-  protected readonly propsMapper =
-    new PropertyMapper<ToolbarItemProps>(
-      this.lifecycle,
-      createSizeRequestPropMapper(this.widget),
-      createAlignmentPropMapper(this.widget),
-      createMarginPropMapper(this.widget),
-      createExpandPropMapper(this.widget),
-      createStylePropMapper(this.widget),
-      createChildPropsMapper(
-        () => this.widget,
-        () => this.parent,
-      ),
-      (props) =>
-        props
-          .sameSize(DataType.Boolean, (v = true) => {
-            this.widget.set_homogeneous(v);
-          })
-          .expand(DataType.Boolean, (v = false) => {
-            this.widget.set_expand(v);
-          }),
-    );
+  protected readonly propsMapper = new PropertyMapper<ToolbarItemProps>(
+    this.lifecycle,
+    createSizeRequestPropMapper(this.widget),
+    createAlignmentPropMapper(this.widget),
+    createMarginPropMapper(this.widget),
+    createExpandPropMapper(this.widget),
+    createStylePropMapper(this.widget),
+    createChildPropsMapper(
+      () => this.widget,
+      () => this.parent,
+    ),
+    (props) =>
+      props
+        .sameSize(DataType.Boolean, (v = true) => {
+          this.widget.set_homogeneous(v);
+        })
+        .expand(DataType.Boolean, (v = false) => {
+          this.widget.set_expand(v);
+        }),
+  );
 
   constructor(props: DiffedProps) {
     super();

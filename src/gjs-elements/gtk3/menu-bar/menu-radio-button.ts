@@ -30,19 +30,18 @@ import type { TextNode } from "../text-node";
 import { MenuBarItemElement } from "./menu-bar-item";
 import { MenuEntryElement } from "./menu-entry";
 
-type MenuRadioButtonPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps &
-  TooltipProps &
-  AccelProps;
+type MenuRadioButtonPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps
+  & TooltipProps
+  & AccelProps;
 
-export type MenuRadioButtonEvent<P extends Record<string, any> = {}> =
-  SyntheticEvent<P, MenuRadioButtonElement>;
+export type MenuRadioButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, MenuRadioButtonElement>;
 
-export interface MenuRadioButtonProps
-  extends MenuRadioButtonPropsMixin {
+export interface MenuRadioButtonProps extends MenuRadioButtonPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
   label?: string;
   radioGroup: string;
@@ -56,10 +55,7 @@ export interface MenuRadioButtonProps
   onMouseLeave?: (event: MenuRadioButtonEvent<PointerData>) => void;
 }
 
-export class MenuRadioButtonElement
-  extends BaseElement
-  implements GjsElement<"MENU_RADIO_BUTTON", Gtk.RadioMenuItem>
-{
+export class MenuRadioButtonElement extends BaseElement implements GjsElement<"MENU_RADIO_BUTTON", Gtk.RadioMenuItem> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -69,8 +65,7 @@ export class MenuRadioButtonElement
   readonly kind = "MENU_RADIO_BUTTON";
   protected widget = new Gtk.RadioMenuItem();
 
-  protected parent: MenuBarItemElement | MenuEntryElement | null =
-    null;
+  protected parent: MenuBarItemElement | MenuEntryElement | null = null;
   protected rootBarItem: MenuBarItemElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
@@ -166,8 +161,8 @@ export class MenuRadioButtonElement
       .get_group()
       .some((i) => i.active);
     if (
-      !groupHasActiveEntry &&
-      this.propsMapper.currentProps.isDefault
+      !groupHasActiveEntry
+      && this.propsMapper.currentProps.isDefault
     ) {
       widget.set_active(true);
     }

@@ -25,22 +25,20 @@ import { createStylePropMapper } from "../../utils/property-maps-factories/creat
 import type { TextNode } from "../text-node";
 import { MenuBarItemElement } from "./menu-bar-item";
 
-type MenuBarPropsMixin = ChildPropertiesProps &
-  SizeRequestProps &
-  AlignmentProps &
-  MarginProps &
-  ExpandProps &
-  StyleProps;
+type MenuBarPropsMixin =
+  & ChildPropertiesProps
+  & SizeRequestProps
+  & AlignmentProps
+  & MarginProps
+  & ExpandProps
+  & StyleProps;
 
 export interface MenuBarProps extends MenuBarPropsMixin {
   label?: string;
   icon?: Rg.IconName;
 }
 
-export class MenuBarElement
-  extends BaseElement
-  implements GjsElement<"MENU_BAR", Gtk.MenuBar>
-{
+export class MenuBarElement extends BaseElement implements GjsElement<"MENU_BAR", Gtk.MenuBar> {
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -57,14 +55,13 @@ export class MenuBarElement
     Gtk.MenuBar,
     MenuBarProps
   >(this);
-  protected readonly children =
-    new ChildOrderController<MenuBarItemElement>(
-      this.lifecycle,
-      this.widget,
-      (child) => {
-        this.widget.append(child);
-      },
-    );
+  protected readonly children = new ChildOrderController<MenuBarItemElement>(
+    this.lifecycle,
+    this.widget,
+    (child) => {
+      this.widget.append(child);
+    },
+  );
   protected readonly propsMapper = new PropertyMapper<MenuBarProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
