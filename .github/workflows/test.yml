@@ -33,8 +33,8 @@ jobs:
         run: ./.yarn/yarn.cjs test:tsc
       - name: Run Linter
         run: ./.yarn/yarn.cjs test:lint
-      - name: Run Prettier Check
-        run: ./.yarn/yarn.cjs test:format
+      - name: Run Format Check
+        run: ./.yarn/yarn.cjs test:fmt
       - name: Run Unit Test
         run: ./.yarn/yarn.cjs test:unit
       - name: Attempt Build
