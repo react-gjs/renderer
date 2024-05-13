@@ -49,8 +49,6 @@ export interface MarkupProps extends MarkupPropsMixin {
   margin?: ElementMargin;
   xAlign?: number;
   yAlign?: number;
-  xPad?: number;
-  yPad?: number;
   onAnchorClick?: (event: MarkupEvent<{ href: string }>) => void;
 }
 
@@ -115,12 +113,6 @@ export class MarkupElement extends BaseElement implements GjsElement<"MARKUP", G
         })
         .yAlign(DataType.Number, (v = 0) => {
           this.widget.set_yalign(v);
-        })
-        .xPad(DataType.Number, (v = 0) => {
-          this.widget.xpad = v;
-        })
-        .yPad(DataType.Number, (v = 0) => {
-          this.widget.ypad = v;
         }),
   );
 

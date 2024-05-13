@@ -44,6 +44,8 @@ export class ApplicationElement extends Gtk.Application {
     });
   }
 
+  declare runAsync: (args: string[]) => Promise<number>;
+
   addWindowToApp(window: WindowElement) {
     this._windowList.push(window);
     if (this._isAppActive) {
@@ -103,7 +105,13 @@ export class ApplicationElement extends Gtk.Application {
    * `Gtk.Application`.
    */
   remove(): void {
-    this.quit();
+    // @ts-expect-error
+    if ("MAIN_LOOP_NAME" in globalThis && globalThis.MAIN_LOOP_NAME) {
+      // @ts-expect-error
+      imports.mainloop.quit(globalThis.MAIN_LOOP_NAME);
+    } else {
+      this.quit();
+    }
   }
 
   render(): void {}

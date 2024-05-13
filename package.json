@@ -9,7 +9,9 @@
     "test:lint": "oxlint ./src",
     "test:fmt": "dprint check \"./src/**/*\" && dprint check \"./__tests__/**/*\"",
     "test:tsc": "tsc --noEmit",
-    "build": "rm -rf ./dist && tsc",
+    "build:types": "tsc --declaration --emitDeclarationOnly",
+    "build:src": " node ./scripts/build.mjs",
+    "build": "yarn build:types && yarn build:src",
     "prepare": "husky install"
   },
   "keywords": [],
@@ -30,6 +32,7 @@
     "@reactgjs/gest": "^0.5.0",
     "@types/react-reconciler": "^0.28.4",
     "dprint": "^0.45.1",
+    "esbuild": "^0.21.2",
     "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
     "gjs-esm-types": "^0.0.4",
     "husky": "^8.0.3",

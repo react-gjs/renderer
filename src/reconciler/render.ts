@@ -43,11 +43,11 @@ export class Renderer {
       () => {},
     );
 
-    setTimeout(() => {
-      const code = this.application.run(system.programArgs);
+    this.application.runAsync(system.programArgs).then((code) => {
       system.exit(code);
-    }, 0);
-
-    imports.mainloop.run("Renderer.start");
+    }).catch((e) => {
+      console.error(e);
+      system.exit(1);
+    });
   }
 }
