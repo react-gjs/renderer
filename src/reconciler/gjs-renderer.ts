@@ -35,7 +35,7 @@ const performAppendAction = (action: () => void) => {
   }
 };
 
-export const GjsRenderer = Reconciler({
+export const GjsReconciler = Reconciler({
   isPrimaryRenderer: true,
   noTimeout: -1,
   supportsMutation: true,

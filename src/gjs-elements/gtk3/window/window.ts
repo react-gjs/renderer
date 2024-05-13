@@ -38,7 +38,7 @@ export type WindowProps = {
    * If set to `true`, when the close button on the window is pressed,
    * the application will quit.
    */
-  quitAppOnClose?: boolean;
+  quitOnClose?: boolean;
   onClose?: (event: WindowEvent) => void;
   onDestroy?: (event: WindowEvent) => void;
   onDragBegin?: (event: WindowEvent) => void;
@@ -217,7 +217,7 @@ export class WindowElement extends BaseElement implements GjsElement<"WINDOW", G
       preventDefault: preventQuit,
     });
 
-    if (canQuit && this.propsMapper.currentProps.quitAppOnClose) {
+    if (canQuit && this.propsMapper.currentProps.quitOnClose) {
       this.mainApp?.reactContext?.quit();
     }
 
