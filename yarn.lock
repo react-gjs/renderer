@@ -324,7 +324,7 @@
   dependencies:
     esbuild "~0.19.2"
 
-"@types/json-schema@^7.0.11", "@types/json-schema@^7.0.12":
+"@types/json-schema@^7.0.12":
   version "7.0.15"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
@@ -361,12 +361,12 @@ ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
-async-await-queue@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/async-await-queue/-/async-await-queue-1.2.1.tgz#baf459f5fbac902b060a88fee4da853fd86f2128"
-  integrity sha512-v2j+/EMzAnuJZ8I4570KJMFhi6G9g3WZyFh6cPnmQSJh3nLao77XpRt01kyFegQazPSKvue1yaIYDp/NfV/b0g==
+async-await-queue@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/async-await-queue/-/async-await-queue-2.1.4.tgz#0c44a405cd31369b561f6ac663b74b4b4ffb99ad"
+  integrity sha512-3DpDtxkKO0O/FPlWbk/CrbexjuSxWm1CH1bXlVNVyMBIkKHhT5D85gzHmGJokG3ibNGWQ7pHBmStxUW/z/0LYQ==
 
-chalk@^4.0.0, chalk@^4.1.2:
+chalk@^4.0.0:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.2.tgz#aac4e2b7734a740867aeb16bf02aad556a1e7a01"
   integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
@@ -374,11 +374,12 @@ chalk@^4.0.0, chalk@^4.1.2:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-"clify.js@git+https://github.com/ncpa0cpl/clify.js#0.0.5":
-  version "1.0.3"
-  resolved "git+https://github.com/ncpa0cpl/clify.js#63c08dd0ad286d9416f89a34da6014f204258b38"
+clify.js@^1.0.0-beta.4:
+  version "1.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/clify.js/-/clify.js-1.0.0-beta.5.tgz#0162885160e57384eda77ba67348fe70c4f5823d"
+  integrity sha512-qIOfln1ZP4ILHhttT2uvMp58S7pH4APrdlobNAJiipFNoyDYKKmcr2fLTlWMddQ3PoUAxM6QGtAPqg7EpIo8uQ==
   dependencies:
-    chalk "^4.1.2"
+    minimist "^1.2.8"
 
 color-convert@^2.0.1:
   version "2.0.1"
@@ -396,13 +397,6 @@ csstype@^3.0.2:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.3.tgz#d80ff294d114fb0e6ac500fbf85b60137d7eff81"
   integrity sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==
-
-dilswer@^1.2.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/dilswer/-/dilswer-1.5.0.tgz#b95922da65ffef276624ad29f980b8920a78b5ce"
-  integrity sha512-J53vAsWMg1Yh469v+pSIMYEyaAefzFTcqoos8MIA59l0qD9US0Qfw7egpt4NkScNJuD8vLogToluh942aRhHNg==
-  dependencies:
-    "@types/json-schema" "^7.0.11"
 
 dilswer@^2.1.1:
   version "2.1.1"
@@ -485,14 +479,15 @@ esbuild@~0.19.2:
     "@esbuild/win32-x64" "0.19.12"
 
 git-hook-tasks@ncpa0cpl/git-hook-tasks#master:
-  version "1.0.0"
-  resolved "https://codeload.github.com/ncpa0cpl/git-hook-tasks/tar.gz/4fada7136e96600b0f66606e7427cf57b857504d"
+  version "2.0.0"
+  uid "42157935c4202b19e7ffdd39ced8342979ac4f19"
+  resolved "https://codeload.github.com/ncpa0cpl/git-hook-tasks/tar.gz/42157935c4202b19e7ffdd39ced8342979ac4f19"
   dependencies:
-    async-await-queue "^1.2.1"
+    async-await-queue "^2.1.4"
     chalk "^4.0.0"
-    clify.js "git+https://github.com/ncpa0cpl/clify.js#0.0.5"
-    dilswer "^1.2.0"
-    node-os-walk "^1.0.0"
+    clify.js "^1.0.0-beta.4"
+    dilswer "^2.1.1"
+    node-os-walk "^1.0.2"
     strip-ansi "^6.0.1"
 
 gjs-esm-types@^0.0.4:
@@ -527,7 +522,12 @@ loose-envify@^1.1.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-node-os-walk@^1.0.0:
+minimist@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
+  integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
+
+node-os-walk@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/node-os-walk/-/node-os-walk-1.0.2.tgz#82011408577437856451398f14cfe7fd0982902f"
   integrity sha512-aJOH1sKNP2vdYZwLyaSqPouM5Bg5YnNd0t/8cdLz2mjxDGxZyqFpa7vTsbhfjUdJM3ZBwiLPwu84kl2tET8T+Q==
