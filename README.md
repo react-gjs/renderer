@@ -1,5 +1,8 @@
 # React GJS Renderer
 
+![NPM Version](https://img.shields.io/npm/v/%40reactgjs%2Frenderer)
+
+
 A React renderer for the [Gnome JS](https://gjs.guide/about/). It provides components and methods allowing to use React to build native Gnome GTK applications.
 
 This is the renderer used by the [React Gnome](https://github.com/react-gjs/react-gnome), which is the recommended way of bundling applications using this renderer.
