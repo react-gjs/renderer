@@ -1,3 +1,5 @@
+/// <reference types="gjs-esm-types" />
+
 declare module "gi://Gtk" {
   import Gtk from "gi://Gtk?version=3.0";
   export default Gtk;

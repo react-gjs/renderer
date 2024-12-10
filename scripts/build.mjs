@@ -6,7 +6,7 @@ const p = (...pathSegments) => path.resolve(__dirname, "..", ...pathSegments);
 
 async function build() {
   await esbuild.build({
-    target: "es2023",
+    target: "esnext",
     entryPoints: [p("src/index.ts")],
     bundle: true,
     platform: "node",

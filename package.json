@@ -6,7 +6,8 @@
     "dist",
     "LICENSE",
     "README.md",
-    "package.json"
+    "package.json",
+    "gi.d.ts"
   ],
   "repository": {
     "url": "https://github.com/react-gjs/renderer"
