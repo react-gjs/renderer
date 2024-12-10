@@ -1,10 +1,10 @@
-/// <reference path="../gi.d.ts" />
-/// <reference path="./gjs-elements/gjs-element-types.ts" />
-/// <reference path="./gjs-elements/gjs-element.ts" />
-/// <reference path="./gjs-elements/index.ts" />
-/// <reference path="./gjs-elements/utils/gdk-events/key-press-event.ts" />
-/// <reference path="./gjs-elements/utils/icons/icon-types.ts" />
-/// <reference path="./hooks/gtk3/file-chooser-dialog/file-chooser-dialog.ts" />
+/// <reference path="../gi.d.ts" preserve="true" />
+/// <reference path="./gjs-elements/gjs-element-types.ts" preserve="true" />
+/// <reference path="./gjs-elements/gjs-element.ts" preserve="true" />
+/// <reference path="./gjs-elements/index.ts" preserve="true" />
+/// <reference path="./gjs-elements/utils/gdk-events/key-press-event.ts" preserve="true" />
+/// <reference path="./gjs-elements/utils/icons/icon-types.ts" preserve="true" />
+/// <reference path="./hooks/gtk3/file-chooser-dialog/file-chooser-dialog.ts" preserve="true" />
 
 import "gi://Gdk?version=3.0";
 import "gi://Gtk?version=3.0";
