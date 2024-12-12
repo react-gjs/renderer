@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -43,9 +43,10 @@ type ToolbarToggleButtonPropsMixin =
   & TooltipProps
   & AccelProps;
 
-export type ToolbarToggleButtonEvent<
-  P extends Record<string, any> = {},
-> = SyntheticEvent<P, ToolbarToggleButtonElement>;
+export type ToolbarToggleButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  ToolbarToggleButtonElement
+>;
 
 export interface ToolbarToggleButtonProps extends ToolbarToggleButtonPropsMixin {
   label?: string;
@@ -55,15 +56,9 @@ export interface ToolbarToggleButtonProps extends ToolbarToggleButtonPropsMixin 
   sameSize?: boolean;
   expand?: boolean;
   onClick?: (event: ToolbarToggleButtonEvent) => void;
-  onChange?: (
-    event: ToolbarToggleButtonEvent<{ isActive: boolean }>,
-  ) => void;
-  onMouseEnter?: (
-    event: ToolbarToggleButtonEvent<PointerData>,
-  ) => void;
-  onMouseLeave?: (
-    event: ToolbarToggleButtonEvent<PointerData>,
-  ) => void;
+  onChange?: (event: ToolbarToggleButtonEvent<{ isActive: boolean }>) => void;
+  onMouseEnter?: (event: ToolbarToggleButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: ToolbarToggleButtonEvent<PointerData>) => void;
 }
 
 export class ToolbarToggleButtonElement extends BaseElement
@@ -141,13 +136,13 @@ export class ToolbarToggleButtonElement extends BaseElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -204,14 +199,10 @@ export class ToolbarToggleButtonElement extends BaseElement
   // #region Element internal signals
 
   notifyWillMountTo(parent: GjsElement): boolean {
-    if (
-      GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)
-    ) {
+    if (GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)) {
       this.parent = parent;
     } else {
-      throw new Error(
-        "ToolbarButton can only be a child of a toolbar.",
-      );
+      throw new Error("ToolbarButton can only be a child of a toolbar.");
     }
     return true;
   }

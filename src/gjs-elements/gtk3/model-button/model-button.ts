@@ -4,7 +4,7 @@ import type Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import { ButtonType } from "../../../enums/custom";
 import type { ButtonRole, PositionType } from "../../../enums/gtk3-index";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -77,9 +77,7 @@ export interface ModelButtonProps extends ModelButtonPropsMixin {
 
 const ImageDataType = DataType.OneOf(
   DataType.String,
-  DataType.Custom(
-    (v): v is GdkPixbuf.Pixbuf => typeof v === "object",
-  ),
+  DataType.Custom((v): v is GdkPixbuf.Pixbuf => typeof v === "object"),
 );
 
 export class ModelButtonElement extends BaseElement implements GjsElement<"MODEL_BUTTON", Gtk.ModelButton> {
@@ -197,33 +195,27 @@ export class ModelButtonElement extends BaseElement implements GjsElement<"MODEL
             return () => this.widget.set_image(null);
           }
         })
-        .iconPixelSize(
-          DataType.Number,
-          (v = 16, allProps, mapperApi) => {
-            if (
-              allProps.icon != null
-              && !mapperApi.isUpdatedInThisCycle("icon")
-            ) {
-              this.setImageIcon(allProps.icon, v);
-            }
-          },
-        )
+        .iconPixelSize(DataType.Number, (v = 16, allProps, mapperApi) => {
+          if (
+            allProps.icon != null
+            && !mapperApi.isUpdatedInThisCycle("icon")
+          ) {
+            this.setImageIcon(allProps.icon, v);
+          }
+        })
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
-        .type(
-          DataType.Enum(ButtonType),
-          (v = ButtonType.NORMAL) => {
-            switch (v) {
-              case ButtonType.NORMAL:
-                this.widget.relief = Gtk.ReliefStyle.NORMAL;
-                break;
-              case ButtonType.FLAT:
-                this.widget.relief = Gtk.ReliefStyle.NONE;
-                break;
-            }
-          },
-        )
+        .type(DataType.Enum(ButtonType), (v = ButtonType.NORMAL) => {
+          switch (v) {
+            case ButtonType.NORMAL:
+              this.widget.relief = Gtk.ReliefStyle.NORMAL;
+              break;
+            case ButtonType.FLAT:
+              this.widget.relief = Gtk.ReliefStyle.NONE;
+              break;
+          }
+        })
         .focusOnClick(DataType.Boolean, (v = true) => {
           this.widget.focus_on_click = v;
         })
@@ -236,12 +228,9 @@ export class ModelButtonElement extends BaseElement implements GjsElement<"MODEL
         .inverted(DataType.Boolean, (v = false) => {
           this.widget.inverted = v;
         })
-        .role(
-          DataType.Enum(Gtk.ButtonRole),
-          (v = Gtk.ButtonRole.NORMAL) => {
-            this.widget.role = v;
-          },
-        ),
+        .role(DataType.Enum(Gtk.ButtonRole), (v = Gtk.ButtonRole.NORMAL) => {
+          this.widget.role = v;
+        }),
   );
 
   protected readonly children = new TextChildController(
@@ -261,13 +250,13 @@ export class ModelButtonElement extends BaseElement implements GjsElement<"MODEL
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -313,12 +302,7 @@ export class ModelButtonElement extends BaseElement implements GjsElement<"MODEL
     }
 
     if (width != null && height != null) {
-      pixbuff = resizePixbuff(
-        pixbuff,
-        width,
-        height,
-        preserveAspectRatio,
-      );
+      pixbuff = resizePixbuff(pixbuff, width, height, preserveAspectRatio);
     }
 
     const image = Gtk.Image.new_from_pixbuf(pixbuff);
@@ -326,10 +310,7 @@ export class ModelButtonElement extends BaseElement implements GjsElement<"MODEL
     this.widget.set_image(image);
   }
 
-  protected setImageIcon(
-    icon: string | Gio.Icon,
-    pixelSize?: number,
-  ) {
+  protected setImageIcon(icon: string | Gio.Icon, pixelSize?: number) {
     const iconWidget = typeof icon === "string"
       ? Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
       : Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON);

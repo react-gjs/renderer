@@ -14,8 +14,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "stripInternal": true,
-    "typeRoots": ["node_modules/gjs-esm-types", "node_modules/@types"]
+    "stripInternal": true
   },
   "include": ["src/**/*", "gi.d.ts"]
 }

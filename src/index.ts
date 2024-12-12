@@ -1,3 +1,4 @@
+/// <reference types="gjs-esm-types" preserve="true" />
 /// <reference path="../gi.d.ts" preserve="true" />
 /// <reference path="./gjs-elements/gjs-element-types.ts" preserve="true" />
 /// <reference path="./gjs-elements/gjs-element.ts" preserve="true" />

@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { Orientation } from "../../../enums/gtk3-index";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -63,9 +63,7 @@ export class FlowBoxElement extends BaseElement implements GjsElement<"FLOW_BOX"
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(
-    this,
-  );
+  protected handlers = new EventHandlers<Gtk.FlowBox, FlowBoxProps>(this);
   protected readonly propsMapper = new PropertyMapper<FlowBoxProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -146,7 +144,7 @@ export class FlowBoxElement extends BaseElement implements GjsElement<"FLOW_BOX"
           newSelected[i].emitter.emit("selected", true);
         }
       },
-      EventPhase.Input,
+      EventPriority.Input,
     );
 
     this.updateProps(props);
@@ -162,16 +160,9 @@ export class FlowBoxElement extends BaseElement implements GjsElement<"FLOW_BOX"
 
   appendChild(child: GjsElement | TextNode): void {
     if (typeof child === "string") {
-      throw new Error(
-        "Box can only have other elements as it's children.",
-      );
+      throw new Error("Box can only have other elements as it's children.");
     } else {
-      if (
-        GjsElementManager.isGjsElementOfKind(
-          child,
-          FlowBoxEntryElement,
-        )
-      ) {
+      if (GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)) {
         // TODO: handle should append logic
         mountAction(
           this,
@@ -193,17 +184,13 @@ export class FlowBoxElement extends BaseElement implements GjsElement<"FLOW_BOX"
           },
         );
       } else {
-        throw new Error(
-          "FlowBox can only have FlexBoxEntry as it's children.",
-        );
+        throw new Error("FlowBox can only have FlexBoxEntry as it's children.");
       }
     }
   }
 
   insertBefore(child: GjsElement, beforeChild: GjsElement): void {
-    if (
-      GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)
-    ) {
+    if (GjsElementManager.isGjsElementOfKind(child, FlowBoxEntryElement)) {
       // TODO: handle should append logic
       mountAction(
         this,

@@ -94,9 +94,7 @@ type FileChooserApi<F> = {
    * Opens the FileChooserDialog and returns a promise that resolves
    * once the user selects a file or cancels the dialog.
    */
-  openDialog: (
-    params: Rg.FileChooserDialogParams,
-  ) => Promise<F | undefined>;
+  openDialog: (params: Rg.FileChooserDialogParams) => Promise<F | undefined>;
   /**
    * Clears the selected file(s) and filter. This will not close the
    * dialog if it is open.
@@ -206,19 +204,15 @@ export function useFileChooser(
 ): any {
   const isMounted = useIsMounted();
   const [file, setFile] = React.useState<Gio.File | Gio.File[]>();
-  const [filter, setFilter] = React.useState<
-    Required<Rg.FileChooserDialogParams>["filters"][number]
-  >();
-  const dialogWidget = React.useRef<Gtk.FileChooserNative>();
+  const [filter, setFilter] = React.useState<Required<Rg.FileChooserDialogParams>["filters"][number]>();
+  const dialogWidget = React.useRef<Gtk.FileChooserNative>(undefined);
 
   const openDialog = React.useCallback(
     (params: Rg.FileChooserDialogParams) => {
       return new Promise<Gio.File | Gio.File[] | undefined>(
         (resolve, reject) => {
           if (dialogWidget.current) {
-            return reject(
-              new Error("This FileChooserDialog is already open."),
-            );
+            return reject(new Error("This FileChooserDialog is already open."));
           }
 
           try {

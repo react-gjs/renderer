@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -127,13 +127,13 @@ export class ToolbarButtonElement extends BaseElement implements GjsElement<"TOO
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -190,14 +190,10 @@ export class ToolbarButtonElement extends BaseElement implements GjsElement<"TOO
   // #region Element internal signals
 
   notifyWillMountTo(parent: GjsElement): boolean {
-    if (
-      GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)
-    ) {
+    if (GjsElementManager.isGjsElementOfKind(parent, ToolbarElement)) {
       this.parent = parent;
     } else {
-      throw new Error(
-        "ToolbarButton can only be a child of a toolbar.",
-      );
+      throw new Error("ToolbarButton can only be a child of a toolbar.");
     }
     return true;
   }

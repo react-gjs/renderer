@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -73,11 +73,10 @@ export class RadioButtonElement extends BaseElement implements GjsElement<"RADIO
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  declare protected handlers: EventHandlers<
-    Gtk.RadioButton,
-    RadioButtonProps
-  >;
-  protected readonly propsMapper = new PropertyMapper<RadioButtonProps>(this.lifecycle);
+  declare protected handlers: EventHandlers<Gtk.RadioButton, RadioButtonProps>;
+  protected readonly propsMapper = new PropertyMapper<RadioButtonProps>(
+    this.lifecycle,
+  );
 
   protected readonly children = new TextChildController(
     this.lifecycle,
@@ -154,9 +153,7 @@ export class RadioButtonElement extends BaseElement implements GjsElement<"RADIO
   // #region Element internal signals
 
   notifyWillMountTo(parent: GjsElement): boolean {
-    if (
-      GjsElementManager.isGjsElementOfKind(parent, RadioGroupElement)
-    ) {
+    if (GjsElementManager.isGjsElementOfKind(parent, RadioGroupElement)) {
       this.parent = parent;
 
       const widget = (this.widget = Gtk.RadioButton.new_from_widget(
@@ -187,10 +184,9 @@ export class RadioButtonElement extends BaseElement implements GjsElement<"RADIO
             }),
       );
 
-      this.handlers = new EventHandlers<
-        Gtk.RadioButton,
-        RadioButtonProps
-      >(this);
+      this.handlers = new EventHandlers<Gtk.RadioButton, RadioButtonProps>(
+        this,
+      );
 
       this.handlers.bind("clicked", "onClick");
       this.handlers.bind("activate", "onActivate");
@@ -205,13 +201,13 @@ export class RadioButtonElement extends BaseElement implements GjsElement<"RADIO
         "enter-notify-event",
         "onMouseEnter",
         parseCrossingEvent,
-        EventPhase.Action,
+        EventPriority.Action,
       );
       this.handlers.bind(
         "leave-notify-event",
         "onMouseLeave",
         parseCrossingEvent,
-        EventPhase.Action,
+        EventPriority.Action,
       );
 
       this.lifecycle.emitLifecycleEventUpdate(this.unappliedProps);

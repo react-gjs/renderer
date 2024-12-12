@@ -15,16 +15,20 @@ export class Renderer {
 
   protected getContainer() {
     if (!this.container) {
-      this.container = GjsReconciler.createContainer(
+      const container = GjsReconciler.createContainer(
         this.application,
         1,
         null,
         false,
         null,
         "",
-        () => console.error,
+        (...args: any[]) => console.error(...args),
+        (...args: any[]) => console.error(...args),
+        // @ts-expect-error
+        (...args: any[]) => console.error(...args),
         null,
       );
+      this.container = container;
     }
     return this.container;
   }
@@ -43,11 +47,14 @@ export class Renderer {
       () => {},
     );
 
-    this.application.runAsync(system.programArgs).then((code) => {
-      system.exit(code);
-    }).catch((e) => {
-      console.error(e);
-      system.exit(1);
-    });
+    this.application
+      .runAsync(system.programArgs)
+      .then((code) => {
+        system.exit(code);
+      })
+      .catch((e) => {
+        console.error(e);
+        system.exit(1);
+      });
   }
 }

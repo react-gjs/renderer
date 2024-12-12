@@ -4,7 +4,7 @@ import type Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import { ButtonType } from "../../../enums/custom";
 import type { PositionType } from "../../../enums/gtk3-index";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -47,7 +47,10 @@ type ButtonPropsMixin =
   & TooltipProps
   & AccelProps;
 
-export type ButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, ButtonElement>;
+export type ButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  ButtonElement
+>;
 
 export interface ButtonProps extends ButtonPropsMixin {
   type?: ButtonType;
@@ -73,9 +76,7 @@ export interface ButtonProps extends ButtonPropsMixin {
 
 const ImageDataType = DataType.OneOf(
   DataType.String,
-  DataType.Custom(
-    (v): v is GdkPixbuf.Pixbuf => typeof v === "object",
-  ),
+  DataType.Custom((v): v is GdkPixbuf.Pixbuf => typeof v === "object"),
 );
 
 export class ButtonElement extends BaseElement implements GjsElement<"BUTTON", Gtk.Button> {
@@ -93,10 +94,9 @@ export class ButtonElement extends BaseElement implements GjsElement<"BUTTON", G
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly handlers = new EventHandlers<
-    Gtk.Button,
-    ButtonProps
-  >(this);
+  protected readonly handlers = new EventHandlers<Gtk.Button, ButtonProps>(
+    this,
+  );
   protected readonly propsMapper = new PropertyMapper<ButtonProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -193,17 +193,14 @@ export class ButtonElement extends BaseElement implements GjsElement<"BUTTON", G
             return () => this.widget.set_image(null);
           }
         })
-        .iconPixelSize(
-          DataType.Number,
-          (v = 16, allProps, mapperApi) => {
-            if (
-              allProps.icon != null
-              && !mapperApi.isUpdatedInThisCycle("icon")
-            ) {
-              this.setImageIcon(allProps.icon, v);
-            }
-          },
-        )
+        .iconPixelSize(DataType.Number, (v = 16, allProps, mapperApi) => {
+          if (
+            allProps.icon != null
+            && !mapperApi.isUpdatedInThisCycle("icon")
+          ) {
+            this.setImageIcon(allProps.icon, v);
+          }
+        })
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
@@ -239,13 +236,13 @@ export class ButtonElement extends BaseElement implements GjsElement<"BUTTON", G
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -291,12 +288,7 @@ export class ButtonElement extends BaseElement implements GjsElement<"BUTTON", G
     }
 
     if (width != null && height != null) {
-      pixbuff = resizePixbuff(
-        pixbuff,
-        width,
-        height,
-        preserveAspectRatio,
-      );
+      pixbuff = resizePixbuff(pixbuff, width, height, preserveAspectRatio);
     }
 
     const image = Gtk.Image.new_from_pixbuf(pixbuff);
@@ -304,10 +296,7 @@ export class ButtonElement extends BaseElement implements GjsElement<"BUTTON", G
     this.widget.set_image(image);
   }
 
-  protected setImageIcon(
-    icon: string | Gio.Icon,
-    pixelSize?: number,
-  ) {
+  protected setImageIcon(icon: string | Gio.Icon, pixelSize?: number) {
     const iconWidget = typeof icon === "string"
       ? Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
       : Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON);

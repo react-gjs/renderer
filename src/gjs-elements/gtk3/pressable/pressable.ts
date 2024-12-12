@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import type Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -42,7 +42,10 @@ type PressablePropsMixin =
   & StyleProps
   & TooltipProps;
 
-export type PressableEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, PressableElement>;
+export type PressableEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  PressableElement
+>;
 
 export interface PressableProps extends PressablePropsMixin {
   onPress?: (event: PressableEvent<MouseButtonPressEvent>) => void;
@@ -78,14 +81,8 @@ export class PressableElement extends BaseElement implements GjsElement<"PRESSAB
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected children = new ChildOrderController(
-    this.lifecycle,
-    this.widget,
-  );
-  protected handlers = new EventHandlers<
-    Gtk.EventBox,
-    PressableProps
-  >(this);
+  protected children = new ChildOrderController(this.lifecycle, this.widget);
+  protected handlers = new EventHandlers<Gtk.EventBox, PressableProps>(this);
   protected readonly propsMapper = new PropertyMapper<PressableProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -124,13 +121,13 @@ export class PressableElement extends BaseElement implements GjsElement<"PRESSAB
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -159,21 +156,14 @@ export class PressableElement extends BaseElement implements GjsElement<"PRESSAB
     );
   }
 
-  insertBefore(
-    child: GjsElement | TextNode,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(child: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(child);
 
     mountAction(
       this,
       child,
       (shouldOmitMount) => {
-        this.children.insertBefore(
-          child,
-          beforeChild,
-          shouldOmitMount,
-        );
+        this.children.insertBefore(child, beforeChild, shouldOmitMount);
       },
       () => {
         this.widget.show_all();

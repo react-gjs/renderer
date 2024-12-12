@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import type { CornerType, PolicyType, PositionType, ShadowType } from "../../../enums/gtk3-index";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -43,7 +43,10 @@ type DefaultEventData = {
   currentHPosition: number;
 };
 
-export type ScrollBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<P & DefaultEventData, ScrollBoxElement>;
+export type ScrollBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P & DefaultEventData,
+  ScrollBoxElement
+>;
 
 export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   maxWidth?: number;
@@ -57,9 +60,7 @@ export interface ScrollBoxProps extends ScrollBoxPropsMixin {
   verticalScrollbar?: PolicyType;
   shadow?: ShadowType;
   overlayScrolling?: boolean;
-  onEdgeReached?: (
-    event: ScrollBoxEvent<{ position: PositionType }>,
-  ) => void;
+  onEdgeReached?: (event: ScrollBoxEvent<{ position: PositionType }>) => void;
   onScroll?: (event: ScrollBoxEvent) => void;
   onContentSizeChange?: (event: ScrollBoxEvent) => void;
 }
@@ -79,14 +80,10 @@ export class ScrollBoxElement extends BaseElement implements GjsElement<"SCROLL_
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected children = new ChildOrderController(
-    this.lifecycle,
-    this.widget,
+  protected children = new ChildOrderController(this.lifecycle, this.widget);
+  protected handlers = new EventHandlers<Gtk.ScrolledWindow, ScrollBoxProps>(
+    this,
   );
-  protected handlers = new EventHandlers<
-    Gtk.ScrolledWindow,
-    ScrollBoxProps
-  >(this);
   protected vAdjustmentHandlers = new EventHandlers<
     Gtk.Adjustment,
     ScrollBoxProps
@@ -154,12 +151,9 @@ export class ScrollBoxElement extends BaseElement implements GjsElement<"SCROLL_
             this.widget.window_placement = v;
           },
         )
-        .shadow(
-          DataType.Enum(Gtk.ShadowType),
-          (v = Gtk.ShadowType.NONE) => {
-            this.widget.shadow_type = v;
-          },
-        ),
+        .shadow(DataType.Enum(Gtk.ShadowType), (v = Gtk.ShadowType.NONE) => {
+          this.widget.shadow_type = v;
+        }),
   );
 
   constructor(props: DiffedProps) {
@@ -170,43 +164,35 @@ export class ScrollBoxElement extends BaseElement implements GjsElement<"SCROLL_
       (e: PositionType) => {
         return { position: e };
       },
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.handlers.bind(
       "scroll-event",
       "onScroll",
       () => this.getDefaultEventData(),
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     let lastVUpper = -1;
-    this.vAdjustmentHandlers.bind(
-      "changed",
-      "onContentSizeChange",
-      () => {
-        const upper = this.widget.vadjustment.get_upper();
-        if (lastVUpper !== upper) {
-          lastVUpper = upper;
-          return this.getDefaultEventData();
-        }
-        throw new EventNoop();
-      },
-    );
+    this.vAdjustmentHandlers.bind("changed", "onContentSizeChange", () => {
+      const upper = this.widget.vadjustment.get_upper();
+      if (lastVUpper !== upper) {
+        lastVUpper = upper;
+        return this.getDefaultEventData();
+      }
+      throw new EventNoop();
+    });
 
     let lastHUpper = -1;
-    this.hAdjustmentHandlers.bind(
-      "changed",
-      "onContentSizeChange",
-      () => {
-        const upper = this.widget.hadjustment.get_upper();
-        if (lastHUpper !== upper) {
-          lastHUpper = upper;
-          return this.getDefaultEventData();
-        }
-        throw new EventNoop();
-      },
-    );
+    this.hAdjustmentHandlers.bind("changed", "onContentSizeChange", () => {
+      const upper = this.widget.hadjustment.get_upper();
+      if (lastHUpper !== upper) {
+        lastHUpper = upper;
+        return this.getDefaultEventData();
+      }
+      throw new EventNoop();
+    });
 
     this.updateProps(props);
     this.lifecycle.emitLifecycleEventAfterCreate();
@@ -263,9 +249,7 @@ export class ScrollBoxElement extends BaseElement implements GjsElement<"SCROLL_
     }
   }
 
-  scrollToEnd(
-    orientation: "vertically" | "horizontally" = "vertically",
-  ) {
+  scrollToEnd(orientation: "vertically" | "horizontally" = "vertically") {
     /**
      * Changing the value of the adjustment will trigger a "changed"
      * event immediately after, so to avoid unexpected side-effects
@@ -295,17 +279,11 @@ export class ScrollBoxElement extends BaseElement implements GjsElement<"SCROLL_
       case "top":
         return this.vAdjustment!.get_value();
       case "bottom":
-        return (
-          this.vAdjustment!.get_upper()
-          - this.vAdjustment!.get_value()
-        );
+        return this.vAdjustment!.get_upper() - this.vAdjustment!.get_value();
       case "left":
         return this.hAdjustment!.get_value();
       case "right":
-        return (
-          this.hAdjustment!.get_upper()
-          - this.hAdjustment!.get_value()
-        );
+        return this.hAdjustment!.get_upper() - this.hAdjustment!.get_value();
     }
   }
 
@@ -334,10 +312,7 @@ export class ScrollBoxElement extends BaseElement implements GjsElement<"SCROLL_
     );
   }
 
-  insertBefore(
-    child: GjsElement | TextNode,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(child: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(child);
 
     if (this.children.count() > 0) {
@@ -348,11 +323,7 @@ export class ScrollBoxElement extends BaseElement implements GjsElement<"SCROLL_
       this,
       child,
       (shouldOmitMount) => {
-        this.children.insertBefore(
-          child,
-          beforeChild,
-          shouldOmitMount,
-        );
+        this.children.insertBefore(child, beforeChild, shouldOmitMount);
       },
       () => {
         this.widget.show_all();

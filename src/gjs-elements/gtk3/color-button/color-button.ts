@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { ButtonType } from "../../../enums/custom";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -82,10 +82,9 @@ export class ColorButtonElement extends BaseElement implements GjsElement<"COLOR
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly handlers = new EventHandlers<
-    Gtk.Button,
-    ColorButtonProps
-  >(this);
+  protected readonly handlers = new EventHandlers<Gtk.Button, ColorButtonProps>(
+    this,
+  );
   protected readonly propsMapper = new PropertyMapper<ColorButtonProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -107,27 +106,22 @@ export class ColorButtonElement extends BaseElement implements GjsElement<"COLOR
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
-        .type(
-          DataType.Enum(ButtonType),
-          (v = ButtonType.NORMAL) => {
-            switch (v) {
-              case ButtonType.NORMAL:
-                this.widget.relief = Gtk.ReliefStyle.NORMAL;
-                break;
-              case ButtonType.FLAT:
-                this.widget.relief = Gtk.ReliefStyle.NONE;
-                break;
-            }
-          },
-        )
+        .type(DataType.Enum(ButtonType), (v = ButtonType.NORMAL) => {
+          switch (v) {
+            case ButtonType.NORMAL:
+              this.widget.relief = Gtk.ReliefStyle.NORMAL;
+              break;
+            case ButtonType.FLAT:
+              this.widget.relief = Gtk.ReliefStyle.NONE;
+              break;
+          }
+        })
         .focusOnClick(DataType.Boolean, (v = true) => {
           this.widget.focus_on_click = v;
         })
         .color(DataType.String, (v) => {
           if (v) {
-            this.widget.rgba = parseColor(
-              v as ColorString,
-            ).toRgba();
+            this.widget.rgba = parseColor(v as ColorString).toRgba();
           }
         })
         .showEditor(DataType.Boolean, (v = false) => {
@@ -158,13 +152,13 @@ export class ColorButtonElement extends BaseElement implements GjsElement<"COLOR
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "color-set",
@@ -174,7 +168,7 @@ export class ColorButtonElement extends BaseElement implements GjsElement<"COLOR
           color: this.widget.get_rgba().to_string(),
         };
       },
-      EventPhase.Input,
+      EventPriority.Input,
     );
 
     this.updateProps(props);

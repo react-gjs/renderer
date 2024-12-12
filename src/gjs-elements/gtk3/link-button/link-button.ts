@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -71,10 +71,9 @@ export class LinkButtonElement extends BaseElement implements GjsElement<"LINK_B
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly handlers = new EventHandlers<
-    Gtk.Button,
-    LinkButtonProps
-  >(this);
+  protected readonly handlers = new EventHandlers<Gtk.Button, LinkButtonProps>(
+    this,
+  );
 
   protected readonly propsMapper = new PropertyMapper<LinkButtonProps>(
     this.lifecycle,
@@ -116,13 +115,13 @@ export class LinkButtonElement extends BaseElement implements GjsElement<"LINK_B
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.widget.connect("activate-link", () => {

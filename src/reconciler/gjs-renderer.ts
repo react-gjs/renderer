@@ -9,7 +9,7 @@ import { diffProps } from "../gjs-elements/utils/diff-props";
 import { DoNotAppend } from "../gjs-elements/utils/do-not-append";
 import { isGjsElementOrText } from "../gjs-elements/utils/is-gjs-element";
 import { microtask } from "../gjs-elements/utils/micortask";
-import { EventPhaseController } from "./event-phase";
+import { EventPhaseController, EventPriority } from "./event-phase";
 import { HostContext } from "./host-context";
 
 registerGtk3Elements(GjsElementManager);
@@ -23,11 +23,7 @@ const performAppendAction = (action: () => void) => {
   try {
     action();
   } catch (e) {
-    if (
-      typeof e === "object"
-      && e !== null
-      && e instanceof DoNotAppend
-    ) {
+    if (typeof e === "object" && e !== null && e instanceof DoNotAppend) {
       // do nothing
     } else {
       throw e;
@@ -98,13 +94,7 @@ export const GjsReconciler = Reconciler({
     return new TextNode(text);
   },
   detachDeletedInstance(node) {},
-  finalizeInitialChildren(
-    instance,
-    type,
-    props,
-    rootContainer,
-    hostContext,
-  ) {
+  finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
     return true;
   },
   getChildHostContext(
@@ -112,13 +102,7 @@ export const GjsReconciler = Reconciler({
     type,
     rootContainer,
   ): HostContext<GjsContext> {
-    return GjsElementManager.getContextForKind(
-      type,
-      parentHostContext,
-    );
-  },
-  getCurrentEventPriority() {
-    return EventPhaseController.getCurrentPhase();
+    return GjsElementManager.getContextForKind(type, parentHostContext);
   },
   getInstanceFromNode(node) {
     return undefined;
@@ -155,20 +139,15 @@ export const GjsReconciler = Reconciler({
   shouldSetTextContent(type: any, props: any) {
     return false;
   },
-  commitUpdate(
-    instance: any,
-    updatePayload,
-    type,
-    prevProps,
-    nextProps,
-    internalHandle,
-  ) {
-    if (
-      updatePayload
-      && updatePayload.length > 0
-      && GjsElementManager.isGjsElement(instance)
-    ) {
-      instance.updateProps(updatePayload);
+  commitUpdate(instance: any, type, prevProps, nextProps) {
+    if (GjsElementManager.isGjsElement(instance)) {
+      const updatePayload = instance.diffProps(
+        prevProps as any as object,
+        nextProps as any as object,
+      );
+      if (updatePayload.length > 0) {
+        instance.updateProps(updatePayload);
+      }
     }
   },
   commitTextUpdate(textInstance: any, oldText, newText) {
@@ -198,9 +177,7 @@ export const GjsReconciler = Reconciler({
       container.clear();
     } else if (GjsElementManager.isGjsElement(container)) {
       if ((container.getWidget() as Gtk.Box).get_children) {
-        const children = (
-          container.getWidget() as Gtk.Box
-        ).get_children()!;
+        const children = (container.getWidget() as Gtk.Box).get_children()!;
         for (const child of children) {
           child.destroy();
         }
@@ -255,6 +232,40 @@ export const GjsReconciler = Reconciler({
   },
   scheduleMicrotask(callback) {
     microtask(callback);
+  },
+  // @ts-expect-error
+  maySuspendCommit() {
+    return false;
+  },
+  setCurrentUpdatePriority(newPriority: EventPriority) {
+    EventPhaseController.setPriority(newPriority);
+  },
+  getCurrentUpdatePriority() {
+    return EventPhaseController.getPriority();
+  },
+  getCurrentEventPriority() {
+    return EventPhaseController.getPriority();
+  },
+  resolveUpdatePriority() {
+    const updatePriority = EventPhaseController.getPriority();
+    if (updatePriority !== EventPriority.NoEvent) {
+      return updatePriority;
+    }
+    return EventPriority.Default;
+  },
+  resetFormInstance() {},
+  requestPostPaintCallback(callback: (time: number) => void) {
+    // no-op
+  },
+  shouldAttemptEagerTransition(): boolean {
+    return false;
+  },
+  trackSchedulerEvent(): void {},
+  resolveEventType(): null | string {
+    return null;
+  },
+  resolveEventTimeStamp(): number {
+    return -1.1;
   },
   supportsMicrotasks: true,
 });

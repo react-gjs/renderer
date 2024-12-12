@@ -122,10 +122,7 @@ declare global {
       children?: C | C[];
     } & P;
 
-    type ComponentWithChild<
-      P,
-      C extends React.ReactNode = React.ReactNode,
-    > = {
+    type ComponentWithChild<P, C extends React.ReactNode = React.ReactNode> = {
       children?: C;
     } & P;
 
@@ -139,7 +136,19 @@ declare global {
   }
 
   namespace JSX {
-    interface IntrinsicElements {
+    type ElementType = React.JSX.ElementType;
+    interface Element extends React.JSX.Element {}
+    interface ElementClass extends React.JSX.ElementClass {}
+    interface ElementAttributesProperty extends React.JSX.ElementAttributesProperty {}
+    interface ElementChildrenAttribute extends React.JSX.ElementChildrenAttribute {}
+    type LibraryManagedAttributes<C, P> = React.JSX.LibraryManagedAttributes<
+      C,
+      P
+    >;
+    interface IntrinsicAttributes extends React.JSX.IntrinsicAttributes {}
+    interface IntrinsicClassAttributes<T> extends React.JSX.IntrinsicClassAttributes<T> {}
+
+    interface IntrinsicElements extends React.JSX.IntrinsicElements {
       ACTION_BAR: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<ActionBarProps>,
         ActionBarElement
@@ -205,36 +214,21 @@ declare global {
         Rg.ComponentWithChildren<LabelProps, string>,
         LabelElement
       >;
-      LEVEL_BAR: Rg.IntrinsicComponent<
-        LevelBarProps,
-        LevelBarElement
-      >;
+      LEVEL_BAR: Rg.IntrinsicComponent<LevelBarProps, LevelBarElement>;
       LINK_BUTTON: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<LinkButtonProps, string>,
         LinkButtonElement
       >;
       MARKUP: Rg.IntrinsicComponent<
-        Rg.ComponentWithChildren<
-          MarkupProps,
-          string | React.ReactNode
-        >,
+        Rg.ComponentWithChildren<MarkupProps, string | React.ReactNode>,
         MarkupElement
       >;
       M_ANCHOR: Rg.IntrinsicComponent<
-        Rg.ComponentWithChildren<
-          MAnchorProps,
-          string | React.ReactNode
-        >,
+        Rg.ComponentWithChildren<MAnchorProps, string | React.ReactNode>,
         MAnchorElement
       >;
-      M_BIG: Rg.ComponentWithChildren<
-        MBigProps,
-        string | React.ReactNode
-      >;
-      M_BOLD: Rg.ComponentWithChildren<
-        MBoldProps,
-        string | React.ReactNode
-      >;
+      M_BIG: Rg.ComponentWithChildren<MBigProps, string | React.ReactNode>;
+      M_BOLD: Rg.ComponentWithChildren<MBoldProps, string | React.ReactNode>;
       M_ITALIC: Rg.ComponentWithChildren<
         MItalicProps,
         string | React.ReactNode
@@ -243,14 +237,8 @@ declare global {
         MMonospaceProps,
         string | React.ReactNode
       >;
-      M_SMALL: Rg.ComponentWithChildren<
-        MSmallProps,
-        string | React.ReactNode
-      >;
-      M_SPAN: Rg.ComponentWithChildren<
-        MSpanProps,
-        string | React.ReactNode
-      >;
+      M_SMALL: Rg.ComponentWithChildren<MSmallProps, string | React.ReactNode>;
+      M_SPAN: Rg.ComponentWithChildren<MSpanProps, string | React.ReactNode>;
       M_STRIKETHROUGH: Rg.ComponentWithChildren<
         MStrikethroughProps,
         string | React.ReactNode
@@ -295,10 +283,7 @@ declare global {
         Rg.ComponentWithChildren<ModelButtonProps, string>,
         ModelButtonElement
       >;
-      NUMBER_INPUT: Rg.IntrinsicComponent<
-        NumberInputProps,
-        NumberInputElement
-      >;
+      NUMBER_INPUT: Rg.IntrinsicComponent<NumberInputProps, NumberInputElement>;
       PANED: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<PanedProps>,
         PanedElement
@@ -327,18 +312,12 @@ declare global {
         PopoverMenuSeparatorProps,
         PopoverMenuSeparatorElement
       >;
-      PROGRESS_BAR: Rg.IntrinsicComponent<
-        ProgressBarProps,
-        ProgressBarElement
-      >;
+      PROGRESS_BAR: Rg.IntrinsicComponent<ProgressBarProps, ProgressBarElement>;
       RADIO_GROUP: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<RadioGroupProps>,
         RadioGroupElement
       >;
-      RADIO_BUTTON: Rg.IntrinsicComponent<
-        RadioButtonProps,
-        RadioButtonElement
-      >;
+      RADIO_BUTTON: Rg.IntrinsicComponent<RadioButtonProps, RadioButtonElement>;
       REVEALER: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<RevealerProps>,
         RevealerElement
@@ -351,15 +330,9 @@ declare global {
         Rg.ComponentWithChildren<SearchBarProps>,
         SearchBarElement
       >;
-      SEARCH_INPUT: Rg.IntrinsicComponent<
-        SearchInputProps,
-        SearchInputElement
-      >;
+      SEARCH_INPUT: Rg.IntrinsicComponent<SearchInputProps, SearchInputElement>;
       SELECTOR: Rg.IntrinsicComponent<SelectorProps, SelectorElement>;
-      SEPARATOR: Rg.IntrinsicComponent<
-        SeparatorProps,
-        SeparatorElement
-      >;
+      SEPARATOR: Rg.IntrinsicComponent<SeparatorProps, SeparatorElement>;
       SIZE_GROUP_BOX: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<SizeGroupBoxProps>,
         SizeGroupBoxElement
@@ -375,14 +348,8 @@ declare global {
         StackScreenElement
       >;
       SWITCH: Rg.IntrinsicComponent<SwitchProps, SwitchElement>;
-      TEXT_AREA: Rg.IntrinsicComponent<
-        TextAreaProps,
-        TextAreaElement
-      >;
-      TEXT_ENTRY: Rg.IntrinsicComponent<
-        TextEntryProps,
-        TextEntryElement
-      >;
+      TEXT_AREA: Rg.IntrinsicComponent<TextAreaProps, TextAreaElement>;
+      TEXT_ENTRY: Rg.IntrinsicComponent<TextEntryProps, TextEntryElement>;
       TEXT_VIEW: Rg.IntrinsicComponent<
         Rg.ComponentWithChildren<TextViewProps>,
         TextViewElement
