@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -104,13 +104,13 @@ export class MenuBarItemElement extends BaseElement implements GjsElement<"MENU_
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -141,9 +141,7 @@ export class MenuBarItemElement extends BaseElement implements GjsElement<"MENU_
     ensureNotText(child);
 
     if (!GjsElementManager.isGjsElementOfKind(child, MENU_ELEMENTS)) {
-      throw new Error(
-        "Only MenuEntry can be a child of MenuBarItem.",
-      );
+      throw new Error("Only MenuEntry can be a child of MenuBarItem.");
     }
 
     mountAction(
@@ -159,27 +157,18 @@ export class MenuBarItemElement extends BaseElement implements GjsElement<"MENU_
     );
   }
 
-  insertBefore(
-    child: GjsElement | TextNode,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(child: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(child);
 
     if (!GjsElementManager.isGjsElementOfKind(child, MENU_ELEMENTS)) {
-      throw new Error(
-        "Only MenuEntry can be a child of MenuBarItem.",
-      );
+      throw new Error("Only MenuEntry can be a child of MenuBarItem.");
     }
 
     mountAction(
       this,
       child,
       (shouldOmitMount) => {
-        this.children.insertBefore(
-          child,
-          beforeChild,
-          shouldOmitMount,
-        );
+        this.children.insertBefore(child, beforeChild, shouldOmitMount);
         child.setRootBarItem(this);
       },
       () => {
@@ -205,9 +194,7 @@ export class MenuBarItemElement extends BaseElement implements GjsElement<"MENU_
   // #region Element internal signals
 
   notifyWillMountTo(parent: GjsElement): boolean {
-    if (
-      !GjsElementManager.isGjsElementOfKind(parent, MenuBarElement)
-    ) {
+    if (!GjsElementManager.isGjsElementOfKind(parent, MenuBarElement)) {
       throw new Error("MenuBarItem can only be a child of MenuBar.");
     }
 

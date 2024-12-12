@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
 import { MenuCheckButtonType } from "../../../enums/custom";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -48,9 +48,7 @@ export interface MenuCheckButtonProps extends MenuCheckButtonPropsMixin {
   value?: boolean;
   type?: MenuCheckButtonType;
   inconsistent?: boolean;
-  onToggle?: (
-    event: MenuCheckButtonEvent<{ value: boolean }>,
-  ) => void;
+  onToggle?: (event: MenuCheckButtonEvent<{ value: boolean }>) => void;
   onMouseEnter?: (event: MenuCheckButtonEvent<PointerData>) => void;
   onMouseLeave?: (event: MenuCheckButtonEvent<PointerData>) => void;
 }
@@ -115,13 +113,13 @@ export class MenuCheckButtonElement extends BaseElement implements GjsElement<"M
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -141,10 +139,7 @@ export class MenuCheckButtonElement extends BaseElement implements GjsElement<"M
     throw new Error("MenuCheckButton cannot have children.");
   }
 
-  insertBefore(
-    newChild: GjsElement | TextNode,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     throw new Error("MenuCheckButton cannot have children.");
   }
 

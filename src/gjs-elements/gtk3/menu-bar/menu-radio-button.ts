@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -48,9 +48,7 @@ export interface MenuRadioButtonProps extends MenuRadioButtonPropsMixin {
   isDefault?: boolean;
   inconsistent?: boolean;
   onClick?: (event: MenuRadioButtonEvent) => void;
-  onToggle?: (
-    event: MenuRadioButtonEvent<{ value: boolean }>,
-  ) => void;
+  onToggle?: (event: MenuRadioButtonEvent<{ value: boolean }>) => void;
   onMouseEnter?: (event: MenuRadioButtonEvent<PointerData>) => void;
   onMouseLeave?: (event: MenuRadioButtonEvent<PointerData>) => void;
 }
@@ -69,10 +67,9 @@ export class MenuRadioButtonElement extends BaseElement implements GjsElement<"M
   protected rootBarItem: MenuBarItemElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected handlers = new EventHandlers<
-    Gtk.MenuItem,
-    MenuRadioButtonProps
-  >(this);
+  protected handlers = new EventHandlers<Gtk.MenuItem, MenuRadioButtonProps>(
+    this,
+  );
 
   protected propsMapper = new PropertyMapper<MenuRadioButtonProps>(
     this.lifecycle,
@@ -128,10 +125,9 @@ export class MenuRadioButtonElement extends BaseElement implements GjsElement<"M
           }),
     );
 
-    this.handlers = new EventHandlers<
-      Gtk.RadioMenuItem,
-      MenuRadioButtonProps
-    >(this);
+    this.handlers = new EventHandlers<Gtk.RadioMenuItem, MenuRadioButtonProps>(
+      this,
+    );
 
     this.handlers.bind("clicked", "onClick");
     this.handlers.bind("toggled", "onToggle", () => {
@@ -143,27 +139,20 @@ export class MenuRadioButtonElement extends BaseElement implements GjsElement<"M
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
-    this.lifecycle.emitLifecycleEventUpdate([
-      ...this.unappliedProps.entries(),
-    ]);
+    this.lifecycle.emitLifecycleEventUpdate([...this.unappliedProps.entries()]);
     this.unappliedProps.clear();
 
-    const groupHasActiveEntry = radioGroup
-      .get_group()
-      .some((i) => i.active);
-    if (
-      !groupHasActiveEntry
-      && this.propsMapper.currentProps.isDefault
-    ) {
+    const groupHasActiveEntry = radioGroup.get_group().some((i) => i.active);
+    if (!groupHasActiveEntry && this.propsMapper.currentProps.isDefault) {
       widget.set_active(true);
     }
 
@@ -187,10 +176,7 @@ export class MenuRadioButtonElement extends BaseElement implements GjsElement<"M
     throw new Error("MenuRadioButton cannot have children.");
   }
 
-  insertBefore(
-    newChild: GjsElement | TextNode,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(newChild: GjsElement | TextNode, beforeChild: GjsElement): void {
     throw new Error("MenuRadioButton cannot have children.");
   }
 

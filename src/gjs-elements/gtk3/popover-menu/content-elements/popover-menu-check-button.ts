@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../../reconciler/event-phase";
+import { EventPriority } from "../../../../reconciler/event-phase";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../../gjs-element";
@@ -39,9 +39,10 @@ type PopoverMenuCheckButtonPropsMixin =
   & TooltipProps
   & AccelProps;
 
-export type PopoverMenuCheckButtonEvent<
-  P extends Record<string, any> = {},
-> = SyntheticEvent<P, PopoverMenuCheckButtonElement>;
+export type PopoverMenuCheckButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  PopoverMenuCheckButtonElement
+>;
 
 export interface PopoverMenuCheckButtonProps extends PopoverMenuCheckButtonPropsMixin {
   label?: string;
@@ -49,17 +50,11 @@ export interface PopoverMenuCheckButtonProps extends PopoverMenuCheckButtonProps
   centered?: boolean;
   inverted?: boolean;
   active?: boolean;
-  onChange?: (
-    e: PopoverMenuCheckButtonEvent<{ isActive: boolean }>,
-  ) => void;
+  onChange?: (e: PopoverMenuCheckButtonEvent<{ isActive: boolean }>) => void;
   onPressed?: (event: PopoverMenuCheckButtonEvent) => void;
   onReleased?: (event: PopoverMenuCheckButtonEvent) => void;
-  onMouseEnter?: (
-    event: PopoverMenuCheckButtonEvent<PointerData>,
-  ) => void;
-  onMouseLeave?: (
-    event: PopoverMenuCheckButtonEvent<PointerData>,
-  ) => void;
+  onMouseEnter?: (event: PopoverMenuCheckButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: PopoverMenuCheckButtonEvent<PointerData>) => void;
 }
 
 export class PopoverMenuCheckButtonElement extends BaseElement
@@ -74,10 +69,7 @@ export class PopoverMenuCheckButtonElement extends BaseElement
   readonly kind = "POPOVER_MENU_CHECK_BUTTON";
   protected widget = popoverMenuModelButton();
 
-  protected parent:
-    | PopoverMenuEntryElement
-    | PopoverMenuContentElement
-    | null = null;
+  protected parent: PopoverMenuEntryElement | PopoverMenuContentElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   protected readonly handlers = new EventHandlers<
@@ -133,13 +125,13 @@ export class PopoverMenuCheckButtonElement extends BaseElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -161,10 +153,7 @@ export class PopoverMenuCheckButtonElement extends BaseElement
     throw new Error("PopoverMenuCheckButton cannot have children.");
   }
 
-  insertBefore(
-    child: TextNode | GjsElement,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
     throw new Error("PopoverMenuCheckButton cannot have children.");
   }
 

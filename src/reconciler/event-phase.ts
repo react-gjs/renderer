@@ -1,6 +1,13 @@
-import { ContinuousEventPriority, DefaultEventPriority, DiscreteEventPriority } from "react-reconciler/constants";
+import {
+  ContinuousEventPriority,
+  DefaultEventPriority,
+  DiscreteEventPriority,
+  IdleEventPriority,
+  // @ts-expect-error
+  NoEventPriority,
+} from "react-reconciler/constants";
 
-export enum EventPhase {
+export enum EventPriority {
   /**
    * The default event phase. Used anytime when the event phase is not
    * a `Input` or `Action` phase.
@@ -17,22 +24,33 @@ export enum EventPhase {
    * button click or a keyboard key press)
    */
   Action = ContinuousEventPriority,
+  NoEvent = NoEventPriority,
+  Idle = IdleEventPriority,
 }
 
 export class EventPhaseController {
-  private static currentPhase: EventPhase = EventPhase.Default;
+  private static currentPriority: EventPriority = EventPriority.Default;
+  private static onPhaseEnd?: () => void;
 
-  static getCurrentPhase(): EventPhase {
-    return this.currentPhase;
+  static getPriority(): EventPriority {
+    return this.currentPriority;
   }
 
-  static startPhase<R>(phase: EventPhase, callback: () => R) {
-    const previousPhase = this.currentPhase;
-    this.currentPhase = phase;
+  static setPriority(priority: EventPriority) {
+    this.currentPriority = priority;
+    this.onPhaseEnd = undefined;
+  }
+
+  static startPhase<R>(priority: EventPriority, callback: () => R) {
+    const previousPriority = this.currentPriority;
+    this.setPriority(priority);
+    this.onPhaseEnd = () => {
+      this.setPriority(previousPriority);
+    };
     try {
       return callback();
     } finally {
-      this.currentPhase = previousPhase;
+      this.onPhaseEnd?.();
     }
   }
 }

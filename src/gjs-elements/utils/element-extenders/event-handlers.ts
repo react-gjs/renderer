@@ -1,4 +1,4 @@
-import { EventPhase, EventPhaseController } from "../../../reconciler/event-phase";
+import { EventPhaseController, EventPriority } from "../../../reconciler/event-phase";
 import type { ElementLifecycle } from "../../element-extender";
 import type { GjsElement } from "../../gjs-element";
 import type { DiffedProps } from "./map-properties";
@@ -46,7 +46,7 @@ class EventBind {
     private element: { getWidget(): Widget<any> },
     private signal: string,
     private argGetter: SyntheticEventPropsGenerator<any> = () => ({}),
-    private eventPhase: EventPhase = EventPhase.Input,
+    private eventPhase: EventPriority = EventPriority.Input,
   ) {}
 
   private showAsyncWarning = () => {
@@ -76,24 +76,17 @@ class EventBind {
 
               const a = this.argGetter(...args);
 
-              const syntheticEvent: SyntheticEvent<any> = Object.assign(
-                {},
-                a,
-                {
-                  stopPropagation,
-                  preventDefault: stopPropagation,
-                  originalEvent: args[0],
-                  targetWidget: this.element.getWidget(),
-                  target: this.element,
-                },
-              );
+              const syntheticEvent: SyntheticEvent<any> = Object.assign({}, a, {
+                stopPropagation,
+                preventDefault: stopPropagation,
+                originalEvent: args[0],
+                targetWidget: this.element.getWidget(),
+                target: this.element,
+              });
 
               const handlerReturn = this.handler(syntheticEvent);
 
-              if (
-                isObject(handlerReturn)
-                && handlerReturn instanceof Promise
-              ) {
+              if (isObject(handlerReturn) && handlerReturn instanceof Promise) {
                 this.showAsyncWarning();
               }
 
@@ -179,7 +172,7 @@ export class EventHandlers<
     signal: K,
     handler: W["connect"] extends EventConnect<K, A> ? (event: SyntheticEvent) => void
       : never,
-    eventPhase: EventPhase = EventPhase.Default,
+    eventPhase: EventPriority = EventPriority.Default,
   ) {
     const bind = new EventBind(
       this.element,
@@ -206,7 +199,7 @@ export class EventHandlers<
     propName: W["connect"] extends EventConnect<K, A> ? BindableProps<P>
       : never,
     getArgs?: SyntheticEventPropsGenerator<A>,
-    eventPhase?: EventPhase,
+    eventPhase?: EventPriority,
   ) {
     this.bindEvents.set(
       propName as string,

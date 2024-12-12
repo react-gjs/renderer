@@ -3,7 +3,7 @@ import Gdk from "gi://Gdk";
 import GdkPixbuf from "gi://GdkPixbuf";
 import Gtk from "gi://Gtk";
 import type { WindowTypeHint } from "../../../enums/gtk3-index";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -20,7 +20,10 @@ import type { ApplicationElement } from "../application/application";
 import { HeaderBarElement } from "../headerbar/headerbar";
 import type { TextNode } from "../text-node";
 
-export type WindowEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, WindowElement>;
+export type WindowEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  WindowElement
+>;
 
 export type WindowProps = {
   decorate?: boolean;
@@ -45,9 +48,7 @@ export type WindowProps = {
   onDragEnd?: (event: WindowEvent) => void;
   onFocus?: (event: WindowEvent) => void;
   onHide?: (event: WindowEvent) => void;
-  onResize?: (
-    event: WindowEvent<{ width: number; height: number }>,
-  ) => void;
+  onResize?: (event: WindowEvent<{ width: number; height: number }>) => void;
 };
 
 export class WindowElement extends BaseElement implements GjsElement<"WINDOW", Gtk.Window> {
@@ -143,26 +144,16 @@ export class WindowElement extends BaseElement implements GjsElement<"WINDOW", G
       "drag-begin",
       "onDragBegin",
       undefined,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "drag-end",
       "onDragEnd",
       undefined,
-      EventPhase.Action,
+      EventPriority.Action,
     );
-    this.handlers.bind(
-      "focus",
-      "onFocus",
-      undefined,
-      EventPhase.Action,
-    );
-    this.handlers.bind(
-      "hide",
-      "onHide",
-      undefined,
-      EventPhase.Action,
-    );
+    this.handlers.bind("focus", "onFocus", undefined, EventPriority.Action);
+    this.handlers.bind("hide", "onHide", undefined, EventPriority.Action);
     this.handlers.bind(
       "configure-event",
       "onResize",
@@ -170,7 +161,7 @@ export class WindowElement extends BaseElement implements GjsElement<"WINDOW", G
         width: this.widget.get_allocated_width(),
         height: this.widget.get_allocated_height(),
       }),
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -184,11 +175,7 @@ export class WindowElement extends BaseElement implements GjsElement<"WINDOW", G
     }
   }
 
-  protected addChild(
-    widget: Gtk.Widget,
-    element: GjsElement,
-    index: number,
-  ) {
+  protected addChild(widget: Gtk.Widget, element: GjsElement, index: number) {
     if (
       index === 0
       && GjsElementManager.isGjsElementOfKind(element, HeaderBarElement)
@@ -229,9 +216,7 @@ export class WindowElement extends BaseElement implements GjsElement<"WINDOW", G
     const onclose = props.find(([k]) => k === propName);
 
     if (onclose) {
-      const originalHandler = onclose[1] as
-        | undefined
-        | WindowProps["onClose"];
+      const originalHandler = onclose[1] as undefined | WindowProps["onClose"];
       onclose[1] = (event: WindowEvent) => {
         return this.defaultOnCloseHandler(event, originalHandler);
       };
@@ -256,9 +241,7 @@ export class WindowElement extends BaseElement implements GjsElement<"WINDOW", G
       throw new Error("Can't update props of a disposed window");
     }
 
-    this.lifecycle.emitLifecycleEventUpdate(
-      this.wrapOnCloseProp(props),
-    );
+    this.lifecycle.emitLifecycleEventUpdate(this.wrapOnCloseProp(props));
   }
 
   // #region This widget direct mutations
@@ -282,10 +265,7 @@ export class WindowElement extends BaseElement implements GjsElement<"WINDOW", G
     );
   }
 
-  insertBefore(
-    child: GjsElement | TextNode,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(child: GjsElement | TextNode, beforeChild: GjsElement): void {
     if (this.isDisposed) {
       throw new Error("Can't append child to disposed window");
     }
@@ -296,11 +276,7 @@ export class WindowElement extends BaseElement implements GjsElement<"WINDOW", G
       this,
       child,
       (shouldOmitMount) => {
-        this.children.insertBefore(
-          child,
-          beforeChild,
-          shouldOmitMount,
-        );
+        this.children.insertBefore(child, beforeChild, shouldOmitMount);
       },
       () => {
         this.widget.show_all();

@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../../reconciler/event-phase";
+import { EventPriority } from "../../../../reconciler/event-phase";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../../gjs-element";
@@ -46,9 +46,7 @@ type PopoverMenuEntryPropsMixin =
   & TooltipProps
   & AccelProps;
 
-export type PopoverMenuEntryEvent<
-  P extends Record<string, any> = {},
-> = SyntheticEvent<P, PopoverMenuEntryElement>;
+export type PopoverMenuEntryEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, PopoverMenuEntryElement>;
 
 export interface PopoverMenuEntryProps extends PopoverMenuEntryPropsMixin {
   label?: string;
@@ -99,10 +97,7 @@ export class PopoverMenuEntryElement extends BaseElement implements GjsElement<"
   ownMenuName: string;
   submenu = PopoverMenuEntryElement.createSubmenu();
 
-  protected parent:
-    | PopoverMenuEntryElement
-    | PopoverMenuContentElement
-    | null = null;
+  protected parent: PopoverMenuEntryElement | PopoverMenuContentElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   protected readonly children = new ChildOrderController<
@@ -160,13 +155,13 @@ export class PopoverMenuEntryElement extends BaseElement implements GjsElement<"
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -239,10 +234,7 @@ export class PopoverMenuEntryElement extends BaseElement implements GjsElement<"
     });
   }
 
-  insertBefore(
-    child: TextNode | GjsElement,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
     ensureNotText(beforeChild);
 
     if (

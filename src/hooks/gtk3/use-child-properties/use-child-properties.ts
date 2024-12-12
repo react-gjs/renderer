@@ -5,9 +5,7 @@ import { compareRecordsShallow } from "../../../gjs-elements/utils/diff-props";
 import { isInstrinsic } from "../../../utils/intrinsic-marker";
 
 export const useChildProperties = <
-  E extends
-    | keyof JSX.IntrinsicElements
-    | React.JSXElementConstructor<any>,
+  E extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>,
 >(
   element: E,
   childProperties: Record<string, string | number>,
@@ -19,7 +17,7 @@ export const useChildProperties = <
   }
 
   const childProps = React.useRef({});
-  const ref = React.useRef<GjsElement>();
+  const ref = React.useRef<GjsElement>(undefined);
 
   const [applyProperties] = React.useState(() => () => {
     if (!ref.current) return;
@@ -30,11 +28,7 @@ export const useChildProperties = <
 
     if ("child_set_property" in parent) {
       for (const [key, value] of Object.entries(childProps.current)) {
-        parent.child_set_property(
-          ref.current.getWidget(),
-          key,
-          value,
-        );
+        parent.child_set_property(ref.current.getWidget(), key, value);
       }
     }
   });
@@ -58,10 +52,7 @@ export const useChildProperties = <
   });
 
   React.useEffect(() => {
-    const changed = compareRecordsShallow(
-      childProps.current,
-      childProperties,
-    );
+    const changed = compareRecordsShallow(childProps.current, childProperties);
 
     if (changed) {
       childProps.current = childProperties;

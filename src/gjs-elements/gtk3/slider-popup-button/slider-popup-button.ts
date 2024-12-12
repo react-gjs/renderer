@@ -3,7 +3,7 @@ import Gtk from "gi://Gtk";
 import { ButtonType } from "../../../enums/custom";
 import type { SensitivityType } from "../../../enums/gtk3-index";
 import { PositionType } from "../../../enums/gtk3-index";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -46,9 +46,7 @@ type SliderPopupButtonPropsMixin =
   & TooltipProps
   & AccelProps;
 
-export type SliderPopupButtonEvent<
-  P extends Record<string, any> = {},
-> = SyntheticEvent<P, SliderPopupButtonElement>;
+export type SliderPopupButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, SliderPopupButtonElement>;
 
 export interface SliderPopupButtonProps extends SliderPopupButtonPropsMixin {
   type?: ButtonType;
@@ -80,9 +78,7 @@ export interface SliderPopupButtonProps extends SliderPopupButtonPropsMixin {
   onMouseLeave?: (event: SliderPopupButtonEvent<PointerData>) => void;
   onPopupOpen?: (event: SliderPopupButtonEvent) => void;
   onPopupClose?: (event: SliderPopupButtonEvent) => void;
-  onValueChange?: (
-    event: SliderPopupButtonEvent<{ value: number }>,
-  ) => void;
+  onValueChange?: (event: SliderPopupButtonEvent<{ value: number }>) => void;
 }
 
 const WidgetDataType = DataType.Custom(
@@ -161,19 +157,16 @@ export class SliderPopupButtonElement extends BaseElement
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
-        .type(
-          DataType.Enum(ButtonType),
-          (v = ButtonType.NORMAL) => {
-            switch (v) {
-              case ButtonType.NORMAL:
-                this.widget.relief = Gtk.ReliefStyle.NORMAL;
-                break;
-              case ButtonType.FLAT:
-                this.widget.relief = Gtk.ReliefStyle.NONE;
-                break;
-            }
-          },
-        )
+        .type(DataType.Enum(ButtonType), (v = ButtonType.NORMAL) => {
+          switch (v) {
+            case ButtonType.NORMAL:
+              this.widget.relief = Gtk.ReliefStyle.NORMAL;
+              break;
+            case ButtonType.FLAT:
+              this.widget.relief = Gtk.ReliefStyle.NONE;
+              break;
+          }
+        })
         .focusOnClick(DataType.Boolean, (v = true) => {
           this.widget.focus_on_click = v;
         })
@@ -206,24 +199,18 @@ export class SliderPopupButtonElement extends BaseElement
         .fixedSize(DataType.Boolean, (v = false) => {
           this.scale.set_slider_size_fixed(v);
         })
-        .marks(
-          DataType.Dict(DataType.String),
-          (v = {}, allProps) => {
-            const position = (allProps.marksPosition as any as Gtk.PositionType)
-              ?? Gtk.PositionType.TOP;
+        .marks(DataType.Dict(DataType.String), (v = {}, allProps) => {
+          const position = (allProps.marksPosition as any as Gtk.PositionType)
+            ?? Gtk.PositionType.TOP;
 
-            this.scale.clear_marks();
-            for (const [key, value] of Object.entries(v)) {
-              this.scale.add_mark(Number(key), position, value);
-            }
-          },
-        )
-        .marksPosition(
-          DataType.Enum(PositionType),
-          (_, __, { instead }) => {
-            instead("marks");
-          },
-        ),
+          this.scale.clear_marks();
+          for (const [key, value] of Object.entries(v)) {
+            this.scale.add_mark(Number(key), position, value);
+          }
+        })
+        .marksPosition(DataType.Enum(PositionType), (_, __, { instead }) => {
+          instead("marks");
+        }),
   );
 
   protected readonly children = new TextChildController(
@@ -246,26 +233,21 @@ export class SliderPopupButtonElement extends BaseElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
-    this.handlers.bind(
-      "popup",
-      "onPopupOpen",
-      undefined,
-      EventPhase.Action,
-    );
+    this.handlers.bind("popup", "onPopupOpen", undefined, EventPriority.Action);
     this.handlers.bind(
       "popdown",
       "onPopupClose",
       undefined,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind("value-changed", "onValueChange", () => ({
       value: this.adjustment.value,
@@ -291,10 +273,7 @@ export class SliderPopupButtonElement extends BaseElement
 
     const acceptableRange = max - min;
 
-    const fillAmount = Math.max(
-      min,
-      Math.min(max, min + v * acceptableRange),
-    );
+    const fillAmount = Math.max(min, Math.min(max, min + v * acceptableRange));
 
     this.scale.set_fill_level(fillAmount);
   }

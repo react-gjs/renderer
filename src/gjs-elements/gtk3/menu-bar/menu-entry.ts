@@ -1,6 +1,6 @@
 import { DataType } from "dilswer";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -43,7 +43,10 @@ type MenuEntryPropsMixin =
   & TooltipProps
   & AccelProps;
 
-export type MenuEntryEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, MenuEntryElement>;
+export type MenuEntryEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  MenuEntryElement
+>;
 
 export interface MenuEntryProps extends MenuEntryPropsMixin {
   /** Main text of the menu entry, displayed on the left side. */
@@ -70,10 +73,9 @@ export class MenuEntryElement extends BaseElement implements GjsElement<"MENU_EN
   protected rootBarItem: MenuBarItemElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly handlers = new EventHandlers<
-    Gtk.MenuItem,
-    MenuEntryProps
-  >(this);
+  protected readonly handlers = new EventHandlers<Gtk.MenuItem, MenuEntryProps>(
+    this,
+  );
   protected readonly children = new ChildOrderController<
     MenuEntryElement | MenuCheckButtonElement | MenuRadioButtonElement
   >(
@@ -118,13 +120,13 @@ export class MenuEntryElement extends BaseElement implements GjsElement<"MENU_EN
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);
@@ -182,10 +184,7 @@ export class MenuEntryElement extends BaseElement implements GjsElement<"MENU_EN
     );
   }
 
-  insertBefore(
-    child: GjsElement | TextNode,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(child: GjsElement | TextNode, beforeChild: GjsElement): void {
     ensureNotText(child);
 
     if (
@@ -202,11 +201,7 @@ export class MenuEntryElement extends BaseElement implements GjsElement<"MENU_EN
       this,
       child,
       (shouldOmitMount) => {
-        this.children.insertBefore(
-          child,
-          beforeChild,
-          shouldOmitMount,
-        );
+        this.children.insertBefore(child, beforeChild, shouldOmitMount);
         if (this.rootBarItem) {
           child.setRootBarItem(this.rootBarItem);
         }

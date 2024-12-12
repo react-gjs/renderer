@@ -1,5 +1,5 @@
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -41,7 +41,10 @@ type ButtonBoxPropsMixin =
   & TooltipProps
   & AccelProps;
 
-export type ButtonBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<P, ButtonBoxElement>;
+export type ButtonBoxEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  ButtonBoxElement
+>;
 
 export interface ButtonBoxProps extends ButtonBoxPropsMixin {
   margin?: ElementMargin;
@@ -70,10 +73,9 @@ export class ButtonBoxElement extends BaseElement implements GjsElement<"BUTTON_
   protected parent: GjsElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
-  protected readonly handlers = new EventHandlers<
-    Gtk.Button,
-    ButtonBoxProps
-  >(this);
+  protected readonly handlers = new EventHandlers<Gtk.Button, ButtonBoxProps>(
+    this,
+  );
   protected readonly propsMapper = new PropertyMapper<ButtonBoxProps>(
     this.lifecycle,
     createSizeRequestPropMapper(this.widget),
@@ -99,13 +101,13 @@ export class ButtonBoxElement extends BaseElement implements GjsElement<"BUTTON_
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.updateProps(props);

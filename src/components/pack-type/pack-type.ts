@@ -3,6 +3,7 @@ import { PackType } from "../../enums/gtk3-index";
 
 export const PackEnd = (props: { children: React.ReactElement }) => {
   return React.cloneElement(props.children, {
+    // @ts-expect-error
     "cpt:pack-type": PackType.END,
   });
 };

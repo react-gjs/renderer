@@ -3,7 +3,7 @@ import Gtk from "gi://Gtk";
 import { ButtonType } from "../../../enums/custom";
 import type { SensitivityType } from "../../../enums/gtk3-index";
 import { PositionType } from "../../../enums/gtk3-index";
-import { EventPhase } from "../../../reconciler/event-phase";
+import { EventPriority } from "../../../reconciler/event-phase";
 import type { GjsContext } from "../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../gjs-element";
@@ -70,9 +70,7 @@ export interface VolumeButtonProps extends VolumeButtonPropsMixin {
   onMouseLeave?: (event: VolumeButtonEvent<PointerData>) => void;
   onPopupOpen?: (event: VolumeButtonEvent) => void;
   onPopupClose?: (event: VolumeButtonEvent) => void;
-  onValueChange?: (
-    event: VolumeButtonEvent<{ value: number }>,
-  ) => void;
+  onValueChange?: (event: VolumeButtonEvent<{ value: number }>) => void;
 }
 
 export class VolumeButtonElement extends BaseElement implements GjsElement<"VOLUME_BUTTON", Gtk.VolumeButton> {
@@ -119,19 +117,16 @@ export class VolumeButtonElement extends BaseElement implements GjsElement<"VOLU
         .useUnderline(DataType.Boolean, (v = false) => {
           this.widget.use_underline = v;
         })
-        .type(
-          DataType.Enum(ButtonType),
-          (v = ButtonType.NORMAL) => {
-            switch (v) {
-              case ButtonType.NORMAL:
-                this.widget.relief = Gtk.ReliefStyle.NORMAL;
-                break;
-              case ButtonType.FLAT:
-                this.widget.relief = Gtk.ReliefStyle.NONE;
-                break;
-            }
-          },
-        )
+        .type(DataType.Enum(ButtonType), (v = ButtonType.NORMAL) => {
+          switch (v) {
+            case ButtonType.NORMAL:
+              this.widget.relief = Gtk.ReliefStyle.NORMAL;
+              break;
+            case ButtonType.FLAT:
+              this.widget.relief = Gtk.ReliefStyle.NONE;
+              break;
+          }
+        })
         .focusOnClick(DataType.Boolean, (v = true) => {
           this.widget.focus_on_click = v;
         })
@@ -155,24 +150,18 @@ export class VolumeButtonElement extends BaseElement implements GjsElement<"VOLU
         .fixedSize(DataType.Boolean, (v = false) => {
           this.scale.set_slider_size_fixed(v);
         })
-        .marks(
-          DataType.Dict(DataType.String),
-          (v = {}, allProps) => {
-            const position = (allProps.marksPosition as any as Gtk.PositionType)
-              ?? PositionType.TOP;
+        .marks(DataType.Dict(DataType.String), (v = {}, allProps) => {
+          const position = (allProps.marksPosition as any as Gtk.PositionType)
+            ?? PositionType.TOP;
 
-            this.scale.clear_marks();
-            for (const [key, value] of Object.entries(v)) {
-              this.scale.add_mark(Number(key), position, value);
-            }
-          },
-        )
-        .marksPosition(
-          DataType.Enum(PositionType),
-          (_, __, { instead }) => {
-            instead("marks");
-          },
-        ),
+          this.scale.clear_marks();
+          for (const [key, value] of Object.entries(v)) {
+            this.scale.add_mark(Number(key), position, value);
+          }
+        })
+        .marksPosition(DataType.Enum(PositionType), (_, __, { instead }) => {
+          instead("marks");
+        }),
   );
 
   protected readonly children = new TextChildController(
@@ -192,26 +181,21 @@ export class VolumeButtonElement extends BaseElement implements GjsElement<"VOLU
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
-    this.handlers.bind(
-      "popup",
-      "onPopupOpen",
-      undefined,
-      EventPhase.Action,
-    );
+    this.handlers.bind("popup", "onPopupOpen", undefined, EventPriority.Action);
     this.handlers.bind(
       "popdown",
       "onPopupClose",
       undefined,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind("value-changed", "onValueChange", () => ({
       value: this.adjustment!.value,

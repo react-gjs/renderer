@@ -1,7 +1,7 @@
 import { DataType } from "dilswer";
 import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
-import { EventPhase } from "../../../../reconciler/event-phase";
+import { EventPriority } from "../../../../reconciler/event-phase";
 import type { GjsContext } from "../../../../reconciler/gjs-renderer";
 import type { HostContext } from "../../../../reconciler/host-context";
 import { BaseElement, type GjsElement } from "../../../gjs-element";
@@ -40,9 +40,10 @@ type PopoverMenuRadioButtonPropsMixin =
   & TooltipProps
   & AccelProps;
 
-export type PopoverMenuRadioButtonEvent<
-  P extends Record<string, any> = {},
-> = SyntheticEvent<P, PopoverMenuRadioButtonElement>;
+export type PopoverMenuRadioButtonEvent<P extends Record<string, any> = {}> = SyntheticEvent<
+  P,
+  PopoverMenuRadioButtonElement
+>;
 
 export interface PopoverMenuRadioButtonProps extends PopoverMenuRadioButtonPropsMixin {
   label?: string;
@@ -52,18 +53,12 @@ export interface PopoverMenuRadioButtonProps extends PopoverMenuRadioButtonProps
   radioGroup: string;
   isDefault?: boolean;
   selected?: boolean;
-  onChange?: (
-    e: PopoverMenuRadioButtonEvent<{ isActive: boolean }>,
-  ) => void;
+  onChange?: (e: PopoverMenuRadioButtonEvent<{ isActive: boolean }>) => void;
   onClick?: (e: PopoverMenuRadioButtonEvent) => void;
   onPressed?: (event: PopoverMenuRadioButtonEvent) => void;
   onReleased?: (event: PopoverMenuRadioButtonEvent) => void;
-  onMouseEnter?: (
-    event: PopoverMenuRadioButtonEvent<PointerData>,
-  ) => void;
-  onMouseLeave?: (
-    event: PopoverMenuRadioButtonEvent<PointerData>,
-  ) => void;
+  onMouseEnter?: (event: PopoverMenuRadioButtonEvent<PointerData>) => void;
+  onMouseLeave?: (event: PopoverMenuRadioButtonEvent<PointerData>) => void;
 }
 
 export class PopoverMenuRadioButtonElement extends BaseElement
@@ -83,10 +78,7 @@ export class PopoverMenuRadioButtonElement extends BaseElement
   rootMenu: PopoverMenuElement | null = null;
   radioGroup: RadioGroup | null = null;
 
-  protected parent:
-    | PopoverMenuEntryElement
-    | PopoverMenuContentElement
-    | null = null;
+  protected parent: PopoverMenuEntryElement | PopoverMenuContentElement | null = null;
 
   readonly lifecycle = new ElementLifecycleController();
   protected readonly handlers = new EventHandlers<
@@ -123,10 +115,7 @@ export class PopoverMenuRadioButtonElement extends BaseElement
             const controller = this.rootMenu.getRadioController();
 
             if (this.radioGroup) {
-              controller.removeFromGroup(
-                this.radioGroup.name,
-                this,
-              );
+              controller.removeFromGroup(this.radioGroup.name, this);
             }
 
             this.radioGroup = controller.addToGroup(
@@ -166,13 +155,13 @@ export class PopoverMenuRadioButtonElement extends BaseElement
       "enter-notify-event",
       "onMouseEnter",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
     this.handlers.bind(
       "leave-notify-event",
       "onMouseLeave",
       parseCrossingEvent,
-      EventPhase.Action,
+      EventPriority.Action,
     );
 
     this.widget.get_child;
@@ -214,10 +203,7 @@ export class PopoverMenuRadioButtonElement extends BaseElement
     throw new Error("PopoverMenuCheckButton cannot have children.");
   }
 
-  insertBefore(
-    child: TextNode | GjsElement,
-    beforeChild: GjsElement,
-  ): void {
+  insertBefore(child: TextNode | GjsElement, beforeChild: GjsElement): void {
     throw new Error("PopoverMenuCheckButton cannot have children.");
   }
 
