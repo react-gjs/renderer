@@ -47,15 +47,15 @@
     "react": "^19.0.0"
   },
   "devDependencies": {
-    "@reactgjs/gest": "^0.5.0",
+    "@reactgjs/gest": "^0.6.3",
     "@types/react-reconciler": "^0.28.9",
     "@types/react": "^19.0.1",
-    "dprint": "^0.47.2",
+    "dprint": "^0.47.6",
     "esbuild": "^0.24.0",
-    "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
+    "git-hook-tasks": "git+https://github.com/ncpa0cpl/git-hook-tasks#4215793",
     "gjs-esm-types": "^0.0.4",
     "husky": "^8.0.3",
-    "oxlint": "^0.14.0",
+    "oxlint": "^0.15.1",
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
