@@ -55,7 +55,7 @@
     "git-hook-tasks": "ncpa0cpl/git-hook-tasks#master",
     "gjs-esm-types": "^0.0.4",
     "husky": "^8.0.3",
-    "oxlint": "^0.14.0",
+    "oxlint": "^0.15.1",
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
