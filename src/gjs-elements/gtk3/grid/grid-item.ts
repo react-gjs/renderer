@@ -26,7 +26,10 @@ export type GridItemEvents = {
   itemUpdated: [GridItemElement];
 };
 
-export class GridItemElement extends BaseElement implements GjsElement<"GRID_ITEM"> {
+export class GridItemElement
+  extends BaseElement
+  implements GjsElement<"GRID_ITEM">
+{
   static getContext(
     currentContext: HostContext<GjsContext>,
   ): HostContext<GjsContext> {
@@ -38,7 +41,7 @@ export class GridItemElement extends BaseElement implements GjsElement<"GRID_ITE
   protected childElement: GjsElement | null = null;
   protected get widget(): Gtk.Widget {
     if (!this.childElement) {
-      throw this.emptyReplacement;
+      return this.emptyReplacement;
     }
     return this.childElement.getWidget();
   }
@@ -135,9 +138,7 @@ export class GridItemElement extends BaseElement implements GjsElement<"GRID_ITE
 
   notifyWillMountTo(parent: GjsElement): boolean {
     if (!GjsElementManager.isGjsElementOfKind(parent, GridElement)) {
-      throw new Error(
-        "GridItem can only be appended to the Grid container.",
-      );
+      throw new Error("GridItem can only be appended to the Grid container.");
     }
     this.parent = parent;
     return true;

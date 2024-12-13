@@ -56,28 +56,28 @@ export const createChildPropsMapper = (
   getParent: () => undefined | null | GjsElement,
 ): CaseCollectorCallback<any> => {
   return (_, { addCustomCase, lifecycle, props }) => {
-    const afterMount = () => {
-      const parent = getParent()!.getWidget();
-      const widget = getWidget();
+    const childProps = Object.getOwnPropertyNames(props).filter((n) =>
+      n.startsWith(CHILD_PROP_PREFIX),
+    );
 
-      if ("child_set_property" in parent) {
-        const childProps = Object.getOwnPropertyNames(props).filter(
-          (n) => n.startsWith(CHILD_PROP_PREFIX),
-        );
+    if (childProps.length > 0) {
+      const afterMount = () => {
+        const parent = getParent()!.getWidget();
+        const widget = getWidget();
 
-        for (let i = 0; i < childProps.length; i++) {
-          const value = props[childProps[i]];
-          const cptName = childProps[i].slice(
-            CHILD_PROP_PREFIX.length,
-          );
+        if ("child_set_property" in parent) {
+          for (let i = 0; i < childProps.length; i++) {
+            const value = props[childProps[i]];
+            const cptName = childProps[i].slice(CHILD_PROP_PREFIX.length);
 
-          // @ts-expect-error
-          parent.child_set_property(widget, cptName, value);
+            // @ts-expect-error
+            parent.child_set_property(widget, cptName, value);
+          }
         }
-      }
-    };
+      };
 
-    lifecycle.onMounted(afterMount);
+      lifecycle.onMounted(afterMount);
+    }
 
     addCustomCase(
       (name) => name.startsWith(CHILD_PROP_PREFIX),
