@@ -56,9 +56,7 @@ export const createChildPropsMapper = (
   getParent: () => undefined | null | GjsElement,
 ): CaseCollectorCallback<any> => {
   return (_, { addCustomCase, lifecycle, props }) => {
-    const childProps = Object.getOwnPropertyNames(props).filter((n) =>
-      n.startsWith(CHILD_PROP_PREFIX),
-    );
+    const childProps = Object.getOwnPropertyNames(props).filter((n) => n.startsWith(CHILD_PROP_PREFIX));
 
     if (childProps.length > 0) {
       const afterMount = () => {
