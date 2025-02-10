@@ -51,7 +51,7 @@
     "@types/react-reconciler": "^0.28.9",
     "@types/react": "^19.0.1",
     "dprint": "^0.47.6",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.25.0",
     "git-hook-tasks": "git+https://github.com/ncpa0cpl/git-hook-tasks#4215793",
     "gjs-esm-types": "^0.0.4",
     "husky": "^8.0.3",
