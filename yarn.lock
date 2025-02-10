@@ -172,45 +172,45 @@
   resolved "https://registry.yarnpkg.com/@ncpa0cpl/mutex.js/-/mutex.js-1.0.1.tgz#91cb49545d664944c2daaf116eaf6c7abe1d8cb1"
   integrity sha512-RX2mS49J933mm4gVI9Q7kB2zbLOqWB38efIcFQ/WuYqbn3F+P3lF63A6J9CxBmVyrIp1Zb2KoxtJ4Q60YPvXyQ==
 
-"@oxlint/darwin-arm64@0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@oxlint/darwin-arm64/-/darwin-arm64-0.15.1.tgz#0fb3f73549c0fea70dc622300e03112348a00ced"
-  integrity sha512-NPW7PPyOwjjwuoOMy85KKTbbwwb071veOHpG689Ta31bPg9L0dC3KCqPF/Ypa0568X/BvcNQ3WZDIN6fBogA7Q==
+"@oxlint/darwin-arm64@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@oxlint/darwin-arm64/-/darwin-arm64-0.15.10.tgz#5c9552670181d4426affecbf59513640043ba93b"
+  integrity sha512-nGuKO+lZh4vS2Lb9lceePSQkXLhKcBPIAlux8BY+ewk2LnNNWsCbHhoslBwLF2h0MB8HiqOIk8WzRwllCY8sBg==
 
-"@oxlint/darwin-x64@0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@oxlint/darwin-x64/-/darwin-x64-0.15.1.tgz#2167b5f144eedbe995125623e345c0630d5a13cf"
-  integrity sha512-rd4iSCfPed0D8nEq2ek9KfhcsokW5LMZai5cZo99FhvVzrBv/LHfkUR9p+pMRuaDb2RUOPIMX9Q8SM7gFRgBCw==
+"@oxlint/darwin-x64@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@oxlint/darwin-x64/-/darwin-x64-0.15.10.tgz#124f460a401445ed4b14200662e9743568e89c3d"
+  integrity sha512-Xpyk8PiNKIrxYuundViBsxLcltYPGy+M5w/mO7EI9eeqSizMvWNimQgfPzK5fgh3V0gv8bJG0IyPZJVN0uEE9A==
 
-"@oxlint/linux-arm64-gnu@0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@oxlint/linux-arm64-gnu/-/linux-arm64-gnu-0.15.1.tgz#0a734ae39fddc930eb0fc5b2a2ee52b2d0b72c81"
-  integrity sha512-Ho7CAcfct4pw97GluU0uIgKxs33N0RyAuIaO+1EG04Vf61JmuL+YQamTZfUkN79jLlJX1qufVjADv03wE1TRCA==
+"@oxlint/linux-arm64-gnu@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@oxlint/linux-arm64-gnu/-/linux-arm64-gnu-0.15.10.tgz#1a328ebf141cd74687c4686dcb0ec127857dbc46"
+  integrity sha512-fUxOOYlQBXc6Cz7d40zE2G6VG4yhR9vz+P1M8T1NhTe6yFUzfCCWV+zmHxpUPEy9dgGZPIvodIx7bP+kOPEmuA==
 
-"@oxlint/linux-arm64-musl@0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@oxlint/linux-arm64-musl/-/linux-arm64-musl-0.15.1.tgz#fb0e87f558d3157db12b8f02e8c1165220a6640e"
-  integrity sha512-UJENMhanuMTPyNDWlkLzJwYfar/yVDYYIYdnt5UxQPr2Rsaz1f9Xx4pzC8VJ7OhP9+Vg91gcC82h9u1WC7/Q5w==
+"@oxlint/linux-arm64-musl@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@oxlint/linux-arm64-musl/-/linux-arm64-musl-0.15.10.tgz#160bcc047743ab8cd1ed776e8ff3a3ef327a5483"
+  integrity sha512-JESSO73nplnTftaBpWdgjsOtuSfl7Jeg3I37qJYVtHIxxyJMtHuuUd9g0K0MLbwcue2K7DFCnzlDNlxer2yrgQ==
 
-"@oxlint/linux-x64-gnu@0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@oxlint/linux-x64-gnu/-/linux-x64-gnu-0.15.1.tgz#0a98761da28cd3eaf9fb9c8bb8aef96db29ff208"
-  integrity sha512-q6P7zf5aLCGmgxN2jRkbE/VL/Ui4tvEcBeWUsKRYvQOONMDGdbKkflgzJtDG/1GwCDnq+qt8aLzxHTp1RuweRw==
+"@oxlint/linux-x64-gnu@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@oxlint/linux-x64-gnu/-/linux-x64-gnu-0.15.10.tgz#c005eacd182cff55790317abe664fde9499f971d"
+  integrity sha512-NS4joBtL8Hg7zPBlPxSzrSRqkxtZfABf+fAY8vNxwYMsG8I8VoQZQdhz7+0p6ecg0+jH3CmIpDQfo73eaUBwoA==
 
-"@oxlint/linux-x64-musl@0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@oxlint/linux-x64-musl/-/linux-x64-musl-0.15.1.tgz#28d6c13e36d813a6932d0e49246c1afdd72ef503"
-  integrity sha512-iEADGfl0X/4lE54G5URXw5hKFsKlxlcwApPY3oJ4rjpQjWsqKJKgRQ/l7okBNqgcHik1w2kokbD+Lpewueka5Q==
+"@oxlint/linux-x64-musl@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@oxlint/linux-x64-musl/-/linux-x64-musl-0.15.10.tgz#b2a371c9ad15ae1e810c73012475eb1d671a94d3"
+  integrity sha512-zC2eEEe4scfsoUV87YsZFOSfPutxeaAmCI9Ys2G1lQoTyZ+9G9nuxTzBMla/yspX6mQGxonXPxLxYbIlDT24vA==
 
-"@oxlint/win32-arm64@0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@oxlint/win32-arm64/-/win32-arm64-0.15.1.tgz#e554bd14ae218d80303e0e52546c98174d1db040"
-  integrity sha512-TLkAU+aaGzSbNc19OOPt0hKAAEUuRpvKoGIw8NvuNlh9vRdCyVPkkLtXZeEVfu5YscvqBVMiOfCX1RQvzYbxgA==
+"@oxlint/win32-arm64@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@oxlint/win32-arm64/-/win32-arm64-0.15.10.tgz#cfc4217279cbe6362972926667d31af53b9031db"
+  integrity sha512-u8nHap9L96zTQvwHYqn1ZcoiHzLR24ifuKDBIwlmwEVYucUgE55tUc+ea8kPUUB4uvfOv0HtAxNFuKr43biPzg==
 
-"@oxlint/win32-x64@0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@oxlint/win32-x64/-/win32-x64-0.15.1.tgz#96503a3886e4fdbbb710a4794fe881f0d0aabd7c"
-  integrity sha512-HC/AemArV0eafiIwIlDoVjvW8v18U3cQg4YBT2preOLcCb9gadeF0LVRaiOr53jwoJjrfGl32Kh+lQD+aTJ0pw==
+"@oxlint/win32-x64@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@oxlint/win32-x64/-/win32-x64-0.15.10.tgz#afe31059ce0e20a4c1ba6c5eb462afc08fa43bc6"
+  integrity sha512-OvG4lRw2AnTDJnCb1Jm1bzE2KuRvJLE+fQ6TDSj0UQSmTGHLXIZLc+Y8HMxntCx0p850FVBtYixdg2sHkv+i3g==
 
 "@reactgjs/gest@^0.6.3":
   version "0.6.3"
@@ -387,18 +387,18 @@ node-os-walk@^1.0.2:
   integrity sha512-aJOH1sKNP2vdYZwLyaSqPouM5Bg5YnNd0t/8cdLz2mjxDGxZyqFpa7vTsbhfjUdJM3ZBwiLPwu84kl2tET8T+Q==
 
 oxlint@^0.15.1:
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/oxlint/-/oxlint-0.15.1.tgz#e9dbe8118a5924c4e95cae4d4f561957684c003e"
-  integrity sha512-cyJey9n2HO3b/vKGc3QBgo4skF2/FIDwp3N2VEWdWPKA8gmduosfjdVjyz3sG2ai3aF3Mb3B/1j3d3VJB0svnA==
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/oxlint/-/oxlint-0.15.10.tgz#379d4b51a865d0820f6663ad1b3f31205182e495"
+  integrity sha512-962UBhpbd041fnx1GjQIY7uGIAXcAl/t45Xd6IZi11PyXVRHz7TjC4qpndrwp98Lfg7HuDaMXoOWOaNsgtEgag==
   optionalDependencies:
-    "@oxlint/darwin-arm64" "0.15.1"
-    "@oxlint/darwin-x64" "0.15.1"
-    "@oxlint/linux-arm64-gnu" "0.15.1"
-    "@oxlint/linux-arm64-musl" "0.15.1"
-    "@oxlint/linux-x64-gnu" "0.15.1"
-    "@oxlint/linux-x64-musl" "0.15.1"
-    "@oxlint/win32-arm64" "0.15.1"
-    "@oxlint/win32-x64" "0.15.1"
+    "@oxlint/darwin-arm64" "0.15.10"
+    "@oxlint/darwin-x64" "0.15.10"
+    "@oxlint/linux-arm64-gnu" "0.15.10"
+    "@oxlint/linux-arm64-musl" "0.15.10"
+    "@oxlint/linux-x64-gnu" "0.15.10"
+    "@oxlint/linux-x64-musl" "0.15.10"
+    "@oxlint/win32-arm64" "0.15.10"
+    "@oxlint/win32-x64" "0.15.10"
 
 path-gjsify@^1.0.0:
   version "1.0.0"
