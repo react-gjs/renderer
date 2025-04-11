@@ -105,7 +105,7 @@ export class HeaderBarElement extends BaseElement implements GjsElement<"HEADER_
               }
 
               this.widget.set_decoration_layout(
-                `${leftBtns.join(",")}:${rightBtns.join(",")}`,
+                `${leftBtns.join(",").toLowerCase()}:${rightBtns.join(",").toLowerCase()}`,
               );
               return () => {
                 this.widget.set_decoration_layout(null);
